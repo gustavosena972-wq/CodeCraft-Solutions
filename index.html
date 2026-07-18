@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root{
     --paper:#F7F6F2;
@@ -171,6 +173,12 @@
   .ccs-metric .val{font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:800; margin-top:8px;}
   .ccs-metric.recebido .val{color:var(--teal);}
   .ccs-metric.receber .val{color:var(--amber);}
+  .ccs-metric .sub{font-size:11.5px; color:var(--ink-soft); margin-top:4px;}
+  /* Gráficos de controle */
+  .ccs-charts{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
+  .ccs-chart-card{display:flex; flex-direction:column;}
+  .ccs-chart-title{font-size:13px; font-weight:700; margin-bottom:12px;}
+  .ccs-chart-box{position:relative; height:240px;}
   .ccs-calc-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px;}
   .ccs-calc-grid button{padding:14px 0; font-size:17px; font-weight:700; border:1px solid var(--line); border-radius:8px; background:#fff; font-family:'JetBrains Mono',monospace;}
   .ccs-calc-grid button:hover{background:var(--paper-dim);}
@@ -181,6 +189,8 @@
   @media (max-width:860px){
     .ccs-chat-layout{grid-template-columns:1fr;}
     .ccs-metrics{grid-template-columns:1fr 1fr;}
+    .ccs-charts{grid-template-columns:1fr;}
+    .ccs-chart-card[style*="span 2"]{grid-column:span 1 !important;}
     .ccs-hero{grid-template-columns:1fr; padding:50px 22px 60px;}
     .ccs-nav{padding:16px 20px;} .ccs-nav-links{gap:14px; font-size:13px;}
     .ccs-section{padding:56px 22px;}
@@ -445,9 +455,35 @@
     </div>
 
     <div id="tab-empresa" style="display:none;">
-      <h2 style="font-size:20px; margin-bottom:16px;">Painel da empresa</h2>
-      <div class="ccs-eyebrow" style="margin-bottom:10px;">Ganhos em tempo real</div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <div>
+          <h2 style="font-size:20px; margin-bottom:4px;">Painel de controle</h2>
+          <div style="font-size:13px; color:var(--ink-soft);">Visão financeira e de projetos em tempo real.</div>
+        </div>
+        <button class="ccs-btn amber small" onclick="exportExcel()">↧ Exportar Excel</button>
+      </div>
+
+      <div class="ccs-eyebrow" style="margin-bottom:10px;">Indicadores</div>
       <div class="ccs-metrics" id="empresa-metrics"></div>
+
+      <div class="ccs-eyebrow" style="margin:24px 0 10px;">Gráficos de controle</div>
+      <div class="ccs-charts">
+        <div class="ccs-panel ccs-chart-card" style="grid-column:span 2;">
+          <div class="ccs-chart-title">Faturamento por mês</div>
+          <div class="ccs-chart-box"><canvas id="chart-revenue"></canvas></div>
+        </div>
+        <div class="ccs-panel ccs-chart-card">
+          <div class="ccs-chart-title">Recebido x A receber</div>
+          <div class="ccs-chart-box"><canvas id="chart-paid"></canvas></div>
+        </div>
+        <div class="ccs-panel ccs-chart-card">
+          <div class="ccs-chart-title">Projetos por status</div>
+          <div class="ccs-chart-box"><canvas id="chart-status"></canvas></div>
+        </div>
+      </div>
+
+      <div class="ccs-eyebrow" style="margin:24px 0 10px;">Controle de projetos</div>
+      <div class="ccs-panel" style="overflow-x:auto;" id="empresa-table"></div>
 
       <div class="ccs-panel" style="margin-top:24px; max-width:340px;">
         <div class="ccs-eyebrow" style="margin-bottom:10px;">Calculadora</div>
@@ -1218,23 +1254,167 @@ async function sendCodeInChat(){
   if(ok){ renderAdminChat(); showToast('Código enviado na conversa.'); }
 }
 
-/* ================= EMPRESA (ganhos + calculadora) ================= */
+/* ================= EMPRESA (painel de controle) ================= */
+const CHART_COLORS = { teal:'#2FB6A5', amber:'#E8A33D', slate:'#6B7CA0', panel:'#161B33', line:'#DAD6CA' };
+const STATUS_LABELS = { analise:'Em análise', andamento:'Em andamento', concluido:'Concluído' };
 function money(v){ return 'R$ ' + Number(v||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+let lastEmpresaProjects = [];
+
+function computeStats(projects){
+  let recebido = 0, aReceber = 0;
+  const byStatus = { analise:0, andamento:0, concluido:0 };
+  const byMonth = {}; // 'YYYY-MM' -> { recebido, aReceber }
+  projects.forEach(p=>{
+    const v = Number(p.pixValue || 0);
+    if(p.paid) recebido += v; else aReceber += v;
+    if(byStatus[p.status] === undefined) byStatus[p.status] = 0;
+    byStatus[p.status]++;
+    const d = new Date(p.createdAt);
+    if(!isNaN(d)){
+      const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+      if(!byMonth[key]) byMonth[key] = { recebido:0, aReceber:0 };
+      if(p.paid) byMonth[key].recebido += v; else byMonth[key].aReceber += v;
+    }
+  });
+  const total = recebido + aReceber;
+  const comValor = projects.filter(p=>Number(p.pixValue||0) > 0).length;
+  const concluidos = byStatus.concluido || 0;
+  const emAberto = projects.length - concluidos;
+  const ticket = comValor ? total / comValor : 0;
+  const conclusao = projects.length ? Math.round((concluidos / projects.length) * 100) : 0;
+  const months = Object.keys(byMonth).sort();
+  return { recebido, aReceber, total, ticket, concluidos, emAberto, conclusao, byStatus, byMonth, months, count:projects.length };
+}
+
 async function renderEmpresa(){
   const el = document.getElementById('empresa-metrics');
   if(!el) return;
   const projects = await loadProjects();
-  let recebido = 0, aReceber = 0;
-  projects.forEach(p=>{
-    const v = Number(p.pixValue || 0);
-    if(p.paid) recebido += v; else aReceber += v;
-  });
-  const ativos = projects.filter(p=>p.status!=='concluido').length;
+  lastEmpresaProjects = projects;
+  const s = computeStats(projects);
   el.innerHTML = `
-    <div class="ccs-metric recebido"><div class="lbl">Recebido</div><div class="val">${money(recebido)}</div></div>
-    <div class="ccs-metric receber"><div class="lbl">A receber</div><div class="val">${money(aReceber)}</div></div>
-    <div class="ccs-metric"><div class="lbl">Projetos</div><div class="val">${projects.length}</div></div>
-    <div class="ccs-metric"><div class="lbl">Em aberto</div><div class="val">${ativos}</div></div>`;
+    <div class="ccs-metric"><div class="lbl">Faturamento total</div><div class="val">${money(s.total)}</div><div class="sub">recebido + a receber</div></div>
+    <div class="ccs-metric recebido"><div class="lbl">Recebido</div><div class="val">${money(s.recebido)}</div><div class="sub">pagamentos confirmados</div></div>
+    <div class="ccs-metric receber"><div class="lbl">A receber</div><div class="val">${money(s.aReceber)}</div><div class="sub">aguardando pagamento</div></div>
+    <div class="ccs-metric"><div class="lbl">Ticket médio</div><div class="val">${money(s.ticket)}</div><div class="sub">por projeto com valor</div></div>
+    <div class="ccs-metric"><div class="lbl">Projetos</div><div class="val">${s.count}</div><div class="sub">total cadastrado</div></div>
+    <div class="ccs-metric"><div class="lbl">Em aberto</div><div class="val">${s.emAberto}</div><div class="sub">ainda não concluídos</div></div>
+    <div class="ccs-metric"><div class="lbl">Concluídos</div><div class="val">${s.concluidos}</div><div class="sub">projetos entregues</div></div>
+    <div class="ccs-metric"><div class="lbl">Taxa de conclusão</div><div class="val">${s.conclusao}%</div><div class="sub">concluídos / total</div></div>`;
+  renderEmpresaCharts(s);
+  renderEmpresaTable(projects, s);
+}
+
+let charts = { revenue:null, paid:null, status:null };
+function renderEmpresaCharts(s){
+  if(typeof Chart === 'undefined') return;
+  /* Só desenha quando a aba Empresa está visível — evita rebuild no polling. */
+  const tab = document.getElementById('tab-empresa');
+  if(!tab || tab.style.display === 'none') return;
+  const monthLabels = s.months.map(m=>{ const [y,mo]=m.split('-'); return mo+'/'+y.slice(2); });
+  const recData = s.months.map(m=>s.byMonth[m].recebido);
+  const recvData = s.months.map(m=>s.byMonth[m].aReceber);
+
+  drawChart('revenue', document.getElementById('chart-revenue'), {
+    type:'bar',
+    data:{ labels: monthLabels.length ? monthLabels : ['—'], datasets:[
+      { label:'Recebido', data: recData.length ? recData : [0], backgroundColor: CHART_COLORS.teal },
+      { label:'A receber', data: recvData.length ? recvData : [0], backgroundColor: CHART_COLORS.amber }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label:(c)=>c.dataset.label+': '+money(c.parsed.y) } } },
+      scales:{ x:{ stacked:true, grid:{display:false} }, y:{ stacked:true, ticks:{ callback:(v)=>'R$ '+v } } } }
+  });
+
+  drawChart('paid', document.getElementById('chart-paid'), {
+    type:'doughnut',
+    data:{ labels:['Recebido','A receber'], datasets:[{ data:[s.recebido, s.aReceber], backgroundColor:[CHART_COLORS.teal, CHART_COLORS.amber] }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%',
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label:(c)=>c.label+': '+money(c.parsed) } } } }
+  });
+
+  drawChart('status', document.getElementById('chart-status'), {
+    type:'doughnut',
+    data:{ labels:['Em análise','Em andamento','Concluído'],
+      datasets:[{ data:[s.byStatus.analise||0, s.byStatus.andamento||0, s.byStatus.concluido||0],
+        backgroundColor:[CHART_COLORS.slate, CHART_COLORS.amber, CHART_COLORS.teal] }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{ legend:{ position:'bottom' } } }
+  });
+}
+function drawChart(key, canvas, config){
+  if(!canvas) return;
+  /* Atualiza no lugar quando possível para não piscar a cada polling. */
+  if(charts[key] && charts[key].config.type === config.type){
+    charts[key].data = config.data;
+    charts[key].options = config.options;
+    charts[key].update();
+    return;
+  }
+  if(charts[key]) charts[key].destroy();
+  charts[key] = new Chart(canvas.getContext('2d'), config);
+}
+
+function renderEmpresaTable(projects, s){
+  const el = document.getElementById('empresa-table');
+  if(!el) return;
+  if(!projects.length){ el.innerHTML = '<div class="ccs-empty">Nenhum projeto ainda.</div>'; return; }
+  el.innerHTML = `
+    <table class="ccs-table">
+      <thead><tr><th>Código</th><th>Cliente</th><th>Projeto</th><th>Status</th><th>Valor</th><th>Pago</th><th>Criado em</th></tr></thead>
+      <tbody>
+        ${projects.map(p=>`
+          <tr>
+            <td class="mono">${escapeHtml(p.trackingCode)}</td>
+            <td>${escapeHtml(p.clientName)}</td>
+            <td>${escapeHtml(p.projectName)}</td>
+            <td>${STATUS_LABELS[p.status] || escapeHtml(p.status)}</td>
+            <td>${p.pixValue ? money(p.pixValue) : '—'}</td>
+            <td style="color:${p.paid?'var(--teal)':'var(--ink-soft)'}; font-weight:600;">${p.paid?'Sim':'Não'}</td>
+            <td>${fmtDate(p.createdAt)}</td>
+          </tr>`).join('')}
+      </tbody>
+      <tfoot><tr style="font-weight:700; border-top:2px solid var(--line);">
+        <td colspan="4">Totais</td>
+        <td>${money(s.total)}</td>
+        <td colspan="2">${money(s.recebido)} recebido</td>
+      </tr></tfoot>
+    </table>`;
+}
+
+function exportExcel(){
+  if(typeof XLSX === 'undefined'){ showToast('Biblioteca de Excel não carregou. Tente recarregar.'); return; }
+  const projects = lastEmpresaProjects || [];
+  const s = computeStats(projects);
+  const projRows = [['Código','Cliente','Projeto','Status','Valor (R$)','Pago','Criado em','Atualizado em']];
+  projects.forEach(p=>{
+    projRows.push([
+      p.trackingCode, p.clientName, p.projectName,
+      STATUS_LABELS[p.status] || p.status,
+      Number(p.pixValue || 0), p.paid ? 'Sim' : 'Não',
+      fmtDate(p.createdAt), fmtDate(p.updatedAt)
+    ]);
+  });
+  const resumoRows = [
+    ['Indicador','Valor'],
+    ['Faturamento total', s.total],
+    ['Recebido', s.recebido],
+    ['A receber', s.aReceber],
+    ['Ticket médio', Number(s.ticket.toFixed(2))],
+    ['Projetos', s.count],
+    ['Em aberto', s.emAberto],
+    ['Concluídos', s.concluidos],
+    ['Taxa de conclusão (%)', s.conclusao]
+  ];
+  const wb = XLSX.utils.book_new();
+  const wsP = XLSX.utils.aoa_to_sheet(projRows);
+  wsP['!cols'] = [{wch:10},{wch:20},{wch:24},{wch:14},{wch:12},{wch:6},{wch:18},{wch:18}];
+  const wsR = XLSX.utils.aoa_to_sheet(resumoRows);
+  wsR['!cols'] = [{wch:24},{wch:16}];
+  XLSX.utils.book_append_sheet(wb, wsR, 'Resumo');
+  XLSX.utils.book_append_sheet(wb, wsP, 'Projetos');
+  const stamp = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb, `codecraft-controle-${stamp}.xlsx`);
+  showToast('Excel exportado!');
 }
 let calcExpr = '';
 function calcPress(v){
