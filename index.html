@@ -96,6 +96,12 @@
   .ccs-help{background:var(--paper-dim); border:1px solid var(--line); border-left:3px solid var(--amber); border-radius:8px; padding:12px 14px; font-size:13.5px; color:var(--ink-soft); margin-bottom:18px; line-height:1.5;}
   .ccs-help strong{color:var(--ink);}
 
+  .ccs-steps{display:flex; flex-direction:column; gap:14px; margin-top:34px;}
+  .ccs-step{display:flex; gap:18px; align-items:flex-start; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:22px 24px;}
+  .ccs-step-num{flex:0 0 42px; height:42px; border-radius:50%; background:var(--amber); color:#221304; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:19px; display:flex; align-items:center; justify-content:center;}
+  .ccs-step h3{font-size:16.5px; color:var(--ink); margin-bottom:6px;}
+  .ccs-step p{font-size:14.5px; color:var(--ink-soft); line-height:1.55;}
+
   .ccs-pipeline{display:flex; align-items:flex-start; gap:0; margin-top:44px; flex-wrap:wrap;}
   .ccs-stage{flex:1; min-width:180px; position:relative; padding:0 18px 0 0;}
   .ccs-stage .node{width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:13px; color:#fff; margin-bottom:14px; border:2px solid transparent;}
@@ -247,6 +253,7 @@
     <div class="ccs-nav-links">
       <a href="#quem-somos">Quem somos</a>
       <a href="#servicos">Serviços</a>
+      <a href="#como-comecar">Como começar</a>
       <a href="#precos">Preços</a>
       <a href="#como-funciona">Como funciona</a>
       <a href="#contato">Contato</a>
@@ -296,6 +303,42 @@
       <div class="ccs-card"><div class="num">04</div><h3>Integrações</h3><p>Conectamos seus sistemas a banco de dados, planilhas e ferramentas que você já usa.</p></div>
       <div class="ccs-card"><div class="num">05</div><h3>Acompanhamento em tempo real</h3><p>Portal próprio para você ver o status do seu projeto sem precisar chamar no zap.</p></div>
       <div class="ccs-card"><div class="num">06</div><h3>Suporte pós-entrega</h3><p>Ajuste fino, correções e evolução depois que o projeto vai ao ar.</p></div>
+    </div>
+  </section>
+
+  <section class="ccs-section ccs-section-tight" id="como-comecar">
+    <div class="ccs-eyebrow">Como começar</div>
+    <h2>Primeira vez aqui? É só seguir estes passos</h2>
+    <p class="ccs-lede">Não precisa de cadastro nem de código pra começar. Siga a ordem abaixo — é rápido e sem complicação:</p>
+    <div class="ccs-steps">
+      <div class="ccs-step">
+        <div class="ccs-step-num">1</div>
+        <div>
+          <h3>Primeiro: clique em "Fale com a gente"</h3>
+          <p>No canto inferior direito da tela tem um botão laranja escrito <strong>"Fale com a gente"</strong>. Clique nele para abrir o chat. Não precisa de código nenhum nesse momento.</p>
+        </div>
+      </div>
+      <div class="ccs-step">
+        <div class="ccs-step-num">2</div>
+        <div>
+          <h3>Depois: escreva seu nome e conte sua ideia</h3>
+          <p>Digite seu nome, clique em <strong>"Começar conversa"</strong> e escreva o que você precisa (um site, uma loja, uma landing page…). Pode mandar quantas mensagens quiser.</p>
+        </div>
+      </div>
+      <div class="ccs-step">
+        <div class="ccs-step-num">3</div>
+        <div>
+          <h3>Aí a gente te responde e envia seu código</h3>
+          <p>Nós vemos sua mensagem e respondemos ali mesmo no chat. Quando fecharmos o combinado, você recebe um <strong>código de acompanhamento</strong> dentro da própria conversa.</p>
+        </div>
+      </div>
+      <div class="ccs-step">
+        <div class="ccs-step-num">4</div>
+        <div>
+          <h3>Por fim: acompanhe pelo "Portal do cliente"</h3>
+          <p>Copie o código que recebeu, clique em <strong>"Portal do cliente"</strong> (lá no topo do site), cole o código e clique em <strong>"Ver status"</strong>. Pronto! Você acompanha o andamento, o PIX pra pagamento e conversa com a equipe — tudo em tempo real, sem precisar atualizar a página.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -442,6 +485,7 @@
         <button class="ccs-btn amber" onclick="lookupProject()">Ver status</button>
       </div>
       <p id="client-error" style="color:var(--danger); font-size:13.5px; margin-top:10px; display:none;">Não encontramos nenhum projeto com esse código. Confira e tente de novo.</p>
+      <div class="ccs-help" style="margin:18px 0 0;"><strong>Ainda não tem um código?</strong> Volte ao site e clique no botão <strong>"Fale com a gente"</strong> (canto inferior direito). Comece a conversa e a equipe te envia o seu código de acompanhamento pelo próprio chat.</div>
     </div>
 
     <div id="client-result" style="display:none;">
