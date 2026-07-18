@@ -11,6 +11,7 @@ create table if not exists public.projects (
   tracking_code text unique not null,
   client_name  text not null,
   project_name text not null,
+  service_type text not null default 'site',
   status       text not null default 'analise',
   pix_key      text,
   pix_value    numeric,
@@ -50,6 +51,9 @@ create table if not exists public.lead_chats (
 );
 create index if not exists lead_chats_last_idx
   on public.lead_chats (last_at desc);
+
+-- Se a tabela projects já existia antes, adiciona a coluna de tipo de serviço.
+alter table public.projects add column if not exists service_type text not null default 'site';
 
 -- ================= PERMISSÕES (RLS) =================
 -- Protótipo: liberado para a chave anônima. Troque por regras mais

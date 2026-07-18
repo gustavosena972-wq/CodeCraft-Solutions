@@ -423,6 +423,15 @@
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
           <div class="ccs-field"><label>Nome do cliente</label><input id="np-client"></div>
           <div class="ccs-field"><label>Nome do projeto</label><input id="np-project"></div>
+          <div class="ccs-field"><label>Tipo de serviço</label>
+            <select id="np-service">
+              <option value="loja">Loja virtual</option>
+              <option value="site">Site institucional</option>
+              <option value="landing">Landing page</option>
+              <option value="sistema">Sistema/App sob medida</option>
+              <option value="manutencao">Manutenção mensal</option>
+            </select>
+          </div>
           <div class="ccs-field"><label>Chave PIX</label><input id="np-pixkey" list="np-pixkey-options" value="+5531999758385" placeholder="CPF, e-mail, telefone ou chave aleatória"><datalist id="np-pixkey-options"><option value="+5531999758385">Inter (principal)</option><option value="+5531972003195">Segundo número</option></datalist></div>
           <div class="ccs-field"><label>Valor (R$)</label><input id="np-value" type="number" step="0.01" placeholder="0.00"></div>
           <div class="ccs-field"><label>Cidade (para o PIX)</label><input id="np-city" value="BELO HORIZONTE" placeholder="Ex: SAO PAULO"></div>
@@ -479,6 +488,10 @@
         <div class="ccs-panel ccs-chart-card">
           <div class="ccs-chart-title">Projetos por status</div>
           <div class="ccs-chart-box"><canvas id="chart-status"></canvas></div>
+        </div>
+        <div class="ccs-panel ccs-chart-card" style="grid-column:span 2;">
+          <div class="ccs-chart-title">Faturamento por tipo de serviço</div>
+          <div class="ccs-chart-box"><canvas id="chart-service"></canvas></div>
         </div>
       </div>
 
@@ -555,7 +568,7 @@ function showToast(msg){
 }
 function fromRow(r){
   return { id:r.id, trackingCode:r.tracking_code, clientName:r.client_name, projectName:r.project_name,
-    status:r.status, pixKey:r.pix_key, pixValue:r.pix_value, pixCity:r.pix_city, notes:r.notes,
+    serviceType:r.service_type || 'site', status:r.status, pixKey:r.pix_key, pixValue:r.pix_value, pixCity:r.pix_city, notes:r.notes,
     paid:r.paid, createdAt:r.created_at, updatedAt:r.updated_at };
 }
 
@@ -576,6 +589,7 @@ async function insertProject(p){
   if(!supabaseClient) return null;
   const { data, error } = await supabaseClient.from('projects').insert({
     tracking_code: p.trackingCode, client_name: p.clientName, project_name: p.projectName,
+    service_type: p.serviceType || 'site',
     status:'analise', pix_key: p.pixKey, pix_value: p.pixValue || null, pix_city: p.pixCity, notes: p.notes, paid:false
   }).select().single();
   if(error){ console.error(error); showToast('Erro ao salvar projeto.'); return null; }
@@ -1000,16 +1014,18 @@ function toggleNewProjectForm(){
 async function createProject(){
   const clientName = document.getElementById('np-client').value.trim();
   const projectName = document.getElementById('np-project').value.trim();
+  const serviceType = document.getElementById('np-service').value;
   const pixKey = document.getElementById('np-pixkey').value.trim() || COMPANY_PIX_KEY;
   const pixValue = document.getElementById('np-value').value.trim();
   const pixCity = document.getElementById('np-city').value.trim() || COMPANY_PIX_CITY;
   const notes = document.getElementById('np-notes').value.trim();
   if(!clientName || !projectName){ showToast('Preencha nome do cliente e do projeto.'); return; }
   const trackingCode = genCode();
-  const created = await insertProject({ trackingCode, clientName, projectName, pixKey, pixValue, pixCity, notes });
+  const created = await insertProject({ trackingCode, clientName, projectName, serviceType, pixKey, pixValue, pixCity, notes });
   if(!created) return;
   const contact = (notes.match(/Contato:\s*(.+)/) || [])[1] || '';
   ['np-client','np-project','np-value','np-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('np-service').value = 'site';
   document.getElementById('np-pixkey').value = COMPANY_PIX_KEY;
   document.getElementById('np-city').value = COMPANY_PIX_CITY;
   toggleNewProjectForm();
@@ -1257,6 +1273,9 @@ async function sendCodeInChat(){
 /* ================= EMPRESA (painel de controle) ================= */
 const CHART_COLORS = { teal:'#2FB6A5', amber:'#E8A33D', slate:'#6B7CA0', panel:'#161B33', line:'#DAD6CA' };
 const STATUS_LABELS = { analise:'Em análise', andamento:'Em andamento', concluido:'Concluído' };
+const SERVICE_LABELS = { loja:'Loja virtual', site:'Site institucional', landing:'Landing page', sistema:'Sistema/App sob medida', manutencao:'Manutenção mensal' };
+const SERVICE_ORDER = ['loja','site','landing','sistema','manutencao'];
+const SERVICE_COLORS = { loja:'#2FB6A5', site:'#161B33', landing:'#E8A33D', sistema:'#6B7CA0', manutencao:'#D65B5B' };
 function money(v){ return 'R$ ' + Number(v||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 let lastEmpresaProjects = [];
 
@@ -1264,11 +1283,16 @@ function computeStats(projects){
   let recebido = 0, aReceber = 0;
   const byStatus = { analise:0, andamento:0, concluido:0 };
   const byMonth = {}; // 'YYYY-MM' -> { recebido, aReceber }
+  const byService = {}; // service -> { total, count }
+  SERVICE_ORDER.forEach(k=>{ byService[k] = { total:0, count:0 }; });
   projects.forEach(p=>{
     const v = Number(p.pixValue || 0);
     if(p.paid) recebido += v; else aReceber += v;
     if(byStatus[p.status] === undefined) byStatus[p.status] = 0;
     byStatus[p.status]++;
+    const svc = SERVICE_LABELS[p.serviceType] ? p.serviceType : 'site';
+    if(!byService[svc]) byService[svc] = { total:0, count:0 };
+    byService[svc].total += v; byService[svc].count++;
     const d = new Date(p.createdAt);
     if(!isNaN(d)){
       const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
@@ -1283,7 +1307,7 @@ function computeStats(projects){
   const ticket = comValor ? total / comValor : 0;
   const conclusao = projects.length ? Math.round((concluidos / projects.length) * 100) : 0;
   const months = Object.keys(byMonth).sort();
-  return { recebido, aReceber, total, ticket, concluidos, emAberto, conclusao, byStatus, byMonth, months, count:projects.length };
+  return { recebido, aReceber, total, ticket, concluidos, emAberto, conclusao, byStatus, byMonth, months, byService, count:projects.length };
 }
 
 async function renderEmpresa(){
@@ -1297,15 +1321,15 @@ async function renderEmpresa(){
     <div class="ccs-metric recebido"><div class="lbl">Recebido</div><div class="val">${money(s.recebido)}</div><div class="sub">pagamentos confirmados</div></div>
     <div class="ccs-metric receber"><div class="lbl">A receber</div><div class="val">${money(s.aReceber)}</div><div class="sub">aguardando pagamento</div></div>
     <div class="ccs-metric"><div class="lbl">Ticket médio</div><div class="val">${money(s.ticket)}</div><div class="sub">por projeto com valor</div></div>
-    <div class="ccs-metric"><div class="lbl">Projetos</div><div class="val">${s.count}</div><div class="sub">total cadastrado</div></div>
-    <div class="ccs-metric"><div class="lbl">Em aberto</div><div class="val">${s.emAberto}</div><div class="sub">ainda não concluídos</div></div>
-    <div class="ccs-metric"><div class="lbl">Concluídos</div><div class="val">${s.concluidos}</div><div class="sub">projetos entregues</div></div>
-    <div class="ccs-metric"><div class="lbl">Taxa de conclusão</div><div class="val">${s.conclusao}%</div><div class="sub">concluídos / total</div></div>`;
+    <div class="ccs-metric"><div class="lbl">Sites/lojas</div><div class="val">${s.count}</div><div class="sub">projetos cadastrados</div></div>
+    <div class="ccs-metric"><div class="lbl">Em produção</div><div class="val">${s.emAberto}</div><div class="sub">ainda não entregues</div></div>
+    <div class="ccs-metric"><div class="lbl">Entregues</div><div class="val">${s.concluidos}</div><div class="sub">sites/lojas no ar</div></div>
+    <div class="ccs-metric"><div class="lbl">Taxa de entrega</div><div class="val">${s.conclusao}%</div><div class="sub">entregues / total</div></div>`;
   renderEmpresaCharts(s);
   renderEmpresaTable(projects, s);
 }
 
-let charts = { revenue:null, paid:null, status:null };
+let charts = { revenue:null, paid:null, status:null, service:null };
 function renderEmpresaCharts(s){
   if(typeof Chart === 'undefined') return;
   /* Só desenha quando a aba Empresa está visível — evita rebuild no polling. */
@@ -1340,6 +1364,19 @@ function renderEmpresaCharts(s){
         backgroundColor:[CHART_COLORS.slate, CHART_COLORS.amber, CHART_COLORS.teal] }] },
     options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{ legend:{ position:'bottom' } } }
   });
+
+  const svcLabels = SERVICE_ORDER.map(k=>SERVICE_LABELS[k]);
+  const svcData = SERVICE_ORDER.map(k=>(s.byService[k] ? s.byService[k].total : 0));
+  const svcColors = SERVICE_ORDER.map(k=>SERVICE_COLORS[k]);
+  drawChart('service', document.getElementById('chart-service'), {
+    type:'bar',
+    data:{ labels: svcLabels, datasets:[{ label:'Faturamento', data: svcData, backgroundColor: svcColors }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:(c)=>{
+        const k = SERVICE_ORDER[c.dataIndex]; const n = s.byService[k] ? s.byService[k].count : 0;
+        return money(c.parsed.x) + ' · ' + n + (n===1?' projeto':' projetos'); } } } },
+      scales:{ x:{ ticks:{ callback:(v)=>'R$ '+v } }, y:{ grid:{display:false} } } }
+  });
 }
 function drawChart(key, canvas, config){
   if(!canvas) return;
@@ -1360,13 +1397,14 @@ function renderEmpresaTable(projects, s){
   if(!projects.length){ el.innerHTML = '<div class="ccs-empty">Nenhum projeto ainda.</div>'; return; }
   el.innerHTML = `
     <table class="ccs-table">
-      <thead><tr><th>Código</th><th>Cliente</th><th>Projeto</th><th>Status</th><th>Valor</th><th>Pago</th><th>Criado em</th></tr></thead>
+      <thead><tr><th>Código</th><th>Cliente</th><th>Projeto</th><th>Tipo</th><th>Status</th><th>Valor</th><th>Pago</th><th>Criado em</th></tr></thead>
       <tbody>
         ${projects.map(p=>`
           <tr>
             <td class="mono">${escapeHtml(p.trackingCode)}</td>
             <td>${escapeHtml(p.clientName)}</td>
             <td>${escapeHtml(p.projectName)}</td>
+            <td>${SERVICE_LABELS[p.serviceType] || 'Site institucional'}</td>
             <td>${STATUS_LABELS[p.status] || escapeHtml(p.status)}</td>
             <td>${p.pixValue ? money(p.pixValue) : '—'}</td>
             <td style="color:${p.paid?'var(--teal)':'var(--ink-soft)'}; font-weight:600;">${p.paid?'Sim':'Não'}</td>
@@ -1374,7 +1412,7 @@ function renderEmpresaTable(projects, s){
           </tr>`).join('')}
       </tbody>
       <tfoot><tr style="font-weight:700; border-top:2px solid var(--line);">
-        <td colspan="4">Totais</td>
+        <td colspan="5">Totais</td>
         <td>${money(s.total)}</td>
         <td colspan="2">${money(s.recebido)} recebido</td>
       </tr></tfoot>
@@ -1385,10 +1423,11 @@ function exportExcel(){
   if(typeof XLSX === 'undefined'){ showToast('Biblioteca de Excel não carregou. Tente recarregar.'); return; }
   const projects = lastEmpresaProjects || [];
   const s = computeStats(projects);
-  const projRows = [['Código','Cliente','Projeto','Status','Valor (R$)','Pago','Criado em','Atualizado em']];
+  const projRows = [['Código','Cliente','Projeto','Tipo de serviço','Status','Valor (R$)','Pago','Criado em','Atualizado em']];
   projects.forEach(p=>{
     projRows.push([
       p.trackingCode, p.clientName, p.projectName,
+      SERVICE_LABELS[p.serviceType] || 'Site institucional',
       STATUS_LABELS[p.status] || p.status,
       Number(p.pixValue || 0), p.paid ? 'Sim' : 'Não',
       fmtDate(p.createdAt), fmtDate(p.updatedAt)
@@ -1400,17 +1439,25 @@ function exportExcel(){
     ['Recebido', s.recebido],
     ['A receber', s.aReceber],
     ['Ticket médio', Number(s.ticket.toFixed(2))],
-    ['Projetos', s.count],
-    ['Em aberto', s.emAberto],
-    ['Concluídos', s.concluidos],
-    ['Taxa de conclusão (%)', s.conclusao]
+    ['Sites/lojas (total)', s.count],
+    ['Em produção', s.emAberto],
+    ['Entregues', s.concluidos],
+    ['Taxa de entrega (%)', s.conclusao]
   ];
+  const svcRows = [['Tipo de serviço','Projetos','Faturamento (R$)']];
+  SERVICE_ORDER.forEach(k=>{
+    const b = s.byService[k] || { total:0, count:0 };
+    svcRows.push([SERVICE_LABELS[k], b.count, b.total]);
+  });
   const wb = XLSX.utils.book_new();
   const wsP = XLSX.utils.aoa_to_sheet(projRows);
-  wsP['!cols'] = [{wch:10},{wch:20},{wch:24},{wch:14},{wch:12},{wch:6},{wch:18},{wch:18}];
+  wsP['!cols'] = [{wch:10},{wch:20},{wch:24},{wch:20},{wch:14},{wch:12},{wch:6},{wch:18},{wch:18}];
   const wsR = XLSX.utils.aoa_to_sheet(resumoRows);
   wsR['!cols'] = [{wch:24},{wch:16}];
+  const wsS = XLSX.utils.aoa_to_sheet(svcRows);
+  wsS['!cols'] = [{wch:24},{wch:10},{wch:18}];
   XLSX.utils.book_append_sheet(wb, wsR, 'Resumo');
+  XLSX.utils.book_append_sheet(wb, wsS, 'Por serviço');
   XLSX.utils.book_append_sheet(wb, wsP, 'Projetos');
   const stamp = new Date().toISOString().slice(0,10);
   XLSX.writeFile(wb, `codecraft-controle-${stamp}.xlsx`);
