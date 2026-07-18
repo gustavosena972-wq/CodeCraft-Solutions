@@ -145,6 +145,21 @@
   .ccs-tab{padding:10px 16px; font-weight:700; font-size:14px; color:var(--ink-soft); border-bottom:2px solid transparent; background:none; border-left:none; border-right:none; border-top:none;}
   .ccs-tab.active{color:var(--ink); border-bottom-color:var(--amber);}
 
+  .ccs-admin-layout{display:flex; align-items:flex-start; gap:26px; max-width:1180px; margin:0 auto; padding:32px 24px;}
+  .ccs-admin-nav{flex:0 0 210px; position:sticky; top:24px; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:14px; display:flex; flex-direction:column; gap:4px;}
+  .ccs-admin-nav-title{font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); padding:6px 10px 10px;}
+  .ccs-navitem{display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:11px 12px; border-radius:9px; font-weight:600; font-size:14.5px; color:var(--ink-soft); background:none; border:none; cursor:pointer; transition:background .12s, color .12s;}
+  .ccs-navitem .ico{font-size:16px; width:20px; text-align:center;}
+  .ccs-navitem:hover{background:var(--paper-dim); color:var(--ink);}
+  .ccs-navitem.active{background:var(--panel); color:#fff;}
+  .ccs-admin-content{flex:1; min-width:0;}
+  @media (max-width:760px){
+    .ccs-admin-layout{flex-direction:column; padding:20px 16px;}
+    .ccs-admin-nav{flex:none; width:100%; position:static; flex-direction:row; flex-wrap:wrap;}
+    .ccs-admin-nav-title{display:none;}
+    .ccs-navitem{width:auto; flex:1 1 auto; justify-content:center;}
+  }
+
   .ccs-empty{padding:40px 20px; text-align:center; color:var(--ink-soft); font-size:14.5px;}
   .ccs-toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; border-radius:8px; font-size:14px; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,.25); z-index:100; opacity:0; pointer-events:none; transition:opacity .25s ease;}
   .ccs-toast.show{opacity:1;}
@@ -484,14 +499,16 @@
     </div>
   </div>
 
-  <div class="ccs-shell" id="admin-main" style="display:none; max-width:1000px;">
-    <div class="ccs-tabs">
-      <button class="ccs-tab active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')">Projetos</button>
-      <button class="ccs-tab" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')">Mensagens</button>
-      <button class="ccs-tab" id="tab-btn-conversas" onclick="switchAdminTab('conversas')">Conversas</button>
-      <button class="ccs-tab" id="tab-btn-empresa" onclick="switchAdminTab('empresa')">Empresa</button>
-    </div>
+  <div class="ccs-admin-layout" id="admin-main" style="display:none;">
+    <aside class="ccs-admin-nav">
+      <div class="ccs-admin-nav-title">Menu</div>
+      <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')"><span class="ico">📋</span> Projetos</button>
+      <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')"><span class="ico">✉️</span> Mensagens</button>
+      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')"><span class="ico">💬</span> Conversas</button>
+      <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')"><span class="ico">📊</span> Empresa</button>
+    </aside>
 
+    <div class="ccs-admin-content">
     <div id="tab-projetos">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
         <h2 style="font-size:20px;">Projetos</h2>
@@ -587,6 +604,7 @@
           style="width:100%; text-align:right; font-size:24px; padding:12px; border:1.5px solid var(--line); border-radius:8px; background:var(--paper-dim); margin-bottom:12px;">
         <div class="ccs-calc-grid" id="calc-grid"></div>
       </div>
+    </div>
     </div>
   </div>
 </div>
@@ -1061,7 +1079,7 @@ let adminLoggedIn = false;
 
 function renderAdminGate(){
   document.getElementById('admin-login-shell').style.display = adminLoggedIn ? 'none' : 'block';
-  document.getElementById('admin-main').style.display = adminLoggedIn ? 'block' : 'none';
+  document.getElementById('admin-main').style.display = adminLoggedIn ? 'flex' : 'none';
   document.getElementById('admin-logout-btn').style.display = adminLoggedIn ? 'inline-block' : 'none';
   document.getElementById('admin-live').style.display = adminLoggedIn ? 'inline-flex' : 'none';
   if(adminLoggedIn){
