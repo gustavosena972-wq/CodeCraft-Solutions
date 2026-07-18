@@ -133,7 +133,41 @@
   .ccs-live-dot .d{width:7px;height:7px;border-radius:50%; background:var(--teal); animation:pulse 1.6s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
 
+  /* ===== Chat (estilo WhatsApp) ===== */
+  .ccs-chat-layout{display:grid; grid-template-columns:260px 1fr; gap:16px;}
+  .ccs-chat-side{border:1px solid var(--line); border-radius:var(--radius); padding:14px; background:#fff; max-height:520px; overflow-y:auto;}
+  .ccs-chat-proj{width:100%; text-align:left; border:1px solid var(--line); background:#fff; border-radius:8px; padding:10px 12px; margin-bottom:8px; cursor:pointer;}
+  .ccs-chat-proj:hover{background:var(--paper-dim);}
+  .ccs-chat-proj.active{border-color:var(--amber); background:#FFF7EC;}
+  .ccs-chat-proj strong{display:block; font-size:14px;}
+  .ccs-chat-proj span{font-size:12px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace;}
+  .ccs-chat-main{border:1px solid var(--line); border-radius:var(--radius); background:#fff; display:flex; flex-direction:column; min-height:420px;}
+  .ccs-chat-head{padding:14px 16px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+  .ccs-chat-messages{flex:1; overflow-y:auto; padding:16px; background:#F0EFE9; display:flex; flex-direction:column; gap:8px; min-height:220px; max-height:360px; border-radius:8px;}
+  .ccs-bubble{max-width:78%; padding:9px 13px; border-radius:12px; font-size:14px; line-height:1.4; word-break:break-word;}
+  .ccs-bubble .t{display:block; font-size:10.5px; color:var(--ink-soft); margin-top:4px; font-family:'JetBrains Mono',monospace;}
+  .ccs-bubble.admin{align-self:flex-end; background:#DCF8C6;}
+  .ccs-bubble.client{align-self:flex-start; background:#fff; border:1px solid var(--line);}
+  .ccs-chat-input{display:flex; gap:8px; padding:12px; border-top:1px solid var(--line);}
+  .ccs-chat-input input{flex:1; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:'Inter',sans-serif; font-size:14px;}
+
+  /* ===== Empresa: métricas + calculadora ===== */
+  .ccs-metrics{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+  .ccs-metric{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:18px;}
+  .ccs-metric .lbl{font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; font-weight:700;}
+  .ccs-metric .val{font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:800; margin-top:8px;}
+  .ccs-metric.recebido .val{color:var(--teal);}
+  .ccs-metric.receber .val{color:var(--amber);}
+  .ccs-calc-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px;}
+  .ccs-calc-grid button{padding:14px 0; font-size:17px; font-weight:700; border:1px solid var(--line); border-radius:8px; background:#fff; font-family:'JetBrains Mono',monospace;}
+  .ccs-calc-grid button:hover{background:var(--paper-dim);}
+  .ccs-calc-grid button.op{background:var(--panel); color:#fff; border-color:var(--panel);}
+  .ccs-calc-grid button.eq{background:var(--amber); color:#221304; border-color:var(--amber);}
+  .ccs-calc-grid button.wide{grid-column:span 2;}
+
   @media (max-width:860px){
+    .ccs-chat-layout{grid-template-columns:1fr;}
+    .ccs-metrics{grid-template-columns:1fr 1fr;}
     .ccs-hero{grid-template-columns:1fr; padding:50px 22px 60px;}
     .ccs-nav{padding:16px 20px;} .ccs-nav-links{gap:14px; font-size:13px;}
     .ccs-section{padding:56px 22px;}
@@ -282,6 +316,19 @@
         <div id="client-notes" style="margin-top:14px; font-size:14.5px;"></div>
         <div id="client-pix-area"></div>
       </div>
+
+      <div class="ccs-panel" style="margin-top:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="font-size:16px;">Fale com a equipe</h3>
+          <span class="ccs-live-dot"><span class="d"></span> ao vivo</span>
+        </div>
+        <div id="client-chat-messages" class="ccs-chat-messages"></div>
+        <div class="ccs-chat-input">
+          <input id="client-chat-input" placeholder="Escreva sua mensagem..." onkeydown="if(event.key==='Enter')sendClientChat()">
+          <button class="ccs-btn amber" onclick="sendClientChat()">Enviar</button>
+        </div>
+      </div>
+
       <button class="ccs-btn ghost small" style="margin-top:16px;" onclick="resetClientLookup()">Ver outro código</button>
     </div>
   </div>
@@ -313,6 +360,8 @@
     <div class="ccs-tabs">
       <button class="ccs-tab active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')">Projetos</button>
       <button class="ccs-tab" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')">Mensagens</button>
+      <button class="ccs-tab" id="tab-btn-conversas" onclick="switchAdminTab('conversas')">Conversas</button>
+      <button class="ccs-tab" id="tab-btn-empresa" onclick="switchAdminTab('empresa')">Empresa</button>
     </div>
 
     <div id="tab-projetos">
@@ -325,9 +374,9 @@
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
           <div class="ccs-field"><label>Nome do cliente</label><input id="np-client"></div>
           <div class="ccs-field"><label>Nome do projeto</label><input id="np-project"></div>
-          <div class="ccs-field"><label>Chave PIX</label><input id="np-pixkey" placeholder="CPF, e-mail, telefone ou chave aleatória"></div>
+          <div class="ccs-field"><label>Chave PIX</label><input id="np-pixkey" value="+5531999758385" placeholder="CPF, e-mail, telefone ou chave aleatória"></div>
           <div class="ccs-field"><label>Valor (R$)</label><input id="np-value" type="number" step="0.01" placeholder="0.00"></div>
-          <div class="ccs-field"><label>Cidade (para o PIX)</label><input id="np-city" placeholder="Ex: SAO PAULO"></div>
+          <div class="ccs-field"><label>Cidade (para o PIX)</label><input id="np-city" value="BELO HORIZONTE" placeholder="Ex: SAO PAULO"></div>
           <div class="ccs-field"><label>Observações para o cliente</label><input id="np-notes" placeholder="Opcional"></div>
         </div>
         <div style="display:flex; gap:10px; margin-top:6px;">
@@ -343,6 +392,32 @@
       <h2 style="font-size:20px; margin-bottom:16px;">Mensagens do site</h2>
       <div id="messages-list"></div>
     </div>
+
+    <div id="tab-conversas" style="display:none;">
+      <h2 style="font-size:20px; margin-bottom:16px;">Conversas com clientes</h2>
+      <div class="ccs-chat-layout">
+        <div class="ccs-chat-side">
+          <div class="ccs-eyebrow" style="margin-bottom:10px;">Projetos</div>
+          <div id="chat-project-list"></div>
+        </div>
+        <div class="ccs-chat-main" id="admin-chat-main">
+          <div class="ccs-empty">Selecione um projeto ao lado para conversar.</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-empresa" style="display:none;">
+      <h2 style="font-size:20px; margin-bottom:16px;">Painel da empresa</h2>
+      <div class="ccs-eyebrow" style="margin-bottom:10px;">Ganhos em tempo real</div>
+      <div class="ccs-metrics" id="empresa-metrics"></div>
+
+      <div class="ccs-panel" style="margin-top:24px; max-width:340px;">
+        <div class="ccs-eyebrow" style="margin-bottom:10px;">Calculadora</div>
+        <input id="calc-display" class="mono" readonly value="0"
+          style="width:100%; text-align:right; font-size:24px; padding:12px; border:1.5px solid var(--line); border-radius:8px; background:var(--paper-dim); margin-bottom:12px;">
+        <div class="ccs-calc-grid" id="calc-grid"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -355,6 +430,10 @@
     <div style="background:var(--paper-dim); padding:20px; border-radius:12px; margin-bottom:16px;">
       <div style="font-family:'JetBrains Mono',monospace; font-size:32px; font-weight:800; color:var(--amber); letter-spacing:4px;" id="modal-code"></div>
     </div>
+    <button class="ccs-btn" id="modal-wa-btn" onclick="sendCodeWhatsApp()" style="width:100%; background:#25D366; color:#04310F; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.55-3.7 8.24-8.24 8.24Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.65.31-.22.25-.86.84-.86 2.05 0 1.21.88 2.38 1 2.54.12.16 1.73 2.64 4.19 3.7.59.25 1.04.4 1.4.52.59.19 1.12.16 1.54.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29Z"/></svg>
+      Enviar código pelo WhatsApp
+    </button>
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <button class="ccs-btn amber" onclick="copyCode()" style="flex:1;">Copiar código</button>
       <button class="ccs-btn ghost" onclick="closeCodeModal()" style="flex:1;">Fechar</button>
@@ -371,6 +450,13 @@
 const SUPABASE_URL = 'https://eqaoanbanhryhbldlbhc.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_cDjtfaScPpBj-JHSCwagng_LoKGL-IN';
 /* ========================================================================= */
+
+/* Dados da empresa para o PIX. A chave abaixo (telefone) é onde o dinheiro cai. */
+const COMPANY_NAME = 'CODECRAFT SOLUTIONS';
+const COMPANY_PIX_KEY = '+5531999758385';   // chave PIX principal (telefone)
+const COMPANY_PIX_CITY = 'BELO HORIZONTE';
+/* Intervalo (ms) do fallback de atualização automática caso o realtime falhe. */
+const LIVE_POLL_MS = 4000;
 
 const configOk = !SUPABASE_URL.startsWith('COLE_AQUI') && !SUPABASE_ANON_KEY.startsWith('COLE_AQUI');
 if(!configOk){ document.getElementById('config-banner').classList.add('show'); }
@@ -444,6 +530,29 @@ async function insertMessage(m){
   const { error } = await supabaseClient.from('messages').insert({ name:m.name, contact:m.contact, msg:m.msg });
   if(error){ console.error(error); showToast('Erro ao enviar mensagem.'); }
 }
+/* Chat por projeto (tabela chat_messages). Sinaliza se a tabela não existe
+   ainda, para o site continuar funcionando sem quebrar. */
+let chatTableMissing = false;
+async function loadChat(code){
+  if(!supabaseClient) return [];
+  const { data, error } = await supabaseClient.from('chat_messages')
+    .select('*').eq('tracking_code', code).order('created_at', { ascending:true });
+  if(error){
+    if((error.message||'').toLowerCase().includes('chat_messages')) chatTableMissing = true;
+    console.error(error); return [];
+  }
+  return data.map(c=>({ id:c.id, trackingCode:c.tracking_code, sender:c.sender, body:c.body, createdAt:c.created_at }));
+}
+async function insertChat(code, sender, body){
+  if(!supabaseClient) return false;
+  const { error } = await supabaseClient.from('chat_messages')
+    .insert({ tracking_code: code, sender, body });
+  if(error){
+    if((error.message||'').toLowerCase().includes('chat_messages')) chatTableMissing = true;
+    console.error(error); showToast('Não foi possível enviar. Verifique a tabela de conversas.'); return false;
+  }
+  return true;
+}
 
 /* ================= PIX (BR Code / EMV payload) ================= */
 function crc16(str){
@@ -458,20 +567,43 @@ function crc16(str){
   return crc.toString(16).toUpperCase().padStart(4,'0');
 }
 function tlv(id, value){ return id + String(value.length).padStart(2,'0') + value; }
+/* Normaliza a chave PIX. Telefones precisam do formato +55DDDNUMERO para o
+   banco reconhecer o QR. E-mail/CPF/chave aleatória passam sem alteração. */
+function normalizePixKey(chave){
+  let k = (chave || '').trim();
+  if(!k) return '';
+  if(k.includes('@')) return k;                 // e-mail
+  if(k.startsWith('+')) return k;               // já no formato internacional
+  const digits = k.replace(/\D/g, '');
+  if(/^55\d{10,11}$/.test(digits)) return '+' + digits;   // 55 + DDD + numero
+  if(/^\d{10,11}$/.test(digits)) return '+55' + digits;   // DDD + numero (sem 55)
+  return k;
+}
 function buildPixPayload({chave, valor, nome, cidade, txid}){
-  const merchantAccount = tlv('00','br.gov.bcb.pix') + tlv('01', chave || '');
+  const merchantAccount = tlv('00','br.gov.bcb.pix') + tlv('01', normalizePixKey(chave));
   const mai = tlv('26', merchantAccount);
   const addData = tlv('62', tlv('05', (txid || '***').slice(0,25)));
   let payload = tlv('00','01') + tlv('01','12') + mai + tlv('52','0000') + tlv('53','986');
   if(valor) payload += tlv('54', Number(valor).toFixed(2));
-  payload += tlv('58','BR') + tlv('59',(nome||'CODECRAFT SOLUTIONS').slice(0,25).toUpperCase()) + tlv('60',(cidade||'SAO PAULO').slice(0,15).toUpperCase()) + addData;
+  payload += tlv('58','BR') + tlv('59',(nome||COMPANY_NAME).slice(0,25).toUpperCase()) + tlv('60',(cidade||COMPANY_PIX_CITY).slice(0,15).toUpperCase()) + addData;
   payload += '6304';
   return payload + crc16(payload);
 }
 
 /* ================= SCREEN SWITCH ================= */
 let realtimeChannel = null;
-function stopRealtime(){ if(realtimeChannel){ supabaseClient && supabaseClient.removeChannel(realtimeChannel); realtimeChannel = null; } }
+let pollTimer = null;
+/* Fallback: mesmo que o realtime do Supabase esteja desligado, recarregamos
+   os dados a cada LIVE_POLL_MS para o painel/portal atualizar sozinho. */
+function startPolling(fn){
+  stopPolling();
+  pollTimer = setInterval(()=>{ try{ fn(); }catch(e){ console.error(e); } }, LIVE_POLL_MS);
+}
+function stopPolling(){ if(pollTimer){ clearInterval(pollTimer); pollTimer = null; } }
+function stopRealtime(){
+  if(realtimeChannel){ supabaseClient && supabaseClient.removeChannel(realtimeChannel); realtimeChannel = null; }
+  stopPolling();
+}
 
 function showScreen(name){
   stopRealtime();
@@ -565,14 +697,44 @@ async function lookupProject(){
   document.getElementById('client-lookup').style.display = 'none';
   document.getElementById('client-result').style.display = 'block';
   renderClientProject(proj);
+  renderClientChat();
 
   stopRealtime();
   realtimeChannel = supabaseClient.channel('client-'+code)
     .on('postgres_changes', { event:'*', schema:'public', table:'projects', filter:`tracking_code=eq.${code}` }, async ()=>{
       const updated = await loadProjectByCode(code);
       if(updated) renderClientProject(updated);
-    }).subscribe();
+    })
+    .on('postgres_changes', { event:'*', schema:'public', table:'chat_messages', filter:`tracking_code=eq.${code}` }, ()=>renderClientChat())
+    .subscribe();
+  /* fallback caso o realtime esteja desligado no Supabase */
+  startPolling(async ()=>{
+    const updated = await loadProjectByCode(code);
+    if(updated) renderClientProject(updated);
+    renderClientChat();
+  });
 }
+async function renderClientChat(){
+  if(!currentClientCode) return;
+  const box = document.getElementById('client-chat-messages');
+  const msgs = await loadChat(currentClientCode);
+  box.innerHTML = msgs.length ? msgs.map(renderBubble).join('')
+    : '<div style="text-align:center; color:var(--ink-soft); font-size:13px; margin:auto;">Nenhuma mensagem ainda. Fale com a equipe!</div>';
+  box.scrollTop = box.scrollHeight;
+}
+async function sendClientChat(){
+  if(!currentClientCode) return;
+  const input = document.getElementById('client-chat-input');
+  const body = input.value.trim();
+  if(!body) return;
+  const ok = await insertChat(currentClientCode, 'client', body);
+  if(ok){ input.value=''; renderClientChat(); }
+}
+function renderBubble(m){
+  const who = m.sender === 'admin' ? 'admin' : 'client';
+  return `<div class="ccs-bubble ${who}">${escapeHtml(m.body)}<span class="t">${fmtDate(m.createdAt)}</span></div>`;
+}
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function renderClientProject(proj){
   document.getElementById('client-tracking').textContent = 'Código: ' + proj.trackingCode;
   document.getElementById('client-project-name').textContent = proj.projectName;
@@ -622,9 +784,15 @@ function renderAdminGate(){
     renderAdminAll();
     stopRealtime();
     realtimeChannel = supabaseClient.channel('admin-projects')
-      .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>renderProjectsList())
+      .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); })
       .on('postgres_changes', { event:'*', schema:'public', table:'messages' }, ()=>renderMessagesList())
+      .on('postgres_changes', { event:'*', schema:'public', table:'chat_messages' }, ()=>{ if(currentChatCode) renderAdminChat(); })
       .subscribe();
+    /* fallback caso o realtime esteja desligado no Supabase */
+    startPolling(()=>{
+      renderProjectsList(); renderMessagesList(); renderEmpresa(); renderChatProjectList();
+      if(currentChatCode) renderAdminChat();
+    });
   }
 }
 function adminLogin(){
@@ -640,13 +808,16 @@ function adminLogin(){
 }
 function adminLogout(){ adminLoggedIn = false; stopRealtime(); renderAdminGate(); }
 
+const ADMIN_TABS = ['projetos','mensagens','conversas','empresa'];
 function switchAdminTab(tab){
-  document.getElementById('tab-projetos').style.display = tab==='projetos' ? 'block' : 'none';
-  document.getElementById('tab-mensagens').style.display = tab==='mensagens' ? 'block' : 'none';
-  document.getElementById('tab-btn-projetos').classList.toggle('active', tab==='projetos');
-  document.getElementById('tab-btn-mensagens').classList.toggle('active', tab==='mensagens');
+  ADMIN_TABS.forEach(t=>{
+    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
+    document.getElementById('tab-btn-'+t).classList.toggle('active', t===tab);
+  });
+  if(tab==='conversas') renderChatProjectList();
+  if(tab==='empresa'){ renderEmpresa(); buildCalculator(); }
 }
-async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); }
+async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); }
 function toggleNewProjectForm(){
   const f = document.getElementById('new-project-form');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
@@ -654,25 +825,28 @@ function toggleNewProjectForm(){
 async function createProject(){
   const clientName = document.getElementById('np-client').value.trim();
   const projectName = document.getElementById('np-project').value.trim();
-  const pixKey = document.getElementById('np-pixkey').value.trim();
+  const pixKey = document.getElementById('np-pixkey').value.trim() || COMPANY_PIX_KEY;
   const pixValue = document.getElementById('np-value').value.trim();
-  const pixCity = document.getElementById('np-city').value.trim();
+  const pixCity = document.getElementById('np-city').value.trim() || COMPANY_PIX_CITY;
   const notes = document.getElementById('np-notes').value.trim();
   if(!clientName || !projectName){ showToast('Preencha nome do cliente e do projeto.'); return; }
   const trackingCode = genCode();
   const created = await insertProject({ trackingCode, clientName, projectName, pixKey, pixValue, pixCity, notes });
   if(!created) return;
-  ['np-client','np-project','np-pixkey','np-value','np-city','np-notes'].forEach(id=>document.getElementById(id).value='');
+  const contact = (notes.match(/Contato:\s*(.+)/) || [])[1] || '';
+  ['np-client','np-project','np-value','np-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('np-pixkey').value = COMPANY_PIX_KEY;
+  document.getElementById('np-city').value = COMPANY_PIX_CITY;
   toggleNewProjectForm();
-  showCodeModal(trackingCode, clientName);
+  showCodeModal(trackingCode, clientName, contact);
   renderProjectsList();
 }
-async function setStatus(id, status){ await updateProject(id, { status }); renderProjectsList(); }
-async function togglePaid(id, current){ await updateProject(id, { paid: !current }); renderProjectsList(); }
+async function setStatus(id, status){ await updateProject(id, { status }); renderProjectsList(); renderEmpresa(); }
+async function togglePaid(id, current){ await updateProject(id, { paid: !current }); renderProjectsList(); renderEmpresa(); }
 async function deleteProject(id){
   if(!confirm('Excluir este projeto? Essa ação não pode ser desfeita.')) return;
   await deleteProjectRow(id);
-  renderProjectsList();
+  renderProjectsList(); renderEmpresa(); renderChatProjectList();
 }
 async function renderProjectsList(){
   const container = document.getElementById('projects-list');
@@ -707,20 +881,43 @@ async function renderProjectsList(){
   </div>`;
 }
 let currentCode = null;
-function showCodeModal(code, clientName){
+let modalContact = '';
+function showCodeModal(code, clientName, contact){
   currentCode = code;
+  modalContact = contact || '';
   document.getElementById('modal-code').textContent = code;
   document.getElementById('modal-client-name').textContent = clientName;
   document.getElementById('code-modal').style.display = 'flex';
 }
 function closeCodeModal(){
   document.getElementById('code-modal').style.display = 'none';
-  currentCode = null;
+  currentCode = null; modalContact = '';
 }
 function copyCode(){
   if(currentCode){
     navigator.clipboard.writeText(currentCode).then(()=>showToast('Código copiado!'));
   }
+}
+/* Converte um contato em número para o wa.me (só dígitos, com DDI 55). */
+function waPhone(str){
+  let d = (str||'').replace(/\D/g, '');
+  if(!d) return '';
+  if(d.length <= 11) d = '55' + d;      // sem DDI → adiciona Brasil
+  return d;
+}
+function waLink(contact, text){
+  const phone = waPhone(contact);
+  const msg = encodeURIComponent(text || '');
+  return phone ? `https://wa.me/${phone}?text=${msg}` : `https://wa.me/?text=${msg}`;
+}
+function sendCodeWhatsApp(){
+  let contact = modalContact;
+  if(!waPhone(contact)){
+    contact = prompt('Digite o número de WhatsApp do cliente (com DDD):', '') || '';
+    if(!waPhone(contact)){ showToast('Número inválido.'); return; }
+  }
+  const text = `Olá! Aqui é da CodeCraft Solutions. Seu código de acompanhamento é: ${currentCode}\nAcompanhe seu projeto em tempo real pelo nosso site, na área "Portal do cliente".`;
+  window.open(waLink(contact, text), '_blank');
 }
 function createProjectFromMessage(msgId, name, contact, msg){
   switchAdminTab('projetos');
@@ -737,17 +934,140 @@ async function renderMessagesList(){
     container.innerHTML = '<div class="ccs-panel ccs-empty">Nenhuma mensagem recebida ainda.</div>';
     return;
   }
-  container.innerHTML = messages.map(m=>`
+  container.innerHTML = messages.map(m=>{
+    const nameJs = m.name.replace(/'/g, "\\'");
+    const contactJs = m.contact.replace(/'/g, "\\'");
+    const msgJs = m.msg.replace(/'/g, "\\'").replace(/\n/g, "\\n");
+    const wa = waPhone(m.contact)
+      ? `<a class="ccs-btn small" href="${waLink(m.contact, 'Olá! Aqui é da CodeCraft Solutions.')}" target="_blank" rel="noopener" style="background:#25D366; color:#04310F; text-decoration:none;">Responder no WhatsApp</a>`
+      : '';
+    return `
     <div class="ccs-panel" style="margin-bottom:14px;">
       <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;">
-        <strong>${m.name}</strong>
+        <strong>${escapeHtml(m.name)}</strong>
         <span style="font-size:12.5px; color:var(--ink-soft);">${fmtDate(m.createdAt)}</span>
       </div>
-      <div style="font-size:13px; color:var(--ink-soft); margin:4px 0 8px;">${m.contact}</div>
-      <div style="font-size:14.5px; margin-bottom:12px;">${m.msg}</div>
-      <button class="ccs-btn amber small" onclick="createProjectFromMessage('${m.id}', '${m.name.replace(/'/g, "\\'")}', '${m.contact.replace(/'/g, "\\'")}', '${m.msg.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">Criar projeto a partir desta mensagem</button>
+      <div style="font-size:13px; color:var(--ink-soft); margin:4px 0 8px;">${escapeHtml(m.contact)}</div>
+      <div style="font-size:14.5px; margin-bottom:12px;">${escapeHtml(m.msg)}</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="ccs-btn amber small" onclick="createProjectFromMessage('${m.id}', '${nameJs}', '${contactJs}', '${msgJs}')">Criar projeto</button>
+        ${wa}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ================= CONVERSAS (chat admin) ================= */
+let currentChatCode = null;
+let currentChatProject = null;
+async function renderChatProjectList(){
+  const container = document.getElementById('chat-project-list');
+  if(!container) return;
+  const projects = await loadProjects();
+  if(projects.length === 0){
+    container.innerHTML = '<div class="ccs-empty" style="padding:16px;">Nenhum projeto ainda.</div>';
+    return;
+  }
+  container.innerHTML = projects.map(p=>`
+    <button class="ccs-chat-proj ${p.trackingCode===currentChatCode?'active':''}" onclick="openAdminChat('${p.trackingCode}')">
+      <strong>${escapeHtml(p.clientName)}</strong>
+      <span>${p.trackingCode} · ${escapeHtml(p.projectName)}</span>
+    </button>`).join('');
+}
+async function openAdminChat(code){
+  const proj = await loadProjectByCode(code);
+  currentChatCode = code;
+  currentChatProject = proj;
+  document.querySelectorAll('.ccs-chat-proj').forEach(b=>b.classList.remove('active'));
+  renderChatProjectList();
+  const main = document.getElementById('admin-chat-main');
+  const contact = proj && proj.notes ? (proj.notes.match(/Contato:\s*(.+)/)||[])[1] : '';
+  main.innerHTML = `
+    <div class="ccs-chat-head">
+      <div><strong>${escapeHtml(proj ? proj.clientName : code)}</strong><br>
+        <span style="font-size:12px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace;">${code}</span></div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="ccs-btn ghost small" onclick="sendCodeInChat()">Enviar código</button>
+        ${contact && waPhone(contact) ? `<a class="ccs-btn small" href="${waLink(contact,'')}" target="_blank" rel="noopener" style="background:#25D366; color:#04310F; text-decoration:none;">WhatsApp</a>` : ''}
+      </div>
     </div>
-  `).join('');
+    <div id="admin-chat-messages" class="ccs-chat-messages"></div>
+    <div class="ccs-chat-input">
+      <input id="admin-chat-input" placeholder="Escreva para o cliente..." onkeydown="if(event.key==='Enter')sendAdminChat()">
+      <button class="ccs-btn amber" onclick="sendAdminChat()">Enviar</button>
+    </div>`;
+  renderAdminChat();
+}
+async function renderAdminChat(){
+  if(!currentChatCode) return;
+  const box = document.getElementById('admin-chat-messages');
+  if(!box) return;
+  const msgs = await loadChat(currentChatCode);
+  box.innerHTML = msgs.length ? msgs.map(renderBubble).join('')
+    : '<div style="text-align:center; color:var(--ink-soft); font-size:13px; margin:auto;">Nenhuma mensagem ainda.</div>';
+  box.scrollTop = box.scrollHeight;
+}
+async function sendAdminChat(){
+  const input = document.getElementById('admin-chat-input');
+  if(!input || !currentChatCode) return;
+  const body = input.value.trim();
+  if(!body) return;
+  const ok = await insertChat(currentChatCode, 'admin', body);
+  if(ok){ input.value=''; renderAdminChat(); }
+}
+async function sendCodeInChat(){
+  if(!currentChatCode) return;
+  const ok = await insertChat(currentChatCode, 'admin', `Seu código de acompanhamento é: ${currentChatCode}`);
+  if(ok){ renderAdminChat(); showToast('Código enviado na conversa.'); }
+}
+
+/* ================= EMPRESA (ganhos + calculadora) ================= */
+function money(v){ return 'R$ ' + Number(v||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+async function renderEmpresa(){
+  const el = document.getElementById('empresa-metrics');
+  if(!el) return;
+  const projects = await loadProjects();
+  let recebido = 0, aReceber = 0;
+  projects.forEach(p=>{
+    const v = Number(p.pixValue || 0);
+    if(p.paid) recebido += v; else aReceber += v;
+  });
+  const ativos = projects.filter(p=>p.status!=='concluido').length;
+  el.innerHTML = `
+    <div class="ccs-metric recebido"><div class="lbl">Recebido</div><div class="val">${money(recebido)}</div></div>
+    <div class="ccs-metric receber"><div class="lbl">A receber</div><div class="val">${money(aReceber)}</div></div>
+    <div class="ccs-metric"><div class="lbl">Projetos</div><div class="val">${projects.length}</div></div>
+    <div class="ccs-metric"><div class="lbl">Em aberto</div><div class="val">${ativos}</div></div>`;
+}
+let calcExpr = '';
+function calcPress(v){
+  const disp = document.getElementById('calc-display');
+  if(v==='C'){ calcExpr=''; disp.value='0'; return; }
+  if(v==='='){
+    try{
+      const safe = calcExpr.replace(/[^0-9+\-*/.() ]/g,'');
+      const r = Function('"use strict";return ('+ (safe||'0') +')')();
+      calcExpr = String(r); disp.value = r;
+    }catch(e){ disp.value='Erro'; calcExpr=''; }
+    return;
+  }
+  if(v==='←'){ calcExpr = calcExpr.slice(0,-1); disp.value = calcExpr || '0'; return; }
+  calcExpr += v; disp.value = calcExpr;
+}
+let calcBuilt = false;
+function buildCalculator(){
+  if(calcBuilt) return;
+  const grid = document.getElementById('calc-grid');
+  if(!grid) return;
+  const keys = [
+    ['C','clr'],['←','op'],['(','op'],[')','op'],
+    ['7',''],['8',''],['9',''],['/','op'],
+    ['4',''],['5',''],['6',''],['*','op'],
+    ['1',''],['2',''],['3',''],['-','op'],
+    ['0',''],['.',''],['+','op'],['=','eq']
+  ];
+  grid.innerHTML = keys.map(([k,cls])=>`<button class="${cls==='clr'?'op':cls}" onclick="calcPress('${k}')">${k}</button>`).join('');
+  calcBuilt = true;
 }
 
 /* ================= INIT ================= */
