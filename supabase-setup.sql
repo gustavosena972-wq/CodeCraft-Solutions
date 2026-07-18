@@ -13,6 +13,7 @@ create table if not exists public.projects (
   project_name text not null,
   service_type text not null default 'site',
   status       text not null default 'analise',
+  delivery_url text,
   pix_key      text,
   pix_value    numeric,
   pix_city     text,
@@ -54,6 +55,9 @@ create index if not exists lead_chats_last_idx
 
 -- Se a tabela projects já existia antes, adiciona a coluna de tipo de serviço.
 alter table public.projects add column if not exists service_type text not null default 'site';
+
+-- Link de entrega do projeto (site pronto) mostrado ao cliente.
+alter table public.projects add column if not exists delivery_url text;
 
 -- ================= PERMISSÕES (RLS) =================
 -- Protótipo: liberado para a chave anônima. Troque por regras mais

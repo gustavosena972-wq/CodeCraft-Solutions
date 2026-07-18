@@ -501,6 +501,7 @@
         <div class="ccs-pipeline" id="client-pipeline"></div>
         <p style="font-size:13px; color:var(--ink-soft); margin-top:24px;" id="client-updated"></p>
         <div id="client-notes" style="margin-top:14px; font-size:14.5px;"></div>
+        <div id="client-delivery-area"></div>
         <div id="client-pix-area"></div>
       </div>
 
@@ -558,7 +559,17 @@
         <h2 style="font-size:20px;">Projetos</h2>
         <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
       </div>
-      <div class="ccs-help"><strong>Para que serve:</strong> aqui você cadastra e acompanha cada trabalho (site, loja, landing, etc.). Ao clicar em <strong>+ Novo projeto</strong>, gera um código de acompanhamento pro cliente, define o tipo de serviço, o valor e a chave PIX. Você também muda o status (Em análise → Em andamento → Concluído) e marca quando o cliente já pagou.</div>
+      <div class="ccs-help">
+        <strong>Para que serve:</strong> aqui você cadastra e acompanha cada trabalho (site, loja, landing…). Tudo que você mudar aparece <strong>na hora</strong> pro cliente no portal dele — em tempo real, sem ele precisar atualizar a página.
+        <div style="margin-top:10px;"><strong>Passo a passo:</strong></div>
+        <ol style="margin:6px 0 0 18px; padding:0; line-height:1.75;">
+          <li><strong>Criar o projeto:</strong> clique em <strong>+ Novo projeto</strong>, preencha o nome do cliente, o tipo de serviço, o valor e a chave PIX, e clique em Salvar. O sistema gera um <strong>código</strong> pro cliente.</li>
+          <li><strong>Enviar o código:</strong> mande o código pro cliente pelo WhatsApp ou pela aba <strong>Conversas</strong> (chat).</li>
+          <li><strong>Atualizar o andamento:</strong> use os botões <strong>Em análise → Em andamento → Concluído</strong>. O cliente vê a mudança na hora.</li>
+          <li><strong>Marcar o pagamento:</strong> quando o cliente pagar o PIX, clique em <strong>Marcar como pago</strong>.</li>
+          <li><strong>Entregar o projeto:</strong> quando o site estiver pronto, cole o endereço dele no campo <strong>🔗 Link de entrega</strong> (logo abaixo de cada projeto) e clique em <strong>Salvar link</strong>. Aí aparece o botão <strong>"Acessar meu site"</strong> pro cliente no portal, na hora.</li>
+        </ol>
+      </div>
 
       <div class="ccs-panel" id="new-project-form" style="display:none; margin-bottom:22px;">
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
@@ -714,7 +725,7 @@ function showToast(msg){
 function fromRow(r){
   return { id:r.id, trackingCode:r.tracking_code, clientName:r.client_name, projectName:r.project_name,
     serviceType:r.service_type || 'site', status:r.status, pixKey:r.pix_key, pixValue:r.pix_value, pixCity:r.pix_city, notes:r.notes,
-    paid:r.paid, createdAt:r.created_at, updatedAt:r.updated_at };
+    deliveryUrl:r.delivery_url || '', paid:r.paid, createdAt:r.created_at, updatedAt:r.updated_at };
 }
 
 /* ================= DB CALLS (Supabase) ================= */
@@ -745,6 +756,7 @@ async function updateProject(id, fields){
   const dbFields = { updated_at: new Date().toISOString() };
   if('status' in fields) dbFields.status = fields.status;
   if('paid' in fields) dbFields.paid = fields.paid;
+  if('delivery_url' in fields) dbFields.delivery_url = fields.delivery_url;
   const { error } = await supabaseClient.from('projects').update(dbFields).eq('id', id);
   if(error) console.error(error);
 }
@@ -1003,7 +1015,18 @@ function renderClientProject(proj){
   document.getElementById('client-name').textContent = 'Cliente: ' + proj.clientName;
   document.getElementById('client-pipeline').innerHTML = renderPipeline(proj.status);
   document.getElementById('client-updated').textContent = 'Última atualização: ' + fmtDate(proj.updatedAt);
-  document.getElementById('client-notes').innerHTML = proj.notes ? ('<strong>Observações da equipe:</strong> ' + proj.notes) : '';
+  document.getElementById('client-notes').innerHTML = proj.notes ? ('<strong>Observações da equipe:</strong> ' + escapeHtml(proj.notes)) : '';
+
+  const deliveryArea = document.getElementById('client-delivery-area');
+  if(proj.deliveryUrl){
+    deliveryArea.innerHTML = `<div style="margin-top:16px; padding:18px; border:2px solid var(--teal); border-radius:12px; background:#fff;">
+      <div style="font-weight:800; color:var(--teal); margin-bottom:4px;">🎉 Seu projeto está pronto!</div>
+      <div style="font-size:13.5px; color:var(--ink-soft); margin-bottom:12px;">Clique no botão abaixo para acessar.</div>
+      <a class="ccs-btn amber" href="${escapeHtml(proj.deliveryUrl)}" target="_blank" rel="noopener">Acessar meu site →</a>
+    </div>`;
+  } else {
+    deliveryArea.innerHTML = '';
+  }
 
   const pixArea = document.getElementById('client-pix-area');
   if(proj.paid){
@@ -1199,6 +1222,15 @@ async function createProject(){
 }
 async function setStatus(id, status){ await updateProject(id, { status }); renderProjectsList(); renderEmpresa(); }
 async function togglePaid(id, current){ await updateProject(id, { paid: !current }); renderProjectsList(); renderEmpresa(); }
+async function saveDelivery(id){
+  const input = document.getElementById('delivery-'+id);
+  if(!input) return;
+  let url = input.value.trim();
+  if(url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+  await updateProject(id, { delivery_url: url });
+  showToast(url ? 'Link de entrega salvo!' : 'Link removido.');
+  renderProjectsList();
+}
 async function deleteProject(id){
   if(!confirm('Excluir este projeto? Essa ação não pode ser desfeita.')) return;
   await deleteProjectRow(id);
@@ -1230,6 +1262,17 @@ async function renderProjectsList(){
               ${p.pixKey ? `R$ ${p.pixValue ? Number(p.pixValue).toFixed(2) : '—'}<br><button class="ccs-btn ${p.paid?'ghost':'amber'} small" style="margin-top:6px;" onclick="togglePaid('${p.id}', ${p.paid})">${p.paid ? 'Marcado como pago ✓' : 'Marcar como pago'}</button>` : '<span style="color:var(--ink-soft);">sem PIX</span>'}
             </td>
             <td><button class="ccs-btn ghost small" onclick="deleteProject('${p.id}')">Excluir</button></td>
+          </tr>
+          <tr>
+            <td colspan="5" style="background:var(--paper-dim); border-bottom:2px solid var(--line);">
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <span style="font-size:13px; color:var(--ink-soft); font-weight:700;">🔗 Link de entrega:</span>
+                <input id="delivery-${p.id}" value="${escapeHtml(p.deliveryUrl||'')}" placeholder="https://site-do-cliente.com" style="flex:1; min-width:220px; padding:8px 10px; border:1.5px solid var(--line); border-radius:8px; font-size:13.5px;">
+                <button class="ccs-btn amber small" onclick="saveDelivery('${p.id}')">Salvar link</button>
+                ${p.deliveryUrl ? `<a class="ccs-btn ghost small" href="${escapeHtml(p.deliveryUrl)}" target="_blank" rel="noopener">Abrir</a>` : ''}
+              </div>
+              <div style="font-size:12px; color:var(--ink-soft); margin-top:6px;">Cole o endereço do site pronto e salve — o cliente vê o botão "Acessar meu site" na hora, no portal.</div>
+            </td>
           </tr>
         `).join('')}
       </tbody>
