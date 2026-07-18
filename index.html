@@ -93,6 +93,9 @@
   .ccs-price-card ul li::before{content:'✓'; position:absolute; left:0; color:var(--teal); font-weight:800;}
   .ccs-price-card .ccs-btn{width:100%; text-align:center; justify-content:center;}
 
+  .ccs-help{background:var(--paper-dim); border:1px solid var(--line); border-left:3px solid var(--amber); border-radius:8px; padding:12px 14px; font-size:13.5px; color:var(--ink-soft); margin-bottom:18px; line-height:1.5;}
+  .ccs-help strong{color:var(--ink);}
+
   .ccs-pipeline{display:flex; align-items:flex-start; gap:0; margin-top:44px; flex-wrap:wrap;}
   .ccs-stage{flex:1; min-width:180px; position:relative; padding:0 18px 0 0;}
   .ccs-stage .node{width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:13px; color:#fff; margin-bottom:14px; border:2px solid transparent;}
@@ -494,6 +497,7 @@
         <h2 style="font-size:20px;">Projetos</h2>
         <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
       </div>
+      <div class="ccs-help"><strong>Para que serve:</strong> aqui você cadastra e acompanha cada trabalho (site, loja, landing, etc.). Ao clicar em <strong>+ Novo projeto</strong>, gera um código de acompanhamento pro cliente, define o tipo de serviço, o valor e a chave PIX. Você também muda o status (Em análise → Em andamento → Concluído) e marca quando o cliente já pagou.</div>
 
       <div class="ccs-panel" id="new-project-form" style="display:none; margin-bottom:22px;">
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
@@ -524,11 +528,13 @@
 
     <div id="tab-mensagens" style="display:none;">
       <h2 style="font-size:20px; margin-bottom:16px;">Mensagens do site</h2>
+      <div class="ccs-help"><strong>Para que serve:</strong> é a caixa de entrada do formulário "Fale com a gente" da página inicial. Quando alguém preenche nome, contato e mensagem, o recado cai aqui pra você responder pelo WhatsApp ou e-mail.</div>
       <div id="messages-list"></div>
     </div>
 
     <div id="tab-conversas" style="display:none;">
       <h2 style="font-size:20px; margin-bottom:16px;">Conversas com clientes</h2>
+      <div class="ccs-help"><strong>Para que serve:</strong> é o chat em tempo real (tipo WhatsApp) com quem está no site. Inclui os <strong>novos contatos</strong> (clientes que começaram a conversar sem código) e as conversas por projeto. É aqui que você responde e <strong>envia o código de acompanhamento</strong> direto na conversa.</div>
       <div class="ccs-chat-layout">
         <div class="ccs-chat-side">
           <div id="chat-project-list"></div>
@@ -547,6 +553,7 @@
         </div>
         <button class="ccs-btn amber small" onclick="exportExcel()">↧ Exportar Excel</button>
       </div>
+      <div class="ccs-help"><strong>Para que serve:</strong> é o painel de gestão da empresa. Mostra quanto você já recebeu e quanto tem a receber, quantos sites/lojas estão em produção e entregues, gráficos de faturamento (inclusive por tipo de serviço) e uma calculadora. O botão <strong>Exportar Excel</strong> baixa tudo em planilha (Resumo, Por serviço e Projetos).</div>
 
       <div class="ccs-eyebrow" style="margin-bottom:10px;">Indicadores</div>
       <div class="ccs-metrics" id="empresa-metrics"></div>
