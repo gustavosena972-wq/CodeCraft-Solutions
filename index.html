@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root{
     --paper:#F7F6F2;
@@ -77,6 +79,23 @@
   .ccs-card h3{font-size:17px; font-weight:700;}
   .ccs-card p{color:var(--ink-soft); font-size:14.5px; margin-top:8px;}
 
+  /* ===== Tabela de preços ===== */
+  .ccs-price-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:38px;}
+  .ccs-price-card{position:relative; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:26px; display:flex; flex-direction:column;}
+  .ccs-price-card.featured{border:2px solid var(--amber); box-shadow:0 14px 40px rgba(232,163,61,.18);}
+  .ccs-price-badge{position:absolute; top:-12px; right:18px; background:var(--amber); color:#221304; font-size:11.5px; font-weight:800; padding:5px 12px; border-radius:20px; text-transform:uppercase; letter-spacing:.05em;}
+  .ccs-price-tag{font-size:15px; font-weight:700; color:var(--ink);}
+  .ccs-price{font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:800; margin:10px 0 4px; color:var(--panel);}
+  .ccs-price .from{display:block; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em;}
+  .ccs-price .per{font-size:15px; color:var(--ink-soft);}
+  .ccs-price-card ul{list-style:none; padding:0; margin:14px 0 20px; flex:1;}
+  .ccs-price-card ul li{font-size:14px; color:var(--ink-soft); padding:6px 0 6px 22px; position:relative;}
+  .ccs-price-card ul li::before{content:'✓'; position:absolute; left:0; color:var(--teal); font-weight:800;}
+  .ccs-price-card .ccs-btn{width:100%; text-align:center; justify-content:center;}
+
+  .ccs-help{background:var(--paper-dim); border:1px solid var(--line); border-left:3px solid var(--amber); border-radius:8px; padding:12px 14px; font-size:13.5px; color:var(--ink-soft); margin-bottom:18px; line-height:1.5;}
+  .ccs-help strong{color:var(--ink);}
+
   .ccs-pipeline{display:flex; align-items:flex-start; gap:0; margin-top:44px; flex-wrap:wrap;}
   .ccs-stage{flex:1; min-width:180px; position:relative; padding:0 18px 0 0;}
   .ccs-stage .node{width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:13px; color:#fff; margin-bottom:14px; border:2px solid transparent;}
@@ -126,6 +145,21 @@
   .ccs-tab{padding:10px 16px; font-weight:700; font-size:14px; color:var(--ink-soft); border-bottom:2px solid transparent; background:none; border-left:none; border-right:none; border-top:none;}
   .ccs-tab.active{color:var(--ink); border-bottom-color:var(--amber);}
 
+  .ccs-admin-layout{display:flex; align-items:flex-start; gap:26px; max-width:1180px; margin:0 auto; padding:32px 24px;}
+  .ccs-admin-nav{flex:0 0 210px; position:sticky; top:24px; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:14px; display:flex; flex-direction:column; gap:4px;}
+  .ccs-admin-nav-title{font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); padding:6px 10px 10px;}
+  .ccs-navitem{display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:11px 12px; border-radius:9px; font-weight:600; font-size:14.5px; color:var(--ink-soft); background:none; border:none; cursor:pointer; transition:background .12s, color .12s;}
+  .ccs-navitem .ico{font-size:16px; width:20px; text-align:center;}
+  .ccs-navitem:hover{background:var(--paper-dim); color:var(--ink);}
+  .ccs-navitem.active{background:var(--panel); color:#fff;}
+  .ccs-admin-content{flex:1; min-width:0;}
+  @media (max-width:760px){
+    .ccs-admin-layout{flex-direction:column; padding:20px 16px;}
+    .ccs-admin-nav{flex:none; width:100%; position:static; flex-direction:row; flex-wrap:wrap;}
+    .ccs-admin-nav-title{display:none;}
+    .ccs-navitem{width:auto; flex:1 1 auto; justify-content:center;}
+  }
+
   .ccs-empty{padding:40px 20px; text-align:center; color:var(--ink-soft); font-size:14.5px;}
   .ccs-toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; border-radius:8px; font-size:14px; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,.25); z-index:100; opacity:0; pointer-events:none; transition:opacity .25s ease;}
   .ccs-toast.show{opacity:1;}
@@ -151,6 +185,19 @@
   .ccs-chat-input{display:flex; gap:8px; padding:12px; border-top:1px solid var(--line);}
   .ccs-chat-input input{flex:1; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:'Inter',sans-serif; font-size:14px;}
 
+  /* ===== Chat aberto (widget da landing) ===== */
+  #lead-widget{position:fixed; right:20px; bottom:20px; z-index:120;}
+  #lead-fab{border:none; background:var(--amber); color:#221304; font-weight:800; padding:14px 18px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,.25); font-size:14px; display:flex; align-items:center; gap:8px;}
+  #lead-fab:hover{transform:translateY(-1px);}
+  #lead-panel{position:absolute; right:0; bottom:64px; width:330px; max-width:calc(100vw - 40px); background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.3); overflow:hidden;}
+  .lead-head{background:var(--panel); color:#fff; padding:14px 16px; display:flex; justify-content:space-between; align-items:center;}
+  .lead-head span{font-size:12px; color:#B9BEDB;}
+  .lead-close{background:none; border:none; color:#fff; font-size:24px; line-height:1; cursor:pointer;}
+  #lead-name-step{padding:16px;}
+  #lead-name-step p{margin:0 0 10px; font-size:14px; color:var(--ink-soft);}
+  #lead-name-step input{width:100%; padding:11px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px;}
+  #lead-name-step button{margin-top:10px; width:100%;}
+
   /* ===== Empresa: métricas + calculadora ===== */
   .ccs-metrics{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
   .ccs-metric{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:18px;}
@@ -158,6 +205,12 @@
   .ccs-metric .val{font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:800; margin-top:8px;}
   .ccs-metric.recebido .val{color:var(--teal);}
   .ccs-metric.receber .val{color:var(--amber);}
+  .ccs-metric .sub{font-size:11.5px; color:var(--ink-soft); margin-top:4px;}
+  /* Gráficos de controle */
+  .ccs-charts{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
+  .ccs-chart-card{display:flex; flex-direction:column;}
+  .ccs-chart-title{font-size:13px; font-weight:700; margin-bottom:12px;}
+  .ccs-chart-box{position:relative; height:240px;}
   .ccs-calc-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px;}
   .ccs-calc-grid button{padding:14px 0; font-size:17px; font-weight:700; border:1px solid var(--line); border-radius:8px; background:#fff; font-family:'JetBrains Mono',monospace;}
   .ccs-calc-grid button:hover{background:var(--paper-dim);}
@@ -168,10 +221,13 @@
   @media (max-width:860px){
     .ccs-chat-layout{grid-template-columns:1fr;}
     .ccs-metrics{grid-template-columns:1fr 1fr;}
+    .ccs-charts{grid-template-columns:1fr;}
+    .ccs-chart-card[style*="span 2"]{grid-column:span 1 !important;}
     .ccs-hero{grid-template-columns:1fr; padding:50px 22px 60px;}
     .ccs-nav{padding:16px 20px;} .ccs-nav-links{gap:14px; font-size:13px;}
     .ccs-section{padding:56px 22px;}
     .ccs-grid-3{grid-template-columns:1fr;}
+    .ccs-price-grid{grid-template-columns:1fr;}
     .ccs-about, .ccs-contact-wrap{grid-template-columns:1fr;}
     .ccs-about .mark{display:none;}
     .ccs-app-header{padding:16px 20px;}
@@ -191,6 +247,7 @@
     <div class="ccs-nav-links">
       <a href="#quem-somos">Quem somos</a>
       <a href="#servicos">Serviços</a>
+      <a href="#precos">Preços</a>
       <a href="#como-funciona">Como funciona</a>
       <a href="#contato">Contato</a>
       <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" aria-label="Instagram da CodeCraft Solutions" style="display:flex; align-items:center;">
@@ -242,6 +299,66 @@
     </div>
   </section>
 
+  <section class="ccs-section ccs-section-tight" id="precos">
+    <div class="ccs-eyebrow">Tabela de preços</div>
+    <h2>Preços justos, sem pegadinha</h2>
+    <p class="ccs-lede">Valores <strong>a partir de</strong> — o preço final é combinado conforme o tamanho do projeto. Pediu mais coisa, a gente conversa e ajusta.</p>
+    <div class="ccs-price-grid">
+      <div class="ccs-price-card">
+        <div class="ccs-price-tag">Landing page</div>
+        <div class="ccs-price"><span class="from">a partir de</span> R$ 300</div>
+        <ul>
+          <li>Página única de alta conversão</li>
+          <li>Formulário de contato / WhatsApp</li>
+          <li>Otimizada para celular</li>
+        </ul>
+        <button class="ccs-btn amber" onclick="openLeadFromPricing('Landing page')">Quero um orçamento</button>
+      </div>
+      <div class="ccs-price-card">
+        <div class="ccs-price-tag">Site institucional</div>
+        <div class="ccs-price"><span class="from">a partir de</span> R$ 500</div>
+        <ul>
+          <li>Várias páginas (Home, Sobre, Contato…)</li>
+          <li>Design da sua marca</li>
+          <li>Google e redes sociais</li>
+        </ul>
+        <button class="ccs-btn amber" onclick="openLeadFromPricing('Site institucional')">Quero um orçamento</button>
+      </div>
+      <div class="ccs-price-card featured">
+        <div class="ccs-price-badge">Mais procurado</div>
+        <div class="ccs-price-tag">Loja virtual</div>
+        <div class="ccs-price"><span class="from">a partir de</span> R$ 500</div>
+        <ul>
+          <li>Catálogo de produtos</li>
+          <li>Pagamento e frete</li>
+          <li>Painel para você gerenciar</li>
+        </ul>
+        <button class="ccs-btn amber" onclick="openLeadFromPricing('Loja virtual')">Quero um orçamento</button>
+      </div>
+      <div class="ccs-price-card">
+        <div class="ccs-price-tag">Sistema / App sob medida</div>
+        <div class="ccs-price"><span class="from">sob orçamento</span> R$ 1.500 a R$ 15.000</div>
+        <ul>
+          <li>Feito para o seu processo</li>
+          <li>Painéis, cadastros e integrações</li>
+          <li>Escopo definido junto com você</li>
+        </ul>
+        <button class="ccs-btn amber" onclick="openLeadFromPricing('Sistema/App sob medida')">Quero um orçamento</button>
+      </div>
+      <div class="ccs-price-card">
+        <div class="ccs-price-tag">Manutenção mensal</div>
+        <div class="ccs-price"><span class="from">a partir de</span> R$ 100<span class="per">/mês</span></div>
+        <ul>
+          <li>Ajustes e correções</li>
+          <li>Pequenas melhorias no mês</li>
+          <li>Suporte prioritário</li>
+        </ul>
+        <button class="ccs-btn amber" onclick="openLeadFromPricing('Manutenção mensal')">Quero um orçamento</button>
+      </div>
+    </div>
+    <p style="font-size:13px; color:var(--ink-soft); margin-top:18px;">Os valores são um ponto de partida, pensados pra caber no seu bolso. Projetos maiores ou com mais recursos aumentam conforme o escopo — podendo chegar a ~R$ 15 mil nos mais completos. <strong>Fale com a gente</strong> que montamos um preço justo e sob medida.</p>
+  </section>
+
   <section class="ccs-section" id="como-funciona" style="background:var(--paper-dim); max-width:none; margin-top:20px;">
     <div style="max-width:1180px; margin:0 auto;">
       <div class="ccs-eyebrow">O caminho do seu projeto</div>
@@ -281,6 +398,32 @@
       <div>Feito sob medida, projeto por projeto.</div>
     </div>
   </footer>
+
+  <!-- ===== Chat aberto: cliente fala com a equipe sem precisar de código ===== -->
+  <div id="lead-widget">
+    <button id="lead-fab" onclick="toggleLeadWidget()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H8l-4 4V5a1 1 0 0 1 1-1Z"/></svg>
+      Fale com a gente
+    </button>
+    <div id="lead-panel" style="display:none;">
+      <div class="lead-head">
+        <div><strong>CodeCraft Solutions</strong><br><span>Atendimento no chat</span></div>
+        <button class="lead-close" onclick="toggleLeadWidget()" aria-label="Fechar">&times;</button>
+      </div>
+      <div id="lead-name-step">
+        <p>Oi! Como você se chama? Comece a conversa e a gente te envia seu código de acompanhamento por aqui.</p>
+        <input id="lead-name-input" placeholder="Seu nome" onkeydown="if(event.key==='Enter')startLead()">
+        <button class="ccs-btn amber" onclick="startLead()">Começar conversa</button>
+      </div>
+      <div id="lead-chat-step" style="display:none;">
+        <div id="lead-messages" class="ccs-chat-messages"></div>
+        <div class="ccs-chat-input">
+          <input id="lead-input" placeholder="Escreva sua mensagem..." onkeydown="if(event.key==='Enter')sendLead()">
+          <button class="ccs-btn amber" onclick="sendLead()">Enviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ================= CLIENT PORTAL ================= -->
@@ -356,24 +499,36 @@
     </div>
   </div>
 
-  <div class="ccs-shell" id="admin-main" style="display:none; max-width:1000px;">
-    <div class="ccs-tabs">
-      <button class="ccs-tab active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')">Projetos</button>
-      <button class="ccs-tab" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')">Mensagens</button>
-      <button class="ccs-tab" id="tab-btn-conversas" onclick="switchAdminTab('conversas')">Conversas</button>
-      <button class="ccs-tab" id="tab-btn-empresa" onclick="switchAdminTab('empresa')">Empresa</button>
-    </div>
+  <div class="ccs-admin-layout" id="admin-main" style="display:none;">
+    <aside class="ccs-admin-nav">
+      <div class="ccs-admin-nav-title">Menu</div>
+      <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')"><span class="ico">📋</span> Projetos</button>
+      <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')"><span class="ico">✉️</span> Mensagens</button>
+      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')"><span class="ico">💬</span> Conversas</button>
+      <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')"><span class="ico">📊</span> Empresa</button>
+    </aside>
 
+    <div class="ccs-admin-content">
     <div id="tab-projetos">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
         <h2 style="font-size:20px;">Projetos</h2>
         <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
       </div>
+      <div class="ccs-help"><strong>Para que serve:</strong> aqui você cadastra e acompanha cada trabalho (site, loja, landing, etc.). Ao clicar em <strong>+ Novo projeto</strong>, gera um código de acompanhamento pro cliente, define o tipo de serviço, o valor e a chave PIX. Você também muda o status (Em análise → Em andamento → Concluído) e marca quando o cliente já pagou.</div>
 
       <div class="ccs-panel" id="new-project-form" style="display:none; margin-bottom:22px;">
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
           <div class="ccs-field"><label>Nome do cliente</label><input id="np-client"></div>
           <div class="ccs-field"><label>Nome do projeto</label><input id="np-project"></div>
+          <div class="ccs-field"><label>Tipo de serviço</label>
+            <select id="np-service">
+              <option value="loja">Loja virtual</option>
+              <option value="site">Site institucional</option>
+              <option value="landing">Landing page</option>
+              <option value="sistema">Sistema/App sob medida</option>
+              <option value="manutencao">Manutenção mensal</option>
+            </select>
+          </div>
           <div class="ccs-field"><label>Chave PIX</label><input id="np-pixkey" list="np-pixkey-options" value="+5531999758385" placeholder="CPF, e-mail, telefone ou chave aleatória"><datalist id="np-pixkey-options"><option value="+5531999758385">Inter (principal)</option><option value="+5531972003195">Segundo número</option></datalist></div>
           <div class="ccs-field"><label>Valor (R$)</label><input id="np-value" type="number" step="0.01" placeholder="0.00"></div>
           <div class="ccs-field"><label>Cidade (para o PIX)</label><input id="np-city" value="BELO HORIZONTE" placeholder="Ex: SAO PAULO"></div>
@@ -390,26 +545,58 @@
 
     <div id="tab-mensagens" style="display:none;">
       <h2 style="font-size:20px; margin-bottom:16px;">Mensagens do site</h2>
+      <div class="ccs-help"><strong>Para que serve:</strong> é a caixa de entrada do formulário "Fale com a gente" da página inicial. Quando alguém preenche nome, contato e mensagem, o recado cai aqui pra você responder pelo WhatsApp ou e-mail.</div>
       <div id="messages-list"></div>
     </div>
 
     <div id="tab-conversas" style="display:none;">
       <h2 style="font-size:20px; margin-bottom:16px;">Conversas com clientes</h2>
+      <div class="ccs-help"><strong>Para que serve:</strong> é o chat em tempo real (tipo WhatsApp) com quem está no site. Inclui os <strong>novos contatos</strong> (clientes que começaram a conversar sem código) e as conversas por projeto. É aqui que você responde e <strong>envia o código de acompanhamento</strong> direto na conversa.</div>
       <div class="ccs-chat-layout">
         <div class="ccs-chat-side">
-          <div class="ccs-eyebrow" style="margin-bottom:10px;">Projetos</div>
           <div id="chat-project-list"></div>
         </div>
         <div class="ccs-chat-main" id="admin-chat-main">
-          <div class="ccs-empty">Selecione um projeto ao lado para conversar.</div>
+          <div class="ccs-empty">Selecione uma conversa ao lado para responder.</div>
         </div>
       </div>
     </div>
 
     <div id="tab-empresa" style="display:none;">
-      <h2 style="font-size:20px; margin-bottom:16px;">Painel da empresa</h2>
-      <div class="ccs-eyebrow" style="margin-bottom:10px;">Ganhos em tempo real</div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <div>
+          <h2 style="font-size:20px; margin-bottom:4px;">Painel de controle</h2>
+          <div style="font-size:13px; color:var(--ink-soft);">Visão financeira e de projetos em tempo real.</div>
+        </div>
+        <button class="ccs-btn amber small" onclick="exportExcel()">↧ Exportar Excel</button>
+      </div>
+      <div class="ccs-help"><strong>Para que serve:</strong> é o painel de gestão da empresa. Mostra quanto você já recebeu e quanto tem a receber, quantos sites/lojas estão em produção e entregues, gráficos de faturamento (inclusive por tipo de serviço) e uma calculadora. O botão <strong>Exportar Excel</strong> baixa tudo em planilha (Resumo, Por serviço e Projetos).</div>
+
+      <div class="ccs-eyebrow" style="margin-bottom:10px;">Indicadores</div>
       <div class="ccs-metrics" id="empresa-metrics"></div>
+
+      <div class="ccs-eyebrow" style="margin:24px 0 10px;">Gráficos de controle</div>
+      <div class="ccs-charts">
+        <div class="ccs-panel ccs-chart-card" style="grid-column:span 2;">
+          <div class="ccs-chart-title">Faturamento por mês</div>
+          <div class="ccs-chart-box"><canvas id="chart-revenue"></canvas></div>
+        </div>
+        <div class="ccs-panel ccs-chart-card">
+          <div class="ccs-chart-title">Recebido x A receber</div>
+          <div class="ccs-chart-box"><canvas id="chart-paid"></canvas></div>
+        </div>
+        <div class="ccs-panel ccs-chart-card">
+          <div class="ccs-chart-title">Projetos por status</div>
+          <div class="ccs-chart-box"><canvas id="chart-status"></canvas></div>
+        </div>
+        <div class="ccs-panel ccs-chart-card" style="grid-column:span 2;">
+          <div class="ccs-chart-title">Faturamento por tipo de serviço</div>
+          <div class="ccs-chart-box"><canvas id="chart-service"></canvas></div>
+        </div>
+      </div>
+
+      <div class="ccs-eyebrow" style="margin:24px 0 10px;">Controle de projetos</div>
+      <div class="ccs-panel" style="overflow-x:auto;" id="empresa-table"></div>
 
       <div class="ccs-panel" style="margin-top:24px; max-width:340px;">
         <div class="ccs-eyebrow" style="margin-bottom:10px;">Calculadora</div>
@@ -417,6 +604,7 @@
           style="width:100%; text-align:right; font-size:24px; padding:12px; border:1.5px solid var(--line); border-radius:8px; background:var(--paper-dim); margin-bottom:12px;">
         <div class="ccs-calc-grid" id="calc-grid"></div>
       </div>
+    </div>
     </div>
   </div>
 </div>
@@ -481,7 +669,7 @@ function showToast(msg){
 }
 function fromRow(r){
   return { id:r.id, trackingCode:r.tracking_code, clientName:r.client_name, projectName:r.project_name,
-    status:r.status, pixKey:r.pix_key, pixValue:r.pix_value, pixCity:r.pix_city, notes:r.notes,
+    serviceType:r.service_type || 'site', status:r.status, pixKey:r.pix_key, pixValue:r.pix_value, pixCity:r.pix_city, notes:r.notes,
     paid:r.paid, createdAt:r.created_at, updatedAt:r.updated_at };
 }
 
@@ -502,6 +690,7 @@ async function insertProject(p){
   if(!supabaseClient) return null;
   const { data, error } = await supabaseClient.from('projects').insert({
     tracking_code: p.trackingCode, client_name: p.clientName, project_name: p.projectName,
+    service_type: p.serviceType || 'site',
     status:'analise', pix_key: p.pixKey, pix_value: p.pixValue || null, pix_city: p.pixCity, notes: p.notes, paid:false
   }).select().single();
   if(error){ console.error(error); showToast('Erro ao salvar projeto.'); return null; }
@@ -553,6 +742,32 @@ async function insertChat(code, sender, body){
     console.error(error); showToast('Não foi possível enviar. Verifique a tabela de conversas.'); return false;
   }
   return true;
+}
+
+/* Chat aberto (leads): conversas iniciadas na landing, antes de existir um
+   projeto. Guardamos cada contato em lead_chats; as mensagens reusam a tabela
+   chat_messages (tracking_code = código do lead). */
+async function insertLead(code, name){
+  if(!supabaseClient) return false;
+  const { error } = await supabaseClient.from('lead_chats').insert({ code, name });
+  if(error){ console.error(error); showToast('Não foi possível iniciar o chat. Verifique a tabela de contatos.'); return false; }
+  return true;
+}
+async function loadLeads(){
+  if(!supabaseClient) return [];
+  const { data, error } = await supabaseClient.from('lead_chats').select('*').order('last_at', { ascending:false });
+  if(error){ console.error(error); return []; }
+  return data.map(l=>({ id:l.id, code:l.code, name:l.name, createdAt:l.created_at, lastAt:l.last_at }));
+}
+async function loadLeadByCode(code){
+  if(!supabaseClient) return null;
+  const { data, error } = await supabaseClient.from('lead_chats').select('*').eq('code', code).maybeSingle();
+  if(error || !data) return null;
+  return { id:data.id, code:data.code, name:data.name, createdAt:data.created_at, lastAt:data.last_at };
+}
+async function touchLead(code){
+  if(!supabaseClient) return;
+  await supabaseClient.from('lead_chats').update({ last_at: new Date().toISOString() }).eq('code', code);
 }
 
 /* ================= PIX (BR Code / EMV payload) ================= */
@@ -608,6 +823,8 @@ function stopRealtime(){
 
 function showScreen(name){
   stopRealtime();
+  stopLeadLive();
+  const lp = document.getElementById('lead-panel'); if(lp) lp.style.display = 'none';
   document.getElementById('screen-landing').style.display = name==='landing' ? 'block' : 'none';
   document.getElementById('screen-client').style.display = name==='client' ? 'block' : 'none';
   document.getElementById('screen-admin').style.display = name==='admin' ? 'block' : 'none';
@@ -772,13 +989,97 @@ function copyPix(code){
   navigator.clipboard.writeText(el.textContent).then(()=>showToast('Código PIX copiado!'));
 }
 
+/* ================= CHAT ABERTO (widget da landing) ================= */
+let leadCode = null;
+let leadName = null;
+let leadChannel = null;
+let leadPollTimer = null;
+
+function initLead(){
+  leadCode = localStorage.getItem('ccs_lead_code');
+  leadName = localStorage.getItem('ccs_lead_name');
+}
+let pendingLeadPrefill = '';
+function openLeadFromPricing(service){
+  pendingLeadPrefill = `Olá! Tenho interesse em: ${service}. Pode me passar um orçamento?`;
+  const panel = document.getElementById('lead-panel');
+  if(panel.style.display === 'none' || !panel.style.display) toggleLeadWidget();
+  const input = document.getElementById('lead-input');
+  if(leadCode && input){ input.value = pendingLeadPrefill; input.focus(); pendingLeadPrefill = ''; }
+}
+function toggleLeadWidget(){
+  const panel = document.getElementById('lead-panel');
+  const willOpen = panel.style.display === 'none' || !panel.style.display;
+  panel.style.display = willOpen ? 'block' : 'none';
+  if(!willOpen){ stopLeadLive(); return; }
+  if(leadCode){
+    document.getElementById('lead-name-step').style.display = 'none';
+    document.getElementById('lead-chat-step').style.display = 'block';
+    renderLeadChat();
+    startLeadLive();
+  } else {
+    document.getElementById('lead-name-step').style.display = 'block';
+    document.getElementById('lead-chat-step').style.display = 'none';
+    const ni = document.getElementById('lead-name-input'); if(ni) ni.focus();
+  }
+}
+async function startLead(){
+  if(!configOk){ showToast('Configure o Supabase primeiro (topo do script).'); return; }
+  const name = document.getElementById('lead-name-input').value.trim();
+  if(!name){ showToast('Digite seu nome para começar.'); return; }
+  const code = 'L' + genCode();
+  const ok = await insertLead(code, name);
+  if(!ok) return;
+  leadCode = code; leadName = name;
+  localStorage.setItem('ccs_lead_code', code);
+  localStorage.setItem('ccs_lead_name', name);
+  document.getElementById('lead-name-step').style.display = 'none';
+  document.getElementById('lead-chat-step').style.display = 'block';
+  renderLeadChat();
+  startLeadLive();
+  if(pendingLeadPrefill){
+    const input = document.getElementById('lead-input');
+    if(input){ input.value = pendingLeadPrefill; input.focus(); }
+    pendingLeadPrefill = '';
+  }
+}
+async function sendLead(){
+  if(!leadCode) return;
+  const input = document.getElementById('lead-input');
+  const body = input.value.trim();
+  if(!body) return;
+  const ok = await insertChat(leadCode, 'client', body);
+  if(ok){ input.value=''; await touchLead(leadCode); renderLeadChat(); }
+}
+async function renderLeadChat(){
+  if(!leadCode) return;
+  const box = document.getElementById('lead-messages');
+  if(!box) return;
+  const msgs = await loadChat(leadCode);
+  box.innerHTML = msgs.length ? msgs.map(renderBubble).join('')
+    : '<div style="text-align:center; color:var(--ink-soft); font-size:13px; margin:auto;">Envie uma mensagem para começar a conversa.</div>';
+  box.scrollTop = box.scrollHeight;
+}
+function startLeadLive(){
+  stopLeadLive();
+  if(!supabaseClient || !leadCode) return;
+  leadChannel = supabaseClient.channel('lead-'+leadCode)
+    .on('postgres_changes', { event:'*', schema:'public', table:'chat_messages', filter:`tracking_code=eq.${leadCode}` }, ()=>renderLeadChat())
+    .subscribe();
+  leadPollTimer = setInterval(()=>{ renderLeadChat(); }, LIVE_POLL_MS);
+}
+function stopLeadLive(){
+  if(leadChannel){ supabaseClient && supabaseClient.removeChannel(leadChannel); leadChannel = null; }
+  if(leadPollTimer){ clearInterval(leadPollTimer); leadPollTimer = null; }
+}
+
 /* ================= ADMIN ================= */
 const ADMIN_PASSWORD = 'codecraft2026'; // protótipo — trocar por autenticação real antes de publicar
 let adminLoggedIn = false;
 
 function renderAdminGate(){
   document.getElementById('admin-login-shell').style.display = adminLoggedIn ? 'none' : 'block';
-  document.getElementById('admin-main').style.display = adminLoggedIn ? 'block' : 'none';
+  document.getElementById('admin-main').style.display = adminLoggedIn ? 'flex' : 'none';
   document.getElementById('admin-logout-btn').style.display = adminLoggedIn ? 'inline-block' : 'none';
   document.getElementById('admin-live').style.display = adminLoggedIn ? 'inline-flex' : 'none';
   if(adminLoggedIn){
@@ -787,6 +1088,7 @@ function renderAdminGate(){
     realtimeChannel = supabaseClient.channel('admin-projects')
       .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); })
       .on('postgres_changes', { event:'*', schema:'public', table:'messages' }, ()=>renderMessagesList())
+      .on('postgres_changes', { event:'*', schema:'public', table:'lead_chats' }, ()=>renderChatProjectList())
       .on('postgres_changes', { event:'*', schema:'public', table:'chat_messages' }, ()=>{ if(currentChatCode) renderAdminChat(); })
       .subscribe();
     /* fallback caso o realtime esteja desligado no Supabase */
@@ -826,19 +1128,28 @@ function toggleNewProjectForm(){
 async function createProject(){
   const clientName = document.getElementById('np-client').value.trim();
   const projectName = document.getElementById('np-project').value.trim();
+  const serviceType = document.getElementById('np-service').value;
   const pixKey = document.getElementById('np-pixkey').value.trim() || COMPANY_PIX_KEY;
   const pixValue = document.getElementById('np-value').value.trim();
   const pixCity = document.getElementById('np-city').value.trim() || COMPANY_PIX_CITY;
   const notes = document.getElementById('np-notes').value.trim();
   if(!clientName || !projectName){ showToast('Preencha nome do cliente e do projeto.'); return; }
   const trackingCode = genCode();
-  const created = await insertProject({ trackingCode, clientName, projectName, pixKey, pixValue, pixCity, notes });
+  const created = await insertProject({ trackingCode, clientName, projectName, serviceType, pixKey, pixValue, pixCity, notes });
   if(!created) return;
   const contact = (notes.match(/Contato:\s*(.+)/) || [])[1] || '';
   ['np-client','np-project','np-value','np-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('np-service').value = 'site';
   document.getElementById('np-pixkey').value = COMPANY_PIX_KEY;
   document.getElementById('np-city').value = COMPANY_PIX_CITY;
   toggleNewProjectForm();
+  /* Se o projeto veio de um chat aberto, manda o código direto na conversa do cliente. */
+  if(pendingLeadCode){
+    await insertChat(pendingLeadCode, 'admin', `Seu código de acompanhamento é: ${trackingCode}\nAbra o "Portal do cliente" no site e digite esse código para acompanhar seu projeto em tempo real.`);
+    await touchLead(pendingLeadCode);
+    pendingLeadCode = null; pendingLeadName = '';
+    showToast('Código enviado no chat do cliente!');
+  }
   showCodeModal(trackingCode, clientName, contact);
   renderProjectsList();
 }
@@ -961,24 +1272,75 @@ async function renderMessagesList(){
 /* ================= CONVERSAS (chat admin) ================= */
 let currentChatCode = null;
 let currentChatProject = null;
+let currentChatIsLead = false;
+let pendingLeadCode = null;
+let pendingLeadName = '';
 async function renderChatProjectList(){
   const container = document.getElementById('chat-project-list');
   if(!container) return;
-  const projects = await loadProjects();
-  if(projects.length === 0){
-    container.innerHTML = '<div class="ccs-empty" style="padding:16px;">Nenhum projeto ainda.</div>';
+  const [leads, projects] = await Promise.all([loadLeads(), loadProjects()]);
+  if(leads.length === 0 && projects.length === 0){
+    container.innerHTML = '<div class="ccs-empty" style="padding:16px;">Nenhuma conversa ainda.</div>';
     return;
   }
-  container.innerHTML = projects.map(p=>`
-    <button class="ccs-chat-proj ${p.trackingCode===currentChatCode?'active':''}" onclick="openAdminChat('${p.trackingCode}')">
-      <strong>${escapeHtml(p.clientName)}</strong>
-      <span>${p.trackingCode} · ${escapeHtml(p.projectName)}</span>
-    </button>`).join('');
+  let html = '';
+  if(leads.length){
+    html += '<div class="ccs-eyebrow" style="margin:2px 0 8px;">Novos contatos (chat)</div>';
+    html += leads.map(l=>`
+      <button class="ccs-chat-proj ${l.code===currentChatCode?'active':''}" onclick="openAdminLeadChat('${l.code}')">
+        <strong>${escapeHtml(l.name)}</strong>
+        <span>contato pelo site</span>
+      </button>`).join('');
+  }
+  if(projects.length){
+    if(leads.length) html += '<div class="ccs-eyebrow" style="margin:14px 0 8px;">Projetos</div>';
+    html += projects.map(p=>`
+      <button class="ccs-chat-proj ${p.trackingCode===currentChatCode?'active':''}" onclick="openAdminChat('${p.trackingCode}')">
+        <strong>${escapeHtml(p.clientName)}</strong>
+        <span>${p.trackingCode} · ${escapeHtml(p.projectName)}</span>
+      </button>`).join('');
+  }
+  container.innerHTML = html;
+}
+async function openAdminLeadChat(code){
+  const lead = await loadLeadByCode(code);
+  currentChatCode = code;
+  currentChatProject = null;
+  currentChatIsLead = true;
+  renderChatProjectList();
+  const main = document.getElementById('admin-chat-main');
+  const name = lead ? lead.name : code;
+  main.innerHTML = `
+    <div class="ccs-chat-head">
+      <div><strong>${escapeHtml(name)}</strong><br>
+        <span style="font-size:12px; color:var(--ink-soft);">Contato pelo chat do site</span></div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="ccs-btn amber small" onclick="createProjectForLead('${code}')">Criar projeto e enviar código</button>
+      </div>
+    </div>
+    <div id="admin-chat-messages" class="ccs-chat-messages"></div>
+    <div class="ccs-chat-input">
+      <input id="admin-chat-input" placeholder="Escreva para o cliente..." onkeydown="if(event.key==='Enter')sendAdminChat()">
+      <button class="ccs-btn amber" onclick="sendAdminChat()">Enviar</button>
+    </div>`;
+  renderAdminChat();
+}
+async function createProjectForLead(code){
+  const lead = await loadLeadByCode(code);
+  pendingLeadCode = code;
+  pendingLeadName = lead ? lead.name : '';
+  switchAdminTab('projetos');
+  const f = document.getElementById('new-project-form');
+  f.style.display = 'block';
+  document.getElementById('np-client').value = pendingLeadName;
+  document.getElementById('np-project').focus();
+  showToast('Preencha o projeto — o código será enviado no chat do cliente.');
 }
 async function openAdminChat(code){
   const proj = await loadProjectByCode(code);
   currentChatCode = code;
   currentChatProject = proj;
+  currentChatIsLead = false;
   document.querySelectorAll('.ccs-chat-proj').forEach(b=>b.classList.remove('active'));
   renderChatProjectList();
   const main = document.getElementById('admin-chat-main');
@@ -1022,23 +1384,198 @@ async function sendCodeInChat(){
   if(ok){ renderAdminChat(); showToast('Código enviado na conversa.'); }
 }
 
-/* ================= EMPRESA (ganhos + calculadora) ================= */
+/* ================= EMPRESA (painel de controle) ================= */
+const CHART_COLORS = { teal:'#2FB6A5', amber:'#E8A33D', slate:'#6B7CA0', panel:'#161B33', line:'#DAD6CA' };
+const STATUS_LABELS = { analise:'Em análise', andamento:'Em andamento', concluido:'Concluído' };
+const SERVICE_LABELS = { loja:'Loja virtual', site:'Site institucional', landing:'Landing page', sistema:'Sistema/App sob medida', manutencao:'Manutenção mensal' };
+const SERVICE_ORDER = ['loja','site','landing','sistema','manutencao'];
+const SERVICE_COLORS = { loja:'#2FB6A5', site:'#161B33', landing:'#E8A33D', sistema:'#6B7CA0', manutencao:'#D65B5B' };
 function money(v){ return 'R$ ' + Number(v||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+let lastEmpresaProjects = [];
+
+function computeStats(projects){
+  let recebido = 0, aReceber = 0;
+  const byStatus = { analise:0, andamento:0, concluido:0 };
+  const byMonth = {}; // 'YYYY-MM' -> { recebido, aReceber }
+  const byService = {}; // service -> { total, count }
+  SERVICE_ORDER.forEach(k=>{ byService[k] = { total:0, count:0 }; });
+  projects.forEach(p=>{
+    const v = Number(p.pixValue || 0);
+    if(p.paid) recebido += v; else aReceber += v;
+    if(byStatus[p.status] === undefined) byStatus[p.status] = 0;
+    byStatus[p.status]++;
+    const svc = SERVICE_LABELS[p.serviceType] ? p.serviceType : 'site';
+    if(!byService[svc]) byService[svc] = { total:0, count:0 };
+    byService[svc].total += v; byService[svc].count++;
+    const d = new Date(p.createdAt);
+    if(!isNaN(d)){
+      const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+      if(!byMonth[key]) byMonth[key] = { recebido:0, aReceber:0 };
+      if(p.paid) byMonth[key].recebido += v; else byMonth[key].aReceber += v;
+    }
+  });
+  const total = recebido + aReceber;
+  const comValor = projects.filter(p=>Number(p.pixValue||0) > 0).length;
+  const concluidos = byStatus.concluido || 0;
+  const emAberto = projects.length - concluidos;
+  const ticket = comValor ? total / comValor : 0;
+  const conclusao = projects.length ? Math.round((concluidos / projects.length) * 100) : 0;
+  const months = Object.keys(byMonth).sort();
+  return { recebido, aReceber, total, ticket, concluidos, emAberto, conclusao, byStatus, byMonth, months, byService, count:projects.length };
+}
+
 async function renderEmpresa(){
   const el = document.getElementById('empresa-metrics');
   if(!el) return;
   const projects = await loadProjects();
-  let recebido = 0, aReceber = 0;
-  projects.forEach(p=>{
-    const v = Number(p.pixValue || 0);
-    if(p.paid) recebido += v; else aReceber += v;
-  });
-  const ativos = projects.filter(p=>p.status!=='concluido').length;
+  lastEmpresaProjects = projects;
+  const s = computeStats(projects);
   el.innerHTML = `
-    <div class="ccs-metric recebido"><div class="lbl">Recebido</div><div class="val">${money(recebido)}</div></div>
-    <div class="ccs-metric receber"><div class="lbl">A receber</div><div class="val">${money(aReceber)}</div></div>
-    <div class="ccs-metric"><div class="lbl">Projetos</div><div class="val">${projects.length}</div></div>
-    <div class="ccs-metric"><div class="lbl">Em aberto</div><div class="val">${ativos}</div></div>`;
+    <div class="ccs-metric"><div class="lbl">Faturamento total</div><div class="val">${money(s.total)}</div><div class="sub">recebido + a receber</div></div>
+    <div class="ccs-metric recebido"><div class="lbl">Recebido</div><div class="val">${money(s.recebido)}</div><div class="sub">pagamentos confirmados</div></div>
+    <div class="ccs-metric receber"><div class="lbl">A receber</div><div class="val">${money(s.aReceber)}</div><div class="sub">aguardando pagamento</div></div>
+    <div class="ccs-metric"><div class="lbl">Ticket médio</div><div class="val">${money(s.ticket)}</div><div class="sub">por projeto com valor</div></div>
+    <div class="ccs-metric"><div class="lbl">Sites/lojas</div><div class="val">${s.count}</div><div class="sub">projetos cadastrados</div></div>
+    <div class="ccs-metric"><div class="lbl">Em produção</div><div class="val">${s.emAberto}</div><div class="sub">ainda não entregues</div></div>
+    <div class="ccs-metric"><div class="lbl">Entregues</div><div class="val">${s.concluidos}</div><div class="sub">sites/lojas no ar</div></div>
+    <div class="ccs-metric"><div class="lbl">Taxa de entrega</div><div class="val">${s.conclusao}%</div><div class="sub">entregues / total</div></div>`;
+  renderEmpresaCharts(s);
+  renderEmpresaTable(projects, s);
+}
+
+let charts = { revenue:null, paid:null, status:null, service:null };
+function renderEmpresaCharts(s){
+  if(typeof Chart === 'undefined') return;
+  /* Só desenha quando a aba Empresa está visível — evita rebuild no polling. */
+  const tab = document.getElementById('tab-empresa');
+  if(!tab || tab.style.display === 'none') return;
+  const monthLabels = s.months.map(m=>{ const [y,mo]=m.split('-'); return mo+'/'+y.slice(2); });
+  const recData = s.months.map(m=>s.byMonth[m].recebido);
+  const recvData = s.months.map(m=>s.byMonth[m].aReceber);
+
+  drawChart('revenue', document.getElementById('chart-revenue'), {
+    type:'bar',
+    data:{ labels: monthLabels.length ? monthLabels : ['—'], datasets:[
+      { label:'Recebido', data: recData.length ? recData : [0], backgroundColor: CHART_COLORS.teal },
+      { label:'A receber', data: recvData.length ? recvData : [0], backgroundColor: CHART_COLORS.amber }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label:(c)=>c.dataset.label+': '+money(c.parsed.y) } } },
+      scales:{ x:{ stacked:true, grid:{display:false} }, y:{ stacked:true, ticks:{ callback:(v)=>'R$ '+v } } } }
+  });
+
+  drawChart('paid', document.getElementById('chart-paid'), {
+    type:'doughnut',
+    data:{ labels:['Recebido','A receber'], datasets:[{ data:[s.recebido, s.aReceber], backgroundColor:[CHART_COLORS.teal, CHART_COLORS.amber] }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%',
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label:(c)=>c.label+': '+money(c.parsed) } } } }
+  });
+
+  drawChart('status', document.getElementById('chart-status'), {
+    type:'doughnut',
+    data:{ labels:['Em análise','Em andamento','Concluído'],
+      datasets:[{ data:[s.byStatus.analise||0, s.byStatus.andamento||0, s.byStatus.concluido||0],
+        backgroundColor:[CHART_COLORS.slate, CHART_COLORS.amber, CHART_COLORS.teal] }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{ legend:{ position:'bottom' } } }
+  });
+
+  const svcLabels = SERVICE_ORDER.map(k=>SERVICE_LABELS[k]);
+  const svcData = SERVICE_ORDER.map(k=>(s.byService[k] ? s.byService[k].total : 0));
+  const svcColors = SERVICE_ORDER.map(k=>SERVICE_COLORS[k]);
+  drawChart('service', document.getElementById('chart-service'), {
+    type:'bar',
+    data:{ labels: svcLabels, datasets:[{ label:'Faturamento', data: svcData, backgroundColor: svcColors }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:(c)=>{
+        const k = SERVICE_ORDER[c.dataIndex]; const n = s.byService[k] ? s.byService[k].count : 0;
+        return money(c.parsed.x) + ' · ' + n + (n===1?' projeto':' projetos'); } } } },
+      scales:{ x:{ ticks:{ callback:(v)=>'R$ '+v } }, y:{ grid:{display:false} } } }
+  });
+}
+function drawChart(key, canvas, config){
+  if(!canvas) return;
+  /* Atualiza no lugar quando possível para não piscar a cada polling. */
+  if(charts[key] && charts[key].config.type === config.type){
+    charts[key].data = config.data;
+    charts[key].options = config.options;
+    charts[key].update();
+    return;
+  }
+  if(charts[key]) charts[key].destroy();
+  charts[key] = new Chart(canvas.getContext('2d'), config);
+}
+
+function renderEmpresaTable(projects, s){
+  const el = document.getElementById('empresa-table');
+  if(!el) return;
+  if(!projects.length){ el.innerHTML = '<div class="ccs-empty">Nenhum projeto ainda.</div>'; return; }
+  el.innerHTML = `
+    <table class="ccs-table">
+      <thead><tr><th>Código</th><th>Cliente</th><th>Projeto</th><th>Tipo</th><th>Status</th><th>Valor</th><th>Pago</th><th>Criado em</th></tr></thead>
+      <tbody>
+        ${projects.map(p=>`
+          <tr>
+            <td class="mono">${escapeHtml(p.trackingCode)}</td>
+            <td>${escapeHtml(p.clientName)}</td>
+            <td>${escapeHtml(p.projectName)}</td>
+            <td>${SERVICE_LABELS[p.serviceType] || 'Site institucional'}</td>
+            <td>${STATUS_LABELS[p.status] || escapeHtml(p.status)}</td>
+            <td>${p.pixValue ? money(p.pixValue) : '—'}</td>
+            <td style="color:${p.paid?'var(--teal)':'var(--ink-soft)'}; font-weight:600;">${p.paid?'Sim':'Não'}</td>
+            <td>${fmtDate(p.createdAt)}</td>
+          </tr>`).join('')}
+      </tbody>
+      <tfoot><tr style="font-weight:700; border-top:2px solid var(--line);">
+        <td colspan="5">Totais</td>
+        <td>${money(s.total)}</td>
+        <td colspan="2">${money(s.recebido)} recebido</td>
+      </tr></tfoot>
+    </table>`;
+}
+
+function exportExcel(){
+  if(typeof XLSX === 'undefined'){ showToast('Biblioteca de Excel não carregou. Tente recarregar.'); return; }
+  const projects = lastEmpresaProjects || [];
+  const s = computeStats(projects);
+  const projRows = [['Código','Cliente','Projeto','Tipo de serviço','Status','Valor (R$)','Pago','Criado em','Atualizado em']];
+  projects.forEach(p=>{
+    projRows.push([
+      p.trackingCode, p.clientName, p.projectName,
+      SERVICE_LABELS[p.serviceType] || 'Site institucional',
+      STATUS_LABELS[p.status] || p.status,
+      Number(p.pixValue || 0), p.paid ? 'Sim' : 'Não',
+      fmtDate(p.createdAt), fmtDate(p.updatedAt)
+    ]);
+  });
+  const resumoRows = [
+    ['Indicador','Valor'],
+    ['Faturamento total', s.total],
+    ['Recebido', s.recebido],
+    ['A receber', s.aReceber],
+    ['Ticket médio', Number(s.ticket.toFixed(2))],
+    ['Sites/lojas (total)', s.count],
+    ['Em produção', s.emAberto],
+    ['Entregues', s.concluidos],
+    ['Taxa de entrega (%)', s.conclusao]
+  ];
+  const svcRows = [['Tipo de serviço','Projetos','Faturamento (R$)']];
+  SERVICE_ORDER.forEach(k=>{
+    const b = s.byService[k] || { total:0, count:0 };
+    svcRows.push([SERVICE_LABELS[k], b.count, b.total]);
+  });
+  const wb = XLSX.utils.book_new();
+  const wsP = XLSX.utils.aoa_to_sheet(projRows);
+  wsP['!cols'] = [{wch:10},{wch:20},{wch:24},{wch:20},{wch:14},{wch:12},{wch:6},{wch:18},{wch:18}];
+  const wsR = XLSX.utils.aoa_to_sheet(resumoRows);
+  wsR['!cols'] = [{wch:24},{wch:16}];
+  const wsS = XLSX.utils.aoa_to_sheet(svcRows);
+  wsS['!cols'] = [{wch:24},{wch:10},{wch:18}];
+  XLSX.utils.book_append_sheet(wb, wsR, 'Resumo');
+  XLSX.utils.book_append_sheet(wb, wsS, 'Por serviço');
+  XLSX.utils.book_append_sheet(wb, wsP, 'Projetos');
+  const stamp = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb, `codecraft-controle-${stamp}.xlsx`);
+  showToast('Excel exportado!');
 }
 let calcExpr = '';
 function calcPress(v){
@@ -1073,6 +1610,7 @@ function buildCalculator(){
 
 /* ================= INIT ================= */
 typeHero();
+initLead();
 </script>
 </body>
 </html>
