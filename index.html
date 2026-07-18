@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeCraft Solutions — Sua ideia, em produção</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --paper:#F7F6F2;
+    --paper-dim:#EFEDE6;
+    --ink:#12172B;
+    --ink-soft:#4B5266;
+    --panel:#161B33;
+    --panel-2:#1E2547;
+    --line:#DAD6CA;
+    --line-dark:#2C3358;
+    --amber:#E8A33D;
+    --teal:#2FB6A5;
+    --slate:#6B7CA0;
+    --danger:#D65B5B;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; line-height:1.5;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  h1,h2,h3{font-family:'JetBrains Mono',monospace; margin:0; letter-spacing:-0.01em;}
+  a{color:inherit;}
+  button{font-family:'Inter',sans-serif; cursor:pointer;}
+
+  .ccs-config-banner{
+    display:none; background:#3A1F1F; color:#FCEAEA; padding:12px 20px; text-align:center;
+    font-size:13.5px; font-weight:600; position:sticky; top:0; z-index:100;
+  }
+  .ccs-config-banner.show{display:block;}
+
+  .ccs-nav{position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:18px 40px; background:rgba(247,246,242,0.9); backdrop-filter:blur(6px); border-bottom:1px solid var(--line);}
+  .ccs-logo{display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:18px;}
+  .ccs-logo .dot{width:10px;height:10px;border-radius:2px;background:var(--amber); transform:rotate(45deg);}
+  .ccs-nav-links{display:flex; gap:28px; align-items:center; font-size:14px;}
+  .ccs-nav-links a{text-decoration:none; color:var(--ink-soft); font-weight:600;}
+  .ccs-nav-links a:hover{color:var(--ink);}
+  .ccs-btn{border:none; padding:10px 18px; border-radius:8px; font-weight:700; font-size:14px; background:var(--ink); color:var(--paper); transition:transform .15s ease, background .15s ease;}
+  .ccs-btn:hover{transform:translateY(-1px); background:#000;}
+  .ccs-btn.ghost{background:transparent; color:var(--ink); border:1.5px solid var(--ink);}
+  .ccs-btn.amber{background:var(--amber); color:#221304;}
+  .ccs-btn.small{padding:7px 12px; font-size:12.5px; border-radius:6px;}
+  .ccs-btn:disabled{opacity:.5; cursor:not-allowed; transform:none;}
+
+  .ccs-hero{background:var(--panel); color:#EDEFFA; padding:70px 40px 90px; display:grid; grid-template-columns:1.1fr .9fr; gap:50px; align-items:center;}
+  .ccs-hero-eyebrow{font-family:'JetBrains Mono',monospace; color:var(--amber); font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:14px;}
+  .ccs-hero h1{font-size:44px; line-height:1.12; font-weight:800; color:#fff;}
+  .ccs-hero h1 span{color:var(--amber);}
+  .ccs-hero p{font-size:17px; color:#B9BEDB; max-width:520px; margin-top:18px;}
+  .ccs-hero-ctas{display:flex; gap:14px; margin-top:30px; flex-wrap:wrap;}
+  .ccs-terminal{background:var(--panel-2); border:1px solid var(--line-dark); border-radius:12px; padding:20px; font-family:'JetBrains Mono',monospace; font-size:13.5px; color:#D6DAF3; min-height:220px; box-shadow:0 20px 60px rgba(0,0,0,.35);}
+  .ccs-terminal .bar{display:flex; gap:6px; margin-bottom:14px;}
+  .ccs-terminal .bar span{width:10px;height:10px;border-radius:50%;background:#3A4272;}
+  .ccs-terminal #ccs-typed{white-space:pre-wrap;}
+  .ccs-cursor{display:inline-block; width:8px; background:var(--amber); animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  @media (prefers-reduced-motion:reduce){.ccs-cursor{animation:none;}}
+
+  .ccs-section{padding:80px 40px; max-width:1180px; margin:0 auto;}
+  .ccs-section-tight{padding-top:50px;}
+  .ccs-eyebrow{font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.12em; margin-bottom:10px;}
+  .ccs-section h2{font-size:30px; font-weight:800; max-width:640px;}
+  .ccs-lede{color:var(--ink-soft); font-size:16px; max-width:640px; margin-top:14px;}
+
+  .ccs-grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:38px;}
+  .ccs-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:26px;}
+  .ccs-card .num{font-family:'JetBrains Mono',monospace; color:var(--amber); font-weight:800; font-size:13px; margin-bottom:10px;}
+  .ccs-card h3{font-size:17px; font-weight:700;}
+  .ccs-card p{color:var(--ink-soft); font-size:14.5px; margin-top:8px;}
+
+  .ccs-pipeline{display:flex; align-items:flex-start; gap:0; margin-top:44px; flex-wrap:wrap;}
+  .ccs-stage{flex:1; min-width:180px; position:relative; padding:0 18px 0 0;}
+  .ccs-stage .node{width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:13px; color:#fff; margin-bottom:14px; border:2px solid transparent;}
+  .ccs-stage .track{position:absolute; top:17px; left:34px; right:0; height:2px; background:var(--line);}
+  .ccs-stage:last-child .track{display:none;}
+  .ccs-stage h4{font-size:14.5px; font-weight:700; margin:0 0 4px;}
+  .ccs-stage p{font-size:13px; color:var(--ink-soft); margin:0;}
+  .ccs-stage.done .node{background:var(--slate);}
+  .ccs-stage.current .node{background:var(--amber); color:#221304;}
+  .ccs-stage.current .track{background:var(--amber);}
+  .ccs-stage.done .track{background:var(--slate);}
+  .ccs-stage.future .node{background:#fff; border-color:var(--line); color:var(--ink-soft);}
+
+  .ccs-about{display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center;}
+  .ccs-about .mark{font-family:'JetBrains Mono',monospace; font-size:120px; color:var(--paper-dim); font-weight:800; line-height:1; user-select:none;}
+
+  .ccs-contact-wrap{display:grid; grid-template-columns:1fr 1fr; gap:50px;}
+  .ccs-field{display:flex; flex-direction:column; gap:6px; margin-bottom:16px;}
+  .ccs-field label{font-size:12.5px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em;}
+  .ccs-field input, .ccs-field textarea, .ccs-field select{padding:11px 12px; border-radius:8px; border:1.5px solid var(--line); font-family:'Inter',sans-serif; font-size:14.5px; background:#fff;}
+  .ccs-field input:focus, .ccs-field textarea:focus, .ccs-field select:focus{outline:2px solid var(--amber); outline-offset:1px; border-color:var(--amber);}
+
+  footer{padding:30px 40px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--ink-soft); flex-wrap:wrap; gap:10px;}
+
+  .ccs-app-header{display:flex; align-items:center; justify-content:space-between; padding:18px 40px; border-bottom:1px solid var(--line); background:#fff;}
+  .ccs-shell{max-width:840px; margin:0 auto; padding:50px 24px;}
+  .ccs-panel{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:30px;}
+  .ccs-badge{display:inline-flex; align-items:center; gap:6px; padding:5px 11px; border-radius:20px; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; color:#fff;}
+  .ccs-badge.analise{background:var(--slate);}
+  .ccs-badge.andamento{background:var(--amber); color:#221304;}
+  .ccs-badge.concluido{background:var(--teal);}
+
+  .ccs-pix-box{margin-top:26px; border:1.5px dashed var(--line); border-radius:12px; padding:22px; display:flex; gap:24px; align-items:center; flex-wrap:wrap;}
+  .ccs-pix-key{font-family:'JetBrains Mono',monospace; font-size:13px; background:var(--paper-dim); padding:10px 12px; border-radius:8px; word-break:break-all; flex:1; min-width:220px;}
+  .ccs-qr{width:160px; height:160px; background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px; flex-shrink:0;}
+
+  .ccs-table{width:100%; border-collapse:collapse; margin-top:10px; font-size:14px;}
+  .ccs-table th{text-align:left; font-family:'JetBrains Mono',monospace; font-size:11.5px; text-transform:uppercase; color:var(--ink-soft); padding:10px 8px; border-bottom:1.5px solid var(--line);}
+  .ccs-table td{padding:12px 8px; border-bottom:1px solid var(--line); vertical-align:top;}
+  .ccs-status-btns{display:flex; gap:6px; flex-wrap:wrap;}
+  .ccs-status-btns button{border:1.5px solid var(--line); background:#fff; border-radius:6px; padding:6px 10px; font-size:12px; font-weight:700; font-family:'JetBrains Mono',monospace;}
+  .ccs-status-btns button.active-analise{background:var(--slate); color:#fff; border-color:var(--slate);}
+  .ccs-status-btns button.active-andamento{background:var(--amber); color:#221304; border-color:var(--amber);}
+  .ccs-status-btns button.active-concluido{background:var(--teal); color:#fff; border-color:var(--teal);}
+
+  .ccs-tabs{display:flex; gap:6px; margin-bottom:22px; border-bottom:1px solid var(--line);}
+  .ccs-tab{padding:10px 16px; font-weight:700; font-size:14px; color:var(--ink-soft); border-bottom:2px solid transparent; background:none; border-left:none; border-right:none; border-top:none;}
+  .ccs-tab.active{color:var(--ink); border-bottom-color:var(--amber);}
+
+  .ccs-empty{padding:40px 20px; text-align:center; color:var(--ink-soft); font-size:14.5px;}
+  .ccs-toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; border-radius:8px; font-size:14px; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,.25); z-index:100; opacity:0; pointer-events:none; transition:opacity .25s ease;}
+  .ccs-toast.show{opacity:1;}
+  .ccs-live-dot{display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace;}
+  .ccs-live-dot .d{width:7px;height:7px;border-radius:50%; background:var(--teal); animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+  @media (max-width:860px){
+    .ccs-hero{grid-template-columns:1fr; padding:50px 22px 60px;}
+    .ccs-nav{padding:16px 20px;} .ccs-nav-links{gap:14px; font-size:13px;}
+    .ccs-section{padding:56px 22px;}
+    .ccs-grid-3{grid-template-columns:1fr;}
+    .ccs-about, .ccs-contact-wrap{grid-template-columns:1fr;}
+    .ccs-about .mark{display:none;}
+    .ccs-app-header{padding:16px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="ccs-config-banner" id="config-banner">
+  ⚠️ Configuração pendente: cole sua SUPABASE_URL e SUPABASE_ANON_KEY no topo do &lt;script&gt;, no arquivo, antes de usar o site.
+</div>
+
+<!-- ================= LANDING ================= -->
+<div id="screen-landing">
+  <nav class="ccs-nav">
+    <div class="ccs-logo"><span class="dot"></span> CodeCraft Solutions</div>
+    <div class="ccs-nav-links">
+      <a href="#quem-somos">Quem somos</a>
+      <a href="#servicos">Serviços</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#contato">Contato</a>
+      <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" aria-label="Instagram da CodeCraft Solutions" style="display:flex; align-items:center;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
+      </a>
+      <button class="ccs-btn ghost" onclick="showScreen('admin')">Área admin</button>
+      <button class="ccs-btn amber" onclick="showScreen('client')">Portal do cliente</button>
+    </div>
+  </nav>
+
+  <section class="ccs-hero">
+    <div>
+      <div class="ccs-hero-eyebrow">// software sob medida</div>
+      <h1>Sua ideia,<br>em <span>produção</span>.</h1>
+      <p>A CodeCraft Solutions transforma sistemas, sites e aplicativos em produtos reais — com acompanhamento aberto, do primeiro commit até a entrega.</p>
+      <div class="ccs-hero-ctas">
+        <button class="ccs-btn amber" onclick="showScreen('client')">Acompanhar meu projeto</button>
+        <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="document.getElementById('contato').scrollIntoView()">Fale com a gente</button>
+        <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="document.getElementById('servicos').scrollIntoView()">Ver serviços</button>
+      </div>
+    </div>
+    <div class="ccs-terminal">
+      <div class="bar"><span></span><span></span><span></span></div>
+      <div id="ccs-typed" class="mono"></div>
+    </div>
+  </section>
+
+  <section class="ccs-section ccs-about" id="quem-somos">
+    <div>
+      <div class="ccs-eyebrow">Quem somos</div>
+      <h2>Um estúdio pequeno, focado em entregar certo.</h2>
+      <p class="ccs-lede">Somos uma equipe enxuta que prefere resolver o problema real do cliente a empilhar reunião. Cada projeto passa pelas mesmas três etapas — análise, construção e entrega — e você acompanha cada uma delas em tempo real, sem precisar perguntar "como está indo?".</p>
+      <p class="ccs-lede">Atendemos negócios pequenos e médios que precisam de um sistema, um site ou um app funcionando de verdade — sem contrato complicado e sem letra miúda.</p>
+    </div>
+    <div class="mark">{ }</div>
+  </section>
+
+  <section class="ccs-section ccs-section-tight" id="servicos">
+    <div class="ccs-eyebrow">O que fazemos</div>
+    <h2>Serviços</h2>
+    <p class="ccs-lede">Construímos o que o seu negócio precisa para rodar no dia a dia.</p>
+    <div class="ccs-grid-3">
+      <div class="ccs-card"><div class="num">01</div><h3>Sistemas web</h3><p>Painéis, cadastros e ferramentas internas feitas sob medida para o seu processo.</p></div>
+      <div class="ccs-card"><div class="num">02</div><h3>Aplicativos</h3><p>Apps para clientes ou para uso interno, simples de usar e fáceis de manter.</p></div>
+      <div class="ccs-card"><div class="num">03</div><h3>Sites e landing pages</h3><p>Páginas rápidas, bonitas e claras — pensadas para converter visita em cliente.</p></div>
+      <div class="ccs-card"><div class="num">04</div><h3>Integrações</h3><p>Conectamos seus sistemas a banco de dados, planilhas e ferramentas que você já usa.</p></div>
+      <div class="ccs-card"><div class="num">05</div><h3>Acompanhamento em tempo real</h3><p>Portal próprio para você ver o status do seu projeto sem precisar chamar no zap.</p></div>
+      <div class="ccs-card"><div class="num">06</div><h3>Suporte pós-entrega</h3><p>Ajuste fino, correções e evolução depois que o projeto vai ao ar.</p></div>
+    </div>
+  </section>
+
+  <section class="ccs-section" id="como-funciona" style="background:var(--paper-dim); max-width:none; margin-top:20px;">
+    <div style="max-width:1180px; margin:0 auto;">
+      <div class="ccs-eyebrow">O caminho do seu projeto</div>
+      <h2>Como funciona</h2>
+      <p class="ccs-lede">Três etapas, sempre visíveis para você no portal do cliente.</p>
+      <div class="ccs-pipeline">
+        <div class="ccs-stage current"><div class="track"></div><div class="node">1</div><h4>Em análise</h4><p>Entendemos o problema e desenhamos a solução.</p></div>
+        <div class="ccs-stage future"><div class="track"></div><div class="node">2</div><h4>Em andamento</h4><p>Construção do sistema, com checkpoints claros.</p></div>
+        <div class="ccs-stage future"><div class="track"></div><div class="node">3</div><h4>Concluído</h4><p>Entrega, testes finais e projeto no ar.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ccs-section" id="contato">
+    <div class="ccs-contact-wrap">
+      <div>
+        <div class="ccs-eyebrow">Fale com a gente</div>
+        <h2>Vamos conversar sobre o seu projeto?</h2>
+        <p class="ccs-lede">Conta um pouco do que você precisa. Respondemos o mais rápido possível — e, se virar projeto, você recebe um código de acompanhamento próprio.</p>
+      </div>
+      <form class="ccs-panel" onsubmit="submitContact(event)">
+        <div class="ccs-field"><label>Nome</label><input required id="c-name" placeholder="Seu nome"></div>
+        <div class="ccs-field"><label>Contato (e-mail ou whatsapp)</label><input required id="c-contact" placeholder="Como podemos te chamar"></div>
+        <div class="ccs-field"><label>Mensagem</label><textarea required id="c-msg" rows="4" placeholder="Conte o que você precisa"></textarea></div>
+        <button class="ccs-btn amber" type="submit" style="width:100%;">Enviar mensagem</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="ccs-logo" style="font-size:14px;"><span class="dot" style="width:8px;height:8px;"></span> CodeCraft Solutions</div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:6px; text-decoration:none; color:var(--ink-soft); font-weight:600;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
+        @code.invention
+      </a>
+      <div>Feito sob medida, projeto por projeto.</div>
+    </div>
+  </footer>
+</div>
+
+<!-- ================= CLIENT PORTAL ================= -->
+<div id="screen-client" style="display:none;">
+  <div class="ccs-app-header">
+    <div class="ccs-logo" style="font-size:15px;"><span class="dot" style="width:8px;height:8px;"></span> CodeCraft Solutions</div>
+    <button class="ccs-btn ghost small" onclick="goHome()">← Voltar ao site</button>
+  </div>
+  <div class="ccs-shell">
+    <div id="client-lookup" class="ccs-panel">
+      <div class="ccs-eyebrow">Portal do cliente</div>
+      <h2 style="font-size:22px;">Acompanhe seu projeto</h2>
+      <p class="ccs-lede" style="margin-bottom:18px;">Digite o código de acompanhamento que você recebeu da CodeCraft.</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <input id="client-code-input" class="mono" style="flex:1; min-width:200px; padding:12px; border:1.5px solid var(--line); border-radius:8px; font-size:15px; text-transform:uppercase;" placeholder="EX: A1B2C3">
+        <button class="ccs-btn amber" onclick="lookupProject()">Ver status</button>
+      </div>
+      <p id="client-error" style="color:var(--danger); font-size:13.5px; margin-top:10px; display:none;">Não encontramos nenhum projeto com esse código. Confira e tente de novo.</p>
+    </div>
+
+    <div id="client-result" style="display:none;">
+      <div class="ccs-panel">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+          <div>
+            <div class="ccs-eyebrow" id="client-tracking"></div>
+            <h2 style="font-size:22px;" id="client-project-name"></h2>
+            <p style="color:var(--ink-soft); font-size:14px; margin-top:4px;" id="client-name"></p>
+          </div>
+          <span class="ccs-live-dot"><span class="d"></span> ao vivo</span>
+        </div>
+        <div class="ccs-pipeline" id="client-pipeline"></div>
+        <p style="font-size:13px; color:var(--ink-soft); margin-top:24px;" id="client-updated"></p>
+        <div id="client-notes" style="margin-top:14px; font-size:14.5px;"></div>
+        <div id="client-pix-area"></div>
+      </div>
+      <button class="ccs-btn ghost small" style="margin-top:16px;" onclick="resetClientLookup()">Ver outro código</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ADMIN ================= -->
+<div id="screen-admin" style="display:none;">
+  <div class="ccs-app-header">
+    <div class="ccs-logo" style="font-size:15px;"><span class="dot" style="width:8px;height:8px;"></span> CodeCraft Solutions <span style="color:var(--ink-soft); font-weight:600;">/ admin</span></div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <span id="admin-live" class="ccs-live-dot" style="display:none;"><span class="d"></span> ao vivo</span>
+      <button class="ccs-btn ghost small" id="admin-logout-btn" style="display:none;" onclick="adminLogout()">Sair</button>
+      <button class="ccs-btn ghost small" onclick="goHome()">← Voltar ao site</button>
+    </div>
+  </div>
+
+  <div class="ccs-shell" id="admin-login-shell">
+    <div class="ccs-panel" style="max-width:380px; margin:0 auto;">
+      <div class="ccs-eyebrow">Acesso restrito</div>
+      <h2 style="font-size:20px;">Entrar no painel</h2>
+      <p style="color:var(--ink-soft); font-size:13.5px; margin:10px 0 18px;">A senha fica no próprio código do site — simples para começar, mas troque por um login de verdade antes de usar com dados sensíveis.</p>
+      <div class="ccs-field"><label>Senha</label><input id="admin-pass" type="password" placeholder="Senha do admin"></div>
+      <button class="ccs-btn amber" style="width:100%;" onclick="adminLogin()">Entrar</button>
+      <p id="admin-login-error" style="color:var(--danger); font-size:13px; margin-top:10px; display:none;">Senha incorreta.</p>
+    </div>
+  </div>
+
+  <div class="ccs-shell" id="admin-main" style="display:none; max-width:1000px;">
+    <div class="ccs-tabs">
+      <button class="ccs-tab active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')">Projetos</button>
+      <button class="ccs-tab" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')">Mensagens</button>
+    </div>
+
+    <div id="tab-projetos">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+        <h2 style="font-size:20px;">Projetos</h2>
+        <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
+      </div>
+
+      <div class="ccs-panel" id="new-project-form" style="display:none; margin-bottom:22px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="ccs-field"><label>Nome do cliente</label><input id="np-client"></div>
+          <div class="ccs-field"><label>Nome do projeto</label><input id="np-project"></div>
+          <div class="ccs-field"><label>Chave PIX</label><input id="np-pixkey" placeholder="CPF, e-mail, telefone ou chave aleatória"></div>
+          <div class="ccs-field"><label>Valor (R$)</label><input id="np-value" type="number" step="0.01" placeholder="0.00"></div>
+          <div class="ccs-field"><label>Cidade (para o PIX)</label><input id="np-city" placeholder="Ex: SAO PAULO"></div>
+          <div class="ccs-field"><label>Observações para o cliente</label><input id="np-notes" placeholder="Opcional"></div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:6px;">
+          <button class="ccs-btn amber" onclick="createProject()">Salvar projeto</button>
+          <button class="ccs-btn ghost" onclick="toggleNewProjectForm()">Cancelar</button>
+        </div>
+      </div>
+
+      <div id="projects-list"></div>
+    </div>
+
+    <div id="tab-mensagens" style="display:none;">
+      <h2 style="font-size:20px; margin-bottom:16px;">Mensagens do site</h2>
+      <div id="messages-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="ccs-toast" id="ccs-toast"></div>
+
+<div id="code-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center;">
+  <div class="ccs-panel" style="max-width:420px; margin:20px; text-align:center;">
+    <h3 style="font-size:20px; margin-bottom:12px;">Projeto criado com sucesso!</h3>
+    <p style="color:var(--ink-soft); margin-bottom:16px;">Envie este código para <strong id="modal-client-name"></strong>:</p>
+    <div style="background:var(--paper-dim); padding:20px; border-radius:12px; margin-bottom:16px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:32px; font-weight:800; color:var(--amber); letter-spacing:4px;" id="modal-code"></div>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="ccs-btn amber" onclick="copyCode()" style="flex:1;">Copiar código</button>
+      <button class="ccs-btn ghost" onclick="closeCodeModal()" style="flex:1;">Fechar</button>
+    </div>
+    <p style="font-size:12.5px; color:var(--ink-soft); margin-top:16px;">O cliente usa este código no "Portal do cliente" para acompanhar o projeto em tempo real.</p>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   CONFIGURAÇÃO — cole aqui a URL e a chave do seu projeto Supabase.
+   Onde pegar: Supabase → seu projeto → Project Settings (engrenagem) → API
+   ========================================================================= */
+const SUPABASE_URL = 'https://eqaoanbanhryhbldlbhc.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_cDjtfaScPpBj-JHSCwagng_LoKGL-IN';
+/* ========================================================================= */
+
+const configOk = !SUPABASE_URL.startsWith('COLE_AQUI') && !SUPABASE_ANON_KEY.startsWith('COLE_AQUI');
+if(!configOk){ document.getElementById('config-banner').classList.add('show'); }
+const supabaseClient = configOk ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+/* ================= UTIL ================= */
+function genCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let out = '';
+  for(let i=0;i<6;i++) out += chars[Math.floor(Math.random()*chars.length)];
+  return out;
+}
+function fmtDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function showToast(msg){
+  const t = document.getElementById('ccs-toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+function fromRow(r){
+  return { id:r.id, trackingCode:r.tracking_code, clientName:r.client_name, projectName:r.project_name,
+    status:r.status, pixKey:r.pix_key, pixValue:r.pix_value, pixCity:r.pix_city, notes:r.notes,
+    paid:r.paid, createdAt:r.created_at, updatedAt:r.updated_at };
+}
+
+/* ================= DB CALLS (Supabase) ================= */
+async function loadProjects(){
+  if(!supabaseClient) return [];
+  const { data, error } = await supabaseClient.from('projects').select('*').order('created_at', { ascending:false });
+  if(error){ console.error(error); return []; }
+  return data.map(fromRow);
+}
+async function loadProjectByCode(code){
+  if(!supabaseClient) return null;
+  const { data, error } = await supabaseClient.from('projects').select('*').eq('tracking_code', code).maybeSingle();
+  if(error || !data) return null;
+  return fromRow(data);
+}
+async function insertProject(p){
+  if(!supabaseClient) return null;
+  const { data, error } = await supabaseClient.from('projects').insert({
+    tracking_code: p.trackingCode, client_name: p.clientName, project_name: p.projectName,
+    status:'analise', pix_key: p.pixKey, pix_value: p.pixValue || null, pix_city: p.pixCity, notes: p.notes, paid:false
+  }).select().single();
+  if(error){ console.error(error); showToast('Erro ao salvar projeto.'); return null; }
+  return fromRow(data);
+}
+async function updateProject(id, fields){
+  if(!supabaseClient) return;
+  const dbFields = { updated_at: new Date().toISOString() };
+  if('status' in fields) dbFields.status = fields.status;
+  if('paid' in fields) dbFields.paid = fields.paid;
+  const { error } = await supabaseClient.from('projects').update(dbFields).eq('id', id);
+  if(error) console.error(error);
+}
+async function deleteProjectRow(id){
+  if(!supabaseClient) return;
+  const { error } = await supabaseClient.from('projects').delete().eq('id', id);
+  if(error) console.error(error);
+}
+async function loadMessages(){
+  if(!supabaseClient) return [];
+  const { data, error } = await supabaseClient.from('messages').select('*').order('created_at', { ascending:false });
+  if(error){ console.error(error); return []; }
+  return data.map(m=>({ id:m.id, name:m.name, contact:m.contact, msg:m.msg, createdAt:m.created_at }));
+}
+async function insertMessage(m){
+  if(!supabaseClient) return;
+  const { error } = await supabaseClient.from('messages').insert({ name:m.name, contact:m.contact, msg:m.msg });
+  if(error){ console.error(error); showToast('Erro ao enviar mensagem.'); }
+}
+
+/* ================= PIX (BR Code / EMV payload) ================= */
+function crc16(str){
+  let crc = 0xFFFF;
+  for(let c=0;c<str.length;c++){
+    crc ^= str.charCodeAt(c) << 8;
+    for(let i=0;i<8;i++){
+      crc = (crc & 0x8000) ? ((crc<<1) ^ 0x1021) : (crc<<1);
+      crc &= 0xFFFF;
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4,'0');
+}
+function tlv(id, value){ return id + String(value.length).padStart(2,'0') + value; }
+function buildPixPayload({chave, valor, nome, cidade, txid}){
+  const merchantAccount = tlv('00','br.gov.bcb.pix') + tlv('01', chave || '');
+  const mai = tlv('26', merchantAccount);
+  const addData = tlv('62', tlv('05', (txid || '***').slice(0,25)));
+  let payload = tlv('00','01') + tlv('01','12') + mai + tlv('52','0000') + tlv('53','986');
+  if(valor) payload += tlv('54', Number(valor).toFixed(2));
+  payload += tlv('58','BR') + tlv('59',(nome||'CODECRAFT SOLUTIONS').slice(0,25).toUpperCase()) + tlv('60',(cidade||'SAO PAULO').slice(0,15).toUpperCase()) + addData;
+  payload += '6304';
+  return payload + crc16(payload);
+}
+
+/* ================= SCREEN SWITCH ================= */
+let realtimeChannel = null;
+function stopRealtime(){ if(realtimeChannel){ supabaseClient && supabaseClient.removeChannel(realtimeChannel); realtimeChannel = null; } }
+
+function showScreen(name){
+  stopRealtime();
+  document.getElementById('screen-landing').style.display = name==='landing' ? 'block' : 'none';
+  document.getElementById('screen-client').style.display = name==='client' ? 'block' : 'none';
+  document.getElementById('screen-admin').style.display = name==='admin' ? 'block' : 'none';
+  window.scrollTo(0,0);
+  if(name==='admin'){ renderAdminGate(); }
+  if(name==='client'){ resetClientLookup(); }
+}
+function goHome(){ showScreen('landing'); }
+
+/* ================= HERO TYPING ================= */
+const heroLines = [
+  '$ codecraft status --cliente',
+  '> analisando escopo do projeto...',
+  '> gerando plano de construção...',
+  '> etapa atual: em andamento',
+  '> próxima atualização em tempo real ✓'
+];
+function typeHero(){
+  const el = document.getElementById('ccs-typed');
+  let full = '';
+  let li = 0, ci = 0;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced){ el.textContent = heroLines.join('\\n'); return; }
+  function step(){
+    if(li >= heroLines.length){ return; }
+    const line = heroLines[li];
+    if(ci <= line.length){
+      el.innerHTML = full + line.slice(0,ci) + '<span class="ccs-cursor">&nbsp;</span>';
+      ci++; setTimeout(step, 22);
+    } else {
+      full += line + '\\n'; li++; ci = 0; setTimeout(step, 260);
+    }
+  }
+  step();
+}
+
+/* ================= CONTACT FORM ================= */
+async function submitContact(e){
+  e.preventDefault();
+  if(!configOk){ showToast('Configure o Supabase primeiro (topo do script).'); return; }
+  const name = document.getElementById('c-name').value.trim();
+  const contact = document.getElementById('c-contact').value.trim();
+  const msg = document.getElementById('c-msg').value.trim();
+  await insertMessage({ name, contact, msg });
+  document.getElementById('c-name').value = '';
+  document.getElementById('c-contact').value = '';
+  document.getElementById('c-msg').value = '';
+  showToast('Mensagem enviada! Vamos responder em breve.');
+}
+
+/* ================= PIPELINE RENDER (shared) ================= */
+const STAGES = [
+  {key:'analise', label:'Em análise', desc:'Entendendo o problema e desenhando a solução.'},
+  {key:'andamento', label:'Em andamento', desc:'Construção do projeto em progresso.'},
+  {key:'concluido', label:'Concluído', desc:'Entregue e no ar.'}
+];
+function renderPipeline(currentKey){
+  const currentIdx = STAGES.findIndex(s=>s.key===currentKey);
+  return STAGES.map((s,i)=>{
+    let cls = 'future';
+    if(i < currentIdx) cls = 'done';
+    if(i === currentIdx) cls = 'current';
+    return `<div class="ccs-stage ${cls}"><div class="track"></div><div class="node">${i+1}</div><h4>${s.label}</h4><p>${s.desc}</p></div>`;
+  }).join('');
+}
+
+/* ================= CLIENT PORTAL ================= */
+let currentClientCode = null;
+function resetClientLookup(){
+  currentClientCode = null;
+  document.getElementById('client-lookup').style.display = 'block';
+  document.getElementById('client-result').style.display = 'none';
+  document.getElementById('client-code-input').value = '';
+  document.getElementById('client-error').style.display = 'none';
+  stopRealtime();
+}
+async function lookupProject(){
+  if(!configOk){ showToast('Configure o Supabase primeiro (topo do script).'); return; }
+  const code = document.getElementById('client-code-input').value.trim().toUpperCase();
+  if(!code) return;
+  const proj = await loadProjectByCode(code);
+  if(!proj){
+    document.getElementById('client-error').style.display = 'block';
+    return;
+  }
+  currentClientCode = code;
+  document.getElementById('client-error').style.display = 'none';
+  document.getElementById('client-lookup').style.display = 'none';
+  document.getElementById('client-result').style.display = 'block';
+  renderClientProject(proj);
+
+  stopRealtime();
+  realtimeChannel = supabaseClient.channel('client-'+code)
+    .on('postgres_changes', { event:'*', schema:'public', table:'projects', filter:`tracking_code=eq.${code}` }, async ()=>{
+      const updated = await loadProjectByCode(code);
+      if(updated) renderClientProject(updated);
+    }).subscribe();
+}
+function renderClientProject(proj){
+  document.getElementById('client-tracking').textContent = 'Código: ' + proj.trackingCode;
+  document.getElementById('client-project-name').textContent = proj.projectName;
+  document.getElementById('client-name').textContent = 'Cliente: ' + proj.clientName;
+  document.getElementById('client-pipeline').innerHTML = renderPipeline(proj.status);
+  document.getElementById('client-updated').textContent = 'Última atualização: ' + fmtDate(proj.updatedAt);
+  document.getElementById('client-notes').innerHTML = proj.notes ? ('<strong>Observações da equipe:</strong> ' + proj.notes) : '';
+
+  const pixArea = document.getElementById('client-pix-area');
+  if(proj.paid){
+    pixArea.innerHTML = `<div class="ccs-pix-box" style="border-color:var(--teal); border-style:solid;"><div style="color:var(--teal); font-weight:700;">✓ Pagamento confirmado. Obrigado!</div></div>`;
+  } else if(proj.pixKey){
+    pixArea.innerHTML = `
+      <div class="ccs-pix-box">
+        <div id="qr-${proj.trackingCode}" class="ccs-qr"></div>
+        <div style="flex:1; min-width:220px;">
+          <div style="font-weight:700; margin-bottom:6px;">Pagamento via PIX</div>
+          <div style="font-size:14px; color:var(--ink-soft); margin-bottom:8px;">Valor: ${proj.pixValue ? 'R$ '+Number(proj.pixValue).toFixed(2) : 'a combinar'}</div>
+          <div class="ccs-pix-key" id="pixkeytext-${proj.trackingCode}"></div>
+          <button class="ccs-btn ghost small" style="margin-top:10px;" onclick="copyPix('${proj.trackingCode}')">Copiar código PIX</button>
+        </div>
+      </div>`;
+    const payload = buildPixPayload({chave:proj.pixKey, valor:proj.pixValue, nome:'CODECRAFT SOLUTIONS', cidade:proj.pixCity, txid:proj.trackingCode});
+    document.getElementById(`pixkeytext-${proj.trackingCode}`).textContent = payload;
+    const qrEl = document.getElementById(`qr-${proj.trackingCode}`);
+    qrEl.innerHTML = '';
+    try{ new QRCode(qrEl, {text: payload, width:144, height:144, colorDark:'#12172B', colorLight:'#ffffff'}); }catch(e){}
+  } else {
+    pixArea.innerHTML = '';
+  }
+}
+function copyPix(code){
+  const el = document.getElementById('pixkeytext-'+code);
+  navigator.clipboard.writeText(el.textContent).then(()=>showToast('Código PIX copiado!'));
+}
+
+/* ================= ADMIN ================= */
+const ADMIN_PASSWORD = 'codecraft2026'; // protótipo — trocar por autenticação real antes de publicar
+let adminLoggedIn = false;
+
+function renderAdminGate(){
+  document.getElementById('admin-login-shell').style.display = adminLoggedIn ? 'none' : 'block';
+  document.getElementById('admin-main').style.display = adminLoggedIn ? 'block' : 'none';
+  document.getElementById('admin-logout-btn').style.display = adminLoggedIn ? 'inline-block' : 'none';
+  document.getElementById('admin-live').style.display = adminLoggedIn ? 'inline-flex' : 'none';
+  if(adminLoggedIn){
+    renderAdminAll();
+    stopRealtime();
+    realtimeChannel = supabaseClient.channel('admin-projects')
+      .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>renderProjectsList())
+      .on('postgres_changes', { event:'*', schema:'public', table:'messages' }, ()=>renderMessagesList())
+      .subscribe();
+  }
+}
+function adminLogin(){
+  if(!configOk){ showToast('Configure o Supabase primeiro (topo do script).'); return; }
+  const val = document.getElementById('admin-pass').value;
+  if(val === ADMIN_PASSWORD){
+    adminLoggedIn = true;
+    document.getElementById('admin-login-error').style.display = 'none';
+    renderAdminGate();
+  } else {
+    document.getElementById('admin-login-error').style.display = 'block';
+  }
+}
+function adminLogout(){ adminLoggedIn = false; stopRealtime(); renderAdminGate(); }
+
+function switchAdminTab(tab){
+  document.getElementById('tab-projetos').style.display = tab==='projetos' ? 'block' : 'none';
+  document.getElementById('tab-mensagens').style.display = tab==='mensagens' ? 'block' : 'none';
+  document.getElementById('tab-btn-projetos').classList.toggle('active', tab==='projetos');
+  document.getElementById('tab-btn-mensagens').classList.toggle('active', tab==='mensagens');
+}
+async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); }
+function toggleNewProjectForm(){
+  const f = document.getElementById('new-project-form');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+async function createProject(){
+  const clientName = document.getElementById('np-client').value.trim();
+  const projectName = document.getElementById('np-project').value.trim();
+  const pixKey = document.getElementById('np-pixkey').value.trim();
+  const pixValue = document.getElementById('np-value').value.trim();
+  const pixCity = document.getElementById('np-city').value.trim();
+  const notes = document.getElementById('np-notes').value.trim();
+  if(!clientName || !projectName){ showToast('Preencha nome do cliente e do projeto.'); return; }
+  const trackingCode = genCode();
+  const created = await insertProject({ trackingCode, clientName, projectName, pixKey, pixValue, pixCity, notes });
+  if(!created) return;
+  ['np-client','np-project','np-pixkey','np-value','np-city','np-notes'].forEach(id=>document.getElementById(id).value='');
+  toggleNewProjectForm();
+  showCodeModal(trackingCode, clientName);
+  renderProjectsList();
+}
+async function setStatus(id, status){ await updateProject(id, { status }); renderProjectsList(); }
+async function togglePaid(id, current){ await updateProject(id, { paid: !current }); renderProjectsList(); }
+async function deleteProject(id){
+  if(!confirm('Excluir este projeto? Essa ação não pode ser desfeita.')) return;
+  await deleteProjectRow(id);
+  renderProjectsList();
+}
+async function renderProjectsList(){
+  const container = document.getElementById('projects-list');
+  const projects = await loadProjects();
+  if(projects.length === 0){
+    container.innerHTML = '<div class="ccs-panel ccs-empty">Nenhum projeto ainda. Clique em "Novo projeto" para começar.</div>';
+    return;
+  }
+  container.innerHTML = `<div class="ccs-panel" style="overflow-x:auto;">
+    <table class="ccs-table">
+      <thead><tr><th>Código</th><th>Cliente / Projeto</th><th>Status</th><th>PIX</th><th></th></tr></thead>
+      <tbody>
+        ${projects.map(p=>`
+          <tr>
+            <td class="mono">${p.trackingCode}</td>
+            <td><strong>${p.clientName}</strong><br><span style="color:var(--ink-soft); font-size:13px;">${p.projectName}</span></td>
+            <td>
+              <div class="ccs-status-btns">
+                <button class="${p.status==='analise'?'active-analise':''}" onclick="setStatus('${p.id}','analise')">Em análise</button>
+                <button class="${p.status==='andamento'?'active-andamento':''}" onclick="setStatus('${p.id}','andamento')">Em andamento</button>
+                <button class="${p.status==='concluido'?'active-concluido':''}" onclick="setStatus('${p.id}','concluido')">Concluído</button>
+              </div>
+            </td>
+            <td>
+              ${p.pixKey ? `R$ ${p.pixValue ? Number(p.pixValue).toFixed(2) : '—'}<br><button class="ccs-btn ${p.paid?'ghost':'amber'} small" style="margin-top:6px;" onclick="togglePaid('${p.id}', ${p.paid})">${p.paid ? 'Marcado como pago ✓' : 'Marcar como pago'}</button>` : '<span style="color:var(--ink-soft);">sem PIX</span>'}
+            </td>
+            <td><button class="ccs-btn ghost small" onclick="deleteProject('${p.id}')">Excluir</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+let currentCode = null;
+function showCodeModal(code, clientName){
+  currentCode = code;
+  document.getElementById('modal-code').textContent = code;
+  document.getElementById('modal-client-name').textContent = clientName;
+  document.getElementById('code-modal').style.display = 'flex';
+}
+function closeCodeModal(){
+  document.getElementById('code-modal').style.display = 'none';
+  currentCode = null;
+}
+function copyCode(){
+  if(currentCode){
+    navigator.clipboard.writeText(currentCode).then(()=>showToast('Código copiado!'));
+  }
+}
+function createProjectFromMessage(msgId, name, contact, msg){
+  switchAdminTab('projetos');
+  const f = document.getElementById('new-project-form');
+  f.style.display = 'block';
+  document.getElementById('np-client').value = name;
+  document.getElementById('np-notes').value = `Contato: ${contact}\nMensagem: ${msg}`;
+  document.getElementById('np-project').focus();
+}
+async function renderMessagesList(){
+  const container = document.getElementById('messages-list');
+  const messages = await loadMessages();
+  if(messages.length === 0){
+    container.innerHTML = '<div class="ccs-panel ccs-empty">Nenhuma mensagem recebida ainda.</div>';
+    return;
+  }
+  container.innerHTML = messages.map(m=>`
+    <div class="ccs-panel" style="margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+        <strong>${m.name}</strong>
+        <span style="font-size:12.5px; color:var(--ink-soft);">${fmtDate(m.createdAt)}</span>
+      </div>
+      <div style="font-size:13px; color:var(--ink-soft); margin:4px 0 8px;">${m.contact}</div>
+      <div style="font-size:14.5px; margin-bottom:12px;">${m.msg}</div>
+      <button class="ccs-btn amber small" onclick="createProjectFromMessage('${m.id}', '${m.name.replace(/'/g, "\\'")}', '${m.contact.replace(/'/g, "\\'")}', '${m.msg.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">Criar projeto a partir desta mensagem</button>
+    </div>
+  `).join('');
+}
+
+/* ================= INIT ================= */
+typeHero();
+</script>
+</body>
+</html>
