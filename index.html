@@ -79,6 +79,20 @@
   .ccs-card h3{font-size:17px; font-weight:700;}
   .ccs-card p{color:var(--ink-soft); font-size:14.5px; margin-top:8px;}
 
+  /* ===== Tabela de preços ===== */
+  .ccs-price-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:38px;}
+  .ccs-price-card{position:relative; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:26px; display:flex; flex-direction:column;}
+  .ccs-price-card.featured{border:2px solid var(--amber); box-shadow:0 14px 40px rgba(232,163,61,.18);}
+  .ccs-price-badge{position:absolute; top:-12px; right:18px; background:var(--amber); color:#221304; font-size:11.5px; font-weight:800; padding:5px 12px; border-radius:20px; text-transform:uppercase; letter-spacing:.05em;}
+  .ccs-price-tag{font-size:15px; font-weight:700; color:var(--ink);}
+  .ccs-price{font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:800; margin:10px 0 4px; color:var(--panel);}
+  .ccs-price .from{display:block; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em;}
+  .ccs-price .per{font-size:15px; color:var(--ink-soft);}
+  .ccs-price-card ul{list-style:none; padding:0; margin:14px 0 20px; flex:1;}
+  .ccs-price-card ul li{font-size:14px; color:var(--ink-soft); padding:6px 0 6px 22px; position:relative;}
+  .ccs-price-card ul li::before{content:'✓'; position:absolute; left:0; color:var(--teal); font-weight:800;}
+  .ccs-price-card .ccs-btn{width:100%; text-align:center; justify-content:center;}
+
   .ccs-pipeline{display:flex; align-items:flex-start; gap:0; margin-top:44px; flex-wrap:wrap;}
   .ccs-stage{flex:1; min-width:180px; position:relative; padding:0 18px 0 0;}
   .ccs-stage .node{width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:13px; color:#fff; margin-bottom:14px; border:2px solid transparent;}
@@ -195,6 +209,7 @@
     .ccs-nav{padding:16px 20px;} .ccs-nav-links{gap:14px; font-size:13px;}
     .ccs-section{padding:56px 22px;}
     .ccs-grid-3{grid-template-columns:1fr;}
+    .ccs-price-grid{grid-template-columns:1fr;}
     .ccs-about, .ccs-contact-wrap{grid-template-columns:1fr;}
     .ccs-about .mark{display:none;}
     .ccs-app-header{padding:16px 20px;}
@@ -214,6 +229,7 @@
     <div class="ccs-nav-links">
       <a href="#quem-somos">Quem somos</a>
       <a href="#servicos">Serviços</a>
+      <a href="#precos">Preços</a>
       <a href="#como-funciona">Como funciona</a>
       <a href="#contato">Contato</a>
       <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" aria-label="Instagram da CodeCraft Solutions" style="display:flex; align-items:center;">
@@ -263,6 +279,66 @@
       <div class="ccs-card"><div class="num">05</div><h3>Acompanhamento em tempo real</h3><p>Portal próprio para você ver o status do seu projeto sem precisar chamar no zap.</p></div>
       <div class="ccs-card"><div class="num">06</div><h3>Suporte pós-entrega</h3><p>Ajuste fino, correções e evolução depois que o projeto vai ao ar.</p></div>
     </div>
+  </section>
+
+  <section class="ccs-section ccs-section-tight" id="precos">
+    <div class="ccs-eyebrow">Tabela de preços</div>
+    <h2>Preços justos, sem pegadinha</h2>
+    <p class="ccs-lede">Valores <strong>a partir de</strong> — o preço final é combinado conforme o tamanho do projeto. Pediu mais coisa, a gente conversa e ajusta.</p>
+    <div class="ccs-price-grid">
+      <div class="ccs-price-card">
+        <div class="ccs-price-tag">Landing page</div>
+        <div class="ccs-price"><span class="from">a partir de</span> R$ 800</div>
+        <ul>
+          <li>Página única de alta conversão</li>
+          <li>Formulário de contato / WhatsApp</li>
+          <li>Otimizada para celular</li>
+        </ul>
+        <button class="ccs-btn amber" onclick="openLeadFromPricing('Landing page')">Quero um orçamento</button>
+      </div>
+      <div class="ccs-price-card">
+        <div class="ccs-price-tag">Site institucional</div>
+        <div class="ccs-price"><span class="from">a partir de</span> R$ 1.500</div>
+        <ul>
+          <li>Várias páginas (Home, Sobre, Contato…)</li>
+          <li>Design da sua marca</li>
+          <li>Google e redes sociais</li>
+        </ul>
+        <button class="ccs-btn amber" onclick="openLeadFromPricing('Site institucional')">Quero um orçamento</button>
+      </div>
+      <div class="ccs-price-card featured">
+        <div class="ccs-price-badge">Mais procurado</div>
+        <div class="ccs-price-tag">Loja virtual</div>
+        <div class="ccs-price"><span class="from">a partir de</span> R$ 2.500</div>
+        <ul>
+          <li>Catálogo de produtos</li>
+          <li>Pagamento e frete</li>
+          <li>Painel para você gerenciar</li>
+        </ul>
+        <button class="ccs-btn amber" onclick="openLeadFromPricing('Loja virtual')">Quero um orçamento</button>
+      </div>
+      <div class="ccs-price-card">
+        <div class="ccs-price-tag">Sistema / App sob medida</div>
+        <div class="ccs-price"><span class="from">sob orçamento</span> a partir de R$ 5.000</div>
+        <ul>
+          <li>Feito para o seu processo</li>
+          <li>Painéis, cadastros e integrações</li>
+          <li>Escopo definido junto com você</li>
+        </ul>
+        <button class="ccs-btn amber" onclick="openLeadFromPricing('Sistema/App sob medida')">Quero um orçamento</button>
+      </div>
+      <div class="ccs-price-card">
+        <div class="ccs-price-tag">Manutenção mensal</div>
+        <div class="ccs-price"><span class="from">a partir de</span> R$ 150<span class="per">/mês</span></div>
+        <ul>
+          <li>Ajustes e correções</li>
+          <li>Pequenas melhorias no mês</li>
+          <li>Suporte prioritário</li>
+        </ul>
+        <button class="ccs-btn amber" onclick="openLeadFromPricing('Manutenção mensal')">Quero um orçamento</button>
+      </div>
+    </div>
+    <p style="font-size:13px; color:var(--ink-soft); margin-top:18px;">Os valores são um ponto de partida. Projetos maiores ou com mais recursos têm orçamento personalizado — <strong>fale com a gente</strong> que montamos um preço sob medida.</p>
   </section>
 
   <section class="ccs-section" id="como-funciona" style="background:var(--paper-dim); max-width:none; margin-top:20px;">
@@ -898,6 +974,14 @@ function initLead(){
   leadCode = localStorage.getItem('ccs_lead_code');
   leadName = localStorage.getItem('ccs_lead_name');
 }
+let pendingLeadPrefill = '';
+function openLeadFromPricing(service){
+  pendingLeadPrefill = `Olá! Tenho interesse em: ${service}. Pode me passar um orçamento?`;
+  const panel = document.getElementById('lead-panel');
+  if(panel.style.display === 'none' || !panel.style.display) toggleLeadWidget();
+  const input = document.getElementById('lead-input');
+  if(leadCode && input){ input.value = pendingLeadPrefill; input.focus(); pendingLeadPrefill = ''; }
+}
 function toggleLeadWidget(){
   const panel = document.getElementById('lead-panel');
   const willOpen = panel.style.display === 'none' || !panel.style.display;
@@ -928,6 +1012,11 @@ async function startLead(){
   document.getElementById('lead-chat-step').style.display = 'block';
   renderLeadChat();
   startLeadLive();
+  if(pendingLeadPrefill){
+    const input = document.getElementById('lead-input');
+    if(input){ input.value = pendingLeadPrefill; input.focus(); }
+    pendingLeadPrefill = '';
+  }
 }
 async function sendLead(){
   if(!leadCode) return;
