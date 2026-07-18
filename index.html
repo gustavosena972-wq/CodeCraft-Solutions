@@ -537,10 +537,11 @@
     <div class="ccs-panel" style="max-width:380px; margin:0 auto;">
       <div class="ccs-eyebrow">Acesso restrito</div>
       <h2 style="font-size:20px;">Entrar no painel</h2>
-      <p style="color:var(--ink-soft); font-size:13.5px; margin:10px 0 18px;">A senha fica no próprio código do site — simples para começar, mas troque por um login de verdade antes de usar com dados sensíveis.</p>
-      <div class="ccs-field"><label>Senha</label><input id="admin-pass" type="password" placeholder="Senha do admin"></div>
+      <p style="color:var(--ink-soft); font-size:13.5px; margin:10px 0 18px;">Entre com o e-mail e a senha do seu usuário. Seu usuário é criado no Supabase (Authentication → Users) — a senha não fica mais no código.</p>
+      <div class="ccs-field"><label>E-mail</label><input id="admin-email" type="email" placeholder="seu@email.com" autocomplete="username"></div>
+      <div class="ccs-field"><label>Senha</label><input id="admin-pass" type="password" placeholder="Sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()"></div>
       <button class="ccs-btn amber" style="width:100%;" onclick="adminLogin()">Entrar</button>
-      <p id="admin-login-error" style="color:var(--danger); font-size:13px; margin-top:10px; display:none;">Senha incorreta.</p>
+      <p id="admin-login-error" style="color:var(--danger); font-size:13px; margin-top:10px; display:none;">E-mail ou senha incorretos.</p>
     </div>
   </div>
 
@@ -1141,7 +1142,6 @@ function stopLeadLive(){
 }
 
 /* ================= ADMIN ================= */
-const ADMIN_PASSWORD = 'codecraft2026'; // protótipo — trocar por autenticação real antes de publicar
 let adminLoggedIn = false;
 
 function renderAdminGate(){
@@ -1165,18 +1165,42 @@ function renderAdminGate(){
     });
   }
 }
-function adminLogin(){
+async function adminLogin(){
   if(!configOk){ showToast('Configure o Supabase primeiro (topo do script).'); return; }
-  const val = document.getElementById('admin-pass').value;
-  if(val === ADMIN_PASSWORD){
-    adminLoggedIn = true;
-    document.getElementById('admin-login-error').style.display = 'none';
-    renderAdminGate();
-  } else {
-    document.getElementById('admin-login-error').style.display = 'block';
+  const email = document.getElementById('admin-email').value.trim();
+  const password = document.getElementById('admin-pass').value;
+  const errEl = document.getElementById('admin-login-error');
+  if(!email || !password){
+    errEl.textContent = 'Preencha o e-mail e a senha.';
+    errEl.style.display = 'block';
+    return;
   }
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if(error){
+    errEl.textContent = 'E-mail ou senha incorretos.';
+    errEl.style.display = 'block';
+    return;
+  }
+  adminLoggedIn = true;
+  errEl.style.display = 'none';
+  document.getElementById('admin-pass').value = '';
+  renderAdminGate();
 }
-function adminLogout(){ adminLoggedIn = false; stopRealtime(); renderAdminGate(); }
+async function adminLogout(){
+  adminLoggedIn = false;
+  stopRealtime();
+  if(supabaseClient){ await supabaseClient.auth.signOut(); }
+  renderAdminGate();
+}
+/* Restaura a sessão do admin se ele já estiver logado (Supabase Auth). */
+if(configOk){
+  supabaseClient.auth.getSession().then(({ data })=>{
+    adminLoggedIn = !!(data && data.session);
+    if(adminLoggedIn && document.getElementById('screen-admin').style.display === 'block'){
+      renderAdminGate();
+    }
+  });
+}
 
 const ADMIN_TABS = ['projetos','mensagens','conversas','empresa'];
 function switchAdminTab(tab){
