@@ -374,7 +374,7 @@
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
           <div class="ccs-field"><label>Nome do cliente</label><input id="np-client"></div>
           <div class="ccs-field"><label>Nome do projeto</label><input id="np-project"></div>
-          <div class="ccs-field"><label>Chave PIX</label><input id="np-pixkey" value="+5531999758385" placeholder="CPF, e-mail, telefone ou chave aleatória"></div>
+          <div class="ccs-field"><label>Chave PIX</label><input id="np-pixkey" list="np-pixkey-options" value="+5531999758385" placeholder="CPF, e-mail, telefone ou chave aleatória"><datalist id="np-pixkey-options"><option value="+5531999758385">Inter (principal)</option><option value="+5531972003195">Segundo número</option></datalist></div>
           <div class="ccs-field"><label>Valor (R$)</label><input id="np-value" type="number" step="0.01" placeholder="0.00"></div>
           <div class="ccs-field"><label>Cidade (para o PIX)</label><input id="np-city" value="BELO HORIZONTE" placeholder="Ex: SAO PAULO"></div>
           <div class="ccs-field"><label>Observações para o cliente</label><input id="np-notes" placeholder="Opcional"></div>
@@ -453,7 +453,8 @@ const SUPABASE_ANON_KEY = 'sb_publishable_cDjtfaScPpBj-JHSCwagng_LoKGL-IN';
 
 /* Dados da empresa para o PIX. A chave abaixo (telefone) é onde o dinheiro cai. */
 const COMPANY_NAME = 'CODECRAFT SOLUTIONS';
-const COMPANY_PIX_KEY = '+5531999758385';   // chave PIX principal (telefone)
+const COMPANY_PIX_KEY = '+5531999758385';   // chave PIX principal (telefone, Banco Inter)
+const COMPANY_PIX_KEY_ALT = '+5531972003195'; // segundo número (opção alternativa)
 const COMPANY_PIX_CITY = 'BELO HORIZONTE';
 /* Intervalo (ms) do fallback de atualização automática caso o realtime falhe. */
 const LIVE_POLL_MS = 4000;
