@@ -46,6 +46,8 @@
   .ccs-nav-links{display:flex; gap:28px; align-items:center; font-size:14px; flex-wrap:wrap; justify-content:flex-end;}
   .ccs-nav-links a{text-decoration:none; color:var(--ink-soft); font-weight:600;}
   .ccs-nav-links a:hover{color:var(--ink);}
+  .ccs-nav-links a.ccs-btn{color:var(--ink); font-weight:700;}
+  .ccs-nav-links a.ccs-btn.ghost:hover{background:transparent; color:var(--ink);}
   .ccs-btn{border:none; padding:10px 18px; border-radius:8px; font-weight:700; font-size:14px; background:var(--ink); color:var(--paper); transition:transform .15s ease, background .15s ease;}
   .ccs-btn:hover{transform:translateY(-1px); background:#000;}
   .ccs-btn.ghost{background:transparent; color:var(--ink); border:1.5px solid var(--ink);}
@@ -257,7 +259,6 @@
     <div class="ccs-nav-links">
       <a href="#quem-somos">Quem somos</a>
       <a href="#servicos">Serviços</a>
-      <a href="#financas">Finanças</a>
       <a href="#como-comecar">Como começar</a>
       <a href="#precos">Preços</a>
       <a href="#como-funciona">Como funciona</a>
@@ -266,6 +267,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
       </a>
       <button class="ccs-btn ghost" onclick="showScreen('admin')">Área admin</button>
+      <a class="ccs-btn ghost" href="https://gustavosena972-wq.github.io/financas-codecraft/docs/" target="_blank" rel="noopener">Finanças</a>
       <button class="ccs-btn amber" onclick="showScreen('client')">Portal do cliente</button>
     </div>
   </nav>
@@ -285,15 +287,6 @@
       <div class="bar"><span></span><span></span><span></span></div>
       <div id="ccs-typed" class="mono"></div>
     </div>
-  </section>
-
-  <section class="ccs-section ccs-section-tight" id="financas">
-    <div class="ccs-eyebrow">Finanças CodeCraft</div>
-    <h2>Venha controlar suas finanças</h2>
-    <p class="ccs-lede">Organize o caixa, acompanhe o mês e tome decisões com clareza — para uso pessoal ou da empresa.</p>
-    <p style="margin-top:22px;">
-      <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/docs/" target="_blank" rel="noopener">Abrir Finanças CodeCraft</a>
-    </p>
   </section>
 
   <section class="ccs-section ccs-about" id="quem-somos">
