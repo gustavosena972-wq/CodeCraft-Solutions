@@ -156,7 +156,7 @@
   .ccs-tab.active{color:var(--ink); border-bottom-color:var(--amber);}
 
   .ccs-admin-layout{display:flex; align-items:flex-start; gap:26px; max-width:1180px; margin:0 auto; padding:32px 24px;}
-  .ccs-admin-nav{flex:0 0 210px; position:sticky; top:24px; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:14px; display:flex; flex-direction:column; gap:4px;}
+  .ccs-admin-nav{flex:0 0 210px; position:sticky; top:24px; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:14px; display:flex; flex-direction:column; gap:4px; max-height:calc(100vh - 120px); overflow:auto;}
   .ccs-admin-nav-title{font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); padding:6px 10px 10px;}
   .ccs-navitem{display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding:11px 12px; border-radius:9px; font-weight:600; font-size:14.5px; color:var(--ink-soft); background:none; border:none; cursor:pointer; transition:background .12s, color .12s;}
   .ccs-navitem .ico{font-size:16px; width:20px; text-align:center;}
@@ -176,6 +176,24 @@
   .ccs-live-dot{display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace;}
   .ccs-live-dot .d{width:7px;height:7px;border-radius:50%; background:var(--teal); animation:pulse 1.6s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  @keyframes rise{from{opacity:0; transform:translateY(16px);}to{opacity:1; transform:none;}}
+  @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+  .ccs-hero .ccs-hero-copy{animation:rise .7s ease both;}
+  .ccs-terminal{animation:rise .8s ease both .12s, floaty 6s ease-in-out 1s infinite;}
+  .ccs-card, .ccs-price-card, .ccs-step, .ccs-panel, .ccs-metric{
+    transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  }
+  .ccs-card:hover, .ccs-price-card:hover, .ccs-step:hover{
+    transform:translateY(-4px);
+    box-shadow:0 16px 36px rgba(18,23,43,.08);
+  }
+  .ccs-reveal{opacity:0; transform:translateY(18px); transition:opacity .55s ease, transform .55s ease;}
+  .ccs-reveal.in{opacity:1; transform:none;}
+  @media (prefers-reduced-motion:reduce){
+    .ccs-hero .ccs-hero-copy, .ccs-terminal, .ccs-live-dot .d{animation:none;}
+    .ccs-card, .ccs-price-card, .ccs-step, .ccs-reveal{transition:none; opacity:1; transform:none;}
+    .ccs-card:hover, .ccs-price-card:hover, .ccs-step:hover{transform:none; box-shadow:none;}
+  }
 
   /* ===== Chat (estilo WhatsApp) ===== */
   .ccs-chat-layout{display:grid; grid-template-columns:260px 1fr; gap:16px;}
@@ -281,7 +299,7 @@
   </nav>
 
   <section class="ccs-hero">
-    <div>
+    <div class="ccs-hero-copy">
       <div class="ccs-hero-eyebrow">// software sob medida</div>
       <h1>Sua ideia,<br>em <span>produção</span>.</h1>
       <p>A CodeCraft Solutions transforma sistemas, sites e aplicativos em produtos reais — com acompanhamento aberto, do primeiro commit até a entrega.</p>
@@ -306,8 +324,8 @@
     </div>
     <div class="ccs-financas-side" id="financas">
       <div class="ccs-eyebrow">Finanças CodeCraft</div>
-      <h2>Venha controlar suas finanças</h2>
-      <p class="ccs-lede">Organize o caixa, acompanhe o mês e tome decisões com clareza — para uso pessoal ou da empresa.</p>
+      <h2>Controle o caixa com a planilha e a IA</h2>
+      <p class="ccs-lede">Manda seus gastos. O Finanças CodeCraft monta o caixa, prevê o mês e aponta o que cortar. Pessoal ou empresa.</p>
       <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/docs/" target="_blank" rel="noopener">Abrir Finanças CodeCraft</a>
     </div>
   </section>
@@ -573,7 +591,9 @@
       <button class="ccs-navitem" id="tab-btn-clientes" onclick="switchAdminTab('clientes')"><span class="ico">▣</span> Clientes</button>
       <button class="ccs-navitem" id="tab-btn-cacar" onclick="switchAdminTab('cacar')"><span class="ico">◎</span> Caçar</button>
       <button class="ccs-navitem" id="tab-btn-postar" onclick="switchAdminTab('postar')"><span class="ico">▶</span> Postar</button>
-      <button class="ccs-navitem" id="tab-btn-ia" onclick="switchAdminTab('ia')"><span class="ico">AI</span> IA admin</button>
+      <button class="ccs-navitem" id="tab-btn-ia" onclick="switchAdminTab('ia')"><span class="ico">AI</span> IA</button>
+      <button class="ccs-navitem" id="tab-btn-agenda" onclick="switchAdminTab('agenda')"><span class="ico">▣</span> Agenda</button>
+      <button class="ccs-navitem" id="tab-btn-ferramentas" onclick="switchAdminTab('ferramentas')"><span class="ico">⌘</span> Ferramentas</button>
       <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')"><span class="ico">✉️</span> Mensagens</button>
       <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')"><span class="ico">💬</span> Conversas</button>
       <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')"><span class="ico">📊</span> Empresa</button>
@@ -659,12 +679,57 @@
     </div>
 
     <div id="tab-ia" style="display:none;">
-      <h2 style="font-size:20px; margin-bottom:8px;">IA admin</h2>
-      <div class="ccs-help">Ela lê seus projetos, o mercado (dólar, bolsa, Selic) e executa: cobrar, buscar, postar. Escreva como no WhatsApp. Ex.: “cobra quem deve”, “busca clínicas em BH”, “posta no LinkedIn”.</div>
-      <div class="ccs-ai-box" id="admin-ai-log"></div>
+      <h2 style="font-size:20px; margin-bottom:8px;">IA da operação</h2>
+      <div class="ccs-help">Ela não dá recado: ela cobra, caça cliente, escolhe o canal, escreve o post, lê o mercado e abre o WhatsApp. Escreve como no zap.</div>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
+        <button class="ccs-btn ghost small" onclick="runAiOrder('cobra todo mundo')">Cobrar todos</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('acha clientes de clinica')">Achar clínicas</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('posta no melhor canal')">Postar agora</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('analisa o mercado e age')">Mercado</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('responde conversa parada')">Chat parado</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('gera proposta')">Proposta</button>
+      </div>
+      <div class="ccs-ai-box" id="admin-ai-log" style="min-height:280px; max-height:460px;"></div>
       <div class="ccs-chat-input" style="border:1px solid var(--line); border-radius:10px; margin-top:10px; background:#fff;">
-        <input id="admin-ai-input" placeholder="O que precisa agora?" onkeydown="if(event.key==='Enter')sendAdminAi()">
+        <input id="admin-ai-input" placeholder="Ex.: acha  loja em Contagem, cobra o próximo, onde postar hoje" onkeydown="if(event.key==='Enter')sendAdminAi()">
         <button class="ccs-btn amber" onclick="sendAdminAi()">Fazer</button>
+      </div>
+    </div>
+
+    <div id="tab-agenda" style="display:none;">
+      <h2 style="font-size:20px; margin-bottom:8px;">Agenda da operação</h2>
+      <div class="ccs-help">Cobrança, retorno de lead e conversa parada. Marca o que você fez. A IA também cria item aqui quando cobra ou caça.</div>
+      <div class="ccs-panel" style="margin-bottom:14px;">
+        <div style="display:grid; grid-template-columns:2fr 1fr auto; gap:10px; align-items:end;">
+          <div class="ccs-field"><label>O que fazer</label><input id="task-title" placeholder="Retornar clínica X"></div>
+          <div class="ccs-field"><label>Quando</label><input id="task-when" type="date"></div>
+          <button class="ccs-btn amber" onclick="addTaskFromForm()">Guardar</button>
+        </div>
+      </div>
+      <div id="agenda-list"></div>
+    </div>
+
+    <div id="tab-ferramentas" style="display:none;">
+      <h2 style="font-size:20px; margin-bottom:8px;">Ferramentas do admin</h2>
+      <div class="ccs-help">Atalhos que fecham trabalho. Cada um executa, não só aponta.</div>
+      <div class="ccs-hunt-grid" id="tools-grid"></div>
+      <div class="ccs-panel" style="margin-top:16px;">
+        <div class="ccs-eyebrow">Proposta rápida</div>
+        <p style="font-size:13.5px; color:var(--ink-soft); margin:8px 0 12px;">Gera o texto, copia e abre o WhatsApp do lead ou do número que você colar.</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+          <div class="ccs-field"><label>Cliente</label><input id="prop-name" placeholder="Nome"></div>
+          <div class="ccs-field"><label>WhatsApp</label><input id="prop-phone" placeholder="31 99999-0000"></div>
+          <div class="ccs-field"><label>Serviço</label>
+            <select id="prop-service">
+              <option value="site">Site</option>
+              <option value="loja">Loja</option>
+              <option value="landing">Landing</option>
+              <option value="sistema">Sistema</option>
+              <option value="financas">Finanças CodeCraft</option>
+            </select>
+          </div>
+        </div>
+        <button class="ccs-btn amber" style="margin-top:12px;" onclick="sendProposal()">Gerar, copiar e abrir WhatsApp</button>
       </div>
     </div>
 
@@ -693,7 +758,10 @@
           <h2 style="font-size:20px; margin-bottom:4px;">Painel de controle</h2>
           <div style="font-size:13px; color:var(--ink-soft);">Visão financeira e de projetos em tempo real.</div>
         </div>
-        <button class="ccs-btn amber small" onclick="exportExcel()">↧ Exportar Excel</button>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="ccs-btn amber small" onclick="exportExcel()">↧ Exportar Excel</button>
+          <a class="ccs-btn ghost small" href="https://gustavosena972-wq.github.io/financas-codecraft/docs/" target="_blank" rel="noopener">Abrir Finanças</a>
+        </div>
       </div>
       <div class="ccs-help"><strong>Para que serve:</strong> é o painel de gestão da empresa. Mostra quanto você já recebeu e quanto tem a receber, quantos sites/lojas estão em produção e entregues, gráficos de faturamento (inclusive por tipo de serviço) e uma calculadora. O botão <strong>Exportar Excel</strong> baixa tudo em planilha (Resumo, Por serviço e Projetos).</div>
 
@@ -1175,6 +1243,7 @@ async function startLead(){
   localStorage.setItem('ccs_lead_name', name);
   document.getElementById('lead-name-step').style.display = 'none';
   document.getElementById('lead-chat-step').style.display = 'block';
+  await insertChat(code, 'admin', leadBotReply('oi', true));
   renderLeadChat();
   startLeadLive();
   if(pendingLeadPrefill){
@@ -1183,13 +1252,39 @@ async function startLead(){
     pendingLeadPrefill = '';
   }
 }
+function leadBotReply(text, isFirst){
+  const t = (text||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  if(/preco|preço|quanto custa|valor|orcamento|orçamento/.test(t))
+    return 'Preço de referência da CodeCraft: landing a partir de R$ 1.200, site a partir de R$ 1.800, loja a partir de R$ 2.800, sistema sob medida a partir de R$ 4.500. PIX só na chave 31999758385. Confirma o escopo com a equipe neste chat.';
+  if(/prazo|quando fica|quanto tempo|dias/.test(t))
+    return 'Prazo típico: landing 7 a 15 dias, site 15 a 30, loja e sistema a gente combina. Você acompanha pelo código no Portal do cliente.';
+  if(/pix|pagar|chave|pagamento/.test(t))
+    return 'A chave PIX da CodeCraft é 31999758385 (Inter). Não pague outra chave. O valor do seu projeto aparece no portal quando a equipe cadastrar.';
+  if(/financas|finanças|caixa|planilha|gastos/.test(t))
+    return 'O Finanças CodeCraft organiza gastos, monta a planilha e aponta o que cortar: https://gustavosena972-wq.github.io/financas-codecraft/docs/ — demo demo@codecraft.local / demo1234';
+  if(/whats|zap|telefone|contato/.test(t))
+    return 'WhatsApp da CodeCraft: 31 99975-8385. Pode continuar neste chat também — a equipe vê em tempo real.';
+  if(/bh|belo horizonte|contagem|nova lima|betim/.test(t) && /atend|cidade|onde/.test(t))
+    return 'Atendemos BH e região (Contagem, Betim, Nova Lima) e também online. Conta o tipo de projeto que a equipe entra.';
+  if(isFirst)
+    return 'Oi, aqui é o atendimento da CodeCraft Solutions em BH. Site, loja, sistema e o app Finanças. Conta o que você precisa — a equipe lê isto agora.';
+  return null;
+}
 async function sendLead(){
   if(!leadCode) return;
   const input = document.getElementById('lead-input');
   const body = input.value.trim();
   if(!body) return;
   const ok = await insertChat(leadCode, 'client', body);
-  if(ok){ input.value=''; await touchLead(leadCode); renderLeadChat(); }
+  if(ok){
+    input.value='';
+    await touchLead(leadCode);
+    const msgs = await loadChat(leadCode);
+    const fromAdmin = (msgs||[]).filter(m=>m.sender==='admin').length;
+    const bot = leadBotReply(body, fromAdmin===0);
+    if(bot) await insertChat(leadCode, 'admin', bot);
+    renderLeadChat();
+  }
 }
 async function renderLeadChat(){
   if(!leadCode) return;
@@ -1238,6 +1333,7 @@ function renderAdminGate(){
       if(currentChatCode) renderAdminChat();
       renderHoje();
       renderLeads();
+      renderAgenda();
       const postar = document.getElementById('tab-postar');
       if(postar && postar.style.display!=='none') renderPostar();
     });
@@ -1282,7 +1378,7 @@ if(configOk){
   });
 }
 
-const ADMIN_TABS = ['hoje','projetos','clientes','cacar','postar','ia','mensagens','conversas','empresa'];
+const ADMIN_TABS = ['hoje','projetos','clientes','cacar','postar','ia','agenda','ferramentas','mensagens','conversas','empresa'];
 function switchAdminTab(tab){
   ADMIN_TABS.forEach(t=>{
     const pane = document.getElementById('tab-'+t);
@@ -1297,8 +1393,10 @@ function switchAdminTab(tab){
   if(tab==='cacar') renderHunt();
   if(tab==='postar') renderPostar();
   if(tab==='ia') bootAdminAi();
+  if(tab==='agenda') renderAgenda();
+  if(tab==='ferramentas') renderTools();
 }
-async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); renderHoje(); renderLeads(); renderHunt(); renderPostar(); }
+async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); renderHoje(); renderLeads(); renderHunt(); renderPostar(); renderAgenda(); renderTools(); }
 function toggleNewProjectForm(){
   const f = document.getElementById('new-project-form');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
@@ -1817,8 +1915,67 @@ const HUNTS = [
   { id:'auto', label:'Oficinas e auto', maps:'https://www.google.com/maps/search/oficina+mecânica+Belo+Horizonte', google:'https://www.google.com/search?q=oficina+Belo+Horizonte+whatsapp', insta:'https://www.instagram.com/explore/tags/oficinabh/', niche:'Oficina' },
   { id:'loja', label:'Lojas e e-commerce', maps:'https://www.google.com/maps/search/loja+Belo+Horizonte', google:'https://www.google.com/search?q=loja+precisa+de+site+Belo+Horizonte', insta:'https://www.instagram.com/explore/tags/empreenderbh/', niche:'Loja' },
   { id:'saude', label:'Academias', maps:'https://www.google.com/maps/search/academia+Belo+Horizonte', google:'https://www.google.com/search?q=academia+Belo+Horizonte+contato', insta:'https://www.instagram.com/explore/tags/academiabh/', niche:'Academia' },
-  { id:'cont', label:'Contabilidade', maps:'https://www.google.com/maps/search/contador+Belo+Horizonte', google:'https://www.google.com/search?q=escritório+contabilidade+Belo+Horizonte', insta:'https://www.instagram.com/explore/tags/contadorabh/', niche:'Contador' }
+  { id:'cont', label:'Contabilidade', maps:'https://www.google.com/maps/search/contador+Belo+Horizonte', google:'https://www.google.com/search?q=escritório+contabilidade+Belo+Horizonte', insta:'https://www.instagram.com/explore/tags/contadorabh/', niche:'Contador' },
+  { id:'dent', label:'Dentistas', maps:'https://www.google.com/maps/search/dentista+Belo+Horizonte', google:'https://www.google.com/search?q=consultório+odontológico+Belo+Horizonte+whatsapp', insta:'https://www.instagram.com/explore/tags/dentistabh/', niche:'Dentista' },
+  { id:'salao', label:'Salões e estética', maps:'https://www.google.com/maps/search/salão+de+beleza+Belo+Horizonte', google:'https://www.google.com/search?q=salão+beleza+Belo+Horizonte+whatsapp', insta:'https://www.instagram.com/explore/tags/salaobh/', niche:'Salão' },
+  { id:'pet', label:'Pet shop', maps:'https://www.google.com/maps/search/pet+shop+Belo+Horizonte', google:'https://www.google.com/search?q=pet+shop+Belo+Horizonte+contato', insta:'https://www.instagram.com/explore/tags/petbh/', niche:'Pet shop' },
+  { id:'obra', label:'Construção e reforma', maps:'https://www.google.com/maps/search/construtora+Belo+Horizonte', google:'https://www.google.com/search?q=reforma+Belo+Horizonte+orçamento+whatsapp', insta:'https://www.instagram.com/explore/tags/construçãobh/', niche:'Construção' }
 ];
+const TASKS_KEY = 'ccs-admin-tasks';
+const FINANCAS_URL = 'https://gustavosena972-wq.github.io/financas-codecraft/docs/';
+var aiMem = { unpaidI:0, lastHunt:null, lastChannel:null };
+
+function todayISO(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function loadTasks(){ try{ return JSON.parse(localStorage.getItem(TASKS_KEY)||'[]'); }catch(e){ return []; } }
+function saveTasks(list){ localStorage.setItem(TASKS_KEY, JSON.stringify(list)); }
+function addTask(title, when, type){
+  const list = loadTasks();
+  list.unshift({ id: Date.now().toString(36)+Math.random().toString(36).slice(2,6), title, when: when||todayISO(), type: type||'geral', done:false, at: new Date().toISOString() });
+  saveTasks(list.slice(0,80));
+}
+function addTaskFromForm(){
+  const title = (document.getElementById('task-title').value||'').trim();
+  const when = document.getElementById('task-when').value || todayISO();
+  if(!title){ showToast('Escreve o que fazer.'); return; }
+  addTask(title, when, 'manual');
+  document.getElementById('task-title').value = '';
+  renderAgenda();
+  showToast('Guardado na agenda.');
+}
+function toggleTask(id){
+  saveTasks(loadTasks().map(t=> t.id===id ? Object.assign({},t,{done:!t.done}) : t));
+  renderAgenda();
+}
+function removeTask(id){
+  saveTasks(loadTasks().filter(t=>t.id!==id));
+  renderAgenda();
+}
+function renderAgenda(){
+  const when = document.getElementById('task-when');
+  if(when && !when.value) when.value = todayISO();
+  const el = document.getElementById('agenda-list');
+  if(!el) return;
+  const list = loadTasks();
+  const today = todayISO();
+  const due = list.filter(t=>!t.done && t.when<=today);
+  const later = list.filter(t=>!t.done && t.when>today);
+  const done = list.filter(t=>t.done).slice(0,8);
+  function row(t){
+    return `<div class="ccs-panel" style="margin-bottom:8px; display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; ${t.done?'opacity:.55;':''}">
+      <div><strong>${escapeHtml(t.title)}</strong><br><span style="color:var(--ink-soft); font-size:12px;">${t.when} · ${t.type}</span></div>
+      <div style="display:flex; gap:6px;">
+        <button class="ccs-btn ${t.done?'ghost':'amber'} small" onclick="toggleTask('${t.id}')">${t.done?'Reabrir':'Feito'}</button>
+        <button class="ccs-btn ghost small" onclick="removeTask('${t.id}')">Tirar</button>
+      </div>
+    </div>`;
+  }
+  el.innerHTML = (due.length?`<div class="ccs-eyebrow" style="margin-bottom:8px;">Para hoje / atrasado · ${due.length}</div>`+due.map(row).join(''):'<div class="ccs-panel ccs-empty">Nada atrasado. A IA cria item quando cobra ou caça.</div>')
+    +(later.length?`<div class="ccs-eyebrow" style="margin:16px 0 8px;">Depois</div>`+later.map(row).join(''):'')
+    +(done.length?`<div class="ccs-eyebrow" style="margin:16px 0 8px;">Feito</div>`+done.map(row).join(''):'');
+}
 
 function loadCrmLeadsLocal(){
   try{ return JSON.parse(localStorage.getItem(LEADS_KEY)||'[]'); }catch(e){ return []; }
@@ -1891,6 +2048,7 @@ async function saveLeadAndPing(){
   document.getElementById('lead-name').value=''; document.getElementById('lead-phone').value='';
   await renderLeads();
   window.open(waLink(phone, pitchFor(name, niche)), '_blank');
+  addTask('Retornar '+name+(niche?' · '+niche:''), todayISO(), 'lead');
   showToast('Lead salvo no painel ao vivo. WhatsApp aberto.');
 }
 async function markLead(id, status){
@@ -1940,38 +2098,49 @@ function renderHunt(){
       </div>
     </div>`).join('');
 }
-function runHunt(id){
+function runHunt(id, city){
   const h = HUNTS.find(x=>x.id===id);
   if(!h) return;
-  window.open(h.maps, '_blank');
-  window.open(h.google, '_blank');
+  const place = city || 'Belo Horizonte';
+  const q = encodeURIComponent((h.niche||h.label)+' '+place);
+  window.open('https://www.google.com/maps/search/'+q, '_blank');
+  window.open('https://www.google.com/search?q='+q+'+whatsapp+contato', '_blank');
+  if(h.insta) window.open(h.insta, '_blank');
   const niche = document.getElementById('lead-niche');
   if(niche) niche.value = h.niche;
-  showToast('Maps e Google abertos. Cole o nome em Clientes.');
+  const nameEl = document.getElementById('lead-name');
+  if(nameEl && !nameEl.value) nameEl.placeholder = 'Cole o nome que achou em '+place;
+  aiMem.lastHunt = { id:h.id, city:place };
+  addTask('Caçar '+h.label+' em '+place, todayISO(), 'cacar');
+  showToast('Maps, Google e Instagram abertos. Cole o nome em Clientes.');
   switchAdminTab('clientes');
 }
 
-function todayPosts(){
+function todayPosts(mkt){
   const day = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long' });
+  const extra = mkt && mkt.usd!=null ? ('\nMercado agora: dólar R$ '+moneyFx(mkt.usd)+(mkt.selic!=null?', Selic '+mkt.selic+'%':'')+'. Quem controla o caixa fecha o mês — Finanças CodeCraft.') : '';
   return {
-    linkedin: 'CodeCraft Solutions · '+day+'\n\nEmpresa da Grande BH ainda vende no WhatsApp e perde pedido porque o site não fecha o orçamento.\nA gente entrega site, loja e sistema com acompanhamento em tempo real e PIX na hora.\n\nSe você atende cliente em BH e quer um modelo este mês, chame: 31 99975-8385.',
+    linkedin: 'CodeCraft Solutions · '+day+'\n\nEmpresa da Grande BH ainda vende no WhatsApp e perde pedido porque o site não fecha o orçamento.\nA gente entrega site, loja e sistema com acompanhamento em tempo real e PIX na hora.'+extra+'\n\nSe você atende cliente em BH e quer um modelo este mês, chame: 31 99975-8385.',
     instagram: 'Seu cliente pesquisa no Google. Se não acha a sua empresa, acha a do vizinho.\nSite + WhatsApp + PIX. Feito em BH.\nCodeCraft Solutions · 31 99975-8385',
     google: 'Criação de sites, lojas e sistemas em Belo Horizonte. Acompanhe o projeto ao vivo. PIX 31999758385. WhatsApp 31 99975-8385.',
     whatsapp: 'CodeCraft Solutions — site, loja e sistema em BH. Você acompanha o andamento no portal. Chama no 31 99975-8385.'
   };
 }
-function bestChannel(projects, messages){
+function bestChannel(projects, messages, mkt){
   const unpaid = (projects||[]).filter(p=>!p.paid && Number(p.pixValue)>0).length;
   const hour = new Date().getHours();
   const inbound = (messages||[]).length;
+  const usd = Number(mkt && mkt.usdPct) || 0;
+  const ibov = Number(mkt && mkt.ibovPct) || 0;
   if(unpaid >= 1) return { id:'whatsapp', label:'WhatsApp', why:'Tem cobrança em aberto. Fechar o que já começou rende mais do que post novo.' };
   if(inbound > 0 && hour >= 9 && hour <= 18) return { id:'whatsapp', label:'WhatsApp', why:'Já chega pedido pelo site. Responder e cobrar fecha mais do que postar agora.' };
+  if(Math.abs(usd) >= 0.8 || ibov <= -1) return { id:'linkedin', label:'LinkedIn', why:'Mercado mexeu. Post de caixa e preço em real fecha mais no LinkedIn agora.' };
   if(hour >= 8 && hour <= 11) return { id:'google', label:'Google Meu Negócio', why:'Manhã é hora de busca local: “criar site BH”.' };
   if(hour >= 11 && hour <= 14) return { id:'linkedin', label:'LinkedIn', why:'Horário comercial B2B. Ticket maior.' };
   return { id:'instagram', label:'Instagram', why:'Prova de trabalho fora do expediente. Bom para aparecer, não para fechar sozinho.' };
 }
-function copyPost(kind){
-  const p = todayPosts();
+function copyPost(kind, mkt){
+  const p = todayPosts(mkt || marketCache);
   const text = p[kind] || p.whatsapp;
   navigator.clipboard.writeText(text).then(()=>{
     const done = JSON.parse(localStorage.getItem(POSTS_KEY)||'{}');
@@ -1981,8 +2150,8 @@ function copyPost(kind){
     renderPostar();
   });
 }
-function openPost(kind){
-  copyPost(kind);
+function openPost(kind, mkt){
+  copyPost(kind, mkt);
   const urls = {
     linkedin:'https://www.linkedin.com/feed/',
     instagram:'https://www.instagram.com/',
@@ -1996,8 +2165,9 @@ async function renderPostar(){
   if(!el) return;
   const projects = await loadProjects();
   const messages = await loadMessages();
-  const ch = bestChannel(projects, messages);
-  const posts = todayPosts();
+  const mkt = await loadMarket();
+  const ch = bestChannel(projects, messages, mkt);
+  const posts = todayPosts(mkt);
   const keys = [['linkedin','LinkedIn'],['instagram','Instagram'],['google','Google'],['whatsapp','WhatsApp Status']];
   el.innerHTML = `
     <div class="ccs-panel" style="margin-bottom:14px; border-color:var(--amber);">
@@ -2018,14 +2188,22 @@ async function renderPostar(){
 let marketCache = null;
 async function loadMarket(){
   if(marketCache && (Date.now()-marketCache.at)<20*1000) return marketCache;
-  const out = { usd:null, ibov:null, selic:null, at: Date.now() };
+  const out = { usd:null, usdPct:null, eur:null, ibov:null, ibovPct:null, selic:null, ipca:null, at: Date.now() };
   try{
     const selic = await fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json');
     if(selic.ok){ const j = await selic.json(); out.selic = j[0] && j[0].valor; }
   }catch(e){}
   try{
-    const usd = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL');
-    if(usd.ok){ const j = await usd.json(); out.usd = j.USDBRL && Number(j.USDBRL.bid); out.usdPct = j.USDBRL && j.USDBRL.pctChange; }
+    const ipca = await fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados/ultimos/1?formato=json');
+    if(ipca.ok){ const j = await ipca.json(); out.ipca = j[0] && j[0].valor; }
+  }catch(e){}
+  try{
+    const fx = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL');
+    if(fx.ok){
+      const j = await fx.json();
+      if(j.USDBRL){ out.usd = Number(j.USDBRL.bid); out.usdPct = j.USDBRL.pctChange; }
+      if(j.EURBRL){ out.eur = Number(j.EURBRL.bid); }
+    }
   }catch(e){}
   try{
     const ib = await fetch('https://brapi.dev/api/quote/%5EBVSP');
@@ -2046,39 +2224,132 @@ async function renderHoje(){
   const unpaid = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
   const stuck = projects.filter(p=>p.status==='analise' || (p.status==='andamento' && !p.deliveryUrl));
   const leads = (await loadCrmLeads()).filter(l=>l.status==='aberto');
-  const ch = bestChannel(projects, messages);
   const mkt = await loadMarket();
+  const ch = bestChannel(projects, messages, mkt);
+  const due = loadTasks().filter(x=>!x.done && x.when<=todayISO()).length;
+  const analysis = analyzeMarket(mkt);
   metrics.innerHTML = `
     <div class="ccs-metric receber"><div class="lbl">A receber</div><div class="val">${unpaid.length}</div><div class="sub">projetos sem PIX marcado</div></div>
     <div class="ccs-metric"><div class="lbl">Em produção</div><div class="val">${stuck.length}</div><div class="sub">análise ou sem link</div></div>
-    <div class="ccs-metric"><div class="lbl">Leads abertos</div><div class="val">${leads.length}</div><div class="sub">na fila de Clientes</div></div>
+    <div class="ccs-metric"><div class="lbl">Leads / agenda</div><div class="val">${leads.length}</div><div class="sub">${due} item(ns) para hoje</div></div>
     <div class="ccs-metric"><div class="lbl">Canal de agora</div><div class="val" style="font-size:18px;">${ch.label}</div><div class="sub">${ch.why}</div></div>`;
-  marketEl.innerHTML = `<div class="ccs-eyebrow">Mercado agora</div>
+  marketEl.innerHTML = `<div class="ccs-eyebrow">Mercado agora · ação de hoje</div>
     <div style="display:flex; gap:18px; flex-wrap:wrap; margin-top:8px; font-family:JetBrains Mono,monospace; font-size:14px;">
       <span>Dólar R$ ${moneyFx(mkt.usd)} ${mkt.usdPct!=null?'('+mkt.usdPct+'%)':''}</span>
-      <span>Ibovespa ${mkt.ibov!=null?Number(mkt.ibov).toLocaleString('pt-BR'):'—'}</span>
+      <span>Euro R$ ${moneyFx(mkt.eur)}</span>
+      <span>Ibovespa ${mkt.ibov!=null?Number(mkt.ibov).toLocaleString('pt-BR'):'—'} ${mkt.ibovPct!=null?'('+Number(mkt.ibovPct).toFixed(2)+'%)':''}</span>
       <span>Selic ${mkt.selic!=null?mkt.selic+'%':'—'}</span>
+      <span>IPCA ${mkt.ipca!=null?mkt.ipca+'%':'—'}</span>
     </div>
-    <div style="font-size:12.5px; color:var(--ink-soft); margin-top:8px;">Serve para conversar com cliente de sistema financeiro e para precificar em real.</div>`;
+    <p style="font-size:13px; margin-top:10px;">${escapeHtml(analysis.copy)}</p>
+    <button class="ccs-btn amber small" style="margin-top:8px;" onclick="runAiOrder('analisa o mercado e age')">Postar com esse mercado</button>`;
   const firstUnpaid = unpaid[0];
   const firstLead = leads[0];
   actions.innerHTML = `
     <div class="ccs-eyebrow" style="margin-bottom:10px;">Ações</div>
     ${firstUnpaid ? `<button class="ccs-btn amber" onclick="chaseUnpaid()">Cobrar ${escapeHtml(firstUnpaid.clientName)} · ${money(Number(firstUnpaid.pixValue))}</button>` : '<p style="color:var(--ink-soft);">Nada a cobrar no PIX agora.</p>'}
+    ${unpaid.length>1 ? `<button class="ccs-btn ghost" style="margin-top:8px;" onclick="chaseAllUnpaid()">Cobrar todos (${unpaid.length})</button>` : ''}
     ${firstLead ? `<button class="ccs-btn" style="margin-top:8px;" onclick="openLeadWa('${firstLead.id}')">Chamar lead ${escapeHtml(firstLead.name)}</button>` : ''}
     <button class="ccs-btn ghost" style="margin-top:8px;" onclick="runHunt('clinica')">Caçar clínicas em BH</button>
     <button class="ccs-btn ghost" style="margin-top:8px;" onclick="openPost('${ch.id}')">Postar em ${ch.label}</button>
+    <button class="ccs-btn ghost" style="margin-top:8px;" onclick="runAiOrder('responde conversa parada')">Responder chat parado</button>
+    <a class="ccs-btn ghost" style="margin-top:8px; display:inline-block; text-decoration:none;" href="${FINANCAS_URL}" target="_blank" rel="noopener">Abrir Finanças</a>
   `;
 }
-function chaseUnpaid(){
-  loadProjects().then(projects=>{
-    const p = projects.find(x=>!x.paid && Number(x.pixValue)>0);
-    if(!p){ showToast('Nada a cobrar.'); return; }
-    const contact = ((p.notes||'').match(/Contato:\s*(.+)/)||[])[1] || '';
-    const text = 'Olá, '+p.clientName+'! Aqui é da CodeCraft. O PIX do projeto '+p.projectName+' é '+money(Number(p.pixValue))+' na chave 31999758385. Quando puder, me avisa que confirmo no painel.';
-    window.open(waLink(contact, text), '_blank');
-    showToast('WhatsApp de cobrança aberto.');
-  });
+function chaseText(p){
+  return 'Olá, '+p.clientName+'! Aqui é da CodeCraft. O PIX do projeto '+p.projectName+' é '+money(Number(p.pixValue))+' na chave 31999758385. Quando puder, me avisa que confirmo no painel.';
+}
+function chaseProject(p){
+  if(!p) return false;
+  const contact = ((p.notes||'').match(/Contato:\s*(.+)/)||[])[1] || '';
+  window.open(waLink(contact, chaseText(p)), '_blank');
+  addTask('Cobrar '+p.clientName+' · '+money(Number(p.pixValue)), todayISO(), 'cobranca');
+  return true;
+}
+async function chaseUnpaid(){
+  const projects = await loadProjects();
+  const unpaid = projects.filter(x=>!x.paid && Number(x.pixValue)>0);
+  if(!unpaid.length){ showToast('Nada a cobrar.'); return null; }
+  const p = unpaid[aiMem.unpaidI % unpaid.length];
+  aiMem.unpaidI++;
+  chaseProject(p);
+  showToast('WhatsApp de cobrança aberto: '+p.clientName);
+  return p;
+}
+async function chaseAllUnpaid(){
+  const projects = await loadProjects();
+  const unpaid = projects.filter(x=>!x.paid && Number(x.pixValue)>0);
+  if(!unpaid.length){ showToast('Nada a cobrar.'); return; }
+  unpaid.slice(0,6).forEach((p,i)=> setTimeout(()=> chaseProject(p), i*700));
+  showToast('Abrindo cobrança de '+Math.min(6, unpaid.length)+' cliente(s).');
+}
+
+function proposalText(name, service){
+  const map = {
+    site: 'site institucional com acompanhamento ao vivo e PIX na entrega',
+    loja: 'loja virtual com pedido, WhatsApp e PIX',
+    landing: 'landing page para captar cliente',
+    sistema: 'sistema sob medida para o dia a dia da empresa',
+    financas: 'Finanças CodeCraft — coloca os gastos, a planilha mostra o caixa e o que cortar'
+  };
+  const what = map[service] || map.site;
+  return 'Olá'+(name?', '+name:'')+'! Sou da CodeCraft Solutions, em BH.\n\nPosso te entregar um '+what+'. Você acompanha cada etapa no portal e paga só na chave PIX 31999758385.\n\nMe fala o que você precisa que eu fecho o escopo e o prazo.\nWhatsApp 31 99975-8385';
+}
+function sendProposal(){
+  const name = (document.getElementById('prop-name').value||'').trim();
+  const phone = (document.getElementById('prop-phone').value||'').trim();
+  const service = document.getElementById('prop-service').value;
+  const text = proposalText(name, service);
+  navigator.clipboard.writeText(text).catch(()=>{});
+  window.open(waLink(phone, text), '_blank');
+  addTask('Proposta '+service+(name?' · '+name:''), todayISO(), 'proposta');
+  showToast('Proposta copiada e WhatsApp aberto.');
+}
+
+function renderTools(){
+  const el = document.getElementById('tools-grid');
+  if(!el) return;
+  el.innerHTML = [
+    ['Cobrar quem deve','Abre o WhatsApp do próximo PIX em aberto.','chaseUnpaid()'],
+    ['Cobrar todos','Abre até 6 cobranças em sequência.','chaseAllUnpaid()'],
+    ['Achar clínicas BH','Maps + Google + Instagram já filtrados.','runHunt("clinica")'],
+    ['Postar no melhor canal','Copia o texto e abre o canal de agora.','runAiOrder("posta no melhor canal")'],
+    ['Analisar mercado e postar','Lê dólar, bolsa e Selic e já publica.','runAiOrder("analisa o mercado e age")'],
+    ['Responder chat parado','Abre a conversa parada e manda o texto.','runAiOrder("responde conversa parada")'],
+    ['Abrir Finanças CodeCraft','Planilha, gastos e o que cortar.','window.open(FINANCAS_URL,"_blank")'],
+    ['Exportar a empresa','Baixa Excel de projetos e caixa.','exportExcel()']
+  ].map(([t,d,fn])=>`
+    <div class="ccs-panel">
+      <strong>${t}</strong>
+      <p style="font-size:13px; color:var(--ink-soft); margin:8px 0 12px;">${d}</p>
+      <button class="ccs-btn amber small" onclick='${fn}'>Fazer agora</button>
+    </div>`).join('');
+}
+
+async function findStalledChats(){
+  const chats = await loadLeadChats();
+  const stalled = [];
+  for(const c of (chats||[]).slice(0,20)){
+    const msgs = await loadChat(c.code);
+    if(!msgs || !msgs.length) continue;
+    const last = msgs[msgs.length-1];
+    const ageH = (Date.now()-new Date(last.created_at||last.createdAt||Date.now()).getTime())/36e5;
+    if(last.sender==='client' && ageH >= 2) stalled.push({ code:c.code, name:c.name, last, ageH });
+  }
+  return stalled;
+}
+async function replyStalledChat(){
+  const stalled = await findStalledChats();
+  if(!stalled.length){ showToast('Nenhuma conversa parada agora.'); return null; }
+  const s = stalled[0];
+  const text = 'Oi, '+(s.name||'')+'! Aqui é da CodeCraft. Vi sua mensagem. Me confirma se é site, loja ou sistema que eu já te passo prazo e valor. PIX só na chave 31999758385.';
+  await insertChat(s.code, 'admin', text);
+  currentChatCode = s.code;
+  switchAdminTab('conversas');
+  renderChatProjectList();
+  renderAdminChat();
+  addTask('Retornar chat '+(s.name||s.code), todayISO(), 'chat');
+  return s;
 }
 
 let adminAiBooted = false;
@@ -2086,7 +2357,7 @@ function bootAdminAi(){
   const log = document.getElementById('admin-ai-log');
   if(!log) return;
   if(!adminAiBooted){
-    log.innerHTML = '<div class="ccs-ai-msg">Posso cobrar quem deve, abrir busca de cliente, copiar post e ler dólar/Selic. Manda a ordem.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg">Estou na operação. Posso <strong>cobrar</strong>, <strong>achar cliente</strong>, <strong>postar</strong>, <strong>ler o mercado</strong>, <strong>mandar proposta</strong> e <strong>responder chat parado</strong>. Manda a ordem — eu faço, não só aponto.</div>';
     adminAiBooted = true;
   }
 }
@@ -2096,6 +2367,56 @@ function pushAi(who, html){
   log.innerHTML += `<div class="ccs-ai-msg ${who==='me'?'me':''}">${html}</div>`;
   log.scrollTop = log.scrollHeight;
 }
+function runAiOrder(text){
+  const input = document.getElementById('admin-ai-input');
+  if(input) input.value = text;
+  switchAdminTab('ia');
+  sendAdminAi();
+}
+function pickHunt(t){
+  const pairs = [
+    ['clinica','clinic'],['adv','advog'],['imob','imob'],['rest','rest'],['auto','oficin'],
+    ['loja','loja'],['saude','academ'],['cont','contab'],['dent','dent'],['salao','salao'],
+    ['pet','pet'],['obra','constru']
+  ];
+  for(const [id, key] of pairs){ if(t.includes(key) || t.includes(id)) return HUNTS.find(h=>h.id===id); }
+  const byNiche = HUNTS.find(h=> t.includes((h.niche||'').toLowerCase()) || t.includes((h.label||'').toLowerCase()));
+  return byNiche || HUNTS[0];
+}
+function pickCity(t){
+  const cities = [['contagem','Contagem'],['betim','Betim'],['nova lima','Nova Lima'],['savassi','Savassi BH'],['pampulha','Pampulha BH'],['belo horizonte','Belo Horizonte'],['bh','Belo Horizonte']];
+  for(const [k,v] of cities){ if(t.includes(k)) return v; }
+  return 'Belo Horizonte';
+}
+function analyzeMarket(mkt){
+  const usd = Number(mkt.usdPct)||0;
+  const ibov = Number(mkt.ibovPct)||0;
+  const selic = Number(mkt.selic)||0;
+  const lines = [];
+  let action = 'linkedin';
+  let why = 'Horário B2B.';
+  if(usd >= 0.6){
+    lines.push('Dólar subindo ('+mkt.usdPct+'%). Cliente de sistema e loja precisa de preço em real, sem surpresa.');
+    action = 'linkedin'; why = 'Dólar em alta: post de precificação e sistema de caixa fecha mais no LinkedIn.';
+  }else if(usd <= -0.6){
+    lines.push('Dólar caindo ('+mkt.usdPct+'%). Bom momento para fechar projeto agora, sem esperar “melhorar o câmbio”.');
+    action = 'whatsapp'; why = 'Câmbio a favor: cobra e fecha no WhatsApp o que já está na mesa.';
+  }else{
+    lines.push('Dólar estável em R$ '+moneyFx(mkt.usd)+'.');
+  }
+  if(ibov <= -1){
+    lines.push('Ibovespa caiu '+mkt.ibovPct+'%. Empresa aperta custo — o gancho do Finanças (cortar gasto) funciona hoje.');
+    action = 'linkedin';
+  }else if(ibov >= 1){
+    lines.push('Bolsa sobe. Dono de loja e clínica olha crescimento: site e captura de cliente.');
+  }
+  if(selic >= 13){
+    lines.push('Selic em '+selic+'%. Crédito caro: vender PIX à vista (chave 31999758385) é o argumento certo.');
+  }
+  if(mkt.eur!=null) lines.push('Euro R$ '+moneyFx(mkt.eur)+'.');
+  return { lines, action, why, copy: lines.join(' ') };
+}
+
 async function sendAdminAi(){
   const input = document.getElementById('admin-ai-input');
   const raw = (input.value||'').trim();
@@ -2106,47 +2427,103 @@ async function sendAdminAi(){
   const projects = await loadProjects();
   const messages = await loadMessages();
   const unpaid = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
+  const leads = (await loadCrmLeads()).filter(l=>l.status==='aberto');
   const mkt = await loadMarket();
+  const huntAsk = /(buscar|cacar|caçar|achar cliente|prospec|encontra cliente|encontrar cliente|clinic|advog|imob|restaur|oficin|loja|academ|contab|dent|salao|pet|constru)/.test(t);
 
-  if(/(cobr|receber|atras|pix pend)/.test(t)){
+  if(/(cobra todo|cobrar todos|todos os pix)/.test(t)){
+    if(!unpaid.length){ pushAi('bot','Ninguém com PIX em aberto.'); return; }
+    chaseAllUnpaid();
+    pushAi('bot','Abri até 6 WhatsApp de cobrança. São <strong>'+unpaid.length+'</strong> em aberto. Primeiro: '+escapeHtml(unpaid[0].clientName)+'.');
+    return;
+  }
+  if(/(cobr|receber|atras|pix pend|proximo pix|próximo pix)/.test(t)){
     if(!unpaid.length){ pushAi('bot','Ninguém com valor em aberto. Sem cobrança agora.'); return; }
-    chaseUnpaid();
-    pushAi('bot','Abri o WhatsApp do primeiro em atraso: <strong>'+escapeHtml(unpaid[0].clientName)+'</strong> · '+money(Number(unpaid[0].pixValue))+'. São '+unpaid.length+' no total.');
+    const p = await chaseUnpaid();
+    if(!p) return;
+    pushAi('bot','Abri o WhatsApp de <strong>'+escapeHtml(p.clientName)+'</strong> · '+money(Number(p.pixValue))+'. Manda <em>cobra o próximo</em> que eu sigo a fila ('+unpaid.length+').');
     return;
   }
-  if(/(buscar|cacar|achar cliente|prospec|clinica|advog|imob|restaur|oficina|loja|academia|contador)/.test(t)){
-    const hit = HUNTS.find(h=> t.includes(h.id) || t.includes(h.niche.toLowerCase()) || (h.id==='clinica' && t.includes('clinic')) || (h.id==='adv' && t.includes('advog')) || (h.id==='imob' && t.includes('imob')) || (h.id==='rest' && t.includes('rest')) || (h.id==='auto' && t.includes('oficin')) || (h.id==='loja' && t.includes('loja')) || (h.id==='saude' && t.includes('academ')) || (h.id==='cont' && t.includes('contab')));
-    const h = hit || HUNTS[0];
-    runHunt(h.id);
-    pushAi('bot','Abri Maps e Google de <strong>'+h.label+'</strong>. Cole o nome em Clientes e aperte Guardar e abrir WhatsApp.');
+  if(huntAsk && !/(postar|linkedin|instagram|mercado|dolar)/.test(t)){
+    const h = pickHunt(t);
+    const city = pickCity(t);
+    runHunt(h.id, city);
+    pushAi('bot','Abri Maps, Google e Instagram de <strong>'+escapeHtml(h.label)+'</strong> em <strong>'+escapeHtml(city)+'</strong>. Cole o nome e o WhatsApp em Clientes e aperte Guardar — eu já deixo o nicho preenchido.');
     return;
   }
-  if(/(postar|linkedin|instagram|google meu|status)/.test(t)){
-    const ch = bestChannel(projects, messages);
-    let kind = ch.id;
+  if(/(postar|linkedin|instagram|google meu|status|melhor canal|onde postar)/.test(t)){
+    const scored = bestChannel(projects, messages, mkt);
+    let kind = scored.id;
     if(t.includes('linkedin')) kind='linkedin';
     if(t.includes('instagram')) kind='instagram';
     if(t.includes('google')) kind='google';
     if(t.includes('whats') || t.includes('status')) kind='whatsapp';
-    openPost(kind);
-    pushAi('bot','Copiei o texto de hoje e abri o '+kind+'. É só colar e publicar.');
+    aiMem.lastChannel = kind;
+    openPost(kind, mkt);
+    pushAi('bot','Canal de agora: <strong>'+kind+'</strong>. '+scored.why+' Copiei o texto (já com o mercado de hoje) e abri a rede. É colar e publicar.');
     return;
   }
-  if(/(dolar|bolsa|ibov|selic|mercado|juros)/.test(t)){
-    pushAi('bot','Mercado agora: dólar R$ '+moneyFx(mkt.usd)+', Ibovespa '+(mkt.ibov!=null?Number(mkt.ibov).toLocaleString('pt-BR'):'—')+', Selic '+(mkt.selic!=null?mkt.selic+'%':'—')+'. Use isso na conversa com cliente de sistema financeiro. Se o dólar sobe, site em real precisa de preço claro.');
-    return;
-  }
-  if(/(hoje|o que fazer|fila)/.test(t)){
+  if(/(dolar|bolsa|ibov|selic|mercado|juros|analisa o mercado|analise o mercado|análise)/.test(t)){
+    const a = analyzeMarket(mkt);
+    openPost(a.action, mkt);
     switchAdminTab('hoje');
-    pushAi('bot','Abri a aba Hoje. Lá estão cobrança, lead e o canal para postar.');
+    pushAi('bot','Mercado agora: dólar <strong>R$ '+moneyFx(mkt.usd)+'</strong> ('+(mkt.usdPct??'—')+'%), Ibovespa '+(mkt.ibov!=null?Number(mkt.ibov).toLocaleString('pt-BR'):'—')+' ('+(mkt.ibovPct??'—')+'%), Selic '+(mkt.selic!=null?mkt.selic+'%':'—')+(mkt.ipca!=null?', IPCA '+mkt.ipca+'%':'')+'.<br>'+a.lines.map(x=>escapeHtml(x)).join('<br>')+'<br>Já copiei o post e abri o <strong>'+a.action+'</strong> — '+escapeHtml(a.why));
     return;
   }
-  pushAi('bot','Manda uma ordem: <em>cobra quem deve</em>, <em>busca clínicas</em>, <em>posta no LinkedIn</em> ou <em>como está o dólar</em>.');
+  if(/(chat parado|conversa parada|responde conversa|lead parado)/.test(t)){
+    const s = await replyStalledChat();
+    if(!s){ pushAi('bot','Nenhuma conversa de cliente parada há mais de 2h.'); return; }
+    pushAi('bot','Respondi <strong>'+escapeHtml(s.name||s.code)+'</strong> no chat e abri Conversas. A mensagem já foi enviada.');
+    return;
+  }
+  if(/(proposta|orcamento|orçamento|manda preco|manda preço)/.test(t)){
+    const lead = leads[0];
+    const nameEl = document.getElementById('prop-name');
+    const phoneEl = document.getElementById('prop-phone');
+    if(nameEl && lead) nameEl.value = lead.name;
+    if(phoneEl && lead) phoneEl.value = lead.phone||'';
+    if(lead){ sendProposal(); pushAi('bot','Gerei a proposta para <strong>'+escapeHtml(lead.name)+'</strong>, copiei e abri o WhatsApp.'); }
+    else { switchAdminTab('ferramentas'); pushAi('bot','Abri Ferramentas. Preenche cliente e WhatsApp que eu gero, copio e abro o zap.'); }
+    return;
+  }
+  if(/(financas|finanças|planilha|gastos)/.test(t)){
+    window.open(FINANCAS_URL, '_blank');
+    pushAi('bot','Abri o Finanças CodeCraft. Lá o cliente coloca gasto, a planilha monta o caixa e mostra o que cortar.');
+    return;
+  }
+  if(/(excel|export|relatorio|relatório)/.test(t)){
+    exportExcel();
+    pushAi('bot','Baixei o Excel da empresa (caixa e projetos).');
+    return;
+  }
+  if(/(hoje|o que fazer|fila|agenda)/.test(t)){
+    switchAdminTab('hoje');
+    renderHoje();
+    const due = loadTasks().filter(x=>!x.done && x.when<=todayISO()).length;
+    pushAi('bot','Abri Hoje. '+unpaid.length+' PIX em aberto, '+leads.length+' lead(s), '+due+' item(ns) na agenda. Dólar R$ '+moneyFx(mkt.usd)+'.');
+    return;
+  }
+  if(/(chamar lead|abrir lead|whats do lead)/.test(t)){
+    if(!leads.length){ pushAi('bot','Fila de Clientes vazia. Manda <em>acha clínicas</em> que eu abro a busca.'); return; }
+    openLeadWa(leads[0].id);
+    pushAi('bot','Abri o WhatsApp de <strong>'+escapeHtml(leads[0].name)+'</strong>.');
+    return;
+  }
+  const ch = bestChannel(projects, messages, mkt);
+  pushAi('bot','Não ficou claro, então fiz o que mais fecha agora: canal <strong>'+ch.label+'</strong> ('+escapeHtml(ch.why)+'). Manda uma ordem direta: <em>cobra todo mundo</em>, <em>acha loja em Contagem</em>, <em>posta no melhor canal</em>, <em>analisa o mercado e age</em>, <em>responde conversa parada</em> ou <em>gera proposta</em>.');
+  openPost(ch.id, mkt);
 }
 
 /* ================= INIT ================= */
 typeHero();
 initLead();
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.querySelectorAll('.ccs-card, .ccs-price-card, .ccs-step, .ccs-about, .ccs-grid-3, .ccs-price-grid').forEach((el)=>el.classList.add('ccs-reveal'));
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach((entry)=>{ if(entry.isIntersecting){ entry.target.classList.add('in'); io.unobserve(entry.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.ccs-reveal').forEach((el)=>io.observe(el));
+}
 </script>
 </body>
 </html>
