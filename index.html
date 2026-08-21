@@ -245,11 +245,14 @@
   .ccs-calc-grid button.op{background:var(--panel); color:#fff; border-color:var(--panel);}
   .ccs-calc-grid button.eq{background:var(--amber); color:#221304; border-color:var(--amber);}
   .ccs-calc-grid button.wide{grid-column:span 2;}
-  .ccs-hunt-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
-  .ccs-ai-box{display:flex; flex-direction:column; gap:8px; max-height:420px; overflow:auto; background:var(--paper-dim); border-radius:10px; padding:12px;}
+  .ccs-ai-layout{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;}
+  .ccs-ai-box{display:flex; flex-direction:column; gap:8px; max-height:420px; overflow:auto; background:var(--paper-dim); border-radius:10px; padding:12px; min-height:280px;}
   .ccs-ai-msg{font-size:14px; line-height:1.5; padding:10px 12px; border-radius:10px; background:#fff; border:1px solid var(--line);}
   .ccs-ai-msg.me{background:var(--panel); color:#fff; border-color:var(--panel);}
-  @media (max-width:760px){ .ccs-hunt-grid{grid-template-columns:1fr;} .ccs-metrics{grid-template-columns:1fr 1fr;} }
+  .ccs-ig-preview{background:#0c161e; border-radius:12px; padding:12px;}
+  .ccs-ig-preview canvas{width:100%; height:auto; display:block; border-radius:8px; background:#12172B;}
+  @media (max-width:900px){ .ccs-ai-layout{grid-template-columns:1fr;} }
+  @media (max-width:760px){ .ccs-metrics{grid-template-columns:1fr 1fr;} }
 
   @media (max-width:860px){
     .ccs-chat-layout{grid-template-columns:1fr;}
@@ -586,26 +589,66 @@
   <div class="ccs-admin-layout" id="admin-main" style="display:none;">
     <aside class="ccs-admin-nav">
       <div class="ccs-admin-nav-title">Menu</div>
-      <button class="ccs-navitem active" id="tab-btn-hoje" onclick="switchAdminTab('hoje')"><span class="ico">●</span> Hoje</button>
+      <button class="ccs-navitem active" id="tab-btn-ia" onclick="switchAdminTab('ia')"><span class="ico">AI</span> IA análise</button>
+      <button class="ccs-navitem" id="tab-btn-instagram" onclick="switchAdminTab('instagram')"><span class="ico">IG</span> IA Instagram</button>
       <button class="ccs-navitem" id="tab-btn-projetos" onclick="switchAdminTab('projetos')"><span class="ico">📋</span> Projetos</button>
-      <button class="ccs-navitem" id="tab-btn-clientes" onclick="switchAdminTab('clientes')"><span class="ico">▣</span> Clientes</button>
-      <button class="ccs-navitem" id="tab-btn-cacar" onclick="switchAdminTab('cacar')"><span class="ico">◎</span> Caçar</button>
-      <button class="ccs-navitem" id="tab-btn-postar" onclick="switchAdminTab('postar')"><span class="ico">▶</span> Postar</button>
-      <button class="ccs-navitem" id="tab-btn-ia" onclick="switchAdminTab('ia')"><span class="ico">AI</span> IA</button>
-      <button class="ccs-navitem" id="tab-btn-agenda" onclick="switchAdminTab('agenda')"><span class="ico">▣</span> Agenda</button>
-      <button class="ccs-navitem" id="tab-btn-ferramentas" onclick="switchAdminTab('ferramentas')"><span class="ico">⌘</span> Ferramentas</button>
-      <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')"><span class="ico">✉️</span> Mensagens</button>
       <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')"><span class="ico">💬</span> Conversas</button>
+      <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')"><span class="ico">✉️</span> Mensagens</button>
       <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')"><span class="ico">📊</span> Empresa</button>
     </aside>
 
     <div class="ccs-admin-content">
-    <div id="tab-hoje">
-      <h2 style="font-size:20px; margin-bottom:8px;">O que fazer agora</h2>
-      <div class="ccs-help">Não é recado. Aqui a IA junta cobrança, conversa parada, mercado e o melhor canal de hoje. Cada botão abre a ação.</div>
-      <div class="ccs-metrics" id="hoje-metrics" style="margin-bottom:16px;"></div>
-      <div class="ccs-panel" id="hoje-market" style="margin-bottom:16px;"></div>
-      <div class="ccs-panel" id="hoje-actions"></div>
+    <div id="tab-ia">
+      <h2 style="font-size:20px; margin-bottom:8px;">IA de análise</h2>
+      <div class="ccs-help">Conversa com você. Lê o mercado, estuda os projetos e diz onde colocar o site, a loja e o Finanças. A outra IA cuida só do Instagram @code.invention.</div>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
+        <button class="ccs-btn ghost small" onclick="runAiOrder('analisa o mercado')">Mercado agora</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('analisa os projetos')">Projetos</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('onde postar as ferramentas')">Onde postar</button>
+      </div>
+      <div class="ccs-ai-box" id="admin-ai-log"></div>
+      <div class="ccs-chat-input" style="border:1px solid var(--line); border-radius:10px; margin-top:10px; background:#fff;">
+        <input id="admin-ai-input" placeholder="Como está o mercado? E os projetos? Onde divulgar o Finanças?" onkeydown="if(event.key==='Enter')sendAdminAi()">
+        <button class="ccs-btn amber" onclick="sendAdminAi()">Conversar</button>
+      </div>
+    </div>
+
+    <div id="tab-instagram" style="display:none;">
+      <h2 style="font-size:20px; margin-bottom:8px;">IA do Instagram · @code.invention</h2>
+      <div class="ccs-help">Essa IA só gerencia a página <strong>@code.invention</strong>: arte, foto, informação, story e roteiro de reels. Se a conta Business estiver ligada, ela publica sozinha na página. A Meta não aceita senha aqui — liga o token grátis uma vez.</div>
+      <div class="ccs-ai-layout">
+        <div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
+            <button class="ccs-btn amber small" onclick="runIgOrder('publica um post agora')">Publicar agora</button>
+            <button class="ccs-btn ghost small" onclick="runIgOrder('faz um story')">Story</button>
+            <button class="ccs-btn ghost small" onclick="runIgOrder('faz um reels do financas')">Reels</button>
+            <button class="ccs-btn ghost small" onclick="runIgOrder('posta o mercado de hoje')">Mercado</button>
+          </div>
+          <div class="ccs-ai-box" id="ig-ai-log"></div>
+          <div class="ccs-chat-input" style="border:1px solid var(--line); border-radius:10px; margin-top:10px; background:#fff;">
+            <input id="ig-ai-input" placeholder="Ex.: publica um post do site, story do PIX, reels do Finanças" onkeydown="if(event.key==='Enter')sendIgAi()">
+            <button class="ccs-btn amber" onclick="sendIgAi()">Mandar</button>
+          </div>
+          <div class="ccs-panel" style="margin-top:14px;">
+            <div class="ccs-eyebrow">Ligar @code.invention (uma vez)</div>
+            <p style="font-size:13px; color:var(--ink-soft); margin:8px 0;">Meta for Developers, Instagram Professional + Página. Cole o token e o IG User ID. Aí ela posta sozinha na página.</p>
+            <div class="ccs-field"><label>Token da Meta</label><input id="ig-token" type="password" placeholder="EAAG..."></div>
+            <div class="ccs-field" style="margin-top:8px;"><label>ID do Instagram</label><input id="ig-userid" placeholder="17841..."></div>
+            <button class="ccs-btn amber small" style="margin-top:10px;" onclick="saveIgConn()">Ligar a página</button>
+            <p id="ig-conn-status" style="font-size:12.5px; color:var(--ink-soft); margin-top:8px;"></p>
+          </div>
+        </div>
+        <div>
+          <div class="ccs-ig-preview"><canvas id="ig-canvas" width="1080" height="1080"></canvas></div>
+          <div class="ccs-field" style="margin-top:10px;"><label>Legenda</label><textarea id="ig-caption" rows="5" style="width:100%; padding:10px; border:1.5px solid var(--line); border-radius:8px; font-family:Inter,sans-serif; font-size:14px;"></textarea></div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
+            <button class="ccs-btn amber" onclick="publishIgNow()">Publicar no @code.invention</button>
+            <button class="ccs-btn ghost" onclick="downloadIgArt()">Baixar arte</button>
+            <button class="ccs-btn ghost" onclick="openCompanyIg()">Abrir Instagram</button>
+          </div>
+          <div id="ig-queue" style="margin-top:14px;"></div>
+        </div>
+      </div>
     </div>
 
     <div id="tab-projetos" style="display:none;">
@@ -650,87 +693,6 @@
       </div>
 
       <div id="projects-list"></div>
-    </div>
-
-    <div id="tab-clientes" style="display:none;">
-      <h2 style="font-size:20px; margin-bottom:8px;">Fila de clientes</h2>
-      <div class="ccs-help">Quem você está buscando. Guarda o contato e abre o WhatsApp com o texto pronto — não é dica, é o envio.</div>
-      <div class="ccs-panel" style="margin-bottom:16px;">
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
-          <div class="ccs-field"><label>Empresa</label><input id="lead-name" placeholder="Nome que você achou"></div>
-          <div class="ccs-field"><label>WhatsApp</label><input id="lead-phone" placeholder="31 99999-0000"></div>
-          <div class="ccs-field"><label>Nicho</label><input id="lead-niche" placeholder="Clínica, loja, advogado"></div>
-        </div>
-        <button class="ccs-btn amber" style="margin-top:12px;" onclick="saveLeadAndPing()">Guardar e abrir WhatsApp</button>
-      </div>
-      <div id="leads-list"></div>
-    </div>
-
-    <div id="tab-cacar" style="display:none;">
-      <h2 style="font-size:20px; margin-bottom:8px;">Caçar cliente</h2>
-      <div class="ccs-help">Cada botão abre o Maps e o Google já filtrado na Grande BH. Você acha a empresa, cola o nome em Clientes e manda o WhatsApp.</div>
-      <div class="ccs-hunt-grid" id="hunt-grid"></div>
-    </div>
-
-    <div id="tab-postar" style="display:none;">
-      <h2 style="font-size:20px; margin-bottom:8px;">Postar agora</h2>
-      <div class="ccs-help">A IA escolhe o canal com mais chance de fechar hoje e já escreve o texto. Você copia e publica.</div>
-      <div id="postar-box"></div>
-    </div>
-
-    <div id="tab-ia" style="display:none;">
-      <h2 style="font-size:20px; margin-bottom:8px;">IA da operação</h2>
-      <div class="ccs-help">Ela não dá recado: ela cobra, caça cliente, escolhe o canal, escreve o post, lê o mercado e abre o WhatsApp. Escreve como no zap.</div>
-      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
-        <button class="ccs-btn ghost small" onclick="runAiOrder('cobra todo mundo')">Cobrar todos</button>
-        <button class="ccs-btn ghost small" onclick="runAiOrder('acha clientes de clinica')">Achar clínicas</button>
-        <button class="ccs-btn ghost small" onclick="runAiOrder('posta no melhor canal')">Postar agora</button>
-        <button class="ccs-btn ghost small" onclick="runAiOrder('analisa o mercado e age')">Mercado</button>
-        <button class="ccs-btn ghost small" onclick="runAiOrder('responde conversa parada')">Chat parado</button>
-        <button class="ccs-btn ghost small" onclick="runAiOrder('gera proposta')">Proposta</button>
-      </div>
-      <div class="ccs-ai-box" id="admin-ai-log" style="min-height:280px; max-height:460px;"></div>
-      <div class="ccs-chat-input" style="border:1px solid var(--line); border-radius:10px; margin-top:10px; background:#fff;">
-        <input id="admin-ai-input" placeholder="Ex.: acha  loja em Contagem, cobra o próximo, onde postar hoje" onkeydown="if(event.key==='Enter')sendAdminAi()">
-        <button class="ccs-btn amber" onclick="sendAdminAi()">Fazer</button>
-      </div>
-    </div>
-
-    <div id="tab-agenda" style="display:none;">
-      <h2 style="font-size:20px; margin-bottom:8px;">Agenda da operação</h2>
-      <div class="ccs-help">Cobrança, retorno de lead e conversa parada. Marca o que você fez. A IA também cria item aqui quando cobra ou caça.</div>
-      <div class="ccs-panel" style="margin-bottom:14px;">
-        <div style="display:grid; grid-template-columns:2fr 1fr auto; gap:10px; align-items:end;">
-          <div class="ccs-field"><label>O que fazer</label><input id="task-title" placeholder="Retornar clínica X"></div>
-          <div class="ccs-field"><label>Quando</label><input id="task-when" type="date"></div>
-          <button class="ccs-btn amber" onclick="addTaskFromForm()">Guardar</button>
-        </div>
-      </div>
-      <div id="agenda-list"></div>
-    </div>
-
-    <div id="tab-ferramentas" style="display:none;">
-      <h2 style="font-size:20px; margin-bottom:8px;">Ferramentas do admin</h2>
-      <div class="ccs-help">Atalhos que fecham trabalho. Cada um executa, não só aponta.</div>
-      <div class="ccs-hunt-grid" id="tools-grid"></div>
-      <div class="ccs-panel" style="margin-top:16px;">
-        <div class="ccs-eyebrow">Proposta rápida</div>
-        <p style="font-size:13.5px; color:var(--ink-soft); margin:8px 0 12px;">Gera o texto, copia e abre o WhatsApp do lead ou do número que você colar.</p>
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
-          <div class="ccs-field"><label>Cliente</label><input id="prop-name" placeholder="Nome"></div>
-          <div class="ccs-field"><label>WhatsApp</label><input id="prop-phone" placeholder="31 99999-0000"></div>
-          <div class="ccs-field"><label>Serviço</label>
-            <select id="prop-service">
-              <option value="site">Site</option>
-              <option value="loja">Loja</option>
-              <option value="landing">Landing</option>
-              <option value="sistema">Sistema</option>
-              <option value="financas">Finanças CodeCraft</option>
-            </select>
-          </div>
-        </div>
-        <button class="ccs-btn amber" style="margin-top:12px;" onclick="sendProposal()">Gerar, copiar e abrir WhatsApp</button>
-      </div>
     </div>
 
     <div id="tab-mensagens" style="display:none;">
@@ -1318,24 +1280,17 @@ function renderAdminGate(){
   document.getElementById('admin-live').style.display = adminLoggedIn ? 'inline-flex' : 'none';
     if(adminLoggedIn){
     renderAdminAll();
-    switchAdminTab('hoje');
+    switchAdminTab('ia');
     stopRealtime();
     realtimeChannel = supabaseClient.channel('admin-projects')
-      .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); renderHoje(); })
-      .on('postgres_changes', { event:'*', schema:'public', table:'messages' }, ()=>{ renderMessagesList(); renderHoje(); })
-      .on('postgres_changes', { event:'*', schema:'public', table:'lead_chats' }, ()=>{ renderChatProjectList(); renderLeads(); renderHoje(); })
+      .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); })
+      .on('postgres_changes', { event:'*', schema:'public', table:'messages' }, ()=>{ renderMessagesList(); })
+      .on('postgres_changes', { event:'*', schema:'public', table:'lead_chats' }, ()=>{ renderChatProjectList(); })
       .on('postgres_changes', { event:'*', schema:'public', table:'chat_messages' }, ()=>{ if(currentChatCode) renderAdminChat(); })
-      .on('postgres_changes', { event:'*', schema:'public', table:'admin_leads' }, ()=>{ renderLeads(); renderHoje(); })
       .subscribe();
-    /* fallback caso o realtime esteja desligado no Supabase */
     startPolling(()=>{
       renderProjectsList(); renderMessagesList(); renderEmpresa(); renderChatProjectList();
       if(currentChatCode) renderAdminChat();
-      renderHoje();
-      renderLeads();
-      renderAgenda();
-      const postar = document.getElementById('tab-postar');
-      if(postar && postar.style.display!=='none') renderPostar();
     });
   }
 }
@@ -1378,7 +1333,7 @@ if(configOk){
   });
 }
 
-const ADMIN_TABS = ['hoje','projetos','clientes','cacar','postar','ia','agenda','ferramentas','mensagens','conversas','empresa'];
+const ADMIN_TABS = ['ia','instagram','projetos','conversas','mensagens','empresa'];
 function switchAdminTab(tab){
   ADMIN_TABS.forEach(t=>{
     const pane = document.getElementById('tab-'+t);
@@ -1388,15 +1343,10 @@ function switchAdminTab(tab){
   });
   if(tab==='conversas') renderChatProjectList();
   if(tab==='empresa'){ renderEmpresa(); buildCalculator(); }
-  if(tab==='hoje') renderHoje();
-  if(tab==='clientes') renderLeads();
-  if(tab==='cacar') renderHunt();
-  if(tab==='postar') renderPostar();
   if(tab==='ia') bootAdminAi();
-  if(tab==='agenda') renderAgenda();
-  if(tab==='ferramentas') renderTools();
+  if(tab==='instagram'){ bootIgAi(); refreshIgConnStatus(); renderIgQueue(); }
 }
-async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); renderHoje(); renderLeads(); renderHunt(); renderPostar(); renderAgenda(); renderTools(); }
+async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); }
 function toggleNewProjectForm(){
   const f = document.getElementById('new-project-form');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
@@ -2039,7 +1989,9 @@ function pitchFor(name, niche){
   return 'Olá, '+who+'! Aqui é da CodeCraft Solutions, em Belo Horizonte. Fazemos site, loja e sistema.'+n+' Posso mandar um modelo pronto, sem compromisso, em dois minutos?';
 }
 async function saveLeadAndPing(){
-  const name = document.getElementById('lead-name').value.trim();
+  const nameEl = document.getElementById('lead-name');
+  if(!nameEl) return;
+  const name = nameEl.value.trim();
   const phone = document.getElementById('lead-phone').value.trim();
   const niche = document.getElementById('lead-niche').value.trim();
   if(!name){ showToast('Coloque o nome da empresa.'); return; }
@@ -2112,8 +2064,7 @@ function runHunt(id, city){
   if(nameEl && !nameEl.value) nameEl.placeholder = 'Cole o nome que achou em '+place;
   aiMem.lastHunt = { id:h.id, city:place };
   addTask('Caçar '+h.label+' em '+place, todayISO(), 'cacar');
-  showToast('Maps, Google e Instagram abertos. Cole o nome em Clientes.');
-  switchAdminTab('clientes');
+  showToast('Maps, Google e Instagram abertos.');
 }
 
 function todayPosts(mkt){
@@ -2296,7 +2247,9 @@ function proposalText(name, service){
   return 'Olá'+(name?', '+name:'')+'! Sou da CodeCraft Solutions, em BH.\n\nPosso te entregar um '+what+'. Você acompanha cada etapa no portal e paga só na chave PIX 31999758385.\n\nMe fala o que você precisa que eu fecho o escopo e o prazo.\nWhatsApp 31 99975-8385';
 }
 function sendProposal(){
-  const name = (document.getElementById('prop-name').value||'').trim();
+  const nameEl = document.getElementById('prop-name');
+  if(!nameEl) return;
+  const name = (nameEl.value||'').trim();
   const phone = (document.getElementById('prop-phone').value||'').trim();
   const service = document.getElementById('prop-service').value;
   const text = proposalText(name, service);
@@ -2357,7 +2310,7 @@ function bootAdminAi(){
   const log = document.getElementById('admin-ai-log');
   if(!log) return;
   if(!adminAiBooted){
-    log.innerHTML = '<div class="ccs-ai-msg">Estou na operação. Posso <strong>cobrar</strong>, <strong>achar cliente</strong>, <strong>postar</strong>, <strong>ler o mercado</strong>, <strong>mandar proposta</strong> e <strong>responder chat parado</strong>. Manda a ordem — eu faço, não só aponto.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg">Sou a IA de análise. Converso com você, leio dólar/bolsa/Selic, estudo os projetos e digo onde colocar o site, a loja e o Finanças. O Instagram @code.invention é a outra IA, no menu.</div>';
     adminAiBooted = true;
   }
 }
@@ -2373,48 +2326,59 @@ function runAiOrder(text){
   switchAdminTab('ia');
   sendAdminAi();
 }
-function pickHunt(t){
-  const pairs = [
-    ['clinica','clinic'],['adv','advog'],['imob','imob'],['rest','rest'],['auto','oficin'],
-    ['loja','loja'],['saude','academ'],['cont','contab'],['dent','dent'],['salao','salao'],
-    ['pet','pet'],['obra','constru']
-  ];
-  for(const [id, key] of pairs){ if(t.includes(key) || t.includes(id)) return HUNTS.find(h=>h.id===id); }
-  const byNiche = HUNTS.find(h=> t.includes((h.niche||'').toLowerCase()) || t.includes((h.label||'').toLowerCase()));
-  return byNiche || HUNTS[0];
-}
-function pickCity(t){
-  const cities = [['contagem','Contagem'],['betim','Betim'],['nova lima','Nova Lima'],['savassi','Savassi BH'],['pampulha','Pampulha BH'],['belo horizonte','Belo Horizonte'],['bh','Belo Horizonte']];
-  for(const [k,v] of cities){ if(t.includes(k)) return v; }
-  return 'Belo Horizonte';
-}
 function analyzeMarket(mkt){
   const usd = Number(mkt.usdPct)||0;
   const ibov = Number(mkt.ibovPct)||0;
   const selic = Number(mkt.selic)||0;
   const lines = [];
-  let action = 'linkedin';
-  let why = 'Horário B2B.';
+  let place = 'linkedin';
   if(usd >= 0.6){
-    lines.push('Dólar subindo ('+mkt.usdPct+'%). Cliente de sistema e loja precisa de preço em real, sem surpresa.');
-    action = 'linkedin'; why = 'Dólar em alta: post de precificação e sistema de caixa fecha mais no LinkedIn.';
+    lines.push('Dólar subindo ('+mkt.usdPct+'%). Cliente de sistema e loja precisa de preço em real.');
+    place = 'linkedin';
   }else if(usd <= -0.6){
-    lines.push('Dólar caindo ('+mkt.usdPct+'%). Bom momento para fechar projeto agora, sem esperar “melhorar o câmbio”.');
-    action = 'whatsapp'; why = 'Câmbio a favor: cobra e fecha no WhatsApp o que já está na mesa.';
+    lines.push('Dólar caindo ('+mkt.usdPct+'%). Bom momento para fechar projeto agora.');
+    place = 'whatsapp';
   }else{
     lines.push('Dólar estável em R$ '+moneyFx(mkt.usd)+'.');
   }
   if(ibov <= -1){
-    lines.push('Ibovespa caiu '+mkt.ibovPct+'%. Empresa aperta custo — o gancho do Finanças (cortar gasto) funciona hoje.');
-    action = 'linkedin';
+    lines.push('Ibovespa caiu '+mkt.ibovPct+'%. Empresa aperta custo — Finanças CodeCraft (cortar gasto) encaixa hoje.');
+    place = 'linkedin';
   }else if(ibov >= 1){
     lines.push('Bolsa sobe. Dono de loja e clínica olha crescimento: site e captura de cliente.');
   }
   if(selic >= 13){
-    lines.push('Selic em '+selic+'%. Crédito caro: vender PIX à vista (chave 31999758385) é o argumento certo.');
+    lines.push('Selic em '+selic+'%. Crédito caro: PIX à vista fecha mais que parcelado.');
   }
   if(mkt.eur!=null) lines.push('Euro R$ '+moneyFx(mkt.eur)+'.');
-  return { lines, action, why, copy: lines.join(' ') };
+  return { lines, place, copy: lines.join(' ') };
+}
+function analyzeProjects(projects){
+  if(!projects.length) return 'Nenhum projeto no painel ainda.';
+  const by = {};
+  projects.forEach(p=>{ by[p.status]=(by[p.status]||0)+1; });
+  const unpaid = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
+  const noLink = projects.filter(p=>p.status==='concluido' && !p.deliveryUrl);
+  return projects.length+' projeto(s): '+(by.analise||0)+' em análise, '+(by.andamento||0)+' em andamento, '+(by.concluido||0)+' concluído(s).<br>'+
+    (unpaid.length ? unpaid.length+' com PIX em aberto: '+unpaid.slice(0,5).map(p=>escapeHtml(p.clientName)+' '+money(Number(p.pixValue))).join(', ')+'.' : 'Nenhum PIX em aberto.')+'<br>'+
+    (noLink.length ? noLink.length+' concluído sem link de entrega — o cliente não abre o site no portal.' : 'Entregas com link ok.');
+}
+function whereToPlaceTools(mkt, projects){
+  const a = analyzeMarket(mkt);
+  const unpaid = projects.filter(p=>!p.paid && Number(p.pixValue)>0).length;
+  const inProd = projects.filter(p=>p.status!=='concluido').length;
+  const places = [
+    'Instagram <strong>@code.invention</strong>: foto, story e reels da empresa. Isso é a <em>IA Instagram</em>, não eu.',
+    (Number(mkt.ibovPct)<=-1 || Number(mkt.selic)>=13)
+      ? 'Finanças CodeCraft agora: LinkedIn (dono de empresa) e reels no @code.invention com “o que cortar”.'
+      : 'Finanças: LinkedIn de dia, Instagram @code.invention à noite.',
+    Number(mkt.usdPct)>=0.6
+      ? 'Sistema e loja: LinkedIn e Google — preço em real, sem surpresa de dólar.'
+      : 'Site e loja: Google (quem pesquisa) + WhatsApp para quem já é contato.'
+  ];
+  if(inProd) places.push(inProd+' projeto(s) em produção: mostre andamento no Instagram (a outra IA faz a arte).');
+  if(unpaid) places.push(unpaid+' PIX em aberto: cobrança no WhatsApp/Conversas, não no Instagram.');
+  return { places, market:a };
 }
 
 async function sendAdminAi(){
@@ -2425,93 +2389,273 @@ async function sendAdminAi(){
   pushAi('me', escapeHtml(raw));
   const t = raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const projects = await loadProjects();
-  const messages = await loadMessages();
-  const unpaid = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
-  const leads = (await loadCrmLeads()).filter(l=>l.status==='aberto');
   const mkt = await loadMarket();
-  const huntAsk = /(buscar|cacar|caçar|achar cliente|prospec|encontra cliente|encontrar cliente|clinic|advog|imob|restaur|oficin|loja|academ|contab|dent|salao|pet|constru)/.test(t);
 
-  if(/(cobra todo|cobrar todos|todos os pix)/.test(t)){
-    if(!unpaid.length){ pushAi('bot','Ninguém com PIX em aberto.'); return; }
-    chaseAllUnpaid();
-    pushAi('bot','Abri até 6 WhatsApp de cobrança. São <strong>'+unpaid.length+'</strong> em aberto. Primeiro: '+escapeHtml(unpaid[0].clientName)+'.');
+  if(/(instagram|story|reels|postar na pagina)/.test(t)){
+    pushAi('bot','O Instagram @code.invention é a outra IA. Abre <strong>IA Instagram</strong> no menu e manda publicar.');
     return;
   }
-  if(/(cobr|receber|atras|pix pend|proximo pix|próximo pix)/.test(t)){
-    if(!unpaid.length){ pushAi('bot','Ninguém com valor em aberto. Sem cobrança agora.'); return; }
-    const p = await chaseUnpaid();
-    if(!p) return;
-    pushAi('bot','Abri o WhatsApp de <strong>'+escapeHtml(p.clientName)+'</strong> · '+money(Number(p.pixValue))+'. Manda <em>cobra o próximo</em> que eu sigo a fila ('+unpaid.length+').');
-    return;
-  }
-  if(huntAsk && !/(postar|linkedin|instagram|mercado|dolar)/.test(t)){
-    const h = pickHunt(t);
-    const city = pickCity(t);
-    runHunt(h.id, city);
-    pushAi('bot','Abri Maps, Google e Instagram de <strong>'+escapeHtml(h.label)+'</strong> em <strong>'+escapeHtml(city)+'</strong>. Cole o nome e o WhatsApp em Clientes e aperte Guardar — eu já deixo o nicho preenchido.');
-    return;
-  }
-  if(/(postar|linkedin|instagram|google meu|status|melhor canal|onde postar)/.test(t)){
-    const scored = bestChannel(projects, messages, mkt);
-    let kind = scored.id;
-    if(t.includes('linkedin')) kind='linkedin';
-    if(t.includes('instagram')) kind='instagram';
-    if(t.includes('google')) kind='google';
-    if(t.includes('whats') || t.includes('status')) kind='whatsapp';
-    aiMem.lastChannel = kind;
-    openPost(kind, mkt);
-    pushAi('bot','Canal de agora: <strong>'+kind+'</strong>. '+scored.why+' Copiei o texto (já com o mercado de hoje) e abri a rede. É colar e publicar.');
-    return;
-  }
-  if(/(dolar|bolsa|ibov|selic|mercado|juros|analisa o mercado|analise o mercado|análise)/.test(t)){
+  if(/(dolar|bolsa|ibov|selic|mercado|juros|ipca|analisa o mercado|analise o mercado)/.test(t)){
     const a = analyzeMarket(mkt);
-    openPost(a.action, mkt);
-    switchAdminTab('hoje');
-    pushAi('bot','Mercado agora: dólar <strong>R$ '+moneyFx(mkt.usd)+'</strong> ('+(mkt.usdPct??'—')+'%), Ibovespa '+(mkt.ibov!=null?Number(mkt.ibov).toLocaleString('pt-BR'):'—')+' ('+(mkt.ibovPct??'—')+'%), Selic '+(mkt.selic!=null?mkt.selic+'%':'—')+(mkt.ipca!=null?', IPCA '+mkt.ipca+'%':'')+'.<br>'+a.lines.map(x=>escapeHtml(x)).join('<br>')+'<br>Já copiei o post e abri o <strong>'+a.action+'</strong> — '+escapeHtml(a.why));
+    const w = whereToPlaceTools(mkt, projects);
+    pushAi('bot','Mercado agora: dólar <strong>R$ '+moneyFx(mkt.usd)+'</strong> ('+(mkt.usdPct??'—')+'%), Ibovespa '+(mkt.ibov!=null?Number(mkt.ibov).toLocaleString('pt-BR'):'—')+' ('+(mkt.ibovPct??'—')+'%), Selic '+(mkt.selic!=null?mkt.selic+'%':'—')+(mkt.ipca!=null?', IPCA '+mkt.ipca+'%':'')+'.<br>'+a.lines.map(x=>escapeHtml(x)).join('<br>')+'<br><br>Onde colocar as ferramentas:<br>'+w.places.join('<br>'));
     return;
   }
-  if(/(chat parado|conversa parada|responde conversa|lead parado)/.test(t)){
-    const s = await replyStalledChat();
-    if(!s){ pushAi('bot','Nenhuma conversa de cliente parada há mais de 2h.'); return; }
-    pushAi('bot','Respondi <strong>'+escapeHtml(s.name||s.code)+'</strong> no chat e abri Conversas. A mensagem já foi enviada.');
+  if(/(projeto|painel|andamento|pix em aberto|analisa os projetos)/.test(t)){
+    pushAi('bot', analyzeProjects(projects));
     return;
   }
-  if(/(proposta|orcamento|orçamento|manda preco|manda preço)/.test(t)){
-    const lead = leads[0];
-    const nameEl = document.getElementById('prop-name');
-    const phoneEl = document.getElementById('prop-phone');
-    if(nameEl && lead) nameEl.value = lead.name;
-    if(phoneEl && lead) phoneEl.value = lead.phone||'';
-    if(lead){ sendProposal(); pushAi('bot','Gerei a proposta para <strong>'+escapeHtml(lead.name)+'</strong>, copiei e abri o WhatsApp.'); }
-    else { switchAdminTab('ferramentas'); pushAi('bot','Abri Ferramentas. Preenche cliente e WhatsApp que eu gero, copio e abro o zap.'); }
+  if(/(onde postar|divulgar|ferramenta|financas|finanças|planilha|canal)/.test(t)){
+    const w = whereToPlaceTools(mkt, projects);
+    pushAi('bot', w.places.join('<br><br>')+'<br><br>Mercado: '+escapeHtml(w.market.copy));
     return;
   }
-  if(/(financas|finanças|planilha|gastos)/.test(t)){
-    window.open(FINANCAS_URL, '_blank');
-    pushAi('bot','Abri o Finanças CodeCraft. Lá o cliente coloca gasto, a planilha monta o caixa e mostra o que cortar.');
+  const a = analyzeMarket(mkt);
+  pushAi('bot','Te escuto. Agora: dólar R$ '+moneyFx(mkt.usd)+', '+projects.length+' projeto(s) no painel.<br>'+a.lines.map(x=>escapeHtml(x)).join(' ')+'<br><br>Pode perguntar o mercado, os projetos ou onde postar o Finanças/site. Instagram é a outra IA.');
+}
+
+const IG_HANDLE = 'code.invention';
+const IG_PAGE_URL = 'https://instagram.com/code.invention';
+const IG_CONN_KEY = 'ccs-ig-conn';
+const IG_QUEUE_KEY = 'ccs-ig-queue';
+let igAiBooted = false;
+
+function igConn(){ try { return JSON.parse(localStorage.getItem(IG_CONN_KEY)||'{}'); } catch(e){ return {}; } }
+function igQueue(){ try { return JSON.parse(localStorage.getItem(IG_QUEUE_KEY)||'[]'); } catch(e){ return []; } }
+function saveIgQueue(list){ localStorage.setItem(IG_QUEUE_KEY, JSON.stringify(list.slice(0,24))); renderIgQueue(); }
+function openCompanyIg(){ window.open(IG_PAGE_URL, '_blank'); }
+
+function saveIgConn(){
+  const token = ((document.getElementById('ig-token')||{}).value||'').trim();
+  const igUserId = ((document.getElementById('ig-userid')||{}).value||'').trim();
+  localStorage.setItem(IG_CONN_KEY, JSON.stringify({ token, igUserId }));
+  refreshIgConnStatus();
+  showToast(token && igUserId ? 'Página @code.invention ligada neste computador.' : 'Falta o token ou o ID.');
+}
+function refreshIgConnStatus(){
+  const c = igConn();
+  const el = document.getElementById('ig-conn-status');
+  if(!el) return;
+  el.textContent = (c.token && c.igUserId)
+    ? 'Ligada. A publicação vai para @code.invention.'
+    : 'Ainda sem token. A IA cria arte e texto e abre @code.invention. Para postar sozinha na página, cole o token grátis da Meta.';
+  const tok = document.getElementById('ig-token');
+  const uid = document.getElementById('ig-userid');
+  if(tok && c.token && !tok.value) tok.value = c.token;
+  if(uid && c.igUserId && !uid.value) uid.value = c.igUserId;
+}
+function bootIgAi(){
+  const log = document.getElementById('ig-ai-log');
+  if(!log) return;
+  if(!igAiBooted){
+    log.innerHTML = '<div class="ccs-ai-msg">Sou a IA do Instagram da CodeCraft. Página: <strong>@code.invention</strong>. Crio arte, foto, informação, story e roteiro de reels. Manda publicar que eu executo.</div>';
+    igAiBooted = true;
+    const extra = igThemes().empresa;
+    drawIgPost('feed', extra);
+    const cap = document.getElementById('ig-caption');
+    if(cap && !cap.value) cap.value = igCaption('empresa', extra, {});
+  }
+  refreshIgConnStatus();
+  renderIgQueue();
+}
+function pushIg(who, html){
+  const log = document.getElementById('ig-ai-log');
+  if(!log) return;
+  log.innerHTML += `<div class="ccs-ai-msg ${who==='me'?'me':''}">${html}</div>`;
+  log.scrollTop = log.scrollHeight;
+}
+function runIgOrder(text){
+  const input = document.getElementById('ig-ai-input');
+  if(input) input.value = text;
+  switchAdminTab('instagram');
+  sendIgAi();
+}
+function igThemes(){
+  return {
+    site: { kicker:'SITE + PORTAL', title:'Seu cliente\nacompanha o\nprojeto ao vivo', sub:'CodeCraft Solutions · Belo Horizonte' },
+    financas: { kicker:'FINANÇAS CODECRAFT', title:'Coloca o gasto.\nA planilha mostra\no que cortar.', sub:'Pessoa e empresa, no mesmo app' },
+    pix: { kicker:'PIX NA ENTREGA', title:'Paga só quando\no site estiver\nno ar', sub:'CodeCraft Solutions · BH' },
+    mercado: { kicker:'MERCADO HOJE', title:'Dólar, bolsa\ne Selic\nno radar', sub:'Onde divulgar as ferramentas agora' },
+    story: { kicker:'@code.invention', title:'Site, loja\ne sistema\nem BH', sub:'Fale no WhatsApp 31 99975-8385' },
+    empresa: { kicker:'CODECRAFT', title:'Tecnologia\nque fecha\ncaixa', sub:'instagram.com/code.invention' }
+  };
+}
+function pickIgTheme(t){
+  if(/financ|planilha|gasto/.test(t)) return 'financas';
+  if(/pix|pagam/.test(t)) return 'pix';
+  if(/dolar|mercado|bolsa|selic/.test(t)) return 'mercado';
+  if(/story|stories/.test(t)) return 'story';
+  if(/site|loja|portal/.test(t)) return 'site';
+  return 'empresa';
+}
+function igCaption(kind, extra, mkt){
+  const handle = '@'+IG_HANDLE;
+  const map = {
+    site: 'Seu cliente acompanha o projeto ao vivo. Site, loja e sistema em Belo Horizonte.\n\nCodeCraft Solutions\n'+handle+'\nWhatsApp 31 99975-8385',
+    financas: 'Finanças CodeCraft: coloca o gasto, a planilha mostra o caixa e o que cortar.\nPessoa e empresa no mesmo app.\n\n'+FINANCAS_URL+'\n'+handle,
+    pix: 'Paga na entrega. Site no ar, cliente acompanha, você recebe.\n\nCodeCraft Solutions · BH\n'+handle,
+    mercado: 'Mercado agora: dólar R$ '+moneyFx(mkt&&mkt.usd)+' · Ibovespa '+(mkt&&mkt.ibovPct!=null?mkt.ibovPct+'%':'—')+' · Selic '+(mkt&&mkt.selic!=null?mkt.selic+'%':'—')+'.\nHora de divulgar a ferramenta certa.\n'+handle,
+    story: 'CodeCraft Solutions · BH\nSite · loja · sistema\n'+handle,
+    empresa: 'Tecnologia que fecha caixa.\nSite, loja, sistema e Finanças CodeCraft.\n'+handle+'\nWhatsApp 31 99975-8385'
+  };
+  return map[kind] || map.empresa;
+}
+function drawIgPost(kind, extra){
+  const canvas = document.getElementById('ig-canvas');
+  if(!canvas) return;
+  const story = kind==='story' || kind==='reels';
+  canvas.width = 1080;
+  canvas.height = story ? 1920 : 1080;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const g = ctx.createLinearGradient(0,0,w,h);
+  g.addColorStop(0,'#0c161e');
+  g.addColorStop(0.5,'#12172B');
+  g.addColorStop(1,'#1a3a4a');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,w,h);
+  ctx.beginPath(); ctx.arc(w*0.86, h*0.1, 260, 0, Math.PI*2); ctx.fillStyle='rgba(212,175,55,0.14)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(w*0.05, h*0.92, 320, 0, Math.PI*2); ctx.fillStyle='rgba(47,111,138,0.28)'; ctx.fill();
+  ctx.fillStyle='#D4AF37';
+  if(ctx.roundRect){ ctx.beginPath(); ctx.roundRect(64,64,118,118,22); ctx.fill(); }
+  else { ctx.fillRect(64,64,118,118); }
+  ctx.fillStyle='#0c161e';
+  ctx.font='700 44px Inter, Arial, sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText('CC', 123, 140);
+  ctx.textAlign='left';
+  ctx.fillStyle='#D4AF37';
+  ctx.font='700 26px Inter, Arial, sans-serif';
+  ctx.fillText(extra.kicker||'CODECRAFT', 206, 108);
+  ctx.fillStyle='rgba(255,255,255,0.7)';
+  ctx.font='500 22px Inter, Arial, sans-serif';
+  ctx.fillText('@'+IG_HANDLE, 206, 146);
+  ctx.fillStyle='#fff';
+  ctx.font='800 78px Inter, Arial, sans-serif';
+  const lines = String(extra.title||'CodeCraft').split('\n');
+  let y = story ? 700 : 430;
+  lines.forEach(line=>{ ctx.fillText(line, 64, y); y += 96; });
+  ctx.fillStyle='rgba(255,255,255,0.72)';
+  ctx.font='500 30px Inter, Arial, sans-serif';
+  ctx.fillText(extra.sub||'', 64, y+36);
+  if(extra.market){
+    ctx.fillStyle='#D4AF37';
+    ctx.font='600 26px JetBrains Mono, Consolas, monospace';
+    ctx.fillText(extra.market, 64, h-120);
+  }
+  ctx.fillStyle='rgba(255,255,255,0.45)';
+  ctx.font='500 22px Inter, Arial, sans-serif';
+  ctx.fillText('CodeCraft Solutions · BH', 64, h-56);
+}
+function renderIgQueue(){
+  const el = document.getElementById('ig-queue');
+  if(!el) return;
+  const q = igQueue();
+  if(!q.length){ el.innerHTML=''; return; }
+  el.innerHTML = '<div class="ccs-eyebrow">Fila recente</div>'+q.slice(0,6).map(item=>
+    '<p style="font-size:13px; color:var(--ink-soft); margin-top:8px;">'+(item.format||'feed')+' · '+(item.theme||'')+' · '+new Date(item.at).toLocaleString('pt-BR')+'</p>'
+  ).join('');
+}
+function downloadIgBlob(blob){
+  if(!blob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'codecraft-'+IG_HANDLE+'-'+Date.now()+'.jpg';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2500);
+}
+function downloadIgArt(){
+  const canvas = document.getElementById('ig-canvas');
+  if(!canvas) return;
+  canvas.toBlob(b=>downloadIgBlob(b), 'image/jpeg', 0.92);
+}
+async function uploadIgImage(blob){
+  if(!supabaseClient) return null;
+  const path = 'posts/'+Date.now()+'.jpg';
+  const { error } = await supabaseClient.storage.from('ig-posts').upload(path, blob, { contentType:'image/jpeg', upsert:true });
+  if(error) return null;
+  const { data } = supabaseClient.storage.from('ig-posts').getPublicUrl(path);
+  return data && data.publicUrl;
+}
+async function publishIgGraph(imageUrl, caption){
+  const c = igConn();
+  const make = new URLSearchParams({ image_url:imageUrl, caption:caption||'', access_token:c.token });
+  const createdRes = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(c.igUserId)+'/media?'+make.toString(), { method:'POST' });
+  const created = await createdRes.json();
+  if(!created.id) throw new Error((created.error&&created.error.message)||'A Meta não criou a mídia.');
+  const pub = new URLSearchParams({ creation_id:created.id, access_token:c.token });
+  const pubRes = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(c.igUserId)+'/media_publish?'+pub.toString(), { method:'POST' });
+  const published = await pubRes.json();
+  if(!published.id) throw new Error((published.error&&published.error.message)||'A Meta não publicou.');
+  return published.id;
+}
+async function publishIgNow(fromChat){
+  const canvas = document.getElementById('ig-canvas');
+  const captionEl = document.getElementById('ig-caption');
+  if(!canvas || !captionEl) return '';
+  const caption = captionEl.value.trim();
+  navigator.clipboard.writeText(caption).catch(()=>{});
+  const blob = await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.92));
+  const conn = igConn();
+  if(conn.token && conn.igUserId){
+    try{
+      const url = await uploadIgImage(blob);
+      if(!url) throw new Error('Falta o arquivo público da arte (rode o SQL do bucket ig-posts no Supabase).');
+      await publishIgGraph(url, caption);
+      const msg = 'Publiquei no <strong>@code.invention</strong>.';
+      if(!fromChat) pushIg('bot', msg);
+      showToast('Publicado no @code.invention');
+      return msg;
+    }catch(err){
+      downloadIgBlob(blob);
+      openCompanyIg();
+      const msg = 'A publicação automática na Meta falhou: '+escapeHtml(err.message||String(err))+'. Baixei a arte, copiei a legenda e abri <strong>@code.invention</strong>.';
+      if(!fromChat) pushIg('bot', msg);
+      return msg;
+    }
+  }
+  downloadIgBlob(blob);
+  openCompanyIg();
+  const msg = 'Arte e legenda prontas. Abri <strong>@code.invention</strong> com o texto copiado. Para ela postar sozinha na página, ligue o token da Meta abaixo — a Meta não aceita senha neste site.';
+  if(!fromChat){ pushIg('bot', msg); showToast('Arte pronta. Abri o Instagram.'); }
+  return msg;
+}
+
+async function sendIgAi(){
+  const input = document.getElementById('ig-ai-input');
+  const raw = (input.value||'').trim();
+  if(!raw) return;
+  input.value = '';
+  pushIg('me', escapeHtml(raw));
+  const t = raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const mkt = await loadMarket();
+  let format = 'feed';
+  if(/story/.test(t)) format = 'story';
+  if(/reel|video|reels/.test(t)) format = 'reels';
+  const theme = pickIgTheme(t);
+  const extra = Object.assign({}, igThemes()[theme] || igThemes().empresa);
+  extra.market = 'USD R$ '+moneyFx(mkt.usd)+'  ·  IBOV '+(mkt.ibovPct??'—')+'%  ·  SELIC '+(mkt.selic??'—')+'%';
+  if(theme==='mercado'){
+    extra.title = 'Dólar R$ '+moneyFx(mkt.usd)+'\nIbov '+(mkt.ibovPct??'—')+'%\nSelic '+(mkt.selic??'—')+'%';
+  }
+  drawIgPost(format==='feed' ? 'feed' : format, extra);
+  const capEl = document.getElementById('ig-caption');
+  const cap = igCaption(theme, extra, mkt);
+  if(capEl) capEl.value = cap;
+  const q = igQueue();
+  q.unshift({ at:new Date().toISOString(), theme, format, caption:cap });
+  saveIgQueue(q);
+  const wantPublish = /(public|posta|postar|agora|manda|publica)/.test(t);
+  if(format==='reels' && !wantPublish){
+    pushIg('bot','Montei o reels em formato vertical + roteiro na legenda para <strong>@code.invention</strong>. A Meta só sobe vídeo .mp4; a arte e o texto já estão prontos. Manda <em>publica agora</em> que eu executo.');
     return;
   }
-  if(/(excel|export|relatorio|relatório)/.test(t)){
-    exportExcel();
-    pushAi('bot','Baixei o Excel da empresa (caixa e projetos).');
+  if(wantPublish){
+    const result = await publishIgNow(true);
+    pushIg('bot', result);
     return;
   }
-  if(/(hoje|o que fazer|fila|agenda)/.test(t)){
-    switchAdminTab('hoje');
-    renderHoje();
-    const due = loadTasks().filter(x=>!x.done && x.when<=todayISO()).length;
-    pushAi('bot','Abri Hoje. '+unpaid.length+' PIX em aberto, '+leads.length+' lead(s), '+due+' item(ns) na agenda. Dólar R$ '+moneyFx(mkt.usd)+'.');
-    return;
-  }
-  if(/(chamar lead|abrir lead|whats do lead)/.test(t)){
-    if(!leads.length){ pushAi('bot','Fila de Clientes vazia. Manda <em>acha clínicas</em> que eu abro a busca.'); return; }
-    openLeadWa(leads[0].id);
-    pushAi('bot','Abri o WhatsApp de <strong>'+escapeHtml(leads[0].name)+'</strong>.');
-    return;
-  }
-  const ch = bestChannel(projects, messages, mkt);
-  pushAi('bot','Não ficou claro, então fiz o que mais fecha agora: canal <strong>'+ch.label+'</strong> ('+escapeHtml(ch.why)+'). Manda uma ordem direta: <em>cobra todo mundo</em>, <em>acha loja em Contagem</em>, <em>posta no melhor canal</em>, <em>analisa o mercado e age</em>, <em>responde conversa parada</em> ou <em>gera proposta</em>.');
-  openPost(ch.id, mkt);
+  pushIg('bot','Arte e legenda prontas para <strong>@code.invention</strong>. Manda <em>publica agora</em> ou clique em Publicar.');
 }
 
 /* ================= INIT ================= */

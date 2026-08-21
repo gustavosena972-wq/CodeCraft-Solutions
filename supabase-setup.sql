@@ -114,3 +114,17 @@ alter table public.messages      replica identity full;
 alter table public.chat_messages replica identity full;
 alter table public.lead_chats    replica identity full;
 alter table public.admin_leads   replica identity full;
+
+-- Arte da IA do Instagram (@code.invention). Bucket público para a Meta
+-- conseguir puxar a imagem na hora de publicar.
+insert into storage.buckets (id, name, public)
+values ('ig-posts', 'ig-posts', true)
+on conflict (id) do update set public = true;
+
+drop policy if exists "anon read ig posts" on storage.objects;
+create policy "anon read ig posts" on storage.objects
+  for select using (bucket_id = 'ig-posts');
+
+drop policy if exists "anon upload ig posts" on storage.objects;
+create policy "anon upload ig posts" on storage.objects
+  for insert with check (bucket_id = 'ig-posts');
