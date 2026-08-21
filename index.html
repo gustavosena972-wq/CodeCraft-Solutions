@@ -2316,7 +2316,7 @@ function bootAdminAi(){
   const log = document.getElementById('admin-ai-log');
   if(!log) return;
   if(!adminAiBooted){
-    log.innerHTML = '<div class="ccs-ai-msg"><strong>Jarvis online.</strong> Manda um projeto que eu analiso. Pede mercado, cliente, ideia, futuro ou a parte Empresa do Finanças. Instagram @code.invention é a outra IA.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg"><strong>Jarvis online.</strong> Eu sou da CodeCraft. Manda um projeto que eu analiso. Pede mercado, cliente, ideia, futuro ou abre a parte Empresa do Finanças. Instagram @code.invention é a outra IA.</div>';
     adminAiBooted = true;
   }
 }
@@ -2402,7 +2402,7 @@ function jarvisFinance(projects){
   projects.forEach(p=>{ const k=p.serviceType||'site'; bySvc[k]=(bySvc[k]||0)+Number(p.pixValue||0); });
   const svc = Object.keys(bySvc).map(k=>k+' '+money(bySvc[k])).join(', ') || 'sem valor lançado';
   window.open(FINANCAS_URL, '_blank');
-  return 'Abri o <strong>Finanças</strong> — usa o espaço <em>Empresa</em> no topo, não o pessoal.<br>Deste painel: recebido '+money(paid)+', em aberto '+open.length+' ('+money(open.reduce((s,p)=>s+Number(p.pixValue||0),0))+'). Por serviço: '+escapeHtml(svc)+'.<br>Lá o Jarvis da empresa lê DRE, título e caixa. PIX da CodeCraft não muda.';
+  return 'Abri o <strong>Finanças</strong> — usa o espaço <em>Empresa</em> no topo, não o pessoal.<br>Deste painel: recebido '+money(paid)+', em aberto '+open.length+' ('+money(open.reduce((s,p)=>s+Number(p.pixValue||0),0))+'). Por serviço: '+escapeHtml(svc)+'.<br>Lá o <strong>contador da empresa</strong> lê DRE, título e caixa. Jarvis fica aqui, na CodeCraft. PIX da CodeCraft não muda.';
 }
 
 async function sendAdminAi(){
