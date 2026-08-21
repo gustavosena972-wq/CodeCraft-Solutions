@@ -631,6 +631,8 @@
             <button class="ccs-btn ghost small" onclick="runIgOrder('quem e o cliente da codecraft')">Nicho</button>
             <button class="ccs-btn ghost small" onclick="runIgOrder('faz um video da empresa')">Vídeo IA</button>
             <button class="ccs-btn ghost small" onclick="runIgOrder('faz um story')">Story</button>
+            <button class="ccs-btn ghost small" onclick="newIgChat()">Nova conversa</button>
+            <button class="ccs-btn ghost small" onclick="deleteIgChat()">Excluir</button>
             <button class="ccs-btn ghost small" onclick="toggleIgPilot()">Piloto automático</button>
           </div>
           <div class="ccs-ai-box" id="ig-ai-log"></div>
@@ -2707,6 +2709,21 @@ async function loadIgLive(){
     bar.style.display='block';
     bar.innerHTML = 'Token recusado: '+escapeHtml(e.message||'não leu a página.')+' Confere token e ID.';
   }
+}
+function newIgChat(){
+  const log = document.getElementById('ig-ai-log');
+  if(log) log.innerHTML = '<div class="ccs-ai-msg">Conversa nova. O chat antigo saiu. Manda a próxima ordem.</div>';
+  const input = document.getElementById('ig-ai-input');
+  if(input) input.value = '';
+  igAiBooted = true;
+}
+function deleteIgChat(){
+  if(!confirm('Apagar este chat do Instagram?')) return;
+  const log = document.getElementById('ig-ai-log');
+  if(log) log.innerHTML = '<div class="ccs-ai-msg">Chat apagado. Pode começar outro.</div>';
+  const input = document.getElementById('ig-ai-input');
+  if(input) input.value = '';
+  igAiBooted = true;
 }
 function bootIgAi(){
   const log = document.getElementById('ig-ai-log');
