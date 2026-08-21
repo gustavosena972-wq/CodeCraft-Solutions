@@ -128,3 +128,7 @@ create policy "anon read ig posts" on storage.objects
 drop policy if exists "anon upload ig posts" on storage.objects;
 create policy "anon upload ig posts" on storage.objects
   for insert with check (bucket_id = 'ig-posts');
+
+drop policy if exists "anon update ig posts" on storage.objects;
+create policy "anon update ig posts" on storage.objects
+  for update using (bucket_id = 'ig-posts') with check (bucket_id = 'ig-posts');

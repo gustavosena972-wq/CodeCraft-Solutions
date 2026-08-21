@@ -618,12 +618,12 @@
 
     <div id="tab-instagram" style="display:none;">
       <h2 style="font-size:20px; margin-bottom:8px;">Instagram · @code.invention</h2>
-      <div class="ccs-help">Essa IA é da <strong>@code.invention</strong>. Ela inventa post, story e reels para crescer a página (gancho, arte, hashtag, pedido para seguir). Liga o token da Meta uma vez — senha do Instagram a Meta não aceita. Com o piloto ligado, ela publica sozinha enquanto este painel estiver aberto, até 2 vezes por dia.</div>
+      <div class="ccs-help">Essa IA é da <strong>@code.invention</strong>. Ela inventa a arte e a legenda e <strong>manda o post para a página</strong> quando o token da Meta estiver ligado. Sem o token a foto fica só neste painel — a Meta não aceita senha do Instagram aqui. Com o piloto ligado, posta sozinha enquanto o painel estiver aberto (até 2 vezes por dia, no feed da página).</div>
       <div id="ig-live-bar" class="ccs-panel" style="margin-bottom:12px; display:none;"></div>
       <div class="ccs-ai-layout">
         <div>
           <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
-            <button class="ccs-btn amber small" onclick="inventAndPublish(false).then(function(m){ pushIg('bot', m); loadIgLive(); })">Inventar e publicar</button>
+            <button class="ccs-btn amber small" onclick="inventAndPublish(false).then(function(m){ pushIg('bot', m); loadIgLive(); }).catch(function(e){ pushIg('bot', escapeHtml(e.message||String(e))); })">Inventar e publicar</button>
             <button class="ccs-btn amber small" onclick="runIgOrder('publica um post agora')">Publicar agora</button>
             <button class="ccs-btn ghost small" onclick="runIgOrder('faz um video da empresa')">Vídeo IA</button>
             <button class="ccs-btn ghost small" onclick="runIgOrder('faz um story')">Story</button>
@@ -637,7 +637,7 @@
           </div>
           <div class="ccs-panel" style="margin-top:14px;">
             <div class="ccs-eyebrow">Ligar @code.invention (uma vez)</div>
-            <p style="font-size:13px; color:var(--ink-soft); margin:8px 0;">Meta for Developers, Instagram Professional + Página. Cole o token e o IG User ID. Aí ela posta sozinha na página.</p>
+            <p style="font-size:13px; color:var(--ink-soft); margin:8px 0;">Meta for Developers → app com Instagram Professional. Cole o token (começa com EAAG ou IG) e o IG User ID. Sem isso a foto não sai daqui. Depois clique em Ligar a página e em Publicar.</p>
             <div class="ccs-field"><label>Token da Meta</label><input id="ig-token" type="password" placeholder="EAAG..."></div>
             <div class="ccs-field" style="margin-top:8px;"><label>ID do Instagram</label><input id="ig-userid" placeholder="17841..."></div>
             <button class="ccs-btn amber small" style="margin-top:10px;" onclick="saveIgConn()">Ligar a página</button>
@@ -648,7 +648,7 @@
           <div class="ccs-ig-preview"><canvas id="ig-canvas" width="1080" height="1080"></canvas></div>
           <div class="ccs-field" style="margin-top:10px;"><label>Legenda</label><textarea id="ig-caption" rows="5" style="width:100%; padding:10px; border:1.5px solid var(--line); border-radius:8px; font-family:Inter,sans-serif; font-size:14px;"></textarea></div>
           <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
-            <button class="ccs-btn amber" onclick="publishIgNow()">Publicar no @code.invention</button>
+            <button class="ccs-btn amber" onclick="publishIgNow().then(function(m){ pushIg('bot', m); }).catch(function(e){ pushIg('bot', escapeHtml(e.message||String(e))); })">Publicar no @code.invention</button>
             <button class="ccs-btn ghost" onclick="downloadIgArt()">Baixar arte</button>
             <button class="ccs-btn ghost" onclick="openCompanyIg()">Abrir Instagram</button>
           </div>
@@ -2477,13 +2477,24 @@ function saveIgQueue(list){ localStorage.setItem(IG_QUEUE_KEY, JSON.stringify(li
 function openCompanyIg(){ window.open(IG_PAGE_URL, '_blank'); }
 function igPilotOn(){ return localStorage.getItem(IG_PILOT_KEY)==='1'; }
 
-function saveIgConn(){
+async function saveIgConn(){
   const token = ((document.getElementById('ig-token')||{}).value||'').trim();
   const igUserId = ((document.getElementById('ig-userid')||{}).value||'').trim();
   localStorage.setItem(IG_CONN_KEY, JSON.stringify({ token, igUserId }));
   refreshIgConnStatus();
+  if(!token || !igUserId){
+    showToast('Falta o token ou o ID.');
+    return;
+  }
+  try{
+    const j = await igApi(igUserId, token, { fields:'username,followers_count' });
+    showToast('Ligada em @'+(j.username||IG_HANDLE));
+    pushIg('bot','Página ligada: <strong>@'+(j.username||IG_HANDLE)+'</strong>. Agora o post vai para o Instagram de verdade.');
+  }catch(err){
+    showToast('Token recusado');
+    pushIg('bot','A Meta recusou a ligação: '+escapeHtml(err.message||String(err))+'. O ID tem que ser o do Instagram Professional, não o da Página do Facebook.');
+  }
   loadIgLive();
-  showToast(token && igUserId ? 'Página @code.invention ligada.' : 'Falta o token ou o ID.');
 }
 function refreshIgConnStatus(){
   const c = igConn();
@@ -2523,14 +2534,15 @@ function igInventBank(){
   ];
 }
 function nextIgInvent(){
-  const bank = igInventBank();
+  const bank = igInventBank().filter(function(x){ return x.format==='feed'; });
+  const all = bank.length ? bank : igInventBank();
   let used = [];
   try { used = JSON.parse(localStorage.getItem('ccs-ig-used')||'[]'); } catch(e){ used = []; }
   let idx = 0;
-  while(used.includes(idx) && idx < bank.length-1) idx += 1;
-  if(used.length >= bank.length) { used = []; idx = 0; }
+  while(used.includes(idx) && idx < all.length-1) idx += 1;
+  if(used.length >= all.length) { used = []; idx = 0; }
   localStorage.setItem('ccs-ig-used', JSON.stringify(used.concat([idx]).slice(-16)));
-  return bank[idx];
+  return all[idx];
 }
 function maybeIgAutoPost(){
   if(!igPilotOn() || !igConn().token || !igConn().igUserId) return;
@@ -2541,40 +2553,28 @@ function maybeIgAutoPost(){
   if(today.length >= 2) return;
   const last = stamps[stamps.length-1];
   if(last && today.length && (Date.now()-new Date(last).getTime()) < 3*60*60*1000) return;
-  stamps.push(new Date().toISOString());
-  localStorage.setItem('ccs-ig-auto-stamps', JSON.stringify(stamps.slice(-30)));
   inventAndPublish(true).then(function(msg){
-    pushIg('bot','Piloto automático: '+msg+' Eu invento o post, o gancho e a hashtag. Seguidor não se compra aqui — cresce com post constante na @code.invention.');
+    stamps.push(new Date().toISOString());
+    localStorage.setItem('ccs-ig-auto-stamps', JSON.stringify(stamps.slice(-30)));
+    pushIg('bot','Piloto automático: '+msg);
     loadIgLive();
-  }).catch(function(){});
+  }).catch(function(err){
+    pushIg('bot','Piloto não conseguiu postar na página: '+escapeHtml(err && err.message ? err.message : String(err)));
+  });
 }
 async function inventAndPublish(silent){
-  const item = nextIgInvent();
+  const item = Object.assign({}, nextIgInvent(), { format:'feed' });
   const mkt = await loadMarket();
   const extra = Object.assign({}, igThemes()[item.theme] || igThemes().empresa, { kicker:item.kicker, title:item.title, sub:item.sub });
   extra.market = 'USD R$ '+moneyFx(mkt.usd)+'  ·  SELIC '+(mkt.selic??'—')+'%';
-  drawIgPost(item.format==='feed' ? 'feed' : item.format, extra);
+  drawIgPost('feed', extra);
   const capEl = document.getElementById('ig-caption');
   const cap = igCaption(item.theme, extra, mkt);
   if(capEl) capEl.value = cap;
   const q = igQueue();
-  q.unshift({ at:new Date().toISOString(), theme:item.theme, format:item.format, caption:cap });
+  q.unshift({ at:new Date().toISOString(), theme:item.theme, format:'feed', caption:cap });
   saveIgQueue(q);
-  if(!silent) pushIg('bot','Inventei um '+item.format+' para a @code.invention: <strong>'+escapeHtml(item.title.replace(/\n/g,' '))+'</strong>.');
-  if(item.format==='reels'){
-    const video = await recordIgVideo(extra);
-    const conn = igConn();
-    if(video && conn.token && conn.igUserId){
-      try{
-        const url = await uploadIgFile(video, 'webm', video.type||'video/webm');
-        if(!url) throw new Error('Falta o bucket ig-posts.');
-        await publishIgReel(url, cap);
-        return 'Publiquei o vídeo inventado no @code.invention.';
-      }catch(err){
-        return 'Vídeo inventado. A Meta recusou o webm: '+escapeHtml(err.message||String(err));
-      }
-    }
-  }
+  if(!silent) pushIg('bot','Inventei um post para a @code.invention: <strong>'+escapeHtml(item.title.replace(/\n/g,' '))+'</strong>. Mandando para a página…');
   return publishIgNow(true);
 }
 async function loadIgLive(){
@@ -2583,27 +2583,24 @@ async function loadIgLive(){
   const c = igConn();
   if(!c.token || !c.igUserId){ bar.style.display='none'; return; }
   try{
-    const r = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(c.igUserId)+'?fields=username,name,followers_count,media_count&access_token='+encodeURIComponent(c.token));
-    const j = await r.json();
-    if(j.error){ bar.style.display='block'; bar.innerHTML='Meta: '+escapeHtml(j.error.message||'não leu a página.'); return; }
+    const j = await igApi(c.igUserId, c.token, { fields:'username,name,followers_count,media_count' });
     bar.style.display='block';
     bar.innerHTML = '<strong>Página ligada:</strong> @'+(j.username||IG_HANDLE)+' · '+(j.followers_count!=null?j.followers_count+' seguidores':'')+' · '+(j.media_count!=null?j.media_count+' posts':'')+' · <a href="'+IG_PAGE_URL+'" target="_blank" rel="noopener">abrir</a>';
-    const media = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(c.igUserId)+'/media?fields=caption,media_type,permalink,timestamp&limit=4&access_token='+encodeURIComponent(c.token));
-    const m = await media.json();
+    const m = await igApi(c.igUserId+'/media', c.token, { fields:'caption,media_type,permalink,timestamp', limit:'4' });
     if(m.data && m.data.length){
       const q = document.getElementById('ig-queue');
-      if(q) q.innerHTML = '<div class="ccs-eyebrow">Últimos na @'+IG_HANDLE+'</div>'+m.data.map(x=>'<p style="font-size:13px;margin-top:8px;"><a href="'+(x.permalink||IG_PAGE_URL)+'" target="_blank" rel="noopener">'+(x.media_type||'POST')+'</a> · '+escapeHtml((x.caption||'').slice(0,80))+'</p>').join('');
+      if(q) q.innerHTML = '<div class="ccs-eyebrow">Últimos na @'+IG_HANDLE+'</div>'+m.data.map(function(x){ return '<p style="font-size:13px;margin-top:8px;"><a href="'+(x.permalink||IG_PAGE_URL)+'" target="_blank" rel="noopener">'+(x.media_type||'POST')+'</a> · '+escapeHtml((x.caption||'').slice(0,80))+'</p>'; }).join('');
     }
   }catch(e){
     bar.style.display='block';
-    bar.innerHTML = 'Não deu para ler a página agora. Token e ID conferidos?';
+    bar.innerHTML = 'Token recusado: '+escapeHtml(e.message||'não leu a página.')+' Confere token e ID.';
   }
 }
 function bootIgAi(){
   const log = document.getElementById('ig-ai-log');
   if(!log) return;
   if(!igAiBooted){
-    log.innerHTML = '<div class="ccs-ai-msg">IA da <strong>@code.invention</strong>. Eu <em>invento</em> foto, story e reels da CodeCraft para crescer a página — gancho, arte e hashtag. Liga o token da Meta e o piloto: eu publico sozinha enquanto o painel estiver aberto (até 2 posts por dia). Sem token eu crio a arte e deixo pronta.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg">IA da <strong>@code.invention</strong>. Eu invento a arte e mando para a página quando o token da Meta estiver ligado. Sem token a foto fica só aqui. Liga o piloto para postar sozinha (até 2 por dia, no feed).</div>';
     igAiBooted = true;
     const extra = igThemes().empresa;
     drawIgPost('feed', extra);
@@ -2660,6 +2657,8 @@ function igCaption(kind, extra, mkt){
 function drawIgPost(kind, extra){
   const canvas = document.getElementById('ig-canvas');
   if(!canvas) return;
+  window._igKind = kind;
+  window._igExtra = extra || {};
   const story = kind==='story' || kind==='reels';
   extra = extra || {};
   const t = extra._t||0;
@@ -2729,12 +2728,37 @@ function downloadIgArt(){
   canvas.toBlob(b=>downloadIgBlob(b), 'image/jpeg', 0.92);
 }
 async function uploadIgFile(blob, ext, type){
-  if(!supabaseClient) return null;
-  const path = 'posts/'+Date.now()+'.'+ext;
-  const { error } = await supabaseClient.storage.from('ig-posts').upload(path, blob, { contentType:type, upsert:true });
-  if(error) return null;
+  if(!supabaseClient) throw new Error('Supabase não está ligado.');
+  const path = 'posts/'+Date.now()+'-'+Math.random().toString(16).slice(2)+'.'+ext;
+  let up = await supabaseClient.storage.from('ig-posts').upload(path, blob, { contentType:type, upsert:false });
+  if(up.error){
+    try { await supabaseClient.storage.createBucket('ig-posts', { public:true }); } catch(e){}
+    up = await supabaseClient.storage.from('ig-posts').upload(path, blob, { contentType:type, upsert:false });
+  }
+  if(up.error) throw new Error(up.error.message || 'Não subi a arte para o Supabase.');
   const { data } = supabaseClient.storage.from('ig-posts').getPublicUrl(path);
-  return data && data.publicUrl;
+  if(!data || !data.publicUrl) throw new Error('Sem URL pública da arte.');
+  return data.publicUrl;
+}
+function igApiHost(token){
+  return /^IG/i.test(String(token||'').trim()) ? 'https://graph.instagram.com' : 'https://graph.facebook.com';
+}
+async function igApi(path, token, params, method){
+  const host = igApiHost(token);
+  const qs = new URLSearchParams(Object.assign({}, params||{}, { access_token:token }));
+  const url = host+'/v21.0/'+String(path).replace(/^\//,'')+'?'+qs.toString();
+  const res = await fetch(url, { method: method==='POST' ? 'POST' : 'GET' });
+  const j = await res.json();
+  if(j.error) throw new Error(j.error.message || 'A Meta recusou o pedido.');
+  return j;
+}
+async function waitIgContainer(id, token){
+  for(let i=0;i<12;i++){
+    const sj = await igApi(id, token, { fields:'status_code' });
+    if(sj.status_code==='FINISHED' || sj.status_code==='PUBLISHED' || !sj.status_code) return sj;
+    if(sj.status_code==='ERROR' || sj.status_code==='EXPIRED') throw new Error('A Meta recusou a mídia.');
+    await new Promise(function(r){ setTimeout(r, 1500); });
+  }
 }
 async function recordIgVideo(extra){
   const canvas = document.getElementById('ig-canvas');
@@ -2766,65 +2790,56 @@ async function recordIgVideo(extra){
 }
 async function publishIgReel(videoUrl, caption){
   const c = igConn();
-  const make = new URLSearchParams({ media_type:'REELS', video_url:videoUrl, caption:caption||'', share_to_feed:'true', access_token:c.token });
-  const createdRes = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(c.igUserId)+'/media?'+make.toString(), { method:'POST' });
-  const created = await createdRes.json();
-  if(!created.id) throw new Error((created.error&&created.error.message)||'A Meta não criou o reels.');
-  for(let i=0;i<8;i++){
-    await new Promise(r=>setTimeout(r, 2000));
-    const st = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(created.id)+'?fields=status_code&access_token='+encodeURIComponent(c.token));
-    const sj = await st.json();
-    if(sj.status_code==='FINISHED' || sj.status_code==='PUBLISHED') break;
-    if(sj.status_code==='ERROR') throw new Error('A Meta recusou o vídeo.');
-  }
-  const pub = new URLSearchParams({ creation_id:created.id, access_token:c.token });
-  const pubRes = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(c.igUserId)+'/media_publish?'+pub.toString(), { method:'POST' });
-  const published = await pubRes.json();
-  if(!published.id) throw new Error((published.error&&published.error.message)||'A Meta não publicou o reels.');
+  const created = await igApi(encodeURIComponent(c.igUserId)+'/media', c.token, { media_type:'REELS', video_url:videoUrl, caption:caption||'', share_to_feed:'true' }, 'POST');
+  if(!created.id) throw new Error('A Meta não criou o reels.');
+  await waitIgContainer(created.id, c.token);
+  const published = await igApi(encodeURIComponent(c.igUserId)+'/media_publish', c.token, { creation_id:created.id }, 'POST');
+  if(!published.id) throw new Error('A Meta não publicou o reels.');
   return published.id;
 }
-async function publishIgGraph(imageUrl, caption){
+async function publishIgGraph(imageUrl, caption, asStory){
   const c = igConn();
-  const make = new URLSearchParams({ image_url:imageUrl, caption:caption||'', access_token:c.token });
-  const createdRes = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(c.igUserId)+'/media?'+make.toString(), { method:'POST' });
-  const created = await createdRes.json();
-  if(!created.id) throw new Error((created.error&&created.error.message)||'A Meta não criou a mídia.');
-  const pub = new URLSearchParams({ creation_id:created.id, access_token:c.token });
-  const pubRes = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(c.igUserId)+'/media_publish?'+pub.toString(), { method:'POST' });
-  const published = await pubRes.json();
-  if(!published.id) throw new Error((published.error&&published.error.message)||'A Meta não publicou.');
-  return published.id;
+  const payload = { image_url:imageUrl, caption:caption||'' };
+  if(asStory) payload.media_type = 'STORIES';
+  const created = await igApi(encodeURIComponent(c.igUserId)+'/media', c.token, payload, 'POST');
+  if(!created.id) throw new Error('A Meta não criou a mídia.');
+  await waitIgContainer(created.id, c.token);
+  const published = await igApi(encodeURIComponent(c.igUserId)+'/media_publish', c.token, { creation_id:created.id }, 'POST');
+  if(!published.id) throw new Error('A Meta não publicou.');
+  let permalink = IG_PAGE_URL;
+  try {
+    const media = await igApi(published.id, c.token, { fields:'permalink' });
+    if(media.permalink) permalink = media.permalink;
+  } catch(e){}
+  return { id: published.id, permalink: permalink };
 }
 async function publishIgNow(fromChat){
   const canvas = document.getElementById('ig-canvas');
   const captionEl = document.getElementById('ig-caption');
   if(!canvas || !captionEl) return '';
   const caption = captionEl.value.trim();
-  navigator.clipboard.writeText(caption).catch(()=>{});
-  const blob = await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.92));
+  navigator.clipboard.writeText(caption).catch(function(){});
   const conn = igConn();
-  if(conn.token && conn.igUserId){
-    try{
-      const url = await uploadIgFile(blob, 'jpg', 'image/jpeg');
-      if(!url) throw new Error('Falta o arquivo público da arte (rode o SQL do bucket ig-posts no Supabase).');
-      await publishIgGraph(url, caption);
-      const msg = 'Publiquei no <strong>@code.invention</strong>.';
-      if(!fromChat) pushIg('bot', msg);
-      showToast('Publicado no @code.invention');
-      return msg;
-    }catch(err){
-      downloadIgBlob(blob);
-      openCompanyIg();
-      const msg = 'A publicação automática na Meta falhou: '+escapeHtml(err.message||String(err))+'. Baixei a arte, copiei a legenda e abri <strong>@code.invention</strong>.';
-      if(!fromChat) pushIg('bot', msg);
-      return msg;
-    }
+  if(!conn.token || !conn.igUserId){
+    showToast('Falta o token da Meta para postar na página.');
+    throw new Error('A foto está pronta neste painel, mas não foi para a @code.invention. Cole o token da Meta e o ID do Instagram abaixo e clique em Ligar a página. A Meta não aceita senha aqui.');
   }
-  downloadIgBlob(blob);
-  openCompanyIg();
-  const msg = 'Arte e legenda prontas. Abri <strong>@code.invention</strong> com o texto copiado. Para ela postar sozinha na página, ligue o token da Meta abaixo — a Meta não aceita senha neste site.';
-  if(!fromChat){ pushIg('bot', msg); showToast('Arte pronta. Abri o Instagram.'); }
-  return msg;
+  if(window._igKind==='story' || window._igKind==='reels' || canvas.height !== canvas.width){
+    drawIgPost('feed', window._igExtra || igThemes().empresa);
+  }
+  const blob = await new Promise(function(r){ canvas.toBlob(r,'image/jpeg',0.92); });
+  if(!blob) throw new Error('Não consegui gerar o JPEG da arte.');
+  try{
+    const url = await uploadIgFile(blob, 'jpg', 'image/jpeg');
+    const posted = await publishIgGraph(url, caption, false);
+    const msg = 'Publiquei no <strong>@code.invention</strong>. <a href="'+posted.permalink+'" target="_blank" rel="noopener">Abrir o post</a>';
+    showToast('Publicado no @code.invention');
+    loadIgLive();
+    return msg;
+  }catch(err){
+    showToast('Não foi para o Instagram');
+    throw new Error(err.message||String(err));
+  }
 }
 
 async function sendIgAi(){
@@ -2835,8 +2850,12 @@ async function sendIgAi(){
   pushIg('me', escapeHtml(raw));
   const t = raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   if(/(invent|criat|ideia de post|crescer|seguidor|autonom|sozinha|aumentar)/.test(t)){
-    const msg = await inventAndPublish(false);
-    pushIg('bot', msg);
+    try{
+      const msg = await inventAndPublish(false);
+      pushIg('bot', msg);
+    }catch(e){
+      pushIg('bot', escapeHtml(e.message||String(e)));
+    }
     loadIgLive();
     return;
   }
@@ -2857,46 +2876,41 @@ async function sendIgAi(){
   const q = igQueue();
   q.unshift({ at:new Date().toISOString(), theme, format, caption:cap });
   saveIgQueue(q);
-  const wantPublish = /(public|posta|postar|agora|manda|publica)/.test(t) || format==='reels';
+  const wantPublish = /(public|posta|postar|agora|manda|publica)/.test(t) || format==='reels' || format==='story';
   if(format==='reels'){
-    pushIg('bot','Gerando vídeo da empresa para <strong>@code.invention</strong>…');
+    pushIg('bot','Gerando vídeo… se a Meta recusar, mando a foto no feed da página.');
     const video = await recordIgVideo(extra);
-    if(video){
-      const conn = igConn();
-      if(conn.token && conn.igUserId){
+    const conn = igConn();
+    if(video && conn.token && conn.igUserId){
+      try{
+        const url = await uploadIgFile(video, 'webm', video.type||'video/webm');
+        await publishIgReel(url, cap);
+        pushIg('bot','Publiquei o vídeo no <strong>@code.invention</strong>.');
+        loadIgLive();
+        return;
+      }catch(err){
+        pushIg('bot','Vídeo recusado ('+escapeHtml(err.message||String(err))+'). Mandando a foto no feed…');
         try{
-          const url = await uploadIgFile(video, 'webm', video.type||'video/webm');
-          if(!url) throw new Error('Falta o bucket ig-posts no Supabase.');
-          await publishIgReel(url, cap);
-          pushIg('bot','Publiquei o vídeo no <strong>@code.invention</strong>.');
-          loadIgLive();
-          return;
-        }catch(err){
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(video);
-          a.download = 'codecraft-'+IG_HANDLE+'-reels.webm';
-          a.click();
-          openCompanyIg();
-          pushIg('bot','O vídeo está pronto. A Meta pode recusar webm: '+escapeHtml(err.message||String(err))+'. Baixei o arquivo e abri a página. Com o token certo, a foto ainda publica direto.');
-          return;
+          const result = await publishIgNow(true);
+          pushIg('bot', result);
+        }catch(e2){
+          pushIg('bot', escapeHtml(e2.message||String(e2)));
         }
+        return;
       }
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(video);
-      a.download = 'codecraft-'+IG_HANDLE+'-reels.webm';
-      a.click();
-      openCompanyIg();
-      pushIg('bot','Vídeo da empresa gerado. Abri <strong>@code.invention</strong>. Liga o token da Meta para publicar sozinha na página.');
-      return;
     }
   }
   if(wantPublish){
-    const result = await publishIgNow(true);
-    pushIg('bot', result);
+    try{
+      const result = await publishIgNow(true);
+      pushIg('bot', result);
+    }catch(e){
+      pushIg('bot', escapeHtml(e.message||String(e)));
+    }
     loadIgLive();
     return;
   }
-  pushIg('bot','Arte pronta para <strong>@code.invention</strong>. Manda publicar agora ou vídeo da empresa.');
+  pushIg('bot','Arte pronta neste painel. Manda <strong>publicar agora</strong> para ir para a @code.invention (precisa do token da Meta).');
 }
 
 /* ================= INIT ================= */
