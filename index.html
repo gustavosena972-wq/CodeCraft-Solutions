@@ -968,8 +968,11 @@ function tlv(id, value){ return id + String(value.length).padStart(2,'0') + valu
 function normalizePixKey(chave){
   let k = (chave || '').trim();
   if(!k) return '';
-  if(k.includes('@')) return k;
+  if(k.includes('@')) return k.toLowerCase();
+  if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(k)) return k;
   const digits = k.replace(/\D/g, '');
+  if(digits.length === 11 && digits[2] === '9') return '+55' + digits;
+  if(digits.length === 13 && digits.indexOf('55') === 0) return '+' + digits;
   return digits || k;
 }
 function buildPixPayload({chave, valor, nome, cidade, txid}){
@@ -1176,10 +1179,30 @@ function renderClientProject(proj){
 }
 function copyPix(code){
   const el = document.getElementById('pixkeytext-'+code);
-  navigator.clipboard.writeText(el.textContent).then(()=>showToast('PIX copia e cola copiado!'));
+  if(!el || !el.textContent){ showToast('PIX ainda não carregou.'); return; }
+  copyRaw(el.textContent, 'PIX copia e cola copiado!');
+}
+function copyRaw(text, okMsg){
+  const done = function(){ showToast(okMsg || 'Copiado.'); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(function(){ copyFallback(text, done); });
+    return;
+  }
+  copyFallback(text, done);
+}
+function copyFallback(text, done){
+  const el = document.createElement('textarea');
+  el.value = text;
+  el.setAttribute('readonly','');
+  el.style.position = 'fixed';
+  el.style.left = '-9999px';
+  document.body.appendChild(el);
+  el.select();
+  try{ document.execCommand('copy'); done(); }catch(e){ showToast('Selecione o código e copie no celular.'); }
+  document.body.removeChild(el);
 }
 function copyText(text){
-  navigator.clipboard.writeText(text).then(()=>showToast('Chave PIX copiada: '+text));
+  copyRaw(text, 'Chave PIX copiada: '+text);
 }
 
 /* ================= CHAT ABERTO (widget da landing) ================= */
