@@ -637,9 +637,20 @@
           </div>
           <div class="ccs-panel" style="margin-top:14px;">
             <div class="ccs-eyebrow">Ligar @code.invention (uma vez)</div>
-            <p style="font-size:13px; color:var(--ink-soft); margin:8px 0;">Meta for Developers → app com Instagram Professional. Cole o token (começa com EAAG ou IG) e o IG User ID. Sem isso a foto não sai daqui. Depois clique em Ligar a página e em Publicar.</p>
-            <div class="ccs-field"><label>Token da Meta</label><input id="ig-token" type="password" placeholder="EAAG..."></div>
-            <div class="ccs-field" style="margin-top:8px;"><label>ID do Instagram</label><input id="ig-userid" placeholder="17841..."></div>
+            <p style="font-size:13px; color:var(--ink-soft); margin:8px 0;"><strong>Não é senha do Instagram.</strong> A Meta não deixa o site postar com usuário e senha. Ela dá uma <strong>chave</strong> (token) e um <strong>número da conta</strong> (ID). Sem esses dois, a arte fica só neste painel.</p>
+            <ol style="margin:8px 0 0 18px; padding:0; font-size:13px; color:var(--ink-soft); line-height:1.7;">
+              <li>No Instagram, @code.invention tem que ser <strong>conta profissional</strong> e estar ligada a uma <strong>Página do Facebook</strong> (Configurações → Conta).</li>
+              <li>Abra o <a href="https://developers.facebook.com/" target="_blank" rel="noopener">site de desenvolvedor da Meta</a> com o Facebook da empresa e crie um app (tipo Negócios / Business), nome CodeCraft.</li>
+              <li>Abra o <a href="https://developers.facebook.com/tools/explorer/" target="_blank" rel="noopener">Graph API Explorer</a>. Em Permissões, marque: <code>instagram_basic</code>, <code>instagram_content_publish</code>, <code>pages_show_list</code>. Clique em Generate Access Token e autorize a Página ligada à @code.invention.</li>
+              <li>No campo da API, cole: <code>me/accounts?fields=name,access_token,instagram_business_account</code> e clique em Submit.</li>
+              <li><strong>Token</strong> = o <code>access_token</code> da Página (começa com EAAG). <strong>ID</strong> = o número dentro de <code>instagram_business_account</code> (tipo 17841…). Não use o ID da Página do Facebook.</li>
+            </ol>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
+              <a class="ccs-btn ghost small" href="https://developers.facebook.com/tools/explorer/" target="_blank" rel="noopener">Abrir o gerador de chave</a>
+              <a class="ccs-btn ghost small" href="https://www.instagram.com/accounts/convert_to_professional_account/" target="_blank" rel="noopener">Ver se a conta é profissional</a>
+            </div>
+            <div class="ccs-field" style="margin-top:12px;"><label>Chave de publicação (token)</label><input id="ig-token" type="password" placeholder="Cole aqui o access_token que começa com EAAG"></div>
+            <div class="ccs-field" style="margin-top:8px;"><label>Número da conta @code.invention (ID)</label><input id="ig-userid" placeholder="Cole o id de instagram_business_account"></div>
             <button class="ccs-btn amber small" style="margin-top:10px;" onclick="saveIgConn()">Ligar a página</button>
             <p id="ig-conn-status" style="font-size:12.5px; color:var(--ink-soft); margin-top:8px;"></p>
           </div>
