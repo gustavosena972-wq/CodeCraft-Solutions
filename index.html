@@ -600,7 +600,7 @@
               <option value="manutencao">Manutenção mensal</option>
             </select>
           </div>
-          <div class="ccs-field"><label>Chave PIX</label><input id="np-pixkey" list="np-pixkey-options" value="+5531999758385" placeholder="CPF, e-mail, telefone ou chave aleatória"><datalist id="np-pixkey-options"><option value="+5531999758385">Inter (principal)</option><option value="+5531972003195">Segundo número</option></datalist></div>
+          <div class="ccs-field"><label>Chave PIX</label><input id="np-pixkey" list="np-pixkey-options" value="31999758385" placeholder="CPF, e-mail, telefone ou chave aleatória"><datalist id="np-pixkey-options"><option value="31999758385">Inter (principal)</option></datalist></div>
           <div class="ccs-field"><label>Valor (R$)</label><input id="np-value" type="number" step="0.01" placeholder="0.00"></div>
           <div class="ccs-field"><label>Cidade (para o PIX)</label><input id="np-city" value="BELO HORIZONTE" placeholder="Ex: SAO PAULO"></div>
           <div class="ccs-field"><label>Observações para o cliente</label><input id="np-notes" placeholder="Opcional"></div>
@@ -712,8 +712,8 @@ const SUPABASE_ANON_KEY = 'sb_publishable_cDjtfaScPpBj-JHSCwagng_LoKGL-IN';
 
 /* Dados da empresa para o PIX. A chave abaixo (telefone) é onde o dinheiro cai. */
 const COMPANY_NAME = 'CODECRAFT SOLUTIONS';
-const COMPANY_PIX_KEY = '+5531999758385';   // chave PIX principal (telefone, Banco Inter)
-const COMPANY_PIX_KEY_ALT = '+5531972003195'; // segundo número (opção alternativa)
+const COMPANY_PIX_KEY = '31999758385';
+const COMPANY_PIX_KEY_ALT = '31999758385';
 const COMPANY_PIX_CITY = 'BELO HORIZONTE';
 /* Intervalo (ms) do fallback de atualização automática caso o realtime falhe. */
 const LIVE_POLL_MS = 4000;
@@ -860,18 +860,16 @@ function tlv(id, value){ return id + String(value.length).padStart(2,'0') + valu
 function normalizePixKey(chave){
   let k = (chave || '').trim();
   if(!k) return '';
-  if(k.includes('@')) return k;                 // e-mail
-  if(k.startsWith('+')) return k;               // já no formato internacional
+  if(k.includes('@')) return k;
   const digits = k.replace(/\D/g, '');
-  if(/^55\d{10,11}$/.test(digits)) return '+' + digits;   // 55 + DDD + numero
-  if(/^\d{10,11}$/.test(digits)) return '+55' + digits;   // DDD + numero (sem 55)
-  return k;
+  return digits || k;
 }
 function buildPixPayload({chave, valor, nome, cidade, txid}){
   const merchantAccount = tlv('00','br.gov.bcb.pix') + tlv('01', normalizePixKey(chave));
   const mai = tlv('26', merchantAccount);
-  const addData = tlv('62', tlv('05', (txid || '***').slice(0,25)));
-  let payload = tlv('00','01') + tlv('01','12') + mai + tlv('52','0000') + tlv('53','986');
+  const tx = String(txid || '***').replace(/[^a-zA-Z0-9*]/g,'').slice(0,25) || '***';
+  const addData = tlv('62', tlv('05', tx));
+  let payload = tlv('00','01') + tlv('01','11') + mai + tlv('52','0000') + tlv('53','986');
   if(valor) payload += tlv('54', Number(valor).toFixed(2));
   payload += tlv('58','BR') + tlv('59',(nome||COMPANY_NAME).slice(0,25).toUpperCase()) + tlv('60',(cidade||COMPANY_PIX_CITY).slice(0,15).toUpperCase()) + addData;
   payload += '6304';
@@ -1053,12 +1051,13 @@ function renderClientProject(proj){
         <div id="qr-${proj.trackingCode}" class="ccs-qr"></div>
         <div style="flex:1; min-width:220px;">
           <div style="font-weight:700; margin-bottom:6px;">Pagamento via PIX</div>
-          <div style="font-size:14px; color:var(--ink-soft); margin-bottom:8px;">Valor: ${proj.pixValue ? 'R$ '+Number(proj.pixValue).toFixed(2) : 'a combinar'}</div>
+          <div style="font-size:14px; color:var(--ink-soft); margin-bottom:8px;">Valor: ${proj.pixValue ? 'R$ '+Number(proj.pixValue).toFixed(2) : 'a combinar'} · Chave: <strong>31999758385</strong></div>
           <div class="ccs-pix-key" id="pixkeytext-${proj.trackingCode}"></div>
-          <button class="ccs-btn ghost small" style="margin-top:10px;" onclick="copyPix('${proj.trackingCode}')">Copiar código PIX</button>
+          <button class="ccs-btn amber small" style="margin-top:10px;" onclick="copyText('31999758385')">Copiar chave 31999758385</button>
+          <button class="ccs-btn ghost small" style="margin-top:10px;" onclick="copyPix('${proj.trackingCode}')">Copiar copia e cola</button>
         </div>
       </div>`;
-    const payload = buildPixPayload({chave:proj.pixKey, valor:proj.pixValue, nome:'CODECRAFT SOLUTIONS', cidade:proj.pixCity, txid:proj.trackingCode});
+    const payload = buildPixPayload({chave: COMPANY_PIX_KEY, valor: proj.pixValue, nome:'CODECRAFT SOLUTIONS', cidade: proj.pixCity || COMPANY_PIX_CITY, txid: proj.trackingCode});
     document.getElementById(`pixkeytext-${proj.trackingCode}`).textContent = payload;
     const qrEl = document.getElementById(`qr-${proj.trackingCode}`);
     qrEl.innerHTML = '';
@@ -1069,7 +1068,10 @@ function renderClientProject(proj){
 }
 function copyPix(code){
   const el = document.getElementById('pixkeytext-'+code);
-  navigator.clipboard.writeText(el.textContent).then(()=>showToast('Código PIX copiado!'));
+  navigator.clipboard.writeText(el.textContent).then(()=>showToast('PIX copia e cola copiado!'));
+}
+function copyText(text){
+  navigator.clipboard.writeText(text).then(()=>showToast('Chave PIX copiada: '+text));
 }
 
 /* ================= CHAT ABERTO (widget da landing) ================= */
