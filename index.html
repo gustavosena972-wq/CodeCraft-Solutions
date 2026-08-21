@@ -227,6 +227,11 @@
   .ccs-calc-grid button.op{background:var(--panel); color:#fff; border-color:var(--panel);}
   .ccs-calc-grid button.eq{background:var(--amber); color:#221304; border-color:var(--amber);}
   .ccs-calc-grid button.wide{grid-column:span 2;}
+  .ccs-hunt-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+  .ccs-ai-box{display:flex; flex-direction:column; gap:8px; max-height:420px; overflow:auto; background:var(--paper-dim); border-radius:10px; padding:12px;}
+  .ccs-ai-msg{font-size:14px; line-height:1.5; padding:10px 12px; border-radius:10px; background:#fff; border:1px solid var(--line);}
+  .ccs-ai-msg.me{background:var(--panel); color:#fff; border-color:var(--panel);}
+  @media (max-width:760px){ .ccs-hunt-grid{grid-template-columns:1fr;} .ccs-metrics{grid-template-columns:1fr 1fr;} }
 
   @media (max-width:860px){
     .ccs-chat-layout{grid-template-columns:1fr;}
@@ -563,14 +568,27 @@
   <div class="ccs-admin-layout" id="admin-main" style="display:none;">
     <aside class="ccs-admin-nav">
       <div class="ccs-admin-nav-title">Menu</div>
-      <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')"><span class="ico">📋</span> Projetos</button>
+      <button class="ccs-navitem active" id="tab-btn-hoje" onclick="switchAdminTab('hoje')"><span class="ico">●</span> Hoje</button>
+      <button class="ccs-navitem" id="tab-btn-projetos" onclick="switchAdminTab('projetos')"><span class="ico">📋</span> Projetos</button>
+      <button class="ccs-navitem" id="tab-btn-clientes" onclick="switchAdminTab('clientes')"><span class="ico">▣</span> Clientes</button>
+      <button class="ccs-navitem" id="tab-btn-cacar" onclick="switchAdminTab('cacar')"><span class="ico">◎</span> Caçar</button>
+      <button class="ccs-navitem" id="tab-btn-postar" onclick="switchAdminTab('postar')"><span class="ico">▶</span> Postar</button>
+      <button class="ccs-navitem" id="tab-btn-ia" onclick="switchAdminTab('ia')"><span class="ico">AI</span> IA admin</button>
       <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')"><span class="ico">✉️</span> Mensagens</button>
       <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')"><span class="ico">💬</span> Conversas</button>
       <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')"><span class="ico">📊</span> Empresa</button>
     </aside>
 
     <div class="ccs-admin-content">
-    <div id="tab-projetos">
+    <div id="tab-hoje">
+      <h2 style="font-size:20px; margin-bottom:8px;">O que fazer agora</h2>
+      <div class="ccs-help">Não é recado. Aqui a IA junta cobrança, conversa parada, mercado e o melhor canal de hoje. Cada botão abre a ação.</div>
+      <div class="ccs-metrics" id="hoje-metrics" style="margin-bottom:16px;"></div>
+      <div class="ccs-panel" id="hoje-market" style="margin-bottom:16px;"></div>
+      <div class="ccs-panel" id="hoje-actions"></div>
+    </div>
+
+    <div id="tab-projetos" style="display:none;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
         <h2 style="font-size:20px;">Projetos</h2>
         <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
@@ -612,6 +630,42 @@
       </div>
 
       <div id="projects-list"></div>
+    </div>
+
+    <div id="tab-clientes" style="display:none;">
+      <h2 style="font-size:20px; margin-bottom:8px;">Fila de clientes</h2>
+      <div class="ccs-help">Quem você está buscando. Guarda o contato e abre o WhatsApp com o texto pronto — não é dica, é o envio.</div>
+      <div class="ccs-panel" style="margin-bottom:16px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+          <div class="ccs-field"><label>Empresa</label><input id="lead-name" placeholder="Nome que você achou"></div>
+          <div class="ccs-field"><label>WhatsApp</label><input id="lead-phone" placeholder="31 99999-0000"></div>
+          <div class="ccs-field"><label>Nicho</label><input id="lead-niche" placeholder="Clínica, loja, advogado"></div>
+        </div>
+        <button class="ccs-btn amber" style="margin-top:12px;" onclick="saveLeadAndPing()">Guardar e abrir WhatsApp</button>
+      </div>
+      <div id="leads-list"></div>
+    </div>
+
+    <div id="tab-cacar" style="display:none;">
+      <h2 style="font-size:20px; margin-bottom:8px;">Caçar cliente</h2>
+      <div class="ccs-help">Cada botão abre o Maps e o Google já filtrado na Grande BH. Você acha a empresa, cola o nome em Clientes e manda o WhatsApp.</div>
+      <div class="ccs-hunt-grid" id="hunt-grid"></div>
+    </div>
+
+    <div id="tab-postar" style="display:none;">
+      <h2 style="font-size:20px; margin-bottom:8px;">Postar agora</h2>
+      <div class="ccs-help">A IA escolhe o canal com mais chance de fechar hoje e já escreve o texto. Você copia e publica.</div>
+      <div id="postar-box"></div>
+    </div>
+
+    <div id="tab-ia" style="display:none;">
+      <h2 style="font-size:20px; margin-bottom:8px;">IA admin</h2>
+      <div class="ccs-help">Ela lê seus projetos, o mercado (dólar, bolsa, Selic) e executa: cobrar, buscar, postar. Escreva como no WhatsApp. Ex.: “cobra quem deve”, “busca clínicas em BH”, “posta no LinkedIn”.</div>
+      <div class="ccs-ai-box" id="admin-ai-log"></div>
+      <div class="ccs-chat-input" style="border:1px solid var(--line); border-radius:10px; margin-top:10px; background:#fff;">
+        <input id="admin-ai-input" placeholder="O que precisa agora?" onkeydown="if(event.key==='Enter')sendAdminAi()">
+        <button class="ccs-btn amber" onclick="sendAdminAi()">Fazer</button>
+      </div>
     </div>
 
     <div id="tab-mensagens" style="display:none;">
@@ -1166,8 +1220,9 @@ function renderAdminGate(){
   document.getElementById('admin-main').style.display = adminLoggedIn ? 'flex' : 'none';
   document.getElementById('admin-logout-btn').style.display = adminLoggedIn ? 'inline-block' : 'none';
   document.getElementById('admin-live').style.display = adminLoggedIn ? 'inline-flex' : 'none';
-  if(adminLoggedIn){
+    if(adminLoggedIn){
     renderAdminAll();
+    switchAdminTab('hoje');
     stopRealtime();
     realtimeChannel = supabaseClient.channel('admin-projects')
       .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); })
@@ -1179,6 +1234,8 @@ function renderAdminGate(){
     startPolling(()=>{
       renderProjectsList(); renderMessagesList(); renderEmpresa(); renderChatProjectList();
       if(currentChatCode) renderAdminChat();
+      const hoje = document.getElementById('tab-hoje');
+      if(hoje && hoje.style.display!=='none') renderHoje();
     });
   }
 }
@@ -1219,16 +1276,23 @@ if(configOk){
   });
 }
 
-const ADMIN_TABS = ['projetos','mensagens','conversas','empresa'];
+const ADMIN_TABS = ['hoje','projetos','clientes','cacar','postar','ia','mensagens','conversas','empresa'];
 function switchAdminTab(tab){
   ADMIN_TABS.forEach(t=>{
-    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
-    document.getElementById('tab-btn-'+t).classList.toggle('active', t===tab);
+    const pane = document.getElementById('tab-'+t);
+    const btn = document.getElementById('tab-btn-'+t);
+    if(pane) pane.style.display = t===tab ? 'block' : 'none';
+    if(btn) btn.classList.toggle('active', t===tab);
   });
   if(tab==='conversas') renderChatProjectList();
   if(tab==='empresa'){ renderEmpresa(); buildCalculator(); }
+  if(tab==='hoje') renderHoje();
+  if(tab==='clientes') renderLeads();
+  if(tab==='cacar') renderHunt();
+  if(tab==='postar') renderPostar();
+  if(tab==='ia') bootAdminAi();
 }
-async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); }
+async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); renderHoje(); renderLeads(); renderHunt(); renderPostar(); }
 function toggleNewProjectForm(){
   const f = document.getElementById('new-project-form');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
@@ -1734,6 +1798,287 @@ function buildCalculator(){
   ];
   grid.innerHTML = keys.map(([k,cls])=>`<button class="${cls==='clr'?'op':cls}" onclick="calcPress('${k}')">${k}</button>`).join('');
   calcBuilt = true;
+}
+
+/* ================= ADMIN OPS: leads, caça, post, IA, mercado ================= */
+const LEADS_KEY = 'ccs-admin-leads';
+const POSTS_KEY = 'ccs-admin-posts';
+const HUNTS = [
+  { id:'clinica', label:'Clínicas e consultórios', maps:'https://www.google.com/maps/search/clínica+Belo+Horizonte', google:'https://www.google.com/search?q=clínica+Belo+Horizonte+telefone', insta:'https://www.instagram.com/explore/tags/clinicabh/', niche:'Clínica' },
+  { id:'adv', label:'Advocacia', maps:'https://www.google.com/maps/search/advogado+Belo+Horizonte', google:'https://www.google.com/search?q=escritório+advocacia+Belo+Horizonte+contato', insta:'https://www.instagram.com/explore/tags/advogadobh/', niche:'Advogado' },
+  { id:'imob', label:'Imobiliárias', maps:'https://www.google.com/maps/search/imobiliária+Belo+Horizonte', google:'https://www.google.com/search?q=imobiliária+Belo+Horizonte+whatsapp', insta:'https://www.instagram.com/explore/tags/imobiliariabh/', niche:'Imobiliária' },
+  { id:'rest', label:'Restaurantes', maps:'https://www.google.com/maps/search/restaurante+Belo+Horizonte', google:'https://www.google.com/search?q=restaurante+Savassi+delivery+contato', insta:'https://www.instagram.com/explore/tags/gastronomiabh/', niche:'Restaurante' },
+  { id:'auto', label:'Oficinas e auto', maps:'https://www.google.com/maps/search/oficina+mecânica+Belo+Horizonte', google:'https://www.google.com/search?q=oficina+Belo+Horizonte+whatsapp', insta:'https://www.instagram.com/explore/tags/oficinabh/', niche:'Oficina' },
+  { id:'loja', label:'Lojas e e-commerce', maps:'https://www.google.com/maps/search/loja+Belo+Horizonte', google:'https://www.google.com/search?q=loja+precisa+de+site+Belo+Horizonte', insta:'https://www.instagram.com/explore/tags/empreenderbh/', niche:'Loja' },
+  { id:'saude', label:'Academias', maps:'https://www.google.com/maps/search/academia+Belo+Horizonte', google:'https://www.google.com/search?q=academia+Belo+Horizonte+contato', insta:'https://www.instagram.com/explore/tags/academiabh/', niche:'Academia' },
+  { id:'cont', label:'Contabilidade', maps:'https://www.google.com/maps/search/contador+Belo+Horizonte', google:'https://www.google.com/search?q=escritório+contabilidade+Belo+Horizonte', insta:'https://www.instagram.com/explore/tags/contadorabh/', niche:'Contador' }
+];
+
+function loadLeads(){
+  try{ return JSON.parse(localStorage.getItem(LEADS_KEY)||'[]'); }catch(e){ return []; }
+}
+function saveLeads(list){ localStorage.setItem(LEADS_KEY, JSON.stringify(list)); }
+function pitchFor(name, niche){
+  const who = name || 'você';
+  const n = niche ? ' Vi o segmento de '+niche+'.' : '';
+  return 'Olá, '+who+'! Aqui é da CodeCraft Solutions, em Belo Horizonte. Fazemos site, loja e sistema.'+n+' Posso mandar um modelo pronto, sem compromisso, em dois minutos?';
+}
+function saveLeadAndPing(){
+  const name = document.getElementById('lead-name').value.trim();
+  const phone = document.getElementById('lead-phone').value.trim();
+  const niche = document.getElementById('lead-niche').value.trim();
+  if(!name){ showToast('Coloque o nome da empresa.'); return; }
+  const lead = { id: Date.now().toString(36), name, phone, niche, createdAt: new Date().toISOString(), status:'aberto' };
+  const list = loadLeads(); list.unshift(lead); saveLeads(list);
+  document.getElementById('lead-name').value=''; document.getElementById('lead-phone').value='';
+  renderLeads();
+  window.open(waLink(phone, pitchFor(name, niche)), '_blank');
+  showToast('Lead salvo. WhatsApp aberto com o texto.');
+}
+function markLead(id, status){
+  saveLeads(loadLeads().map(l=> l.id===id ? Object.assign({}, l, { status }) : l));
+  renderLeads();
+}
+function removeLead(id){
+  saveLeads(loadLeads().filter(l=>l.id!==id));
+  renderLeads();
+}
+function openLeadWa(id){
+  const l = loadLeads().find(x=>x.id===id);
+  if(!l) return;
+  window.open(waLink(l.phone, pitchFor(l.name, l.niche)), '_blank');
+}
+function renderLeads(){
+  const el = document.getElementById('leads-list');
+  if(!el) return;
+  const list = loadLeads();
+  if(!list.length){ el.innerHTML = '<div class="ccs-panel ccs-empty">Nenhum lead ainda. Caçe um nicho e cole o nome aqui.</div>'; return; }
+  el.innerHTML = list.map(l=>`
+    <div class="ccs-panel" style="margin-bottom:10px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+      <div><strong>${escapeHtml(l.name)}</strong> · ${escapeHtml(l.niche||'—')}<br><span style="color:var(--ink-soft); font-size:13px;">${escapeHtml(l.phone||'sem WhatsApp')} · ${l.status}</span></div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="ccs-btn amber small" onclick="openLeadWa('${l.id}')">WhatsApp</button>
+        <button class="ccs-btn ghost small" onclick="markLead('${l.id}','respondeu')">Respondeu</button>
+        <button class="ccs-btn ghost small" onclick="removeLead('${l.id}')">Tirar</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderHunt(){
+  const el = document.getElementById('hunt-grid');
+  if(!el) return;
+  el.innerHTML = HUNTS.map(h=>`
+    <div class="ccs-panel">
+      <strong>${h.label}</strong>
+      <p style="font-size:13px; color:var(--ink-soft); margin:8px 0 12px;">Abre Maps e Google já na Grande BH. Ache uma empresa e salve em Clientes.</p>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="ccs-btn amber small" onclick="runHunt('${h.id}')">Caçar agora</button>
+        <a class="ccs-btn ghost small" href="${h.insta}" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </div>`).join('');
+}
+function runHunt(id){
+  const h = HUNTS.find(x=>x.id===id);
+  if(!h) return;
+  window.open(h.maps, '_blank');
+  window.open(h.google, '_blank');
+  const niche = document.getElementById('lead-niche');
+  if(niche) niche.value = h.niche;
+  showToast('Maps e Google abertos. Cole o nome em Clientes.');
+  switchAdminTab('clientes');
+}
+
+function todayPosts(){
+  const day = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long' });
+  return {
+    linkedin: 'CodeCraft Solutions · '+day+'\n\nEmpresa da Grande BH ainda vende no WhatsApp e perde pedido porque o site não fecha o orçamento.\nA gente entrega site, loja e sistema com acompanhamento em tempo real e PIX na hora.\n\nSe você atende cliente em BH e quer um modelo este mês, chame: 31 99975-8385.',
+    instagram: 'Seu cliente pesquisa no Google. Se não acha a sua empresa, acha a do vizinho.\nSite + WhatsApp + PIX. Feito em BH.\nCodeCraft Solutions · 31 99975-8385',
+    google: 'Criação de sites, lojas e sistemas em Belo Horizonte. Acompanhe o projeto ao vivo. PIX 31999758385. WhatsApp 31 99975-8385.',
+    whatsapp: 'CodeCraft Solutions — site, loja e sistema em BH. Você acompanha o andamento no portal. Chama no 31 99975-8385.'
+  };
+}
+function bestChannel(projects, messages){
+  const unpaid = (projects||[]).filter(p=>!p.paid && Number(p.pixValue)>0).length;
+  const hour = new Date().getHours();
+  const inbound = (messages||[]).length;
+  if(unpaid >= 1) return { id:'whatsapp', label:'WhatsApp', why:'Tem cobrança em aberto. Fechar o que já começou rende mais do que post novo.' };
+  if(inbound > 0 && hour >= 9 && hour <= 18) return { id:'whatsapp', label:'WhatsApp', why:'Já chega pedido pelo site. Responder e cobrar fecha mais do que postar agora.' };
+  if(hour >= 8 && hour <= 11) return { id:'google', label:'Google Meu Negócio', why:'Manhã é hora de busca local: “criar site BH”.' };
+  if(hour >= 11 && hour <= 14) return { id:'linkedin', label:'LinkedIn', why:'Horário comercial B2B. Ticket maior.' };
+  return { id:'instagram', label:'Instagram', why:'Prova de trabalho fora do expediente. Bom para aparecer, não para fechar sozinho.' };
+}
+function copyPost(kind){
+  const p = todayPosts();
+  const text = p[kind] || p.whatsapp;
+  navigator.clipboard.writeText(text).then(()=>{
+    const done = JSON.parse(localStorage.getItem(POSTS_KEY)||'{}');
+    done[new Date().toISOString().slice(0,10)+'-'+kind] = true;
+    localStorage.setItem(POSTS_KEY, JSON.stringify(done));
+    showToast('Texto copiado. Cole no app e publique.');
+    renderPostar();
+  });
+}
+function openPost(kind){
+  copyPost(kind);
+  const urls = {
+    linkedin:'https://www.linkedin.com/feed/',
+    instagram:'https://www.instagram.com/',
+    google:'https://business.google.com/posts',
+    whatsapp:'https://web.whatsapp.com/'
+  };
+  window.open(urls[kind]||urls.whatsapp, '_blank');
+}
+async function renderPostar(){
+  const el = document.getElementById('postar-box');
+  if(!el) return;
+  const projects = await loadProjects();
+  const messages = await loadMessages();
+  const ch = bestChannel(projects, messages);
+  const posts = todayPosts();
+  const keys = [['linkedin','LinkedIn'],['instagram','Instagram'],['google','Google'],['whatsapp','WhatsApp Status']];
+  el.innerHTML = `
+    <div class="ccs-panel" style="margin-bottom:14px; border-color:var(--amber);">
+      <div class="ccs-eyebrow">Canal de agora</div>
+      <h3 style="margin:6px 0;">${ch.label}</h3>
+      <p style="color:var(--ink-soft); font-size:14px;">${ch.why}</p>
+      <button class="ccs-btn amber" style="margin-top:10px;" onclick="openPost('${ch.id}')">Copiar e abrir ${ch.label}</button>
+    </div>
+    ${keys.map(([k,lab])=>`
+      <div class="ccs-panel" style="margin-bottom:10px;">
+        <strong>${lab}</strong>
+        <pre style="white-space:pre-wrap; font-family:Inter,sans-serif; font-size:13.5px; margin:10px 0; color:var(--ink);">${escapeHtml(posts[k])}</pre>
+        <button class="ccs-btn amber small" onclick="copyPost('${k}')">Copiar</button>
+        <button class="ccs-btn ghost small" onclick="openPost('${k}')">Abrir e postar</button>
+      </div>`).join('')}`;
+}
+
+let marketCache = null;
+async function loadMarket(){
+  if(marketCache && (Date.now()-marketCache.at)<5*60*1000) return marketCache;
+  const out = { usd:null, ibov:null, selic:null, at: Date.now() };
+  try{
+    const selic = await fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json');
+    if(selic.ok){ const j = await selic.json(); out.selic = j[0] && j[0].valor; }
+  }catch(e){}
+  try{
+    const usd = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL');
+    if(usd.ok){ const j = await usd.json(); out.usd = j.USDBRL && Number(j.USDBRL.bid); out.usdPct = j.USDBRL && j.USDBRL.pctChange; }
+  }catch(e){}
+  try{
+    const ib = await fetch('https://brapi.dev/api/quote/%5EBVSP');
+    if(ib.ok){ const j = await ib.json(); const q = j.results && j.results[0]; if(q){ out.ibov = q.regularMarketPrice; out.ibovPct = q.regularMarketChangePercent; } }
+  }catch(e){}
+  marketCache = out;
+  return out;
+}
+function moneyFx(n){ return n==null ? '—' : Number(n).toLocaleString('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+
+async function renderHoje(){
+  const metrics = document.getElementById('hoje-metrics');
+  const marketEl = document.getElementById('hoje-market');
+  const actions = document.getElementById('hoje-actions');
+  if(!metrics) return;
+  const projects = await loadProjects();
+  const messages = await loadMessages();
+  const unpaid = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
+  const stuck = projects.filter(p=>p.status==='analise' || (p.status==='andamento' && !p.deliveryUrl));
+  const leads = loadLeads().filter(l=>l.status==='aberto');
+  const ch = bestChannel(projects, messages);
+  const mkt = await loadMarket();
+  metrics.innerHTML = `
+    <div class="ccs-metric receber"><div class="lbl">A receber</div><div class="val">${unpaid.length}</div><div class="sub">projetos sem PIX marcado</div></div>
+    <div class="ccs-metric"><div class="lbl">Em produção</div><div class="val">${stuck.length}</div><div class="sub">análise ou sem link</div></div>
+    <div class="ccs-metric"><div class="lbl">Leads abertos</div><div class="val">${leads.length}</div><div class="sub">na fila de Clientes</div></div>
+    <div class="ccs-metric"><div class="lbl">Canal de agora</div><div class="val" style="font-size:18px;">${ch.label}</div><div class="sub">${ch.why}</div></div>`;
+  marketEl.innerHTML = `<div class="ccs-eyebrow">Mercado agora</div>
+    <div style="display:flex; gap:18px; flex-wrap:wrap; margin-top:8px; font-family:JetBrains Mono,monospace; font-size:14px;">
+      <span>Dólar R$ ${moneyFx(mkt.usd)} ${mkt.usdPct!=null?'('+mkt.usdPct+'%)':''}</span>
+      <span>Ibovespa ${mkt.ibov!=null?Number(mkt.ibov).toLocaleString('pt-BR'):'—'}</span>
+      <span>Selic ${mkt.selic!=null?mkt.selic+'%':'—'}</span>
+    </div>
+    <div style="font-size:12.5px; color:var(--ink-soft); margin-top:8px;">Serve para conversar com cliente de sistema financeiro e para precificar em real.</div>`;
+  const firstUnpaid = unpaid[0];
+  const firstLead = leads[0];
+  actions.innerHTML = `
+    <div class="ccs-eyebrow" style="margin-bottom:10px;">Ações</div>
+    ${firstUnpaid ? `<button class="ccs-btn amber" onclick="chaseUnpaid()">Cobrar ${escapeHtml(firstUnpaid.clientName)} · ${money(Number(firstUnpaid.pixValue))}</button>` : '<p style="color:var(--ink-soft);">Nada a cobrar no PIX agora.</p>'}
+    ${firstLead ? `<button class="ccs-btn" style="margin-top:8px;" onclick="openLeadWa('${firstLead.id}')">Chamar lead ${escapeHtml(firstLead.name)}</button>` : ''}
+    <button class="ccs-btn ghost" style="margin-top:8px;" onclick="runHunt('clinica')">Caçar clínicas em BH</button>
+    <button class="ccs-btn ghost" style="margin-top:8px;" onclick="openPost('${ch.id}')">Postar em ${ch.label}</button>
+  `;
+}
+function chaseUnpaid(){
+  loadProjects().then(projects=>{
+    const p = projects.find(x=>!x.paid && Number(x.pixValue)>0);
+    if(!p){ showToast('Nada a cobrar.'); return; }
+    const contact = ((p.notes||'').match(/Contato:\s*(.+)/)||[])[1] || '';
+    const text = 'Olá, '+p.clientName+'! Aqui é da CodeCraft. O PIX do projeto '+p.projectName+' é '+money(Number(p.pixValue))+' na chave 31999758385. Quando puder, me avisa que confirmo no painel.';
+    window.open(waLink(contact, text), '_blank');
+    showToast('WhatsApp de cobrança aberto.');
+  });
+}
+
+let adminAiBooted = false;
+function bootAdminAi(){
+  const log = document.getElementById('admin-ai-log');
+  if(!log) return;
+  if(!adminAiBooted){
+    log.innerHTML = '<div class="ccs-ai-msg">Posso cobrar quem deve, abrir busca de cliente, copiar post e ler dólar/Selic. Manda a ordem.</div>';
+    adminAiBooted = true;
+  }
+}
+function pushAi(who, html){
+  const log = document.getElementById('admin-ai-log');
+  if(!log) return;
+  log.innerHTML += `<div class="ccs-ai-msg ${who==='me'?'me':''}">${html}</div>`;
+  log.scrollTop = log.scrollHeight;
+}
+async function sendAdminAi(){
+  const input = document.getElementById('admin-ai-input');
+  const raw = (input.value||'').trim();
+  if(!raw) return;
+  input.value = '';
+  pushAi('me', escapeHtml(raw));
+  const t = raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const projects = await loadProjects();
+  const messages = await loadMessages();
+  const unpaid = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
+  const mkt = await loadMarket();
+
+  if(/(cobr|receber|atras|pix pend)/.test(t)){
+    if(!unpaid.length){ pushAi('bot','Ninguém com valor em aberto. Sem cobrança agora.'); return; }
+    chaseUnpaid();
+    pushAi('bot','Abri o WhatsApp do primeiro em atraso: <strong>'+escapeHtml(unpaid[0].clientName)+'</strong> · '+money(Number(unpaid[0].pixValue))+'. São '+unpaid.length+' no total.');
+    return;
+  }
+  if(/(buscar|cacar|achar cliente|prospec|clinica|advog|imob|restaur|oficina|loja|academia|contador)/.test(t)){
+    const hit = HUNTS.find(h=> t.includes(h.id) || t.includes(h.niche.toLowerCase()) || (h.id==='clinica' && t.includes('clinic')) || (h.id==='adv' && t.includes('advog')) || (h.id==='imob' && t.includes('imob')) || (h.id==='rest' && t.includes('rest')) || (h.id==='auto' && t.includes('oficin')) || (h.id==='loja' && t.includes('loja')) || (h.id==='saude' && t.includes('academ')) || (h.id==='cont' && t.includes('contab')));
+    const h = hit || HUNTS[0];
+    runHunt(h.id);
+    pushAi('bot','Abri Maps e Google de <strong>'+h.label+'</strong>. Cole o nome em Clientes e aperte Guardar e abrir WhatsApp.');
+    return;
+  }
+  if(/(postar|linkedin|instagram|google meu|status)/.test(t)){
+    const ch = bestChannel(projects, messages);
+    let kind = ch.id;
+    if(t.includes('linkedin')) kind='linkedin';
+    if(t.includes('instagram')) kind='instagram';
+    if(t.includes('google')) kind='google';
+    if(t.includes('whats') || t.includes('status')) kind='whatsapp';
+    openPost(kind);
+    pushAi('bot','Copiei o texto de hoje e abri o '+kind+'. É só colar e publicar.');
+    return;
+  }
+  if(/(dolar|bolsa|ibov|selic|mercado|juros)/.test(t)){
+    pushAi('bot','Mercado agora: dólar R$ '+moneyFx(mkt.usd)+', Ibovespa '+(mkt.ibov!=null?Number(mkt.ibov).toLocaleString('pt-BR'):'—')+', Selic '+(mkt.selic!=null?mkt.selic+'%':'—')+'. Use isso na conversa com cliente de sistema financeiro. Se o dólar sobe, site em real precisa de preço claro.');
+    return;
+  }
+  if(/(hoje|o que fazer|fila)/.test(t)){
+    switchAdminTab('hoje');
+    pushAi('bot','Abri a aba Hoje. Lá estão cobrança, lead e o canal para postar.');
+    return;
+  }
+  pushAi('bot','Manda uma ordem: <em>cobra quem deve</em>, <em>busca clínicas</em>, <em>posta no LinkedIn</em> ou <em>como está o dólar</em>.');
 }
 
 /* ================= INIT ================= */
