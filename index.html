@@ -618,21 +618,24 @@
 
     <div id="tab-instagram" style="display:none;">
       <h2 style="font-size:20px; margin-bottom:8px;">Instagram · @code.invention</h2>
-      <div class="ccs-help">Essa IA é da <strong>@code.invention</strong>. Ela inventa a arte e a legenda e <strong>manda o post para a página</strong> quando o token da Meta estiver ligado. Sem o token a foto fica só neste painel — a Meta não aceita senha do Instagram aqui. Com o piloto ligado, posta sozinha enquanto o painel estiver aberto (até 2 vezes por dia, no feed da página).</div>
+      <div class="ccs-help">Essa IA é o <strong>marketing digital da @code.invention</strong>. Ela pensa posicionamento, calendário, gancho e nicho — e também inventa a arte. Para publicar sozinha na página precisa da chave da Meta. Sem a chave, a arte fica neste painel. Se você colar só a chave, eu busco o ID da conta.</div>
       <div id="ig-live-bar" class="ccs-panel" style="margin-bottom:12px; display:none;"></div>
       <div class="ccs-ai-layout">
         <div>
           <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
             <button class="ccs-btn amber small" onclick="inventAndPublish(false).then(function(m){ pushIg('bot', m); loadIgLive(); }).catch(function(e){ pushIg('bot', escapeHtml(e.message||String(e))); })">Inventar e publicar</button>
             <button class="ccs-btn amber small" onclick="runIgOrder('publica um post agora')">Publicar agora</button>
+            <button class="ccs-btn ghost small" onclick="runIgOrder('qual a estrategia da pagina')">Estratégia</button>
+            <button class="ccs-btn ghost small" onclick="runIgOrder('monta o calendario da semana')">Calendário</button>
+            <button class="ccs-btn ghost small" onclick="runIgOrder('escreve um gancho forte')">Gancho</button>
+            <button class="ccs-btn ghost small" onclick="runIgOrder('quem e o cliente da codecraft')">Nicho</button>
             <button class="ccs-btn ghost small" onclick="runIgOrder('faz um video da empresa')">Vídeo IA</button>
             <button class="ccs-btn ghost small" onclick="runIgOrder('faz um story')">Story</button>
-            <button class="ccs-btn ghost small" onclick="runIgOrder('posta o mercado de hoje')">Mercado</button>
             <button class="ccs-btn ghost small" onclick="toggleIgPilot()">Piloto automático</button>
           </div>
           <div class="ccs-ai-box" id="ig-ai-log"></div>
           <div class="ccs-chat-input" style="border:1px solid var(--line); border-radius:10px; margin-top:10px; background:#fff;">
-            <input id="ig-ai-input" placeholder="Ex.: publica um post do site, story do PIX, reels do Finanças" onkeydown="if(event.key==='Enter')sendIgAi()">
+            <input id="ig-ai-input" placeholder="Ex.: estratégia da página, calendário, gancho, publica um post do site" onkeydown="if(event.key==='Enter')sendIgAi()">
             <button class="ccs-btn amber" onclick="sendIgAi()">Mandar</button>
           </div>
           <div class="ccs-panel" style="margin-top:14px;">
@@ -652,6 +655,7 @@
             <div class="ccs-field" style="margin-top:12px;"><label>Chave de publicação (token)</label><input id="ig-token" type="password" placeholder="Cole aqui o access_token que começa com EAAG"></div>
             <div class="ccs-field" style="margin-top:8px;"><label>Número da conta @code.invention (ID)</label><input id="ig-userid" placeholder="Cole o id de instagram_business_account"></div>
             <button class="ccs-btn amber small" style="margin-top:10px;" onclick="saveIgConn()">Ligar a página</button>
+            <button class="ccs-btn ghost small" style="margin-top:10px;" onclick="fillIgIdFromToken()">Buscar o ID pela chave</button>
             <p id="ig-conn-status" style="font-size:12.5px; color:var(--ink-soft); margin-top:8px;"></p>
           </div>
         </div>
@@ -2474,6 +2478,51 @@ async function sendAdminAi(){
   pushAi('bot','Jarvis. Dólar R$ '+moneyFx(mkt.usd)+', '+projects.length+' projeto(s), '+(messages||[]).length+' recado(s) no site.<br>'+a.lines[0]+'<br>Manda o projeto, pede cliente, ideia, futuro ou finanças da empresa.');
 }
 
+const MKT_BANK = [
+  { cat:'strategy', title:'Posicionamento', body:'CodeCraft não vende site bonito. Vende site que fecha caixa em BH: clínica, loja e MEI que ainda só atendem no WhatsApp. Toda peça: 1 problema, 1 prova, 1 PIX na entrega.' },
+  { cat:'calendar', title:'Semana padrão', body:'Seg: problema do nicho. Ter: antes/depois. Qua: Finanças CodeCraft. Qui: prova social. Sex: oferta PIX na entrega. Sáb: mercado (Selic/dólar) e o que vender. Dom: bastidor da @code.invention. 1 CTA por post.' },
+  { cat:'copy', title:'Gancho', body:'3 segundos: “Sua clínica ainda manda orçamento no WhatsApp?” Depois a prova. Depois o que fazer. Hashtag só no fim. @code.invention uma vez. Sem enrolação.' },
+  { cat:'growth', title:'Alcance', body:'Reels ensina. Carrossel salva. Story pergunta. Feed posiciona. Não poste os quatro iguais. 4 a 6 posts por semana. Piloto no máximo 2/dia no feed, com 3h de folga.' },
+  { cat:'niche', title:'Quem comprar', body:'Clínica, loja de bairro, oficina, salão e MEI em BH. Quem vive de WhatsApp e perde cliente sem site e sem caixa. Não persegue empresa grande de ERP.' },
+  { cat:'offer', title:'Oferta', body:'PIX na entrega. Preço de partida no site. Finanças CodeCraft para quem já tem site e ainda bagunça planilha. Uma oferta por post. Nunca duas.' },
+  { cat:'funnel', title:'Funil', body:'Conteúdo → WhatsApp 31 99975-8385 → briefing no chat do site → PIX. Instagram não fecha contrato sozinho. O post tem que mandar para o WhatsApp ou para o portal.' },
+  { cat:'tone', title:'Tom', body:'Português simples. BH. Sem jargão de agência. Fala como dono de oficina, não como MBA. Frase curta. Número na tela quando houver.' }
+];
+let mktBankLive = MKT_BANK.slice();
+
+async function seedMarketingBank(){
+  if(!supabaseClient) return;
+  try{
+    const { data, error } = await supabaseClient.from('marketing_intel').select('cat,title,body').eq('active', true);
+    if(!error && data && data.length){
+      mktBankLive = data;
+      return;
+    }
+    const rows = MKT_BANK.map(function(x){ return { cat:x.cat, title:x.title, body:x.body, channel:'instagram', active:true }; });
+    await supabaseClient.from('marketing_intel').upsert(rows, { onConflict:'title' });
+    mktBankLive = MKT_BANK.slice();
+  }catch(e){
+    mktBankLive = MKT_BANK.slice();
+  }
+}
+function mktPick(cat){
+  const list = mktBankLive.filter(function(x){ return x.cat===cat; });
+  const pool = list.length ? list : mktBankLive;
+  return pool[Math.floor(Math.random()*pool.length)].body;
+}
+function mktStrategyReply(raw, mkt){
+  const t = raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  if(/calend|semana|pilar/.test(t)) return mktPick('calendar');
+  if(/nicho|cliente|publico|clinica|loja|mei/.test(t)) return mktPick('niche');
+  if(/hook|gancho|legenda|copy|caption|escreve/.test(t)) return mktPick('copy');
+  if(/reels|algorit|alcance|seguidor|crescer/.test(t)) return mktPick('growth');
+  if(/oferta|preco|pix na entrega/.test(t)) return mktPick('offer');
+  if(/funil|whatsapp|vender/.test(t)) return mktPick('funnel');
+  if(/tom|como falar|linguagem/.test(t)) return mktPick('tone');
+  const extra = mkt && mkt.usd!=null ? (' Mercado agora: dólar R$ '+moneyFx(mkt.usd)+(mkt.selic!=null?', Selic '+mkt.selic+'%.':'')+' Com Selic alta, venda PIX à vista e Finanças.') : '';
+  return mktPick('strategy')+extra;
+}
+
 const IG_HANDLE = 'code.invention';
 const IG_PAGE_URL = 'https://instagram.com/code.invention';
 const IG_CONN_KEY = 'ccs-ig-conn';
@@ -2488,9 +2537,61 @@ function saveIgQueue(list){ localStorage.setItem(IG_QUEUE_KEY, JSON.stringify(li
 function openCompanyIg(){ window.open(IG_PAGE_URL, '_blank'); }
 function igPilotOn(){ return localStorage.getItem(IG_PILOT_KEY)==='1'; }
 
+async function discoverIgFromToken(token){
+  if(/^IG/i.test(String(token||''))){
+    const me = await igApi('me', token, { fields:'user_id,username,account_type' });
+    const id = me.user_id || me.id;
+    if(!id) throw new Error('Este token IG não trouxe o número da conta.');
+    return { igUserId:String(id), token:token, username:me.username };
+  }
+  const j = await igApi('me/accounts', token, { fields:'name,access_token,instagram_business_account' });
+  const pages = j.data || [];
+  for(let i=0;i<pages.length;i++){
+    const ig = pages[i].instagram_business_account;
+    if(ig && ig.id){
+      return { igUserId:String(ig.id), token: pages[i].access_token || token, page: pages[i].name, username: IG_HANDLE };
+    }
+  }
+  throw new Error('Não achei Instagram Professional ligado a uma Página neste token.');
+}
+async function fillIgIdFromToken(){
+  const tok = document.getElementById('ig-token');
+  const uid = document.getElementById('ig-userid');
+  const token = ((tok||{}).value||'').trim() || (igConn().token||'');
+  if(!token){
+    showToast('Cola a chave primeiro.');
+    pushIg('bot','Cola a chave de publicação (token). Sem ela a Meta não me entrega o ID. Eu não consigo inventar esse número.');
+    return;
+  }
+  try{
+    const found = await discoverIgFromToken(token);
+    if(tok) tok.value = found.token;
+    if(uid) uid.value = found.igUserId;
+    pushIg('bot','Achei o ID da conta: <strong>'+escapeHtml(found.igUserId)+'</strong>'+(found.page?' na Página '+escapeHtml(found.page):'')+'. Clique em Ligar a página para gravar.');
+    showToast('ID encontrado');
+  }catch(err){
+    showToast('Não achei o ID');
+    pushIg('bot','Não consegui puxar o ID: '+escapeHtml(err.message||String(err))+'. A conta @code.invention tem que ser profissional e estar ligada a uma Página do Facebook.');
+  }
+}
 async function saveIgConn(){
-  const token = ((document.getElementById('ig-token')||{}).value||'').trim();
-  const igUserId = ((document.getElementById('ig-userid')||{}).value||'').trim();
+  let token = ((document.getElementById('ig-token')||{}).value||'').trim();
+  let igUserId = ((document.getElementById('ig-userid')||{}).value||'').trim();
+  if(token && !igUserId){
+    try{
+      const found = await discoverIgFromToken(token);
+      igUserId = found.igUserId;
+      token = found.token || token;
+      const uid = document.getElementById('ig-userid');
+      const tok = document.getElementById('ig-token');
+      if(uid) uid.value = igUserId;
+      if(tok) tok.value = token;
+    }catch(err){
+      showToast('Falta o ID');
+      pushIg('bot','Sem o número da conta eu não ligo. '+escapeHtml(err.message||String(err)));
+      return;
+    }
+  }
   localStorage.setItem(IG_CONN_KEY, JSON.stringify({ token, igUserId }));
   refreshIgConnStatus();
   if(!token || !igUserId){
@@ -2611,8 +2712,9 @@ function bootIgAi(){
   const log = document.getElementById('ig-ai-log');
   if(!log) return;
   if(!igAiBooted){
-    log.innerHTML = '<div class="ccs-ai-msg">IA da <strong>@code.invention</strong>. Eu invento a arte e mando para a página quando o token da Meta estiver ligado. Sem token a foto fica só aqui. Liga o piloto para postar sozinha (até 2 por dia, no feed).</div>';
+    log.innerHTML = '<div class="ccs-ai-msg">Marketing da <strong>@code.invention</strong>. Eu penso como estrategista: posicionamento, calendário, gancho, nicho e oferta. Também invento a arte e publico quando a chave da Meta estiver ligada. Pergunta “estratégia”, “calendário” ou “gancho”. Se colar só a chave, eu busco o ID.</div>';
     igAiBooted = true;
+    seedMarketingBank();
     const extra = igThemes().empresa;
     drawIgPost('feed', extra);
     const cap = document.getElementById('ig-caption');
@@ -2860,7 +2962,13 @@ async function sendIgAi(){
   input.value = '';
   pushIg('me', escapeHtml(raw));
   const t = raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  if(/(invent|criat|ideia de post|crescer|seguidor|autonom|sozinha|aumentar)/.test(t)){
+  const mkt = await loadMarket();
+  const talkOnly = /(estrateg|calend|gancho|nicho|cliente da|posicion|copy|legenda|funil|alcance|seguidor|como crescer|quem comprar|oferta)/.test(t) && !/(public|posta|postar|inventar|cria um post|faz um post|story|reel|video)/.test(t);
+  if(talkOnly){
+    pushIg('bot', escapeHtml(mktStrategyReply(raw, mkt)));
+    return;
+  }
+  if(/(invent|criat|ideia de post|autonom|sozinha|aumentar)/.test(t)){
     try{
       const msg = await inventAndPublish(false);
       pushIg('bot', msg);
@@ -2870,13 +2978,13 @@ async function sendIgAi(){
     loadIgLive();
     return;
   }
-  const mkt = await loadMarket();
   let format = 'feed';
   if(/story/.test(t)) format = 'story';
   if(/reel|video|reels/.test(t)) format = 'reels';
   const theme = pickIgTheme(t);
   const extra = Object.assign({}, igThemes()[theme] || igThemes().empresa);
   extra.market = 'USD R$ '+moneyFx(mkt.usd)+'  ·  IBOV '+(mkt.ibovPct??'—')+'%  ·  SELIC '+(mkt.selic??'—')+'%';
+  extra.kicker = extra.kicker || 'CODECRAFT';
   if(theme==='mercado'){
     extra.title = 'Dólar R$ '+moneyFx(mkt.usd)+'\nIbov '+(mkt.ibovPct??'—')+'%\nSelic '+(mkt.selic??'—')+'%';
   }
@@ -2889,7 +2997,7 @@ async function sendIgAi(){
   saveIgQueue(q);
   const wantPublish = /(public|posta|postar|agora|manda|publica)/.test(t) || format==='reels' || format==='story';
   if(format==='reels'){
-    pushIg('bot','Gerando vídeo… se a Meta recusar, mando a foto no feed da página.');
+    pushIg('bot', escapeHtml(mktPick('growth'))+' Gerando vídeo… se a Meta recusar, mando a foto no feed.');
     const video = await recordIgVideo(extra);
     const conn = igConn();
     if(video && conn.token && conn.igUserId){
@@ -2921,7 +3029,7 @@ async function sendIgAi(){
     loadIgLive();
     return;
   }
-  pushIg('bot','Arte pronta neste painel. Manda <strong>publicar agora</strong> para ir para a @code.invention (precisa do token da Meta).');
+  pushIg('bot', escapeHtml(mktStrategyReply(raw, mkt))+'<br><br>Arte pronta neste painel. Manda <strong>publicar agora</strong> para ir para a @code.invention (precisa da chave da Meta).');
 }
 
 /* ================= INIT ================= */

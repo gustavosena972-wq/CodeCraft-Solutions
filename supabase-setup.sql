@@ -115,6 +115,34 @@ alter table public.chat_messages replica identity full;
 alter table public.lead_chats    replica identity full;
 alter table public.admin_leads   replica identity full;
 
+-- Banco de inteligência de marketing da @code.invention
+create table if not exists public.marketing_intel (
+  id          uuid primary key default gen_random_uuid(),
+  cat         text not null,
+  title       text not null unique,
+  body        text not null,
+  channel     text not null default 'instagram',
+  active      boolean not null default true,
+  created_at  timestamptz not null default now()
+);
+alter table public.marketing_intel enable row level security;
+drop policy if exists "anon all marketing" on public.marketing_intel;
+create policy "anon all marketing" on public.marketing_intel for all using (true) with check (true);
+alter table public.marketing_intel replica identity full;
+do $$
+begin
+  begin execute 'alter publication supabase_realtime add table public.marketing_intel'; exception when duplicate_object then null; end;
+end $$;
+
+insert into public.marketing_intel (cat, title, body) values
+('strategy', 'Posicionamento', 'CodeCraft não vende “site bonito”. Vende site que fecha caixa em BH: clínica, loja e MEI que ainda só atendem no WhatsApp. Toda peça precisa de um problema, uma prova e um PIX na entrega.'),
+('calendar', 'Semana padrão', 'Seg: problema do nicho. Ter: antes/depois. Qua: Finanças CodeCraft. Qui: prova social. Sex: oferta PIX na entrega. Sáb: mercado (Selic/dólar) + o que vender. Dom: bastidor da @code.invention.'),
+('copy', 'Gancho', 'Primeira linha tem 3 segundos: “Sua clínica ainda manda orçamento no WhatsApp?”. Depois prova. Depois o que fazer. Hashtag no fim, nunca no começo.'),
+('growth', 'Alcance', 'Reels ensina. Carrossel salva. Story pergunta. Feed posiciona. Não poste os 4 iguais. Um gancho, um CTA, um @code.invention. 4–6 posts/semana bate 1 viral.'),
+('niche', 'Quem comprar', 'Clínica, loja de bairro, oficina, salão e MEI em BH/região. Quem vive de WhatsApp e perde cliente porque não tem site nem caixa. Não persegue empresa grande de ERP.'),
+('offer', 'Oferta', 'PIX na entrega. Preço de partida no site. Finanças CodeCraft para quem já tem site e ainda bagunça planilha. Uma oferta por post. Nunca duas.')
+on conflict do nothing;
+
 -- Arte da IA do Instagram (@code.invention). Bucket público para a Meta
 -- conseguir puxar a imagem na hora de publicar.
 insert into storage.buckets (id, name, public)
