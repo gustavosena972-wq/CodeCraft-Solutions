@@ -618,11 +618,12 @@
 
     <div id="tab-instagram" style="display:none;">
       <h2 style="font-size:20px; margin-bottom:8px;">Instagram · @code.invention</h2>
-      <div class="ccs-help">Essa IA é da página <strong>@code.invention</strong>. Ela cria foto, vídeo e story da empresa e publica na página. Liga o token da Meta uma vez — a Meta não aceita senha. Com a ligação, o piloto automático posta sozinho.</div>
+      <div class="ccs-help">Essa IA é da <strong>@code.invention</strong>. Ela inventa post, story e reels para crescer a página (gancho, arte, hashtag, pedido para seguir). Liga o token da Meta uma vez — senha do Instagram a Meta não aceita. Com o piloto ligado, ela publica sozinha enquanto este painel estiver aberto, até 2 vezes por dia.</div>
       <div id="ig-live-bar" class="ccs-panel" style="margin-bottom:12px; display:none;"></div>
       <div class="ccs-ai-layout">
         <div>
           <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
+            <button class="ccs-btn amber small" onclick="inventAndPublish(false).then(function(m){ pushIg('bot', m); loadIgLive(); })">Inventar e publicar</button>
             <button class="ccs-btn amber small" onclick="runIgOrder('publica um post agora')">Publicar agora</button>
             <button class="ccs-btn ghost small" onclick="runIgOrder('faz um video da empresa')">Vídeo IA</button>
             <button class="ccs-btn ghost small" onclick="runIgOrder('faz um story')">Story</button>
@@ -2505,13 +2506,76 @@ function toggleIgPilot(){
 function startIgAutopilot(){
   if(igPilotTimer){ clearInterval(igPilotTimer); igPilotTimer = null; }
   if(!igPilotOn()) return;
-  igPilotTimer = setInterval(()=>{
-    if(!igPilotOn() || !igConn().token) return;
-    const day = new Date().toISOString().slice(0,10);
-    if(localStorage.getItem('ccs-ig-last-auto')===day) return;
-    localStorage.setItem('ccs-ig-last-auto', day);
-    runIgOrder('publica um post agora');
-  }, 45*60*1000);
+  maybeIgAutoPost();
+  igPilotTimer = setInterval(maybeIgAutoPost, 20*60*1000);
+}
+const IG_GROWTH_TAGS = '\n\nSiga @code.invention · salva se for útil\n#CodeCraft #BeloHorizonte #empreenderBH #siteprofissional #financaspessoais #tecnologiaBH';
+function igInventBank(){
+  return [
+    { theme:'site', format:'feed', kicker:'SITE AO VIVO', title:'O cliente vê\no projeto\ncrescer', sub:'Portal da CodeCraft · BH' },
+    { theme:'financas', format:'feed', kicker:'FINANÇAS', title:'Sua planilha\nmostra o que\ncortar este mês', sub:'Finanças CodeCraft' },
+    { theme:'pix', format:'feed', kicker:'PIX NA ENTREGA', title:'Paga quando\no site estiver\nno ar', sub:'Sem surpresa no valor' },
+    { theme:'empresa', format:'feed', kicker:'CODECRAFT', title:'Clínica e loja\nainda vendem\nsó no WhatsApp', sub:'A gente fecha o site' },
+    { theme:'story', format:'story', kicker:'@code.invention', title:'BH precisa\nde site que\nfecha caixa', sub:'Fale no WhatsApp' },
+    { theme:'financas', format:'reels', kicker:'REELS', title:'3 cortes\nque sobram\ndinheiro', sub:'Finanças CodeCraft' },
+    { theme:'mercado', format:'feed', kicker:'MERCADO', title:'Selic alta.\nPIX à vista\nfecha mais', sub:'CodeCraft no radar' },
+    { theme:'site', format:'reels', kicker:'ANTES / DEPOIS', title:'WhatsApp\nvira site\ncom pedido', sub:'@code.invention' }
+  ];
+}
+function nextIgInvent(){
+  const bank = igInventBank();
+  let used = [];
+  try { used = JSON.parse(localStorage.getItem('ccs-ig-used')||'[]'); } catch(e){ used = []; }
+  let idx = 0;
+  while(used.includes(idx) && idx < bank.length-1) idx += 1;
+  if(used.length >= bank.length) { used = []; idx = 0; }
+  localStorage.setItem('ccs-ig-used', JSON.stringify(used.concat([idx]).slice(-16)));
+  return bank[idx];
+}
+function maybeIgAutoPost(){
+  if(!igPilotOn() || !igConn().token || !igConn().igUserId) return;
+  let stamps = [];
+  try { stamps = JSON.parse(localStorage.getItem('ccs-ig-auto-stamps')||'[]'); } catch(e){ stamps = []; }
+  const day = new Date().toISOString().slice(0,10);
+  const today = stamps.filter(function(s){ return String(s).slice(0,10)===day; });
+  if(today.length >= 2) return;
+  const last = stamps[stamps.length-1];
+  if(last && today.length && (Date.now()-new Date(last).getTime()) < 3*60*60*1000) return;
+  stamps.push(new Date().toISOString());
+  localStorage.setItem('ccs-ig-auto-stamps', JSON.stringify(stamps.slice(-30)));
+  inventAndPublish(true).then(function(msg){
+    pushIg('bot','Piloto automático: '+msg+' Eu invento o post, o gancho e a hashtag. Seguidor não se compra aqui — cresce com post constante na @code.invention.');
+    loadIgLive();
+  }).catch(function(){});
+}
+async function inventAndPublish(silent){
+  const item = nextIgInvent();
+  const mkt = await loadMarket();
+  const extra = Object.assign({}, igThemes()[item.theme] || igThemes().empresa, { kicker:item.kicker, title:item.title, sub:item.sub });
+  extra.market = 'USD R$ '+moneyFx(mkt.usd)+'  ·  SELIC '+(mkt.selic??'—')+'%';
+  drawIgPost(item.format==='feed' ? 'feed' : item.format, extra);
+  const capEl = document.getElementById('ig-caption');
+  const cap = igCaption(item.theme, extra, mkt);
+  if(capEl) capEl.value = cap;
+  const q = igQueue();
+  q.unshift({ at:new Date().toISOString(), theme:item.theme, format:item.format, caption:cap });
+  saveIgQueue(q);
+  if(!silent) pushIg('bot','Inventei um '+item.format+' para a @code.invention: <strong>'+escapeHtml(item.title.replace(/\n/g,' '))+'</strong>.');
+  if(item.format==='reels'){
+    const video = await recordIgVideo(extra);
+    const conn = igConn();
+    if(video && conn.token && conn.igUserId){
+      try{
+        const url = await uploadIgFile(video, 'webm', video.type||'video/webm');
+        if(!url) throw new Error('Falta o bucket ig-posts.');
+        await publishIgReel(url, cap);
+        return 'Publiquei o vídeo inventado no @code.invention.';
+      }catch(err){
+        return 'Vídeo inventado. A Meta recusou o webm: '+escapeHtml(err.message||String(err));
+      }
+    }
+  }
+  return publishIgNow(true);
 }
 async function loadIgLive(){
   const bar = document.getElementById('ig-live-bar');
@@ -2539,7 +2603,7 @@ function bootIgAi(){
   const log = document.getElementById('ig-ai-log');
   if(!log) return;
   if(!igAiBooted){
-    log.innerHTML = '<div class="ccs-ai-msg">IA da página <strong>@code.invention</strong>. Crio foto e vídeo da CodeCraft e publico na página. Liga o token e, se quiser, o piloto automático.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg">IA da <strong>@code.invention</strong>. Eu <em>invento</em> foto, story e reels da CodeCraft para crescer a página — gancho, arte e hashtag. Liga o token da Meta e o piloto: eu publico sozinha enquanto o painel estiver aberto (até 2 posts por dia). Sem token eu crio a arte e deixo pronta.</div>';
     igAiBooted = true;
     const extra = igThemes().empresa;
     drawIgPost('feed', extra);
@@ -2591,7 +2655,7 @@ function igCaption(kind, extra, mkt){
     story: 'CodeCraft Solutions · BH\nSite · loja · sistema\n'+handle,
     empresa: 'Tecnologia que fecha caixa.\nSite, loja, sistema e Finanças CodeCraft.\n'+handle+'\nWhatsApp 31 99975-8385'
   };
-  return map[kind] || map.empresa;
+  return (map[kind] || map.empresa) + IG_GROWTH_TAGS;
 }
 function drawIgPost(kind, extra){
   const canvas = document.getElementById('ig-canvas');
@@ -2770,6 +2834,12 @@ async function sendIgAi(){
   input.value = '';
   pushIg('me', escapeHtml(raw));
   const t = raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  if(/(invent|criat|ideia de post|crescer|seguidor|autonom|sozinha|aumentar)/.test(t)){
+    const msg = await inventAndPublish(false);
+    pushIg('bot', msg);
+    loadIgLive();
+    return;
+  }
   const mkt = await loadMarket();
   let format = 'feed';
   if(/story/.test(t)) format = 'story';
