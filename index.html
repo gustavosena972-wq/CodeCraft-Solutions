@@ -589,7 +589,7 @@
   <div class="ccs-admin-layout" id="admin-main" style="display:none;">
     <aside class="ccs-admin-nav">
       <div class="ccs-admin-nav-title">Menu</div>
-      <button class="ccs-navitem active" id="tab-btn-ia" onclick="switchAdminTab('ia')"><span class="ico">AI</span> IA análise</button>
+      <button class="ccs-navitem active" id="tab-btn-ia" onclick="switchAdminTab('ia')"><span class="ico">AI</span> Jarvis</button>
       <button class="ccs-navitem" id="tab-btn-instagram" onclick="switchAdminTab('instagram')"><span class="ico">IG</span> IA Instagram</button>
       <button class="ccs-navitem" id="tab-btn-projetos" onclick="switchAdminTab('projetos')"><span class="ico">📋</span> Projetos</button>
       <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')"><span class="ico">💬</span> Conversas</button>
@@ -599,30 +599,35 @@
 
     <div class="ccs-admin-content">
     <div id="tab-ia">
-      <h2 style="font-size:20px; margin-bottom:8px;">IA de análise</h2>
-      <div class="ccs-help">Conversa com você. Lê o mercado, estuda os projetos e diz onde colocar o site, a loja e o Finanças. A outra IA cuida só do Instagram @code.invention.</div>
+      <h2 style="font-size:20px; margin-bottom:8px;">Jarvis · CodeCraft</h2>
+      <div class="ccs-help">Não é uma página de funções. Você pede, ele age: analisa o projeto que você mandar, lê o mercado, acha quem precisa do que a empresa faz, cuida da parte Empresa no Finanças, dá ideia e olha o futuro. Instagram é a outra IA.</div>
       <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
-        <button class="ccs-btn ghost small" onclick="runAiOrder('analisa o mercado')">Mercado agora</button>
         <button class="ccs-btn ghost small" onclick="runAiOrder('analisa os projetos')">Projetos</button>
-        <button class="ccs-btn ghost small" onclick="runAiOrder('onde postar as ferramentas')">Onde postar</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('como está o mercado')">Mercado</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('acha cliente')">Achar cliente</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('ideias para melhorar')">Ideias</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('finanças da empresa')">Finanças</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('olha o futuro')">Futuro</button>
       </div>
-      <div class="ccs-ai-box" id="admin-ai-log"></div>
+      <div class="ccs-ai-box" id="admin-ai-log" style="min-height:360px; max-height:520px;"></div>
       <div class="ccs-chat-input" style="border:1px solid var(--line); border-radius:10px; margin-top:10px; background:#fff;">
-        <input id="admin-ai-input" placeholder="Como está o mercado? E os projetos? Onde divulgar o Finanças?" onkeydown="if(event.key==='Enter')sendAdminAi()">
-        <button class="ccs-btn amber" onclick="sendAdminAi()">Conversar</button>
+        <input id="admin-ai-input" placeholder="Manda um projeto, pede cliente, mercado, ideia, futuro…" onkeydown="if(event.key==='Enter')sendAdminAi()">
+        <button class="ccs-btn amber" onclick="sendAdminAi()">Pedir</button>
       </div>
     </div>
 
     <div id="tab-instagram" style="display:none;">
-      <h2 style="font-size:20px; margin-bottom:8px;">IA do Instagram · @code.invention</h2>
-      <div class="ccs-help">Essa IA só gerencia a página <strong>@code.invention</strong>: arte, foto, informação, story e roteiro de reels. Se a conta Business estiver ligada, ela publica sozinha na página. A Meta não aceita senha aqui — liga o token grátis uma vez.</div>
+      <h2 style="font-size:20px; margin-bottom:8px;">Instagram · @code.invention</h2>
+      <div class="ccs-help">Essa IA é da página <strong>@code.invention</strong>. Ela cria foto, vídeo e story da empresa e publica na página. Liga o token da Meta uma vez — a Meta não aceita senha. Com a ligação, o piloto automático posta sozinho.</div>
+      <div id="ig-live-bar" class="ccs-panel" style="margin-bottom:12px; display:none;"></div>
       <div class="ccs-ai-layout">
         <div>
           <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
             <button class="ccs-btn amber small" onclick="runIgOrder('publica um post agora')">Publicar agora</button>
+            <button class="ccs-btn ghost small" onclick="runIgOrder('faz um video da empresa')">Vídeo IA</button>
             <button class="ccs-btn ghost small" onclick="runIgOrder('faz um story')">Story</button>
-            <button class="ccs-btn ghost small" onclick="runIgOrder('faz um reels do financas')">Reels</button>
             <button class="ccs-btn ghost small" onclick="runIgOrder('posta o mercado de hoje')">Mercado</button>
+            <button class="ccs-btn ghost small" onclick="toggleIgPilot()">Piloto automático</button>
           </div>
           <div class="ccs-ai-box" id="ig-ai-log"></div>
           <div class="ccs-chat-input" style="border:1px solid var(--line); border-radius:10px; margin-top:10px; background:#fff;">
@@ -1281,6 +1286,7 @@ function renderAdminGate(){
     if(adminLoggedIn){
     renderAdminAll();
     switchAdminTab('ia');
+    startIgAutopilot();
     stopRealtime();
     realtimeChannel = supabaseClient.channel('admin-projects')
       .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); })
@@ -2310,7 +2316,7 @@ function bootAdminAi(){
   const log = document.getElementById('admin-ai-log');
   if(!log) return;
   if(!adminAiBooted){
-    log.innerHTML = '<div class="ccs-ai-msg">Sou a IA de análise. Converso com você, leio dólar/bolsa/Selic, estudo os projetos e digo onde colocar o site, a loja e o Finanças. O Instagram @code.invention é a outra IA, no menu.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg"><strong>Jarvis online.</strong> Manda um projeto que eu analiso. Pede mercado, cliente, ideia, futuro ou a parte Empresa do Finanças. Instagram @code.invention é a outra IA.</div>';
     adminAiBooted = true;
   }
 }
@@ -2326,59 +2332,77 @@ function runAiOrder(text){
   switchAdminTab('ia');
   sendAdminAi();
 }
+function pickHunt(t){
+  const pairs = [
+    ['clinica','clinic'],['adv','advog'],['imob','imob'],['rest','rest'],['auto','oficin'],
+    ['loja','loja'],['saude','academ'],['cont','contab'],['dent','dent'],['salao','salao'],
+    ['pet','pet'],['obra','constru']
+  ];
+  for(const [id, key] of pairs){ if(t.includes(key) || t.includes(id)) return HUNTS.find(h=>h.id===id); }
+  return HUNTS.find(h=> t.includes((h.niche||'').toLowerCase())) || HUNTS[0];
+}
+function pickCity(t){
+  const cities = [['contagem','Contagem'],['betim','Betim'],['nova lima','Nova Lima'],['savassi','Savassi'],['belo horizonte','Belo Horizonte'],['bh','Belo Horizonte']];
+  for(const [k,v] of cities){ if(t.includes(k)) return v; }
+  return 'Belo Horizonte';
+}
 function analyzeMarket(mkt){
   const usd = Number(mkt.usdPct)||0;
   const ibov = Number(mkt.ibovPct)||0;
   const selic = Number(mkt.selic)||0;
   const lines = [];
-  let place = 'linkedin';
-  if(usd >= 0.6){
-    lines.push('Dólar subindo ('+mkt.usdPct+'%). Cliente de sistema e loja precisa de preço em real.');
-    place = 'linkedin';
-  }else if(usd <= -0.6){
-    lines.push('Dólar caindo ('+mkt.usdPct+'%). Bom momento para fechar projeto agora.');
-    place = 'whatsapp';
-  }else{
-    lines.push('Dólar estável em R$ '+moneyFx(mkt.usd)+'.');
-  }
-  if(ibov <= -1){
-    lines.push('Ibovespa caiu '+mkt.ibovPct+'%. Empresa aperta custo — Finanças CodeCraft (cortar gasto) encaixa hoje.');
-    place = 'linkedin';
-  }else if(ibov >= 1){
-    lines.push('Bolsa sobe. Dono de loja e clínica olha crescimento: site e captura de cliente.');
-  }
-  if(selic >= 13){
-    lines.push('Selic em '+selic+'%. Crédito caro: PIX à vista fecha mais que parcelado.');
-  }
+  if(usd >= 0.6) lines.push('Dólar subindo ('+mkt.usdPct+'%). Venda sistema e loja com preço em real, sem surpresa.');
+  else if(usd <= -0.6) lines.push('Dólar caindo. Fecha projeto agora — o cliente para de esperar o câmbio.');
+  else lines.push('Dólar estável em R$ '+moneyFx(mkt.usd)+'.');
+  if(ibov <= -1) lines.push('Ibovespa caiu. Empresa aperta custo: Finanças CodeCraft e site que captura pedido.');
+  else if(ibov >= 1) lines.push('Bolsa sobe. Clínica e loja olham crescimento: site e captura.');
+  if(selic >= 13) lines.push('Selic em '+selic+'%. Crédito caro — PIX à vista fecha mais.');
   if(mkt.eur!=null) lines.push('Euro R$ '+moneyFx(mkt.eur)+'.');
-  return { lines, place, copy: lines.join(' ') };
+  return { lines, copy: lines.join(' ') };
 }
 function analyzeProjects(projects){
-  if(!projects.length) return 'Nenhum projeto no painel ainda.';
+  if(!projects.length) return 'Nenhum projeto no painel. Manda o briefing aqui (cliente, o que precisa, prazo) que eu analiso como se fosse o dono da operação.';
   const by = {};
   projects.forEach(p=>{ by[p.status]=(by[p.status]||0)+1; });
   const unpaid = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
-  const noLink = projects.filter(p=>p.status==='concluido' && !p.deliveryUrl);
-  return projects.length+' projeto(s): '+(by.analise||0)+' em análise, '+(by.andamento||0)+' em andamento, '+(by.concluido||0)+' concluído(s).<br>'+
-    (unpaid.length ? unpaid.length+' com PIX em aberto: '+unpaid.slice(0,5).map(p=>escapeHtml(p.clientName)+' '+money(Number(p.pixValue))).join(', ')+'.' : 'Nenhum PIX em aberto.')+'<br>'+
-    (noLink.length ? noLink.length+' concluído sem link de entrega — o cliente não abre o site no portal.' : 'Entregas com link ok.');
+  const stuck = projects.filter(p=>p.status==='analise' || (p.status==='andamento' && !p.deliveryUrl));
+  const paid = projects.filter(p=>p.paid).reduce((s,p)=>s+Number(p.pixValue||0),0);
+  const open = unpaid.reduce((s,p)=>s+Number(p.pixValue||0),0);
+  let html = projects.length+' projeto(s): '+(by.analise||0)+' em análise, '+(by.andamento||0)+' em andamento, '+(by.concluido||0)+' concluído(s).<br>';
+  html += 'Caixa da operação: recebido '+money(paid)+', em aberto '+money(open)+'.<br>';
+  html += stuck.length ? 'Travado: '+stuck.slice(0,5).map(p=>escapeHtml(p.clientName)+' · '+escapeHtml(p.projectName)).join('; ')+'.<br>' : 'Nada travado na produção.<br>';
+  html += unpaid.length ? 'PIX em aberto: '+unpaid.slice(0,5).map(p=>escapeHtml(p.clientName)+' '+money(Number(p.pixValue))).join(', ')+'.' : 'Nenhum PIX em aberto.';
+  return html;
 }
-function whereToPlaceTools(mkt, projects){
-  const a = analyzeMarket(mkt);
-  const unpaid = projects.filter(p=>!p.paid && Number(p.pixValue)>0).length;
-  const inProd = projects.filter(p=>p.status!=='concluido').length;
-  const places = [
-    'Instagram <strong>@code.invention</strong>: foto, story e reels da empresa. Isso é a <em>IA Instagram</em>, não eu.',
-    (Number(mkt.ibovPct)<=-1 || Number(mkt.selic)>=13)
-      ? 'Finanças CodeCraft agora: LinkedIn (dono de empresa) e reels no @code.invention com “o que cortar”.'
-      : 'Finanças: LinkedIn de dia, Instagram @code.invention à noite.',
-    Number(mkt.usdPct)>=0.6
-      ? 'Sistema e loja: LinkedIn e Google — preço em real, sem surpresa de dólar.'
-      : 'Site e loja: Google (quem pesquisa) + WhatsApp para quem já é contato.'
-  ];
-  if(inProd) places.push(inProd+' projeto(s) em produção: mostre andamento no Instagram (a outra IA faz a arte).');
-  if(unpaid) places.push(unpaid+' PIX em aberto: cobrança no WhatsApp/Conversas, não no Instagram.');
-  return { places, market:a };
+function analyzeBrief(raw, projects){
+  const t = raw.toLowerCase();
+  const kind = /loja|e-?commerce|pedido/.test(t) ? 'loja' : /sistema|app|agenda/.test(t) ? 'sistema' : /landing|captura/.test(t) ? 'landing' : /financ/.test(t) ? 'Finanças CodeCraft' : 'site';
+  const prazo = kind==='landing' ? '7 a 12 dias' : kind==='loja' ? '15 a 25 dias' : kind==='sistema' ? '20 a 40 dias' : '10 a 18 dias';
+  const risco = projects.filter(p=>p.status!=='concluido').length >= 3 ? 'Fila cheia: não promete data curta.' : 'Fila ok para entrar agora.';
+  return 'Li o que você mandou como briefing de <strong>'+kind+'</strong>.<br>Prazo honesto: '+prazo+'. '+risco+'<br>Próximo passo: cadastra em Projetos com nome do cliente, valor e PIX. O cliente acompanha no portal. Se for empresa, o caixa disso entra no espaço Empresa do Finanças.';
+}
+function jarvisIdeas(projects, mkt, messages){
+  const ideas = [];
+  ideas.push('Produto: pacote “site + Finanças” para clínica e loja — um fecha a cara, o outro o caixa.');
+  if((messages||[]).length) ideas.push('Tem recado no site sem resposta. Fecha no chat antes de caçar gente nova.');
+  if(projects.filter(p=>p.status==='concluido' && !p.deliveryUrl).length) ideas.push('Projeto concluído sem link: o cliente não vê o site. Cola a URL na entrega.');
+  if(Number(mkt.selic)>=13) ideas.push('Oferta do trimestre: PIX à vista, sem parcelar. Selic alta mata proposta longa.');
+  if(Number(mkt.ibovPct)<=-1) ideas.push('Gancho de conteúdo: “cortar gasto” no @code.invention e no LinkedIn — a IA do Instagram posta.');
+  ideas.push('Melhoria interna: todo projeto novo já nasce com recorrente de manutenção no Finanças Empresa.');
+  ideas.push('Futuro: loja com pedido no WhatsApp + painel ao vivo. BH ainda vende no zap e perde número.');
+  return ideas;
+}
+function jarvisFuture(mkt){
+  return 'Olhando na frente: Selic em '+(mkt.selic!=null?mkt.selic+'%':'—')+', dólar R$ '+moneyFx(mkt.usd)+'. Empresa pequena em BH vai querer ferramenta barata que fecha caixa, não ERP. CodeCraft ganha com site rápido, loja simples e Finanças. Evita projeto gigante. No @code.invention, reels curtos de “antes/depois” e mercado. Daqui 90 dias: 1 oferta clara (site+Finanças), 1 nicho (clínica ou loja), 1 rotina de post na página.';
+}
+function jarvisFinance(projects){
+  const paid = projects.filter(p=>p.paid).reduce((s,p)=>s+Number(p.pixValue||0),0);
+  const open = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
+  const bySvc = {};
+  projects.forEach(p=>{ const k=p.serviceType||'site'; bySvc[k]=(bySvc[k]||0)+Number(p.pixValue||0); });
+  const svc = Object.keys(bySvc).map(k=>k+' '+money(bySvc[k])).join(', ') || 'sem valor lançado';
+  window.open(FINANCAS_URL, '_blank');
+  return 'Abri o <strong>Finanças</strong> — usa o espaço <em>Empresa</em> no topo, não o pessoal.<br>Deste painel: recebido '+money(paid)+', em aberto '+open.length+' ('+money(open.reduce((s,p)=>s+Number(p.pixValue||0),0))+'). Por serviço: '+escapeHtml(svc)+'.<br>Lá o Jarvis da empresa lê DRE, título e caixa. PIX da CodeCraft não muda.';
 }
 
 async function sendAdminAi(){
@@ -2389,66 +2413,133 @@ async function sendAdminAi(){
   pushAi('me', escapeHtml(raw));
   const t = raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const projects = await loadProjects();
+  const messages = await loadMessages();
   const mkt = await loadMarket();
+  aiMem.lastAsk = t;
 
-  if(/(instagram|story|reels|postar na pagina)/.test(t)){
-    pushAi('bot','O Instagram @code.invention é a outra IA. Abre <strong>IA Instagram</strong> no menu e manda publicar.');
+  if(/(instagram|story|reels|code\.invention)/.test(t) && !/(ideia|futuro)/.test(t)){
+    pushAi('bot','Instagram da empresa é a outra IA, no menu <strong>IA Instagram</strong>. Página: @code.invention.');
     return;
   }
-  if(/(dolar|bolsa|ibov|selic|mercado|juros|ipca|analisa o mercado|analise o mercado)/.test(t)){
+  if(/(acha cliente|encontrar cliente|prospec|quem precisa|cacar|caçar|onde achar)/.test(t)){
+    const h = pickHunt(t);
+    const city = pickCity(t);
+    runHunt(h.id, city);
+    pushAi('bot','Quem precisa do que a gente faz: dono de <strong>'+escapeHtml(h.label)+'</strong> em <strong>'+escapeHtml(city)+'</strong> ainda vende no WhatsApp e não tem site que fecha orçamento. Abri Maps, Google e Instagram já filtrados. Como abordar: “vi que vocês atendem em '+escapeHtml(city)+'. Posso te mostrar um modelo de site com acompanhamento ao vivo, sem compromisso.” Nicho agora: '+escapeHtml(h.niche)+'.');
+    return;
+  }
+  if(/(financas|finanças|dre|titulo|título|caixa da empresa|espaco empresa|espaço empresa)/.test(t)){
+    pushAi('bot', jarvisFinance(projects));
+    return;
+  }
+  if(/(ideia|melhorar|inovar|o que podemos)/.test(t)){
+    pushAi('bot', jarvisIdeas(projects, mkt, messages).map((x,i)=>(i+1)+'. '+x).join('<br>'));
+    return;
+  }
+  if(/(futuro|daqui|trimestre|proximos meses|próximos meses|visao|visão)/.test(t)){
+    pushAi('bot', jarvisFuture(mkt));
+    return;
+  }
+  if(/(dolar|bolsa|ibov|selic|mercado|juros|ipca)/.test(t)){
     const a = analyzeMarket(mkt);
-    const w = whereToPlaceTools(mkt, projects);
-    pushAi('bot','Mercado agora: dólar <strong>R$ '+moneyFx(mkt.usd)+'</strong> ('+(mkt.usdPct??'—')+'%), Ibovespa '+(mkt.ibov!=null?Number(mkt.ibov).toLocaleString('pt-BR'):'—')+' ('+(mkt.ibovPct??'—')+'%), Selic '+(mkt.selic!=null?mkt.selic+'%':'—')+(mkt.ipca!=null?', IPCA '+mkt.ipca+'%':'')+'.<br>'+a.lines.map(x=>escapeHtml(x)).join('<br>')+'<br><br>Onde colocar as ferramentas:<br>'+w.places.join('<br>'));
+    pushAi('bot','Mercado: dólar <strong>R$ '+moneyFx(mkt.usd)+'</strong> ('+(mkt.usdPct??'—')+'%), Ibovespa '+(mkt.ibov!=null?Number(mkt.ibov).toLocaleString('pt-BR'):'—')+' ('+(mkt.ibovPct??'—')+'%), Selic '+(mkt.selic!=null?mkt.selic+'%':'—')+(mkt.ipca!=null?', IPCA '+mkt.ipca+'%':'')+'.<br>'+a.lines.map(x=>escapeHtml(x)).join('<br>')+'<br>Com isso: '+(Number(mkt.ibovPct)<=-1 || Number(mkt.selic)>=13 ? 'vende Finanças e PIX à vista.' : 'vende site/loja de crescimento.'));
     return;
   }
-  if(/(projeto|painel|andamento|pix em aberto|analisa os projetos)/.test(t)){
+  if(/(projeto|andamento|analisa os projetos|painel)/.test(t) && raw.length < 80){
     pushAi('bot', analyzeProjects(projects));
     return;
   }
-  if(/(onde postar|divulgar|ferramenta|financas|finanças|planilha|canal)/.test(t)){
-    const w = whereToPlaceTools(mkt, projects);
-    pushAi('bot', w.places.join('<br><br>')+'<br><br>Mercado: '+escapeHtml(w.market.copy));
+  if(raw.length >= 40 || /(cliente .+quer|precisa de site|precisa de loja|briefing|analisa esse)/.test(t)){
+    const named = projects.find(p=> t.includes((p.clientName||'').toLowerCase()) || t.includes((p.projectName||'').toLowerCase()));
+    if(named){
+      pushAi('bot','Projeto <strong>'+escapeHtml(named.projectName)+'</strong> de '+escapeHtml(named.clientName)+': status '+escapeHtml(named.status)+', valor '+(named.pixValue?money(Number(named.pixValue)):'a combinar')+', pago: '+(named.paid?'sim':'não')+', entrega: '+(named.deliveryUrl||'sem link')+'.<br>'+analyzeBrief(raw, projects));
+      return;
+    }
+    pushAi('bot', analyzeBrief(raw, projects));
     return;
   }
   const a = analyzeMarket(mkt);
-  pushAi('bot','Te escuto. Agora: dólar R$ '+moneyFx(mkt.usd)+', '+projects.length+' projeto(s) no painel.<br>'+a.lines.map(x=>escapeHtml(x)).join(' ')+'<br><br>Pode perguntar o mercado, os projetos ou onde postar o Finanças/site. Instagram é a outra IA.');
+  pushAi('bot','Jarvis. Dólar R$ '+moneyFx(mkt.usd)+', '+projects.length+' projeto(s), '+(messages||[]).length+' recado(s) no site.<br>'+a.lines[0]+'<br>Manda o projeto, pede cliente, ideia, futuro ou finanças da empresa.');
 }
 
 const IG_HANDLE = 'code.invention';
 const IG_PAGE_URL = 'https://instagram.com/code.invention';
 const IG_CONN_KEY = 'ccs-ig-conn';
 const IG_QUEUE_KEY = 'ccs-ig-queue';
+const IG_PILOT_KEY = 'ccs-ig-pilot';
 let igAiBooted = false;
+let igPilotTimer = null;
 
 function igConn(){ try { return JSON.parse(localStorage.getItem(IG_CONN_KEY)||'{}'); } catch(e){ return {}; } }
 function igQueue(){ try { return JSON.parse(localStorage.getItem(IG_QUEUE_KEY)||'[]'); } catch(e){ return []; } }
 function saveIgQueue(list){ localStorage.setItem(IG_QUEUE_KEY, JSON.stringify(list.slice(0,24))); renderIgQueue(); }
 function openCompanyIg(){ window.open(IG_PAGE_URL, '_blank'); }
+function igPilotOn(){ return localStorage.getItem(IG_PILOT_KEY)==='1'; }
 
 function saveIgConn(){
   const token = ((document.getElementById('ig-token')||{}).value||'').trim();
   const igUserId = ((document.getElementById('ig-userid')||{}).value||'').trim();
   localStorage.setItem(IG_CONN_KEY, JSON.stringify({ token, igUserId }));
   refreshIgConnStatus();
-  showToast(token && igUserId ? 'Página @code.invention ligada neste computador.' : 'Falta o token ou o ID.');
+  loadIgLive();
+  showToast(token && igUserId ? 'Página @code.invention ligada.' : 'Falta o token ou o ID.');
 }
 function refreshIgConnStatus(){
   const c = igConn();
   const el = document.getElementById('ig-conn-status');
   if(!el) return;
   el.textContent = (c.token && c.igUserId)
-    ? 'Ligada. A publicação vai para @code.invention.'
-    : 'Ainda sem token. A IA cria arte e texto e abre @code.invention. Para postar sozinha na página, cole o token grátis da Meta.';
+    ? ('Ligada em @'+IG_HANDLE+(igPilotOn()?' · piloto automático ligado.':' · piloto automático desligado.'))
+    : 'Sem token. A IA cria foto e vídeo da empresa. Para publicar sozinha na página @code.invention, cola o token da Meta.';
   const tok = document.getElementById('ig-token');
   const uid = document.getElementById('ig-userid');
   if(tok && c.token && !tok.value) tok.value = c.token;
   if(uid && c.igUserId && !uid.value) uid.value = c.igUserId;
 }
+function toggleIgPilot(){
+  localStorage.setItem(IG_PILOT_KEY, igPilotOn()?'0':'1');
+  refreshIgConnStatus();
+  startIgAutopilot();
+  showToast(igPilotOn()?'Piloto ligado: posta sozinho na @code.invention enquanto o painel estiver aberto.':'Piloto desligado.');
+}
+function startIgAutopilot(){
+  if(igPilotTimer){ clearInterval(igPilotTimer); igPilotTimer = null; }
+  if(!igPilotOn()) return;
+  igPilotTimer = setInterval(()=>{
+    if(!igPilotOn() || !igConn().token) return;
+    const day = new Date().toISOString().slice(0,10);
+    if(localStorage.getItem('ccs-ig-last-auto')===day) return;
+    localStorage.setItem('ccs-ig-last-auto', day);
+    runIgOrder('publica um post agora');
+  }, 45*60*1000);
+}
+async function loadIgLive(){
+  const bar = document.getElementById('ig-live-bar');
+  if(!bar) return;
+  const c = igConn();
+  if(!c.token || !c.igUserId){ bar.style.display='none'; return; }
+  try{
+    const r = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(c.igUserId)+'?fields=username,name,followers_count,media_count&access_token='+encodeURIComponent(c.token));
+    const j = await r.json();
+    if(j.error){ bar.style.display='block'; bar.innerHTML='Meta: '+escapeHtml(j.error.message||'não leu a página.'); return; }
+    bar.style.display='block';
+    bar.innerHTML = '<strong>Página ligada:</strong> @'+(j.username||IG_HANDLE)+' · '+(j.followers_count!=null?j.followers_count+' seguidores':'')+' · '+(j.media_count!=null?j.media_count+' posts':'')+' · <a href="'+IG_PAGE_URL+'" target="_blank" rel="noopener">abrir</a>';
+    const media = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(c.igUserId)+'/media?fields=caption,media_type,permalink,timestamp&limit=4&access_token='+encodeURIComponent(c.token));
+    const m = await media.json();
+    if(m.data && m.data.length){
+      const q = document.getElementById('ig-queue');
+      if(q) q.innerHTML = '<div class="ccs-eyebrow">Últimos na @'+IG_HANDLE+'</div>'+m.data.map(x=>'<p style="font-size:13px;margin-top:8px;"><a href="'+(x.permalink||IG_PAGE_URL)+'" target="_blank" rel="noopener">'+(x.media_type||'POST')+'</a> · '+escapeHtml((x.caption||'').slice(0,80))+'</p>').join('');
+    }
+  }catch(e){
+    bar.style.display='block';
+    bar.innerHTML = 'Não deu para ler a página agora. Token e ID conferidos?';
+  }
+}
 function bootIgAi(){
   const log = document.getElementById('ig-ai-log');
   if(!log) return;
   if(!igAiBooted){
-    log.innerHTML = '<div class="ccs-ai-msg">Sou a IA do Instagram da CodeCraft. Página: <strong>@code.invention</strong>. Crio arte, foto, informação, story e roteiro de reels. Manda publicar que eu executo.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg">IA da página <strong>@code.invention</strong>. Crio foto e vídeo da CodeCraft e publico na página. Liga o token e, se quiser, o piloto automático.</div>';
     igAiBooted = true;
     const extra = igThemes().empresa;
     drawIgPost('feed', extra);
@@ -2457,6 +2548,8 @@ function bootIgAi(){
   }
   refreshIgConnStatus();
   renderIgQueue();
+  loadIgLive();
+  startIgAutopilot();
 }
 function pushIg(who, html){
   const log = document.getElementById('ig-ai-log');
@@ -2504,6 +2597,8 @@ function drawIgPost(kind, extra){
   const canvas = document.getElementById('ig-canvas');
   if(!canvas) return;
   const story = kind==='story' || kind==='reels';
+  extra = extra || {};
+  const t = extra._t||0;
   canvas.width = 1080;
   canvas.height = story ? 1920 : 1080;
   const ctx = canvas.getContext('2d');
@@ -2514,7 +2609,7 @@ function drawIgPost(kind, extra){
   g.addColorStop(1,'#1a3a4a');
   ctx.fillStyle = g;
   ctx.fillRect(0,0,w,h);
-  ctx.beginPath(); ctx.arc(w*0.86, h*0.1, 260, 0, Math.PI*2); ctx.fillStyle='rgba(212,175,55,0.14)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(w*(0.86-t*0.08), h*(0.1+t*0.06), 260, 0, Math.PI*2); ctx.fillStyle='rgba(212,175,55,0.14)'; ctx.fill();
   ctx.beginPath(); ctx.arc(w*0.05, h*0.92, 320, 0, Math.PI*2); ctx.fillStyle='rgba(47,111,138,0.28)'; ctx.fill();
   ctx.fillStyle='#D4AF37';
   if(ctx.roundRect){ ctx.beginPath(); ctx.roundRect(64,64,118,118,22); ctx.fill(); }
@@ -2569,13 +2664,60 @@ function downloadIgArt(){
   if(!canvas) return;
   canvas.toBlob(b=>downloadIgBlob(b), 'image/jpeg', 0.92);
 }
-async function uploadIgImage(blob){
+async function uploadIgFile(blob, ext, type){
   if(!supabaseClient) return null;
-  const path = 'posts/'+Date.now()+'.jpg';
-  const { error } = await supabaseClient.storage.from('ig-posts').upload(path, blob, { contentType:'image/jpeg', upsert:true });
+  const path = 'posts/'+Date.now()+'.'+ext;
+  const { error } = await supabaseClient.storage.from('ig-posts').upload(path, blob, { contentType:type, upsert:true });
   if(error) return null;
   const { data } = supabaseClient.storage.from('ig-posts').getPublicUrl(path);
   return data && data.publicUrl;
+}
+async function recordIgVideo(extra){
+  const canvas = document.getElementById('ig-canvas');
+  if(!canvas || typeof MediaRecorder==='undefined') return null;
+  extra = extra || igThemes().empresa;
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const stream = canvas.captureStream(30);
+  const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
+  const rec = new MediaRecorder(stream, { mimeType: mime });
+  const chunks = [];
+  rec.ondataavailable = function(e){ if(e.data && e.data.size) chunks.push(e.data); };
+  rec.start(80);
+  const duration = 4200;
+  const start = performance.now();
+  await new Promise(function(resolve){
+    function frame(now){
+      const t = Math.min(1, (now-start)/duration);
+      extra._t = t;
+      drawIgPost('reels', extra);
+      if(t<1) requestAnimationFrame(frame); else resolve();
+    }
+    requestAnimationFrame(frame);
+  });
+  rec.stop();
+  await new Promise(function(r){ rec.onstop = r; });
+  if(!chunks.length) return null;
+  return new Blob(chunks, { type: mime });
+}
+async function publishIgReel(videoUrl, caption){
+  const c = igConn();
+  const make = new URLSearchParams({ media_type:'REELS', video_url:videoUrl, caption:caption||'', share_to_feed:'true', access_token:c.token });
+  const createdRes = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(c.igUserId)+'/media?'+make.toString(), { method:'POST' });
+  const created = await createdRes.json();
+  if(!created.id) throw new Error((created.error&&created.error.message)||'A Meta não criou o reels.');
+  for(let i=0;i<8;i++){
+    await new Promise(r=>setTimeout(r, 2000));
+    const st = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(created.id)+'?fields=status_code&access_token='+encodeURIComponent(c.token));
+    const sj = await st.json();
+    if(sj.status_code==='FINISHED' || sj.status_code==='PUBLISHED') break;
+    if(sj.status_code==='ERROR') throw new Error('A Meta recusou o vídeo.');
+  }
+  const pub = new URLSearchParams({ creation_id:created.id, access_token:c.token });
+  const pubRes = await fetch('https://graph.facebook.com/v21.0/'+encodeURIComponent(c.igUserId)+'/media_publish?'+pub.toString(), { method:'POST' });
+  const published = await pubRes.json();
+  if(!published.id) throw new Error((published.error&&published.error.message)||'A Meta não publicou o reels.');
+  return published.id;
 }
 async function publishIgGraph(imageUrl, caption){
   const c = igConn();
@@ -2599,7 +2741,7 @@ async function publishIgNow(fromChat){
   const conn = igConn();
   if(conn.token && conn.igUserId){
     try{
-      const url = await uploadIgImage(blob);
+      const url = await uploadIgFile(blob, 'jpg', 'image/jpeg');
       if(!url) throw new Error('Falta o arquivo público da arte (rode o SQL do bucket ig-posts no Supabase).');
       await publishIgGraph(url, caption);
       const msg = 'Publiquei no <strong>@code.invention</strong>.';
@@ -2645,17 +2787,46 @@ async function sendIgAi(){
   const q = igQueue();
   q.unshift({ at:new Date().toISOString(), theme, format, caption:cap });
   saveIgQueue(q);
-  const wantPublish = /(public|posta|postar|agora|manda|publica)/.test(t);
-  if(format==='reels' && !wantPublish){
-    pushIg('bot','Montei o reels em formato vertical + roteiro na legenda para <strong>@code.invention</strong>. A Meta só sobe vídeo .mp4; a arte e o texto já estão prontos. Manda <em>publica agora</em> que eu executo.');
-    return;
+  const wantPublish = /(public|posta|postar|agora|manda|publica)/.test(t) || format==='reels';
+  if(format==='reels'){
+    pushIg('bot','Gerando vídeo da empresa para <strong>@code.invention</strong>…');
+    const video = await recordIgVideo(extra);
+    if(video){
+      const conn = igConn();
+      if(conn.token && conn.igUserId){
+        try{
+          const url = await uploadIgFile(video, 'webm', video.type||'video/webm');
+          if(!url) throw new Error('Falta o bucket ig-posts no Supabase.');
+          await publishIgReel(url, cap);
+          pushIg('bot','Publiquei o vídeo no <strong>@code.invention</strong>.');
+          loadIgLive();
+          return;
+        }catch(err){
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(video);
+          a.download = 'codecraft-'+IG_HANDLE+'-reels.webm';
+          a.click();
+          openCompanyIg();
+          pushIg('bot','O vídeo está pronto. A Meta pode recusar webm: '+escapeHtml(err.message||String(err))+'. Baixei o arquivo e abri a página. Com o token certo, a foto ainda publica direto.');
+          return;
+        }
+      }
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(video);
+      a.download = 'codecraft-'+IG_HANDLE+'-reels.webm';
+      a.click();
+      openCompanyIg();
+      pushIg('bot','Vídeo da empresa gerado. Abri <strong>@code.invention</strong>. Liga o token da Meta para publicar sozinha na página.');
+      return;
+    }
   }
   if(wantPublish){
     const result = await publishIgNow(true);
     pushIg('bot', result);
+    loadIgLive();
     return;
   }
-  pushIg('bot','Arte e legenda prontas para <strong>@code.invention</strong>. Manda <em>publica agora</em> ou clique em Publicar.');
+  pushIg('bot','Arte pronta para <strong>@code.invention</strong>. Manda publicar agora ou vídeo da empresa.');
 }
 
 /* ================= INIT ================= */
