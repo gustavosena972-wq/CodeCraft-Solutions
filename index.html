@@ -590,7 +590,7 @@
     <aside class="ccs-admin-nav">
       <div class="ccs-admin-nav-title">Menu</div>
       <button class="ccs-navitem active" id="tab-btn-ia" onclick="switchAdminTab('ia')"><span class="ico">AI</span> Jarvis</button>
-      <button class="ccs-navitem" id="tab-btn-instagram" onclick="switchAdminTab('instagram')"><span class="ico">IG</span> IA Instagram</button>
+      <button class="ccs-navitem" id="tab-btn-instagram" onclick="switchAdminTab('instagram')"><span class="ico">IG</span> Instagram</button>
       <button class="ccs-navitem" id="tab-btn-projetos" onclick="switchAdminTab('projetos')"><span class="ico">📋</span> Projetos</button>
       <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')"><span class="ico">💬</span> Conversas</button>
       <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')"><span class="ico">✉️</span> Mensagens</button>
@@ -600,7 +600,7 @@
     <div class="ccs-admin-content">
     <div id="tab-ia">
       <h2 style="font-size:20px; margin-bottom:8px;">Jarvis · CodeCraft</h2>
-      <div class="ccs-help">Não é uma página de funções. Você pede, ele age: analisa o projeto que você mandar, lê o mercado, acha quem precisa do que a empresa faz, cuida da parte Empresa no Finanças, dá ideia e olha o futuro. Instagram é a outra IA.</div>
+      <div class="ccs-help">Não é uma página de funções. Você pede, ele age: analisa o projeto que você mandar, lê o mercado, acha quem precisa do que a empresa faz, cuida da parte Empresa no Finanças, dá ideia e olha o futuro.</div>
       <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
         <button class="ccs-btn ghost small" onclick="runAiOrder('analisa os projetos')">Projetos</button>
         <button class="ccs-btn ghost small" onclick="runAiOrder('como está o mercado')">Mercado</button>
@@ -618,28 +618,18 @@
 
     <div id="tab-instagram" style="display:none;">
       <h2 style="font-size:20px; margin-bottom:8px;">Instagram · @code.invention</h2>
-      <div class="ccs-help">Essa IA é o <strong>marketing digital da @code.invention</strong>. Ela pensa posicionamento, calendário, gancho e nicho — e também inventa a arte. Para publicar sozinha na página precisa da chave da Meta. Sem a chave, a arte fica neste painel. Se você colar só a chave, eu busco o ID da conta.</div>
+      <div class="ccs-help">Sem chat. Aqui você inventa a arte e manda para a <strong>@code.invention</strong>. Para publicar na página precisa da chave da Meta. Sem a chave, a arte fica neste painel.</div>
       <div id="ig-live-bar" class="ccs-panel" style="margin-bottom:12px; display:none;"></div>
       <div class="ccs-ai-layout">
         <div>
           <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
-            <button class="ccs-btn amber small" onclick="inventAndPublish(false).then(function(m){ pushIg('bot', m); loadIgLive(); }).catch(function(e){ pushIg('bot', escapeHtml(e.message||String(e))); })">Inventar e publicar</button>
-            <button class="ccs-btn amber small" onclick="runIgOrder('publica um post agora')">Publicar agora</button>
-            <button class="ccs-btn ghost small" onclick="runIgOrder('qual a estrategia da pagina')">Estratégia</button>
-            <button class="ccs-btn ghost small" onclick="runIgOrder('monta o calendario da semana')">Calendário</button>
-            <button class="ccs-btn ghost small" onclick="runIgOrder('escreve um gancho forte')">Gancho</button>
-            <button class="ccs-btn ghost small" onclick="runIgOrder('quem e o cliente da codecraft')">Nicho</button>
-            <button class="ccs-btn ghost small" onclick="runIgOrder('faz um video da empresa')">Vídeo IA</button>
-            <button class="ccs-btn ghost small" onclick="runIgOrder('faz um story')">Story</button>
-            <button class="ccs-btn ghost small" onclick="newIgChat()">Nova conversa</button>
-            <button class="ccs-btn ghost small" onclick="deleteIgChat()">Excluir</button>
+            <button class="ccs-btn amber small" onclick="inventAndPublish(false).then(function(m){ igNote(m); loadIgLive(); }).catch(function(e){ igNote(escapeHtml(e.message||String(e))); })">Inventar e publicar</button>
+            <button class="ccs-btn amber small" onclick="igPublishNowBtn()">Publicar agora</button>
+            <button class="ccs-btn ghost small" onclick="igMake('reels')">Vídeo</button>
+            <button class="ccs-btn ghost small" onclick="igMake('story')">Story</button>
             <button class="ccs-btn ghost small" onclick="toggleIgPilot()">Piloto automático</button>
           </div>
-          <div class="ccs-ai-box" id="ig-ai-log"></div>
-          <div class="ccs-chat-input" style="border:1px solid var(--line); border-radius:10px; margin-top:10px; background:#fff;">
-            <input id="ig-ai-input" placeholder="Ex.: estratégia da página, calendário, gancho, publica um post do site" onkeydown="if(event.key==='Enter')sendIgAi()">
-            <button class="ccs-btn amber" onclick="sendIgAi()">Mandar</button>
-          </div>
+          <div id="ig-status" class="ccs-help" style="margin-top:0;"></div>
           <div class="ccs-panel" style="margin-top:14px;">
             <div class="ccs-eyebrow">Ligar @code.invention (uma vez)</div>
             <p style="font-size:13px; color:var(--ink-soft); margin:8px 0;"><strong>Não é senha do Instagram.</strong> A Meta não deixa o site postar com usuário e senha. Ela dá uma <strong>chave</strong> (token) e um <strong>número da conta</strong> (ID). Sem esses dois, a arte fica só neste painel.</p>
@@ -665,7 +655,7 @@
           <div class="ccs-ig-preview"><canvas id="ig-canvas" width="1080" height="1080"></canvas></div>
           <div class="ccs-field" style="margin-top:10px;"><label>Legenda</label><textarea id="ig-caption" rows="5" style="width:100%; padding:10px; border:1.5px solid var(--line); border-radius:8px; font-family:Inter,sans-serif; font-size:14px;"></textarea></div>
           <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
-            <button class="ccs-btn amber" onclick="publishIgNow().then(function(m){ pushIg('bot', m); }).catch(function(e){ pushIg('bot', escapeHtml(e.message||String(e))); })">Publicar no @code.invention</button>
+            <button class="ccs-btn amber" onclick="publishIgNow().then(function(m){ igNote(m); }).catch(function(e){ igNote(escapeHtml(e.message||String(e))); })">Publicar no @code.invention</button>
             <button class="ccs-btn ghost" onclick="downloadIgArt()">Baixar arte</button>
             <button class="ccs-btn ghost" onclick="openCompanyIg()">Abrir Instagram</button>
           </div>
@@ -2357,7 +2347,7 @@ function bootAdminAi(){
   const log = document.getElementById('admin-ai-log');
   if(!log) return;
   if(!adminAiBooted){
-    log.innerHTML = '<div class="ccs-ai-msg"><strong>Jarvis online.</strong> Eu sou da CodeCraft. Manda um projeto que eu analiso. Pede mercado, cliente, ideia, futuro ou abre a parte Empresa do Finanças. Instagram @code.invention é a outra IA.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg"><strong>Jarvis online.</strong> Eu sou da CodeCraft. Manda um projeto que eu analiso. Pede mercado, cliente, ideia, futuro ou abre a parte Empresa do Finanças.</div>';
     adminAiBooted = true;
   }
 }
@@ -2428,7 +2418,7 @@ function jarvisIdeas(projects, mkt, messages){
   if((messages||[]).length) ideas.push('Tem recado no site sem resposta. Fecha no chat antes de caçar gente nova.');
   if(projects.filter(p=>p.status==='concluido' && !p.deliveryUrl).length) ideas.push('Projeto concluído sem link: o cliente não vê o site. Cola a URL na entrega.');
   if(Number(mkt.selic)>=13) ideas.push('Oferta do trimestre: PIX à vista, sem parcelar. Selic alta mata proposta longa.');
-  if(Number(mkt.ibovPct)<=-1) ideas.push('Gancho de conteúdo: “cortar gasto” no @code.invention e no LinkedIn — a IA do Instagram posta.');
+  if(Number(mkt.ibovPct)<=-1) ideas.push('Gancho de conteúdo: “cortar gasto” no @code.invention e no LinkedIn.');
   ideas.push('Melhoria interna: todo projeto novo já nasce com recorrente de manutenção no Finanças Empresa.');
   ideas.push('Futuro: loja com pedido no WhatsApp + painel ao vivo. BH ainda vende no zap e perde número.');
   return ideas;
@@ -2459,7 +2449,8 @@ async function sendAdminAi(){
   aiMem.lastAsk = t;
 
   if(/(instagram|story|reels|code\.invention)/.test(t) && !/(ideia|futuro)/.test(t)){
-    pushAi('bot','Instagram da empresa é a outra IA, no menu <strong>IA Instagram</strong>. Página: @code.invention.');
+    switchAdminTab('instagram');
+    pushAi('bot','Posts da @code.invention ficam no menu <strong>Instagram</strong>. Sem chat: inventa a arte e publica na página.');
     return;
   }
   if(/(acha cliente|encontrar cliente|prospec|quem precisa|cacar|caçar|onde achar)/.test(t)){
@@ -2553,7 +2544,6 @@ const IG_PAGE_URL = 'https://instagram.com/code.invention';
 const IG_CONN_KEY = 'ccs-ig-conn';
 const IG_QUEUE_KEY = 'ccs-ig-queue';
 const IG_PILOT_KEY = 'ccs-ig-pilot';
-let igAiBooted = false;
 let igPilotTimer = null;
 
 function igConn(){ try { return JSON.parse(localStorage.getItem(IG_CONN_KEY)||'{}'); } catch(e){ return {}; } }
@@ -2733,49 +2723,60 @@ async function loadIgLive(){
     bar.innerHTML = 'Token recusado: '+escapeHtml(e.message||'não leu a página.')+' Confere token e ID.';
   }
 }
-function newIgChat(){
-  const log = document.getElementById('ig-ai-log');
-  if(log) log.innerHTML = '<div class="ccs-ai-msg">Conversa nova. O chat antigo saiu. Manda a próxima ordem.</div>';
-  const input = document.getElementById('ig-ai-input');
-  if(input) input.value = '';
-  igAiBooted = true;
+function igNote(html){
+  const el = document.getElementById('ig-status');
+  if(el) el.innerHTML = html || '';
+  const plain = String(html||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+  if(plain) showToast(plain.slice(0,90));
 }
-function deleteIgChat(){
-  if(!confirm('Apagar este chat do Instagram?')) return;
-  const log = document.getElementById('ig-ai-log');
-  if(log) log.innerHTML = '<div class="ccs-ai-msg">Chat apagado. Pode começar outro.</div>';
-  const input = document.getElementById('ig-ai-input');
-  if(input) input.value = '';
-  igAiBooted = true;
-}
+function pushIg(who, html){ igNote(html); }
 function bootIgAi(){
-  const log = document.getElementById('ig-ai-log');
-  if(!log) return;
-  if(!igAiBooted){
-    log.innerHTML = '<div class="ccs-ai-msg">Marketing da <strong>@code.invention</strong>. Eu penso como estrategista: posicionamento, calendário, gancho, nicho e oferta. Também invento a arte e publico quando a chave da Meta estiver ligada. Pergunta “estratégia”, “calendário” ou “gancho”. Se colar só a chave, eu busco o ID.</div>';
-    igAiBooted = true;
-    seedMarketingBank();
-    const extra = igThemes().empresa;
-    drawIgPost('feed', extra);
-    const cap = document.getElementById('ig-caption');
-    if(cap && !cap.value) cap.value = igCaption('empresa', extra, {});
-  }
+  seedMarketingBank();
+  const extra = igThemes().empresa;
+  drawIgPost('feed', extra);
+  const cap = document.getElementById('ig-caption');
+  if(cap && !cap.value) cap.value = igCaption('empresa', extra, {});
   refreshIgConnStatus();
   renderIgQueue();
   loadIgLive();
   startIgAutopilot();
 }
-function pushIg(who, html){
-  const log = document.getElementById('ig-ai-log');
-  if(!log) return;
-  log.innerHTML += `<div class="ccs-ai-msg ${who==='me'?'me':''}">${html}</div>`;
-  log.scrollTop = log.scrollHeight;
+async function igPublishNowBtn(){
+  try { igNote(await publishIgNow(true)); loadIgLive(); }
+  catch(e){ igNote(escapeHtml(e.message||String(e))); }
 }
-function runIgOrder(text){
-  const input = document.getElementById('ig-ai-input');
-  if(input) input.value = text;
-  switchAdminTab('instagram');
-  sendIgAi();
+async function igMake(format){
+  format = format || 'feed';
+  const mkt = await loadMarket();
+  const theme = format==='story' ? 'story' : 'empresa';
+  const extra = Object.assign({}, igThemes()[theme] || igThemes().empresa);
+  extra.market = 'USD R$ '+moneyFx(mkt.usd)+'  ·  IBOV '+(mkt.ibovPct??'—')+'%  ·  SELIC '+(mkt.selic??'—')+'%';
+  drawIgPost(format==='feed' ? 'feed' : format, extra);
+  const capEl = document.getElementById('ig-caption');
+  const cap = igCaption(theme, extra, mkt);
+  if(capEl) capEl.value = cap;
+  const q = igQueue();
+  q.unshift({ at:new Date().toISOString(), theme, format, caption:cap });
+  saveIgQueue(q);
+  if(format==='reels'){
+    igNote('Gerando vídeo… se a Meta recusar, mando a foto no feed.');
+    const video = await recordIgVideo(extra);
+    const conn = igConn();
+    if(video && conn.token && conn.igUserId){
+      try{
+        const url = await uploadIgFile(video, 'webm', video.type||'video/webm');
+        await publishIgReel(url, cap);
+        igNote('Publiquei o vídeo no <strong>@code.invention</strong>.');
+        loadIgLive();
+        return;
+      }catch(err){
+        igNote('Vídeo recusado ('+escapeHtml(err.message||String(err))+'). Mandando a foto no feed…');
+      }
+    }
+  }
+  try { igNote(await publishIgNow(true)); }
+  catch(e){ igNote(escapeHtml(e.message||String(e))); }
+  loadIgLive();
 }
 function igThemes(){
   return {
@@ -2993,83 +2994,6 @@ async function publishIgNow(fromChat){
     showToast('Não foi para o Instagram');
     throw new Error(err.message||String(err));
   }
-}
-
-async function sendIgAi(){
-  const input = document.getElementById('ig-ai-input');
-  const raw = (input.value||'').trim();
-  if(!raw) return;
-  input.value = '';
-  pushIg('me', escapeHtml(raw));
-  const t = raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  const mkt = await loadMarket();
-  const talkOnly = /(estrateg|calend|gancho|nicho|cliente da|posicion|copy|legenda|funil|alcance|seguidor|como crescer|quem comprar|oferta)/.test(t) && !/(public|posta|postar|inventar|cria um post|faz um post|story|reel|video)/.test(t);
-  if(talkOnly){
-    pushIg('bot', escapeHtml(mktStrategyReply(raw, mkt)));
-    return;
-  }
-  if(/(invent|criat|ideia de post|autonom|sozinha|aumentar)/.test(t)){
-    try{
-      const msg = await inventAndPublish(false);
-      pushIg('bot', msg);
-    }catch(e){
-      pushIg('bot', escapeHtml(e.message||String(e)));
-    }
-    loadIgLive();
-    return;
-  }
-  let format = 'feed';
-  if(/story/.test(t)) format = 'story';
-  if(/reel|video|reels/.test(t)) format = 'reels';
-  const theme = pickIgTheme(t);
-  const extra = Object.assign({}, igThemes()[theme] || igThemes().empresa);
-  extra.market = 'USD R$ '+moneyFx(mkt.usd)+'  ·  IBOV '+(mkt.ibovPct??'—')+'%  ·  SELIC '+(mkt.selic??'—')+'%';
-  extra.kicker = extra.kicker || 'CODECRAFT';
-  if(theme==='mercado'){
-    extra.title = 'Dólar R$ '+moneyFx(mkt.usd)+'\nIbov '+(mkt.ibovPct??'—')+'%\nSelic '+(mkt.selic??'—')+'%';
-  }
-  drawIgPost(format==='feed' ? 'feed' : format, extra);
-  const capEl = document.getElementById('ig-caption');
-  const cap = igCaption(theme, extra, mkt);
-  if(capEl) capEl.value = cap;
-  const q = igQueue();
-  q.unshift({ at:new Date().toISOString(), theme, format, caption:cap });
-  saveIgQueue(q);
-  const wantPublish = /(public|posta|postar|agora|manda|publica)/.test(t) || format==='reels' || format==='story';
-  if(format==='reels'){
-    pushIg('bot', escapeHtml(mktPick('growth'))+' Gerando vídeo… se a Meta recusar, mando a foto no feed.');
-    const video = await recordIgVideo(extra);
-    const conn = igConn();
-    if(video && conn.token && conn.igUserId){
-      try{
-        const url = await uploadIgFile(video, 'webm', video.type||'video/webm');
-        await publishIgReel(url, cap);
-        pushIg('bot','Publiquei o vídeo no <strong>@code.invention</strong>.');
-        loadIgLive();
-        return;
-      }catch(err){
-        pushIg('bot','Vídeo recusado ('+escapeHtml(err.message||String(err))+'). Mandando a foto no feed…');
-        try{
-          const result = await publishIgNow(true);
-          pushIg('bot', result);
-        }catch(e2){
-          pushIg('bot', escapeHtml(e2.message||String(e2)));
-        }
-        return;
-      }
-    }
-  }
-  if(wantPublish){
-    try{
-      const result = await publishIgNow(true);
-      pushIg('bot', result);
-    }catch(e){
-      pushIg('bot', escapeHtml(e.message||String(e)));
-    }
-    loadIgLive();
-    return;
-  }
-  pushIg('bot', escapeHtml(mktStrategyReply(raw, mkt))+'<br><br>Arte pronta neste painel. Manda <strong>publicar agora</strong> para ir para a @code.invention (precisa da chave da Meta).');
 }
 
 /* ================= INIT ================= */
