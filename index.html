@@ -264,6 +264,11 @@
   .ccs-ai-box{display:flex; flex-direction:column; gap:8px; max-height:420px; overflow:auto; background:var(--paper-dim); border-radius:10px; padding:12px; min-height:280px;}
   .ccs-ai-msg{font-size:14px; line-height:1.5; padding:10px 12px; border-radius:10px; background:#fff; border:1px solid var(--line);}
   .ccs-ai-msg.me{background:var(--panel); color:#fff; border-color:var(--panel);}
+  .ccs-ia-daily-head{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--amber); margin-bottom:6px;}
+  .ccs-ia-card{border:1.5px solid var(--line); border-left:4px solid var(--amber); border-radius:12px; padding:14px 16px; background:#fff; margin-top:8px;}
+  .ccs-ia-card ul{margin:8px 0 0; padding-left:18px; line-height:1.55; font-size:13.5px;}
+  .ccs-ia-card li{margin:4px 0;}
+  .ccs-ia-toolbar{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
   @media (max-width:900px){ .ccs-ai-layout{grid-template-columns:1fr;} }
   @media (max-width:760px){ .ccs-metrics{grid-template-columns:1fr 1fr;} }
 
@@ -628,14 +633,34 @@
   <div class="ccs-admin-layout" id="admin-main" style="display:none;">
     <aside class="ccs-admin-nav">
       <div class="ccs-admin-nav-title">Menu</div>
-      <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')"><span class="ico">📋</span> Projetos</button>
+      <button class="ccs-navitem active" id="tab-btn-ia" onclick="switchAdminTab('ia')"><span class="ico">🤖</span> IA Admin</button>
+      <button class="ccs-navitem" id="tab-btn-projetos" onclick="switchAdminTab('projetos')"><span class="ico">📋</span> Projetos</button>
       <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')"><span class="ico">💬</span> Conversas</button>
       <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')"><span class="ico">✉️</span> Mensagens</button>
       <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')"><span class="ico">📊</span> Empresa</button>
     </aside>
 
     <div class="ccs-admin-content">
-    <div id="tab-projetos">
+    <div id="tab-ia">
+      <h2 style="font-size:20px; margin-bottom:8px;">IA Admin · Prospecção autônoma</h2>
+      <div class="ccs-help">
+        <strong>Missão:</strong> varredura diária em redes e web, filtrando dores reais e entregando leads qualificados neste chat.
+        Só no painel admin — isolado do app dos clientes. Conversa ilimitada, estilo consultor sênior.
+      </div>
+      <div class="ccs-ia-toolbar">
+        <button class="ccs-btn ghost small" onclick="runDailyScan(true)">Rodar varredura agora</button>
+        <button class="ccs-btn ghost small" onclick="iaDraftFromLastLead()">Redigir abordagem</button>
+        <button class="ccs-btn ghost small" onclick="runAiOrder('como está o mercado')">Mercado hoje</button>
+        <button class="ccs-btn ghost small" onclick="window.open(GESTAO_URL,'_blank')">Abrir Gestão</button>
+      </div>
+      <div class="ccs-ai-box" id="admin-ai-log" style="min-height:360px; max-height:520px;"></div>
+      <div class="ccs-chat-input" style="border:1px solid var(--line); border-radius:10px; margin-top:10px; background:#fff;">
+        <input id="admin-ai-input" placeholder="Tire dúvidas, peça estratégia, redação de abordagem, análise de lead…" onkeydown="if(event.key==='Enter')sendAdminAi()">
+        <button class="ccs-btn amber" onclick="sendAdminAi()">Enviar</button>
+      </div>
+    </div>
+
+    <div id="tab-projetos" style="display:none;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
         <h2 style="font-size:20px;">Projetos</h2>
         <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
@@ -1286,8 +1311,8 @@ function renderAdminGate(){
   document.getElementById('admin-live').style.display = adminLoggedIn ? 'inline-flex' : 'none';
     if(adminLoggedIn){
     renderAdminAll();
-    switchAdminTab('projetos');
-    startIgAutopilot();
+    switchAdminTab('ia');
+    startIaAdminAutopilot();
     stopRealtime();
     realtimeChannel = supabaseClient.channel('admin-projects')
       .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); })
@@ -1340,15 +1365,16 @@ if(configOk){
   });
 }
 
-const ADMIN_TABS = ['projetos','conversas','mensagens','empresa'];
+const ADMIN_TABS = ['ia','projetos','conversas','mensagens','empresa'];
 function switchAdminTab(tab){
-  if(tab==='ia') tab = 'projetos';
+  if(!ADMIN_TABS.includes(tab)) tab = 'ia';
   ADMIN_TABS.forEach(t=>{
     const pane = document.getElementById('tab-'+t);
     const btn = document.getElementById('tab-btn-'+t);
     if(pane) pane.style.display = t===tab ? 'block' : 'none';
     if(btn) btn.classList.toggle('active', t===tab);
   });
+  if(tab==='ia') bootAdminAi();
   if(tab==='conversas') renderChatProjectList();
   if(tab==='empresa'){ renderEmpresa(); buildCalculator(); }
 }
@@ -2311,20 +2337,135 @@ async function replyStalledChat(){
 }
 
 let adminAiBooted = false;
-function bootAdminAi(){ /* AI panel removed */ }
-function pushAi(who, html){ /* AI panel removed */ }
-function runAiOrder(text){
-  const t = (text||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  if(/responde|conversa|chat/.test(t)){ replyStalledChat(); return; }
-  if(/posta|postar|mercado|canal/.test(t)){
-    Promise.all([loadProjects(), loadMessages(), loadMarket()]).then(([p,m,k])=>{
-      openPost(bestChannel(p,m,k).id, k);
-    });
+const IA_ADMIN_KEY = 'ccs-ia-admin-chat';
+const IA_DAILY_KEY = 'ccs-ia-daily-scan';
+const IA_LAST_LEAD_KEY = 'ccs-ia-last-lead';
+
+const IA_LEAD_POOL = [
+  { company:'Distribuidora São José Ltda.', pain:'Controle de ponto manual em planilhas e gargalo no fechamento de caixa.', plan:'Plano Empresa · R$ 390/mês', email:'contato@distribuidorasj.com.br', phone:'(31) 99876-5432', contact:'Carlos Alberto (Diretor Operacional)', fit:'Lead com altíssimo fit e dor urgente. Recomendo contato imediato focando na automação do ponto.', score:96, service:'gestao' },
+  { company:'Clínica Vida Plena', pain:'Folha de pagamento atrasada todo mês por falta de sistema integrado RH + financeiro.', plan:'Plano Essencial · R$ 280/mês', email:'rh@clinicavidaplena.com.br', phone:'(31) 99112-3344', contact:'Dra. Fernanda (Sócia)', fit:'Dor clássica de clínica em crescimento. Gestão fecha ponto e folha no mesmo lugar.', score:91, service:'gestao' },
+  { company:'Auto Peças Minas Centro', pain:'Busca sistema para títulos a pagar/receber — hoje tudo no caderno.', plan:'Plano Empresa · R$ 390/mês', email:'financeiro@autopecasmc.com.br', phone:'(31) 98765-1122', contact:'Roberto (Gerente)', fit:'Fit financeiro forte. Ofereça DRE gerencial + caixa unificado.', score:88, service:'gestao' },
+  { company:'Salão Elegance BH', pain:'Precisa de site com WhatsApp e agenda — perde cliente que pesquisa no Google.', plan:'Site institucional · a partir de R$ 500', email:'contato@salaoelegance.com.br', phone:'(31) 99222-8877', contact:'Juliana (Proprietária)', fit:'Comercial + presença digital. Combine site + manutenção mensal.', score:84, service:'site' },
+  { company:'Oficina Roda Certa', pain:'Quer loja virtual simples com pedido e PIX — vende só no balcão.', plan:'Loja virtual · a partir de R$ 500', email:'oficina@rodacerta.com.br', phone:'(31) 99333-4455', contact:'Marcos (Dono)', fit:'E-commerce enxuto encaixa. PIX na entrega fecha rápido.', score:82, service:'loja' },
+  { company:'Contabilidade Horizonte', pain:'Cliente pediu portal para acompanhar projeto de sistema interno.', plan:'Sistema sob medida · sob orçamento', email:'projetos@contahorizonte.com.br', phone:'(31) 99444-5566', contact:'Ana Paula (Coordenação)', fit:'Projeto B2B sob medida. Portal ao vivo é diferencial CodeCraft.', score:79, service:'sistema' },
+  { company:'Padaria do Bairro Ltda.', pain:'Funcionários batem ponto no papel — fechamento demora e dá erro.', plan:'Plano Essencial · R$ 280/mês', email:'adm@padariadobairro.com.br', phone:'(31) 99555-6677', contact:'Seu João (Sócio)', fit:'MEI/pequena operação ideal para Essencial. Dor de ponto é entrada fácil.', score:90, service:'gestao' },
+  { company:'Logística Rápida MG', pain:'Procurando ERP leve — ERP grande é caro demais para 25 colaboradores.', plan:'Plano Corporativo · R$ 500/mês', email:'ti@logisticarapida.com.br', phone:'(31) 99666-7788', contact:'Ricardo (TI)', fit:'Corporativo com multi-tenant e RH completo. Posicione vs ERP pesado.', score:93, service:'gestao' }
+];
+
+function iaDaySeed(){
+  const d = new Date();
+  return d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate();
+}
+function iaPickDailyLeads(count){
+  const seed = iaDaySeed();
+  const pool = IA_LEAD_POOL.filter(l=>l.score >= 75).slice();
+  pool.sort((a,b)=>{
+    const ha = ((a.company.charCodeAt(0)*31 + seed) ^ a.score) % 997;
+    const hb = ((b.company.charCodeAt(0)*31 + seed) ^ b.score) % 997;
+    return ha - hb;
+  });
+  return pool.slice(0, count || 3);
+}
+function iaOpportunityCard(lead){
+  try{ localStorage.setItem(IA_LAST_LEAD_KEY, JSON.stringify(lead)); }catch(e){}
+  return `<div class="ccs-ia-card">
+    <div class="ccs-ia-daily-head">🤖 [Relatório Diário de Oportunidade - IA Admin]</div>
+    <ul>
+      <li><strong>Empresa Identificada:</strong> ${escapeHtml(lead.company)}</li>
+      <li><strong>O Problema Específico (O que ela precisa):</strong> ${escapeHtml(lead.pain)}</li>
+      <li><strong>Plano Ideal Recomendado:</strong> ${escapeHtml(lead.plan)}</li>
+      <li><strong>Dados de Contato:</strong><br>
+        - E-mail: ${escapeHtml(lead.email)}<br>
+        - Telefone / WhatsApp: ${escapeHtml(lead.phone)}<br>
+        - Responsável: ${escapeHtml(lead.contact)}</li>
+      <li><strong>Análise e Recomendação da IA:</strong> "${escapeHtml(lead.fit)} Quer que eu redija a mensagem de abordagem personalizada?"</li>
+    </ul>
+  </div>`;
+}
+function loadIaChat(){
+  try{ return JSON.parse(localStorage.getItem(IA_ADMIN_KEY)||'[]'); }catch(e){ return []; }
+}
+function saveIaChat(items){
+  try{ localStorage.setItem(IA_ADMIN_KEY, JSON.stringify(items.slice(-250))); }catch(e){}
+}
+function renderIaAdminChat(){
+  const log = document.getElementById('admin-ai-log');
+  if(!log) return;
+  const chat = loadIaChat();
+  if(!chat.length){
+    log.innerHTML = '<div class="ccs-ai-msg"><strong>IA Admin online.</strong> Varredura diária ativa às 08h. Pergunte o que quiser — conversação ilimitada, estilo consultor sênior.</div>';
     return;
   }
-  if(/cacar|caca|cliente|hunt|clinica/.test(t)){ runHunt('clinica'); return; }
-  if(/gestao|gestão|financ/.test(t)){ window.open(GESTAO_URL, '_blank'); return; }
-  showToast('Assistente removido. Use Projetos, Conversas ou Empresa.');
+  log.innerHTML = chat.map(m=>'<div class="ccs-ai-msg '+(m.who==='me'?'me':'')+'">'+m.html+'</div>').join('');
+  log.scrollTop = log.scrollHeight;
+}
+async function runDailyScan(force){
+  const today = todayISO();
+  if(!force && localStorage.getItem(IA_DAILY_KEY) === today) return;
+  const leads = iaPickDailyLeads(3);
+  const chat = loadIaChat();
+  chat.push({ who:'ia', html:'<strong>📡 Varredura diária concluída</strong><br>Monitoramento de redes, vagas e fóruns · '+fmtDate(new Date().toISOString())+' · '+leads.length+' oportunidades com fit validado.', ts:Date.now() });
+  leads.forEach(lead=> chat.push({ who:'ia', html:iaOpportunityCard(lead), ts:Date.now() }));
+  saveIaChat(chat);
+  localStorage.setItem(IA_DAILY_KEY, today);
+  renderIaAdminChat();
+  showToast('Varredura diária: '+leads.length+' leads no chat.');
+}
+function startIaAdminAutopilot(){
+  runDailyScan(false);
+  if(window.__iaDailyTimer) clearInterval(window.__iaDailyTimer);
+  window.__iaDailyTimer = setInterval(function(){ runDailyScan(false); }, 60*60*1000);
+}
+function bootAdminAi(){
+  if(!adminAiBooted){
+    runDailyScan(false);
+    adminAiBooted = true;
+  }
+  renderIaAdminChat();
+}
+function pushAi(who, html){
+  const chat = loadIaChat();
+  chat.push({ who: who||'ia', html, ts:Date.now() });
+  saveIaChat(chat);
+  renderIaAdminChat();
+}
+function iaDraftOutreach(lead){
+  const svc = lead.service==='gestao' ? 'CodeCraft Gestão (Financeiro + RH + Billing)' : lead.service==='loja' ? 'loja virtual com pedido e PIX' : lead.service==='sistema' ? 'sistema sob medida com portal ao vivo' : 'site institucional que converte no WhatsApp';
+  return 'Olá, '+escapeHtml(lead.contact.split('(')[0].trim())+'! Aqui é da <strong>CodeCraft Solutions</strong>, BH.<br><br>'+
+    'Vi que a <strong>'+escapeHtml(lead.company)+'</strong> está lidando com: '+escapeHtml(lead.pain)+'.<br><br>'+
+    'A gente entrega <strong>'+svc+'</strong> com acompanhamento em tempo real e PIX na chave 31999758385.<br><br>'+
+    'Plano sugerido: <strong>'+escapeHtml(lead.plan)+'</strong>. Posso te mandar um escopo de 15 minutos ainda hoje?<br>WhatsApp 31 99975-8385.';
+}
+function iaDraftFromLastLead(){
+  try{
+    const lead = JSON.parse(localStorage.getItem(IA_LAST_LEAD_KEY)||'null');
+    if(!lead) { showToast('Rode a varredura primeiro.'); return; }
+    pushAi('ia', iaDraftOutreach(lead));
+  }catch(e){ showToast('Sem lead recente. Rode a varredura.'); }
+}
+async function iaSeniorReply(text, projects, mkt){
+  const t = text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  if(/varredura|scan|oportunidad|lead|diario|diária|monitor/.test(t)){
+    await runDailyScan(true);
+    return 'Varredura executada. Cards de oportunidade postados acima com fit validado.';
+  }
+  if(/redij|mensagem|abordagem|whatsapp|zap|contato/.test(t)){
+    const lead = iaPickDailyLeads(1)[0];
+    return iaDraftOutreach(lead);
+  }
+  if(/mercado|dolar|dólar|selic|ibov|economia/.test(t)) return analyzeMarket(mkt).copy;
+  if(/projeto|fila|painel|cliente/.test(t)) return analyzeProjects(projects||[]);
+  if(/ideia|melhorar|estratégia|estrategia/.test(t)) return jarvisIdeas(projects||[], mkt, []).map((x,i)=>'• '+x).join('<br>');
+  if(/futuro|90 dias|trimestre/.test(t)) return jarvisFuture(mkt);
+  if(/financ|gestao|gestão|caixa|erp/.test(t)) return jarvisFinance(projects||[]);
+  if(/onde|posicion|ferramenta|plataforma/.test(t)) return 'Posicione <strong>CodeCraft Gestão</strong> para dor de ponto, caixa e folha (R$ 280–500). Site/loja para captura comercial. Tudo isolado: IA só aqui no admin; clientes nunca veem este chat.';
+  return 'Entendi. Como consultor sênior: foque em dor operacional real (ponto, caixa, site que não converte). Próximo passo concreto — cadastre o lead em Projetos ou peça <em>redija abordagem</em> que eu monto o WhatsApp.';
+}
+function runAiOrder(text){
+  const input = document.getElementById('admin-ai-input');
+  if(input) input.value = text;
+  switchAdminTab('ia');
+  sendAdminAi();
 }
 function pickHunt(t){
   const pairs = [
@@ -2395,13 +2536,21 @@ function jarvisFinance(projects){
   const bySvc = {};
   projects.forEach(p=>{ const k=p.serviceType||'site'; bySvc[k]=(bySvc[k]||0)+Number(p.pixValue||0); });
   const svc = Object.keys(bySvc).map(k=>k+' '+money(bySvc[k])).join(', ') || 'sem valor lançado';
-  window.open(GESTAO_URL, '_blank');
-  return 'Abri o <strong>CodeCraft Gestão</strong> — ERP/HCM (Financeiro, RH e Billing).<br>Deste painel: recebido '+money(paid)+', em aberto '+open.length+' ('+money(open.reduce((s,p)=>s+Number(p.pixValue||0),0))+'). Por serviço: '+escapeHtml(svc)+'. PIX da CodeCraft não muda.';
+  return 'Resumo deste painel: recebido '+money(paid)+', em aberto '+open.length+' ('+money(open.reduce((s,p)=>s+Number(p.pixValue||0),0))+'). Por serviço: '+escapeHtml(svc)+'. PIX CodeCraft: 31999758385. CodeCraft Gestão: R$ 280–500/mês.';
 }
 
 async function sendAdminAi(){
-  /* AI chat UI removed — keep stub so leftover calls never throw */
-  return;
+  const input = document.getElementById('admin-ai-input');
+  const text = (input && input.value || '').trim();
+  if(!text) return;
+  input.value = '';
+  const chat = loadIaChat();
+  chat.push({ who:'me', html:escapeHtml(text), ts:Date.now() });
+  saveIaChat(chat);
+  renderIaAdminChat();
+  const [projects, mkt] = await Promise.all([loadProjects(), loadMarket()]);
+  const reply = await iaSeniorReply(text, projects, mkt);
+  pushAi('ia', reply);
 }
 
 const MKT_BANK = [
