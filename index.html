@@ -121,15 +121,20 @@
   .ccs-financas-side h2{max-width:none; font-size:26px;}
   .ccs-financas-side .ccs-lede{margin-bottom:22px;}
   .ccs-financas-side .ccs-btn{text-decoration:none; display:inline-block;}
+  .ccs-gestao-wrap{background:var(--panel); color:#fff; border-radius:18px; padding:36px 32px; margin-top:10px;}
+  .ccs-gestao-wrap .ccs-eyebrow{color:var(--amber);}
+  .ccs-gestao-wrap h2{color:#fff; max-width:720px;}
+  .ccs-gestao-wrap .ccs-lede{color:#B9BEDB; max-width:720px;}
   .ccs-gestao-biz{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:22px 0 26px; max-width:920px;}
-  .ccs-gestao-biz .biz{background:var(--paper-dim); border:1px solid var(--line); border-radius:12px; padding:18px 18px;}
-  .ccs-gestao-biz .biz strong{display:block; font-size:15px; margin-bottom:6px;}
-  .ccs-gestao-biz .biz span{font-size:13px; color:var(--ink-soft); line-height:1.45;}
+  .ccs-gestao-biz .biz{background:var(--panel-2); border:1px solid var(--line-dark); border-radius:12px; padding:18px;}
+  .ccs-gestao-biz .biz strong{display:block; font-size:15px; margin-bottom:6px; color:#fff;}
+  .ccs-gestao-biz .biz span{display:block; font-size:13px; color:#B9BEDB; line-height:1.45;}
   .ccs-gestao-plans{display:flex; flex-wrap:wrap; gap:10px; margin:0 0 22px;}
-  .ccs-gestao-plans .plan{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; padding:8px 12px; border-radius:999px; border:1.5px solid var(--line); background:#fff;}
-  .ccs-gestao-plans .plan.hot{border-color:var(--amber); background:#FFF6E8; color:#7A4A00;}
+  .ccs-gestao-plans .plan{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; padding:8px 12px; border-radius:999px; border:1.5px solid var(--line-dark); background:transparent; color:#fff;}
+  .ccs-gestao-plans .plan.hot{border-color:var(--amber); background:#3A2A12; color:var(--amber);}
   @media (max-width:860px){
     .ccs-gestao-biz{grid-template-columns:1fr;}
+    .ccs-gestao-wrap{padding:28px 20px;}
   }
 
   .ccs-contact-wrap{display:grid; grid-template-columns:1fr 1fr; gap:50px;}
@@ -315,9 +320,9 @@
       <h1>Sua ideia,<br>em <span>produção</span>.</h1>
       <p>A CodeCraft Solutions transforma sistemas, sites e aplicativos em produtos reais — com acompanhamento aberto, do primeiro commit até a entrega.</p>
       <div class="ccs-hero-ctas">
-        <button class="ccs-btn amber" onclick="showScreen('client')">Acompanhar meu projeto</button>
+        <button class="ccs-btn amber" onclick="document.getElementById('gestao').scrollIntoView({behavior:'smooth'})">Ver CodeCraft Gestão</button>
+        <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="showScreen('client')">Acompanhar meu projeto</button>
         <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="document.getElementById('contato').scrollIntoView()">Fale com a gente</button>
-        <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="document.getElementById('servicos').scrollIntoView()">Ver serviços</button>
       </div>
     </div>
     <div class="ccs-terminal">
@@ -337,20 +342,22 @@
   </section>
 
   <section class="ccs-section ccs-section-tight" id="gestao">
-    <div class="ccs-eyebrow">Produto · só empresas</div>
-    <h2>CodeCraft Gestão — os negócios da plataforma</h2>
-    <p class="ccs-lede">ERP/HCM B2B multi-tenant: financeiro, RH e assinatura numa plataforma. Sem IA no painel. Planos de R$&nbsp;280 a R$&nbsp;500/mês.</p>
-    <div class="ccs-gestao-biz">
-      <div class="biz"><strong>01 · Financeiro</strong><span>Caixa, contas a pagar/receber e DRE gerencial.</span></div>
-      <div class="biz"><strong>02 · RH</strong><span>Cadastro, ponto eletrônico e fechamento de folha.</span></div>
-      <div class="biz"><strong>03 · Billing</strong><span>Renovação no cartão e cancelamento no painel.</span></div>
+    <div class="ccs-gestao-wrap">
+      <div class="ccs-eyebrow">Produto · só empresas</div>
+      <h2>CodeCraft Gestão — os negócios da plataforma</h2>
+      <p class="ccs-lede">ERP/HCM B2B multi-tenant: Financeiro, RH e Billing numa plataforma. Sem IA no painel. Planos de R$&nbsp;280 a R$&nbsp;500/mês.</p>
+      <div class="ccs-gestao-biz">
+        <div class="biz"><strong>01 · Financeiro</strong><span>Caixa, contas a pagar/receber e DRE gerencial.</span></div>
+        <div class="biz"><strong>02 · RH</strong><span>Cadastro, ponto eletrônico e fechamento de folha.</span></div>
+        <div class="biz"><strong>03 · Billing</strong><span>Renovação no cartão e cancelamento no painel.</span></div>
+      </div>
+      <div class="ccs-gestao-plans">
+        <span class="plan">Essencial · R$ 280</span>
+        <span class="plan hot">Empresa · R$ 390</span>
+        <span class="plan">Corporativo · R$ 500</span>
+      </div>
+      <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener">Abrir CodeCraft Gestão</a>
     </div>
-    <div class="ccs-gestao-plans">
-      <span class="plan">Essencial · R$ 280</span>
-      <span class="plan hot">Empresa · R$ 390</span>
-      <span class="plan">Corporativo · R$ 500</span>
-    </div>
-    <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener">Abrir CodeCraft Gestão</a>
   </section>
 
   <section class="ccs-section ccs-section-tight" id="servicos">
@@ -358,11 +365,11 @@
     <h2>Serviços</h2>
     <p class="ccs-lede">Construímos o que o seu negócio precisa para rodar no dia a dia.</p>
     <div class="ccs-grid-3">
-      <div class="ccs-card"><div class="num">01</div><h3>Sistemas web</h3><p>Painéis, cadastros e ferramentas internas feitas sob medida para o seu processo.</p></div>
-      <div class="ccs-card"><div class="num">02</div><h3>Aplicativos</h3><p>Apps para clientes ou para uso interno, simples de usar e fáceis de manter.</p></div>
-      <div class="ccs-card"><div class="num">03</div><h3>Sites e landing pages</h3><p>Páginas rápidas, bonitas e claras — pensadas para converter visita em cliente.</p></div>
-      <div class="ccs-card"><div class="num">04</div><h3>Integrações</h3><p>Conectamos seus sistemas a banco de dados, planilhas e ferramentas que você já usa.</p></div>
-      <div class="ccs-card"><div class="num">05</div><h3>Acompanhamento em tempo real</h3><p>Portal próprio para você ver o status do seu projeto sem precisar chamar no zap.</p></div>
+      <div class="ccs-card"><div class="num">01</div><h3>CodeCraft Gestão</h3><p>Financeiro, RH e Billing para empresas — planos de R$ 280 a R$ 500. <a href="#gestao">Ver módulos</a>.</p></div>
+      <div class="ccs-card"><div class="num">02</div><h3>Sistemas web</h3><p>Painéis, cadastros e ferramentas internas feitas sob medida para o seu processo.</p></div>
+      <div class="ccs-card"><div class="num">03</div><h3>Aplicativos</h3><p>Apps para clientes ou para uso interno, simples de usar e fáceis de manter.</p></div>
+      <div class="ccs-card"><div class="num">04</div><h3>Sites e landing pages</h3><p>Páginas rápidas, bonitas e claras — pensadas para converter visita em cliente.</p></div>
+      <div class="ccs-card"><div class="num">05</div><h3>Integrações</h3><p>Conectamos seus sistemas a banco de dados, planilhas e ferramentas que você já usa.</p></div>
       <div class="ccs-card"><div class="num">06</div><h3>Suporte pós-entrega</h3><p>Ajuste fino, correções e evolução depois que o projeto vai ao ar.</p></div>
     </div>
   </section>
@@ -2227,7 +2234,7 @@ function proposalText(name, service){
     loja: 'loja virtual com pedido, WhatsApp e PIX',
     landing: 'landing page para captar cliente',
     sistema: 'sistema sob medida para o dia a dia da empresa',
-    gestao: 'CodeCraft Gestão — business OS corporativo (pessoas, finanças e operações)'
+    gestao: 'CodeCraft Gestão — ERP/HCM (Financeiro, RH e Billing, R$ 280–500)'
   };
   const what = map[service] || map.site;
   return 'Olá'+(name?', '+name:'')+'! Sou da CodeCraft Solutions, em BH.\n\nPosso te entregar um '+what+'. Você acompanha cada etapa no portal e paga só na chave PIX 31999758385.\n\nMe fala o que você precisa que eu fecho o escopo e o prazo.\nWhatsApp 31 99975-8385';
@@ -2255,7 +2262,7 @@ function renderTools(){
     ['Postar no melhor canal','Copia o texto e abre o canal de agora.','(async()=>{const p=await loadProjects();const m=await loadMessages();const k=await loadMarket();openPost(bestChannel(p,m,k).id,k);})()'],
     ['Analisar mercado e postar','Lê dólar, bolsa e Selic e já publica.','(async()=>{const p=await loadProjects();const m=await loadMessages();const k=await loadMarket();openPost(bestChannel(p,m,k).id,k);})()'],
     ['Responder chat parado','Abre a conversa parada e manda o texto.','replyStalledChat()'],
-    ['Abrir CodeCraft Gestão','Business OS: pessoas, finanças e operações.','window.open(GESTAO_URL,"_blank")'],
+    ['Abrir CodeCraft Gestão','ERP/HCM: Financeiro, RH e Billing.','window.open(GESTAO_URL,"_blank")'],
     ['Exportar a empresa','Baixa Excel de projetos e caixa.','exportExcel()']
   ].map(([t,d,fn])=>`
     <div class="ccs-panel">
@@ -2377,7 +2384,7 @@ function jarvisFinance(projects){
   projects.forEach(p=>{ const k=p.serviceType||'site'; bySvc[k]=(bySvc[k]||0)+Number(p.pixValue||0); });
   const svc = Object.keys(bySvc).map(k=>k+' '+money(bySvc[k])).join(', ') || 'sem valor lançado';
   window.open(GESTAO_URL, '_blank');
-  return 'Abri o <strong>CodeCraft Gestão</strong> — business OS (pessoas, finanças e operações).<br>Deste painel: recebido '+money(paid)+', em aberto '+open.length+' ('+money(open.reduce((s,p)=>s+Number(p.pixValue||0),0))+'). Por serviço: '+escapeHtml(svc)+'. PIX da CodeCraft não muda.';
+  return 'Abri o <strong>CodeCraft Gestão</strong> — ERP/HCM (Financeiro, RH e Billing).<br>Deste painel: recebido '+money(paid)+', em aberto '+open.length+' ('+money(open.reduce((s,p)=>s+Number(p.pixValue||0),0))+'). Por serviço: '+escapeHtml(svc)+'. PIX da CodeCraft não muda.';
 }
 
 async function sendAdminAi(){
