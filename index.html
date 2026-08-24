@@ -121,6 +121,10 @@
   .ccs-financas-side h2{max-width:none; font-size:26px;}
   .ccs-financas-side .ccs-lede{margin-bottom:22px;}
   .ccs-financas-side .ccs-btn{text-decoration:none; display:inline-block;}
+  .ccs-financas-side .ccs-gestao-mini{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 18px;}
+  .ccs-financas-side .ccs-gestao-mini span{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; padding:6px 10px; border-radius:999px; border:1.5px solid var(--line); background:var(--paper-dim); color:var(--ink);}
+  .ccs-financas-side .ccs-gestao-mini span.hot{border-color:var(--amber); background:#FFF7EC; color:#8a5a12;}
+  .ccs-financas-side .ccs-gestao-actions{display:flex; flex-wrap:wrap; gap:10px;}
   .ccs-gestao-wrap{background:var(--panel); color:#fff; border-radius:18px; padding:36px 32px; margin-top:10px;}
   .ccs-gestao-wrap .ccs-eyebrow{color:var(--amber);}
   .ccs-gestao-wrap h2{color:#fff; max-width:720px;}
@@ -338,7 +342,20 @@
       <p class="ccs-lede">Somos uma equipe enxuta que prefere resolver o problema real do cliente a empilhar reunião. Cada projeto passa pelas mesmas três etapas — análise, construção e entrega — e você acompanha cada uma delas em tempo real, sem precisar perguntar "como está indo?".</p>
       <p class="ccs-lede">Atendemos negócios pequenos e médios que precisam de um sistema, um site ou um app funcionando de verdade — sem contrato complicado e sem letra miúda.</p>
     </div>
-    <div class="ccs-about-mark mark" aria-hidden="true">CC</div>
+    <div class="ccs-financas-side">
+      <div class="ccs-eyebrow">Nosso produto · só empresas</div>
+      <h2>CodeCraft Gestão</h2>
+      <p class="ccs-lede">ERP/HCM B2B para empresas: Financeiro, RH e Billing numa plataforma. Caixa, títulos, DRE, ponto e folha — multi-tenant com RLS. Sem IA no painel.</p>
+      <div class="ccs-gestao-mini">
+        <span>Essencial · R$ 280</span>
+        <span class="hot">Empresa · R$ 390</span>
+        <span>Corporativo · R$ 500</span>
+      </div>
+      <div class="ccs-gestao-actions">
+        <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener">Abrir CodeCraft Gestão</a>
+        <a class="ccs-btn ghost" href="#gestao">Ver módulos</a>
+      </div>
+    </div>
   </section>
 
   <section class="ccs-section ccs-section-tight" id="gestao">
@@ -349,7 +366,7 @@
       <div class="ccs-gestao-biz">
         <div class="biz"><strong>01 · Financeiro</strong><span>Caixa, contas a pagar/receber e DRE gerencial.</span></div>
         <div class="biz"><strong>02 · RH</strong><span>Cadastro, ponto eletrônico e fechamento de folha.</span></div>
-        <div class="biz"><strong>03 · Billing</strong><span>Renovação no cartão e cancelamento no painel.</span></div>
+        <div class="biz"><strong>03 · Billing</strong><span>1º mês no PIX ou cartão · renovação automática no cartão · cancelamento no painel.</span></div>
       </div>
       <div class="ccs-gestao-plans">
         <span class="plan">Essencial · R$ 280</span>
@@ -415,6 +432,18 @@
     <h2>Tabela de preços</h2>
     <p class="ccs-lede">Valores <strong>a partir de</strong> — o preço final é combinado conforme o tamanho do projeto. Pediu mais coisa, a gente conversa e ajusta.</p>
     <div class="ccs-price-grid">
+      <div class="ccs-price-card featured">
+        <div class="ccs-price-badge">Produto CodeCraft</div>
+        <div class="ccs-price-tag">CodeCraft Gestão</div>
+        <div class="ccs-price"><span class="from">a partir de</span> R$ 280<span class="per">/mês</span></div>
+        <ul>
+          <li>Financeiro: caixa, títulos e DRE</li>
+          <li>RH: cadastro, ponto e folha</li>
+          <li>1º mês no PIX ou cartão · renovação no cartão</li>
+          <li>Só empresas · sem IA no painel</li>
+        </ul>
+        <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener">Assinar CodeCraft Gestão</a>
+      </div>
       <div class="ccs-price-card">
         <div class="ccs-price-tag">Landing page</div>
         <div class="ccs-price"><span class="from">a partir de</span> R$ 300</div>
@@ -501,7 +530,8 @@
 
   <footer>
     <div class="ccs-logo" style="font-size:14px;"><span class="dot" style="width:8px;height:8px;"></span> CodeCraft Solutions</div>
-    <div style="display:flex; align-items:center; gap:16px;">
+    <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+      <a href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener" style="text-decoration:none; color:var(--ink-soft); font-weight:600;">CodeCraft Gestão · ERP para empresas</a>
       <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:6px; text-decoration:none; color:var(--ink-soft); font-weight:600;">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
         @code.invention
@@ -967,9 +997,9 @@ function goHome(){ showScreen('landing'); }
 const heroLines = [
   '$ codecraft status --cliente',
   '> analisando escopo do projeto...',
-  '> gerando plano de construção...',
-  '> etapa atual: em andamento',
-  '> próxima atualização em tempo real ✓'
+  '> CodeCraft Gestão: Financeiro + RH + Billing',
+  '> planos R$ 280 a R$ 500 · só empresas',
+  '> etapa atual: em andamento ✓'
 ];
 function typeHero(){
   const el = document.getElementById('ccs-typed');
