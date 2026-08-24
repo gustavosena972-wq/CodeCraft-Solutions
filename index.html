@@ -121,6 +121,16 @@
   .ccs-financas-side h2{max-width:none; font-size:26px;}
   .ccs-financas-side .ccs-lede{margin-bottom:22px;}
   .ccs-financas-side .ccs-btn{text-decoration:none; display:inline-block;}
+  .ccs-gestao-biz{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:22px 0 26px; max-width:920px;}
+  .ccs-gestao-biz .biz{background:var(--paper-dim); border:1px solid var(--line); border-radius:12px; padding:18px 18px;}
+  .ccs-gestao-biz .biz strong{display:block; font-size:15px; margin-bottom:6px;}
+  .ccs-gestao-biz .biz span{font-size:13px; color:var(--ink-soft); line-height:1.45;}
+  .ccs-gestao-plans{display:flex; flex-wrap:wrap; gap:10px; margin:0 0 22px;}
+  .ccs-gestao-plans .plan{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; padding:8px 12px; border-radius:999px; border:1.5px solid var(--line); background:#fff;}
+  .ccs-gestao-plans .plan.hot{border-color:var(--amber); background:#FFF6E8; color:#7A4A00;}
+  @media (max-width:860px){
+    .ccs-gestao-biz{grid-template-columns:1fr;}
+  }
 
   .ccs-contact-wrap{display:grid; grid-template-columns:1fr 1fr; gap:50px;}
   .ccs-field{display:flex; flex-direction:column; gap:6px; margin-bottom:16px;}
@@ -323,12 +333,24 @@
       <p class="ccs-lede">Somos uma equipe enxuta que prefere resolver o problema real do cliente a empilhar reunião. Cada projeto passa pelas mesmas três etapas — análise, construção e entrega — e você acompanha cada uma delas em tempo real, sem precisar perguntar "como está indo?".</p>
       <p class="ccs-lede">Atendemos negócios pequenos e médios que precisam de um sistema, um site ou um app funcionando de verdade — sem contrato complicado e sem letra miúda.</p>
     </div>
-    <div class="ccs-financas-side" id="gestao">
-      <div class="ccs-eyebrow">CodeCraft Gestão</div>
-      <h2>O business OS da sua empresa</h2>
-      <p class="ccs-lede">People, finanças e operações num só lugar. CodeCraft Gestão é o sistema corporativo para empresas que querem rodar gente, caixa e rotina juntas.</p>
-      <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/docs/" target="_blank" rel="noopener">Abrir CodeCraft Gestão</a>
+    <div class="ccs-about-mark mark" aria-hidden="true">CC</div>
+  </section>
+
+  <section class="ccs-section ccs-section-tight" id="gestao">
+    <div class="ccs-eyebrow">Produto · só empresas</div>
+    <h2>CodeCraft Gestão — os negócios da plataforma</h2>
+    <p class="ccs-lede">ERP/HCM B2B multi-tenant: financeiro, RH e assinatura numa plataforma. Sem IA no painel. Planos de R$&nbsp;280 a R$&nbsp;500/mês.</p>
+    <div class="ccs-gestao-biz">
+      <div class="biz"><strong>01 · Financeiro</strong><span>Caixa, contas a pagar/receber e DRE gerencial.</span></div>
+      <div class="biz"><strong>02 · RH</strong><span>Cadastro, ponto eletrônico e fechamento de folha.</span></div>
+      <div class="biz"><strong>03 · Billing</strong><span>Renovação no cartão e cancelamento no painel.</span></div>
     </div>
+    <div class="ccs-gestao-plans">
+      <span class="plan">Essencial · R$ 280</span>
+      <span class="plan hot">Empresa · R$ 390</span>
+      <span class="plan">Corporativo · R$ 500</span>
+    </div>
+    <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener">Abrir CodeCraft Gestão</a>
   </section>
 
   <section class="ccs-section ccs-section-tight" id="servicos">
@@ -1188,7 +1210,7 @@ function leadBotReply(text, isFirst){
   if(/pix|pagar|chave|pagamento/.test(t))
     return 'A chave PIX da CodeCraft é 31999758385 (Inter). Não pague outra chave. O valor do seu projeto aparece no portal quando a equipe cadastrar.';
   if(/financas|finanças|caixa|planilha|gastos|gestao|gestão/.test(t))
-    return 'O CodeCraft Gestão é o business OS corporativo (pessoas, finanças e operações): https://gustavosena972-wq.github.io/financas-codecraft/docs/';
+    return 'O CodeCraft Gestão é o ERP/HCM da CodeCraft (Financeiro, RH e Billing, R$ 280–500): https://gustavosena972-wq.github.io/financas-codecraft/';
   if(/whats|zap|telefone|contato/.test(t))
     return 'WhatsApp da CodeCraft: 31 99975-8385. Pode continuar neste chat também — a equipe vê em tempo real.';
   if(/bh|belo horizonte|contagem|nova lima|betim/.test(t) && /atend|cidade|onde/.test(t))
@@ -1837,7 +1859,7 @@ const HUNTS = [
   { id:'obra', label:'Construção e reforma', maps:'https://www.google.com/maps/search/construtora+Belo+Horizonte', google:'https://www.google.com/search?q=reforma+Belo+Horizonte+orçamento+whatsapp', insta:'https://www.instagram.com/explore/tags/construçãobh/', niche:'Construção' }
 ];
 const TASKS_KEY = 'ccs-admin-tasks';
-const GESTAO_URL = 'https://gustavosena972-wq.github.io/financas-codecraft/docs/';
+const GESTAO_URL = 'https://gustavosena972-wq.github.io/financas-codecraft/';
 var aiMem = { unpaidI:0, lastHunt:null, lastChannel:null };
 
 function todayISO(){
