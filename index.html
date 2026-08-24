@@ -286,7 +286,7 @@
     <div class="ccs-nav-links">
       <a href="#quem-somos">Quem somos</a>
       <a href="#servicos">Serviços</a>
-      <a href="#financas">Finanças</a>
+      <a href="#gestao">Gestão</a>
       <a href="#como-comecar">Como começar</a>
       <a href="#precos">Preços</a>
       <a href="#como-funciona">Como funciona</a>
@@ -323,11 +323,11 @@
       <p class="ccs-lede">Somos uma equipe enxuta que prefere resolver o problema real do cliente a empilhar reunião. Cada projeto passa pelas mesmas três etapas — análise, construção e entrega — e você acompanha cada uma delas em tempo real, sem precisar perguntar "como está indo?".</p>
       <p class="ccs-lede">Atendemos negócios pequenos e médios que precisam de um sistema, um site ou um app funcionando de verdade — sem contrato complicado e sem letra miúda.</p>
     </div>
-    <div class="ccs-financas-side" id="financas">
-      <div class="ccs-eyebrow">Finanças CodeCraft</div>
-      <h2>Controle o caixa com a planilha e a IA</h2>
-      <p class="ccs-lede">Manda seus gastos. O Finanças CodeCraft monta o caixa, prevê o mês e aponta o que cortar. Pessoal ou empresa.</p>
-      <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/docs/" target="_blank" rel="noopener">Abrir Finanças CodeCraft</a>
+    <div class="ccs-financas-side" id="gestao">
+      <div class="ccs-eyebrow">CodeCraft Gestão</div>
+      <h2>O business OS da sua empresa</h2>
+      <p class="ccs-lede">People, finanças e operações num só lugar. CodeCraft Gestão é o sistema corporativo para empresas que querem rodar gente, caixa e rotina juntas.</p>
+      <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/docs/" target="_blank" rel="noopener">Abrir CodeCraft Gestão</a>
     </div>
   </section>
 
@@ -587,33 +587,14 @@
   <div class="ccs-admin-layout" id="admin-main" style="display:none;">
     <aside class="ccs-admin-nav">
       <div class="ccs-admin-nav-title">Menu</div>
-      <button class="ccs-navitem active" id="tab-btn-ia" onclick="switchAdminTab('ia')"><span class="ico">AI</span> Jarvis</button>
-      <button class="ccs-navitem" id="tab-btn-projetos" onclick="switchAdminTab('projetos')"><span class="ico">📋</span> Projetos</button>
+      <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')"><span class="ico">📋</span> Projetos</button>
       <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')"><span class="ico">💬</span> Conversas</button>
       <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')"><span class="ico">✉️</span> Mensagens</button>
       <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')"><span class="ico">📊</span> Empresa</button>
     </aside>
 
     <div class="ccs-admin-content">
-    <div id="tab-ia">
-      <h2 style="font-size:20px; margin-bottom:8px;">Jarvis · CodeCraft</h2>
-      <div class="ccs-help">Não é uma página de funções. Você pede, ele age: analisa o projeto que você mandar, lê o mercado, acha quem precisa do que a empresa faz, cuida da parte Empresa no Finanças, dá ideia e olha o futuro.</div>
-      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
-        <button class="ccs-btn ghost small" onclick="runAiOrder('analisa os projetos')">Projetos</button>
-        <button class="ccs-btn ghost small" onclick="runAiOrder('como está o mercado')">Mercado</button>
-        <button class="ccs-btn ghost small" onclick="runAiOrder('acha cliente')">Achar cliente</button>
-        <button class="ccs-btn ghost small" onclick="runAiOrder('ideias para melhorar')">Ideias</button>
-        <button class="ccs-btn ghost small" onclick="runAiOrder('finanças da empresa')">Finanças</button>
-        <button class="ccs-btn ghost small" onclick="runAiOrder('olha o futuro')">Futuro</button>
-      </div>
-      <div class="ccs-ai-box" id="admin-ai-log" style="min-height:360px; max-height:520px;"></div>
-      <div class="ccs-chat-input" style="border:1px solid var(--line); border-radius:10px; margin-top:10px; background:#fff;">
-        <input id="admin-ai-input" placeholder="Manda um projeto, pede cliente, mercado, ideia, futuro…" onkeydown="if(event.key==='Enter')sendAdminAi()">
-        <button class="ccs-btn amber" onclick="sendAdminAi()">Pedir</button>
-      </div>
-    </div>
-
-    <div id="tab-projetos" style="display:none;">
+    <div id="tab-projetos">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
         <h2 style="font-size:20px;">Projetos</h2>
         <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
@@ -684,7 +665,6 @@
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button class="ccs-btn amber small" onclick="exportExcel()">↧ Exportar Excel</button>
-          <a class="ccs-btn ghost small" href="https://gustavosena972-wq.github.io/financas-codecraft/docs/" target="_blank" rel="noopener">Abrir Finanças</a>
         </div>
       </div>
       <div class="ccs-help"><strong>Para que serve:</strong> é o painel de gestão da empresa. Mostra quanto você já recebeu e quanto tem a receber, quantos sites/lojas estão em produção e entregues, gráficos de faturamento (inclusive por tipo de serviço) e uma calculadora. O botão <strong>Exportar Excel</strong> baixa tudo em planilha (Resumo, Por serviço e Projetos).</div>
@@ -1207,14 +1187,14 @@ function leadBotReply(text, isFirst){
     return 'Prazo típico: landing 7 a 15 dias, site 15 a 30, loja e sistema a gente combina. Você acompanha pelo código no Portal do cliente.';
   if(/pix|pagar|chave|pagamento/.test(t))
     return 'A chave PIX da CodeCraft é 31999758385 (Inter). Não pague outra chave. O valor do seu projeto aparece no portal quando a equipe cadastrar.';
-  if(/financas|finanças|caixa|planilha|gastos/.test(t))
-    return 'O Finanças CodeCraft organiza gastos, monta a planilha e aponta o que cortar: https://gustavosena972-wq.github.io/financas-codecraft/docs/ — demo demo@codecraft.local / demo1234';
+  if(/financas|finanças|caixa|planilha|gastos|gestao|gestão/.test(t))
+    return 'O CodeCraft Gestão é o business OS corporativo (pessoas, finanças e operações): https://gustavosena972-wq.github.io/financas-codecraft/docs/';
   if(/whats|zap|telefone|contato/.test(t))
     return 'WhatsApp da CodeCraft: 31 99975-8385. Pode continuar neste chat também — a equipe vê em tempo real.';
   if(/bh|belo horizonte|contagem|nova lima|betim/.test(t) && /atend|cidade|onde/.test(t))
     return 'Atendemos BH e região (Contagem, Betim, Nova Lima) e também online. Conta o tipo de projeto que a equipe entra.';
   if(isFirst)
-    return 'Oi, aqui é o atendimento da CodeCraft Solutions em BH. Site, loja, sistema e o app Finanças. Conta o que você precisa — a equipe lê isto agora.';
+    return 'Oi, aqui é o atendimento da CodeCraft Solutions em BH. Site, loja, sistema e CodeCraft Gestão. Conta o que você precisa — a equipe lê isto agora.';
   return null;
 }
 async function sendLead(){
@@ -1265,7 +1245,7 @@ function renderAdminGate(){
   document.getElementById('admin-live').style.display = adminLoggedIn ? 'inline-flex' : 'none';
     if(adminLoggedIn){
     renderAdminAll();
-    switchAdminTab('ia');
+    switchAdminTab('projetos');
     startIgAutopilot();
     stopRealtime();
     realtimeChannel = supabaseClient.channel('admin-projects')
@@ -1319,8 +1299,9 @@ if(configOk){
   });
 }
 
-const ADMIN_TABS = ['ia','projetos','conversas','mensagens','empresa'];
+const ADMIN_TABS = ['projetos','conversas','mensagens','empresa'];
 function switchAdminTab(tab){
+  if(tab==='ia') tab = 'projetos';
   ADMIN_TABS.forEach(t=>{
     const pane = document.getElementById('tab-'+t);
     const btn = document.getElementById('tab-btn-'+t);
@@ -1329,7 +1310,6 @@ function switchAdminTab(tab){
   });
   if(tab==='conversas') renderChatProjectList();
   if(tab==='empresa'){ renderEmpresa(); buildCalculator(); }
-  if(tab==='ia') bootAdminAi();
 }
 async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); }
 function toggleNewProjectForm(){
@@ -1857,7 +1837,7 @@ const HUNTS = [
   { id:'obra', label:'Construção e reforma', maps:'https://www.google.com/maps/search/construtora+Belo+Horizonte', google:'https://www.google.com/search?q=reforma+Belo+Horizonte+orçamento+whatsapp', insta:'https://www.instagram.com/explore/tags/construçãobh/', niche:'Construção' }
 ];
 const TASKS_KEY = 'ccs-admin-tasks';
-const FINANCAS_URL = 'https://gustavosena972-wq.github.io/financas-codecraft/docs/';
+const GESTAO_URL = 'https://gustavosena972-wq.github.io/financas-codecraft/docs/';
 var aiMem = { unpaidI:0, lastHunt:null, lastChannel:null };
 
 function todayISO(){
@@ -2054,7 +2034,7 @@ function runHunt(id, city){
 
 function todayPosts(mkt){
   const day = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long' });
-  const extra = mkt && mkt.usd!=null ? ('\nMercado agora: dólar R$ '+moneyFx(mkt.usd)+(mkt.selic!=null?', Selic '+mkt.selic+'%':'')+'. Quem controla o caixa fecha o mês — Finanças CodeCraft.') : '';
+  const extra = mkt && mkt.usd!=null ? ('\nMercado agora: dólar R$ '+moneyFx(mkt.usd)+(mkt.selic!=null?', Selic '+mkt.selic+'%':'')+'. Quem controla gente, caixa e operação fecha o mês — CodeCraft Gestão.') : '';
   return {
     linkedin: 'CodeCraft Solutions · '+day+'\n\nEmpresa da Grande BH ainda vende no WhatsApp e perde pedido porque o site não fecha o orçamento.\nA gente entrega site, loja e sistema com acompanhamento em tempo real e PIX na hora.'+extra+'\n\nSe você atende cliente em BH e quer um modelo este mês, chame: 31 99975-8385.',
     instagram: 'Seu cliente pesquisa no Google. Se não acha a sua empresa, acha a do vizinho.\nSite + WhatsApp + PIX. Feito em BH.\nCodeCraft Solutions · 31 99975-8385',
@@ -2178,7 +2158,7 @@ async function renderHoje(){
       <span>IPCA ${mkt.ipca!=null?mkt.ipca+'%':'—'}</span>
     </div>
     <p style="font-size:13px; margin-top:10px;">${escapeHtml(analysis.copy)}</p>
-    <button class="ccs-btn amber small" style="margin-top:8px;" onclick="runAiOrder('analisa o mercado e age')">Postar com esse mercado</button>`;
+    <button class="ccs-btn amber small" style="margin-top:8px;" onclick="openPost('${ch.id}')">Postar com esse mercado</button>`;
   const firstUnpaid = unpaid[0];
   const firstLead = leads[0];
   actions.innerHTML = `
@@ -2188,8 +2168,7 @@ async function renderHoje(){
     ${firstLead ? `<button class="ccs-btn" style="margin-top:8px;" onclick="openLeadWa('${firstLead.id}')">Chamar lead ${escapeHtml(firstLead.name)}</button>` : ''}
     <button class="ccs-btn ghost" style="margin-top:8px;" onclick="runHunt('clinica')">Caçar clínicas em BH</button>
     <button class="ccs-btn ghost" style="margin-top:8px;" onclick="openPost('${ch.id}')">Postar em ${ch.label}</button>
-    <button class="ccs-btn ghost" style="margin-top:8px;" onclick="runAiOrder('responde conversa parada')">Responder chat parado</button>
-    <a class="ccs-btn ghost" style="margin-top:8px; display:inline-block; text-decoration:none;" href="${FINANCAS_URL}" target="_blank" rel="noopener">Abrir Finanças</a>
+    <button class="ccs-btn ghost" style="margin-top:8px;" onclick="replyStalledChat()">Responder chat parado</button>
   `;
 }
 function chaseText(p){
@@ -2226,7 +2205,7 @@ function proposalText(name, service){
     loja: 'loja virtual com pedido, WhatsApp e PIX',
     landing: 'landing page para captar cliente',
     sistema: 'sistema sob medida para o dia a dia da empresa',
-    financas: 'Finanças CodeCraft — coloca os gastos, a planilha mostra o caixa e o que cortar'
+    gestao: 'CodeCraft Gestão — business OS corporativo (pessoas, finanças e operações)'
   };
   const what = map[service] || map.site;
   return 'Olá'+(name?', '+name:'')+'! Sou da CodeCraft Solutions, em BH.\n\nPosso te entregar um '+what+'. Você acompanha cada etapa no portal e paga só na chave PIX 31999758385.\n\nMe fala o que você precisa que eu fecho o escopo e o prazo.\nWhatsApp 31 99975-8385';
@@ -2251,10 +2230,10 @@ function renderTools(){
     ['Cobrar quem deve','Abre o WhatsApp do próximo PIX em aberto.','chaseUnpaid()'],
     ['Cobrar todos','Abre até 6 cobranças em sequência.','chaseAllUnpaid()'],
     ['Achar clínicas BH','Maps + Google + Instagram já filtrados.','runHunt("clinica")'],
-    ['Postar no melhor canal','Copia o texto e abre o canal de agora.','runAiOrder("posta no melhor canal")'],
-    ['Analisar mercado e postar','Lê dólar, bolsa e Selic e já publica.','runAiOrder("analisa o mercado e age")'],
-    ['Responder chat parado','Abre a conversa parada e manda o texto.','runAiOrder("responde conversa parada")'],
-    ['Abrir Finanças CodeCraft','Planilha, gastos e o que cortar.','window.open(FINANCAS_URL,"_blank")'],
+    ['Postar no melhor canal','Copia o texto e abre o canal de agora.','(async()=>{const p=await loadProjects();const m=await loadMessages();const k=await loadMarket();openPost(bestChannel(p,m,k).id,k);})()'],
+    ['Analisar mercado e postar','Lê dólar, bolsa e Selic e já publica.','(async()=>{const p=await loadProjects();const m=await loadMessages();const k=await loadMarket();openPost(bestChannel(p,m,k).id,k);})()'],
+    ['Responder chat parado','Abre a conversa parada e manda o texto.','replyStalledChat()'],
+    ['Abrir CodeCraft Gestão','Business OS: pessoas, finanças e operações.','window.open(GESTAO_URL,"_blank")'],
     ['Exportar a empresa','Baixa Excel de projetos e caixa.','exportExcel()']
   ].map(([t,d,fn])=>`
     <div class="ccs-panel">
@@ -2291,25 +2270,20 @@ async function replyStalledChat(){
 }
 
 let adminAiBooted = false;
-function bootAdminAi(){
-  const log = document.getElementById('admin-ai-log');
-  if(!log) return;
-  if(!adminAiBooted){
-    log.innerHTML = '<div class="ccs-ai-msg"><strong>Jarvis online.</strong> Eu sou da CodeCraft. Manda um projeto que eu analiso. Pede mercado, cliente, ideia, futuro ou abre a parte Empresa do Finanças.</div>';
-    adminAiBooted = true;
-  }
-}
-function pushAi(who, html){
-  const log = document.getElementById('admin-ai-log');
-  if(!log) return;
-  log.innerHTML += `<div class="ccs-ai-msg ${who==='me'?'me':''}">${html}</div>`;
-  log.scrollTop = log.scrollHeight;
-}
+function bootAdminAi(){ /* AI panel removed */ }
+function pushAi(who, html){ /* AI panel removed */ }
 function runAiOrder(text){
-  const input = document.getElementById('admin-ai-input');
-  if(input) input.value = text;
-  switchAdminTab('ia');
-  sendAdminAi();
+  const t = (text||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  if(/responde|conversa|chat/.test(t)){ replyStalledChat(); return; }
+  if(/posta|postar|mercado|canal/.test(t)){
+    Promise.all([loadProjects(), loadMessages(), loadMarket()]).then(([p,m,k])=>{
+      openPost(bestChannel(p,m,k).id, k);
+    });
+    return;
+  }
+  if(/cacar|caca|cliente|hunt|clinica/.test(t)){ runHunt('clinica'); return; }
+  if(/gestao|gestão|financ/.test(t)){ window.open(GESTAO_URL, '_blank'); return; }
+  showToast('Assistente removido. Use Projetos, Conversas ou Empresa.');
 }
 function pickHunt(t){
   const pairs = [
@@ -2333,7 +2307,7 @@ function analyzeMarket(mkt){
   if(usd >= 0.6) lines.push('Dólar subindo ('+mkt.usdPct+'%). Venda sistema e loja com preço em real, sem surpresa.');
   else if(usd <= -0.6) lines.push('Dólar caindo. Fecha projeto agora — o cliente para de esperar o câmbio.');
   else lines.push('Dólar estável em R$ '+moneyFx(mkt.usd)+'.');
-  if(ibov <= -1) lines.push('Ibovespa caiu. Empresa aperta custo: Finanças CodeCraft e site que captura pedido.');
+  if(ibov <= -1) lines.push('Ibovespa caiu. Empresa aperta custo: CodeCraft Gestão e site que captura pedido.');
   else if(ibov >= 1) lines.push('Bolsa sobe. Clínica e loja olham crescimento: site e captura.');
   if(selic >= 13) lines.push('Selic em '+selic+'%. Crédito caro — PIX à vista fecha mais.');
   if(mkt.eur!=null) lines.push('Euro R$ '+moneyFx(mkt.eur)+'.');
@@ -2355,24 +2329,24 @@ function analyzeProjects(projects){
 }
 function analyzeBrief(raw, projects){
   const t = raw.toLowerCase();
-  const kind = /loja|e-?commerce|pedido/.test(t) ? 'loja' : /sistema|app|agenda/.test(t) ? 'sistema' : /landing|captura/.test(t) ? 'landing' : /financ/.test(t) ? 'Finanças CodeCraft' : 'site';
-  const prazo = kind==='landing' ? '7 a 12 dias' : kind==='loja' ? '15 a 25 dias' : kind==='sistema' ? '20 a 40 dias' : '10 a 18 dias';
+  const kind = /loja|e-?commerce|pedido/.test(t) ? 'loja' : /sistema|app|agenda|gestao|gestão/.test(t) ? 'sistema' : /landing|captura/.test(t) ? 'landing' : /financ/.test(t) ? 'CodeCraft Gestão' : 'site';
+  const prazo = kind==='landing' ? '7 a 12 dias' : kind==='loja' ? '15 a 25 dias' : kind==='sistema' || kind==='CodeCraft Gestão' ? '20 a 40 dias' : '10 a 18 dias';
   const risco = projects.filter(p=>p.status!=='concluido').length >= 3 ? 'Fila cheia: não promete data curta.' : 'Fila ok para entrar agora.';
-  return 'Li o que você mandou como briefing de <strong>'+kind+'</strong>.<br>Prazo honesto: '+prazo+'. '+risco+'<br>Próximo passo: cadastra em Projetos com nome do cliente, valor e PIX. O cliente acompanha no portal. Se for empresa, o caixa disso entra no espaço Empresa do Finanças.';
+  return 'Li o que você mandou como briefing de <strong>'+kind+'</strong>.<br>Prazo honesto: '+prazo+'. '+risco+'<br>Próximo passo: cadastra em Projetos com nome do cliente, valor e PIX. O cliente acompanha no portal.';
 }
 function jarvisIdeas(projects, mkt, messages){
   const ideas = [];
-  ideas.push('Produto: pacote “site + Finanças” para clínica e loja — um fecha a cara, o outro o caixa.');
+  ideas.push('Produto: pacote “site + CodeCraft Gestão” para clínica e loja — um fecha a cara, o outro a operação.');
   if((messages||[]).length) ideas.push('Tem recado no site sem resposta. Fecha no chat antes de caçar gente nova.');
   if(projects.filter(p=>p.status==='concluido' && !p.deliveryUrl).length) ideas.push('Projeto concluído sem link: o cliente não vê o site. Cola a URL na entrega.');
   if(Number(mkt.selic)>=13) ideas.push('Oferta do trimestre: PIX à vista, sem parcelar. Selic alta mata proposta longa.');
   if(Number(mkt.ibovPct)<=-1) ideas.push('Gancho de conteúdo: “cortar gasto” no @code.invention e no LinkedIn.');
-  ideas.push('Melhoria interna: todo projeto novo já nasce com recorrente de manutenção no Finanças Empresa.');
+  ideas.push('Melhoria interna: todo projeto novo já nasce com recorrente de manutenção no painel Empresa.');
   ideas.push('Futuro: loja com pedido no WhatsApp + painel ao vivo. BH ainda vende no zap e perde número.');
   return ideas;
 }
 function jarvisFuture(mkt){
-  return 'Olhando na frente: Selic em '+(mkt.selic!=null?mkt.selic+'%':'—')+', dólar R$ '+moneyFx(mkt.usd)+'. Empresa pequena em BH vai querer ferramenta barata que fecha caixa, não ERP. CodeCraft ganha com site rápido, loja simples e Finanças. Evita projeto gigante. No @code.invention, reels curtos de “antes/depois” e mercado. Daqui 90 dias: 1 oferta clara (site+Finanças), 1 nicho (clínica ou loja), 1 rotina de post na página.';
+  return 'Olhando na frente: Selic em '+(mkt.selic!=null?mkt.selic+'%':'—')+', dólar R$ '+moneyFx(mkt.usd)+'. Empresa pequena em BH vai querer ferramenta barata que fecha caixa, não ERP. CodeCraft ganha com site rápido, loja simples e CodeCraft Gestão. Evita projeto gigante. No @code.invention, reels curtos de “antes/depois” e mercado. Daqui 90 dias: 1 oferta clara (site+Gestão), 1 nicho (clínica ou loja), 1 rotina de post na página.';
 }
 function jarvisFinance(projects){
   const paid = projects.filter(p=>p.paid).reduce((s,p)=>s+Number(p.pixValue||0),0);
@@ -2380,74 +2354,22 @@ function jarvisFinance(projects){
   const bySvc = {};
   projects.forEach(p=>{ const k=p.serviceType||'site'; bySvc[k]=(bySvc[k]||0)+Number(p.pixValue||0); });
   const svc = Object.keys(bySvc).map(k=>k+' '+money(bySvc[k])).join(', ') || 'sem valor lançado';
-  window.open(FINANCAS_URL, '_blank');
-  return 'Abri o <strong>Finanças</strong> — usa o espaço <em>Empresa</em> no topo, não o pessoal.<br>Deste painel: recebido '+money(paid)+', em aberto '+open.length+' ('+money(open.reduce((s,p)=>s+Number(p.pixValue||0),0))+'). Por serviço: '+escapeHtml(svc)+'.<br>Lá o <strong>contador da empresa</strong> lê DRE, título e caixa. Jarvis fica aqui, na CodeCraft. PIX da CodeCraft não muda.';
+  window.open(GESTAO_URL, '_blank');
+  return 'Abri o <strong>CodeCraft Gestão</strong> — business OS (pessoas, finanças e operações).<br>Deste painel: recebido '+money(paid)+', em aberto '+open.length+' ('+money(open.reduce((s,p)=>s+Number(p.pixValue||0),0))+'). Por serviço: '+escapeHtml(svc)+'. PIX da CodeCraft não muda.';
 }
 
 async function sendAdminAi(){
-  const input = document.getElementById('admin-ai-input');
-  const raw = (input.value||'').trim();
-  if(!raw) return;
-  input.value = '';
-  pushAi('me', escapeHtml(raw));
-  const t = raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  const projects = await loadProjects();
-  const messages = await loadMessages();
-  const mkt = await loadMarket();
-  aiMem.lastAsk = t;
-
-  if(/(instagram|story|reels|code\.invention)/.test(t) && !/(ideia|futuro)/.test(t)){
-    pushAi('bot','A IA de postar no Instagram saiu do painel. A página da empresa continua no ar: <a href="https://instagram.com/code.invention" target="_blank" rel="noopener">@code.invention</a>.');
-    return;
-  }
-  if(/(acha cliente|encontrar cliente|prospec|quem precisa|cacar|caçar|onde achar)/.test(t)){
-    const h = pickHunt(t);
-    const city = pickCity(t);
-    runHunt(h.id, city);
-    pushAi('bot','Quem precisa do que a gente faz: dono de <strong>'+escapeHtml(h.label)+'</strong> em <strong>'+escapeHtml(city)+'</strong> ainda vende no WhatsApp e não tem site que fecha orçamento. Abri Maps, Google e Instagram já filtrados. Como abordar: “vi que vocês atendem em '+escapeHtml(city)+'. Posso te mostrar um modelo de site com acompanhamento ao vivo, sem compromisso.” Nicho agora: '+escapeHtml(h.niche)+'.');
-    return;
-  }
-  if(/(financas|finanças|dre|titulo|título|caixa da empresa|espaco empresa|espaço empresa)/.test(t)){
-    pushAi('bot', jarvisFinance(projects));
-    return;
-  }
-  if(/(ideia|melhorar|inovar|o que podemos)/.test(t)){
-    pushAi('bot', jarvisIdeas(projects, mkt, messages).map((x,i)=>(i+1)+'. '+x).join('<br>'));
-    return;
-  }
-  if(/(futuro|daqui|trimestre|proximos meses|próximos meses|visao|visão)/.test(t)){
-    pushAi('bot', jarvisFuture(mkt));
-    return;
-  }
-  if(/(dolar|bolsa|ibov|selic|mercado|juros|ipca)/.test(t)){
-    const a = analyzeMarket(mkt);
-    pushAi('bot','Mercado: dólar <strong>R$ '+moneyFx(mkt.usd)+'</strong> ('+(mkt.usdPct??'—')+'%), Ibovespa '+(mkt.ibov!=null?Number(mkt.ibov).toLocaleString('pt-BR'):'—')+' ('+(mkt.ibovPct??'—')+'%), Selic '+(mkt.selic!=null?mkt.selic+'%':'—')+(mkt.ipca!=null?', IPCA '+mkt.ipca+'%':'')+'.<br>'+a.lines.map(x=>escapeHtml(x)).join('<br>')+'<br>Com isso: '+(Number(mkt.ibovPct)<=-1 || Number(mkt.selic)>=13 ? 'vende Finanças e PIX à vista.' : 'vende site/loja de crescimento.'));
-    return;
-  }
-  if(/(projeto|andamento|analisa os projetos|painel)/.test(t) && raw.length < 80){
-    pushAi('bot', analyzeProjects(projects));
-    return;
-  }
-  if(raw.length >= 40 || /(cliente .+quer|precisa de site|precisa de loja|briefing|analisa esse)/.test(t)){
-    const named = projects.find(p=> t.includes((p.clientName||'').toLowerCase()) || t.includes((p.projectName||'').toLowerCase()));
-    if(named){
-      pushAi('bot','Projeto <strong>'+escapeHtml(named.projectName)+'</strong> de '+escapeHtml(named.clientName)+': status '+escapeHtml(named.status)+', valor '+(named.pixValue?money(Number(named.pixValue)):'a combinar')+', pago: '+(named.paid?'sim':'não')+', entrega: '+(named.deliveryUrl||'sem link')+'.<br>'+analyzeBrief(raw, projects));
-      return;
-    }
-    pushAi('bot', analyzeBrief(raw, projects));
-    return;
-  }
-  const a = analyzeMarket(mkt);
-  pushAi('bot','Jarvis. Dólar R$ '+moneyFx(mkt.usd)+', '+projects.length+' projeto(s), '+(messages||[]).length+' recado(s) no site.<br>'+a.lines[0]+'<br>Manda o projeto, pede cliente, ideia, futuro ou finanças da empresa.');
+  /* AI chat UI removed — keep stub so leftover calls never throw */
+  return;
 }
 
 const MKT_BANK = [
   { cat:'strategy', title:'Posicionamento', body:'CodeCraft não vende site bonito. Vende site que fecha caixa em BH: clínica, loja e MEI que ainda só atendem no WhatsApp. Toda peça: 1 problema, 1 prova, 1 PIX na entrega.' },
-  { cat:'calendar', title:'Semana padrão', body:'Seg: problema do nicho. Ter: antes/depois. Qua: Finanças CodeCraft. Qui: prova social. Sex: oferta PIX na entrega. Sáb: mercado (Selic/dólar) e o que vender. Dom: bastidor da @code.invention. 1 CTA por post.' },
+  { cat:'calendar', title:'Semana padrão', body:'Seg: problema do nicho. Ter: antes/depois. Qua: CodeCraft Gestão. Qui: prova social. Sex: oferta PIX na entrega. Sáb: mercado (Selic/dólar) e o que vender. Dom: bastidor da @code.invention. 1 CTA por post.' },
   { cat:'copy', title:'Gancho', body:'3 segundos: “Sua clínica ainda manda orçamento no WhatsApp?” Depois a prova. Depois o que fazer. Hashtag só no fim. @code.invention uma vez. Sem enrolação.' },
   { cat:'growth', title:'Alcance', body:'Reels ensina. Carrossel salva. Story pergunta. Feed posiciona. Não poste os quatro iguais. 4 a 6 posts por semana. Piloto no máximo 2/dia no feed, com 3h de folga.' },
   { cat:'niche', title:'Quem comprar', body:'Clínica, loja de bairro, oficina, salão e MEI em BH. Quem vive de WhatsApp e perde cliente sem site e sem caixa. Não persegue empresa grande de ERP.' },
-  { cat:'offer', title:'Oferta', body:'PIX na entrega. Preço de partida no site. Finanças CodeCraft para quem já tem site e ainda bagunça planilha. Uma oferta por post. Nunca duas.' },
+  { cat:'offer', title:'Oferta', body:'PIX na entrega. Preço de partida no site. CodeCraft Gestão para quem precisa de people, finanças e operações num só lugar. Uma oferta por post. Nunca duas.' },
   { cat:'funnel', title:'Funil', body:'Conteúdo → WhatsApp 31 99975-8385 → briefing no chat do site → PIX. Instagram não fecha contrato sozinho. O post tem que mandar para o WhatsApp ou para o portal.' },
   { cat:'tone', title:'Tom', body:'Português simples. BH. Sem jargão de agência. Fala como dono de oficina, não como MBA. Frase curta. Número na tela quando houver.' }
 ];
@@ -2482,7 +2404,7 @@ function mktStrategyReply(raw, mkt){
   if(/oferta|preco|pix na entrega/.test(t)) return mktPick('offer');
   if(/funil|whatsapp|vender/.test(t)) return mktPick('funnel');
   if(/tom|como falar|linguagem/.test(t)) return mktPick('tone');
-  const extra = mkt && mkt.usd!=null ? (' Mercado agora: dólar R$ '+moneyFx(mkt.usd)+(mkt.selic!=null?', Selic '+mkt.selic+'%.':'')+' Com Selic alta, venda PIX à vista e Finanças.') : '';
+  const extra = mkt && mkt.usd!=null ? (' Mercado agora: dólar R$ '+moneyFx(mkt.usd)+(mkt.selic!=null?', Selic '+mkt.selic+'%.':'')+' Com Selic alta, venda PIX à vista e CodeCraft Gestão.') : '';
   return mktPick('strategy')+extra;
 }
 

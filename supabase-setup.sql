@@ -136,11 +136,11 @@ end $$;
 
 insert into public.marketing_intel (cat, title, body) values
 ('strategy', 'Posicionamento', 'CodeCraft não vende “site bonito”. Vende site que fecha caixa em BH: clínica, loja e MEI que ainda só atendem no WhatsApp. Toda peça precisa de um problema, uma prova e um PIX na entrega.'),
-('calendar', 'Semana padrão', 'Seg: problema do nicho. Ter: antes/depois. Qua: Finanças CodeCraft. Qui: prova social. Sex: oferta PIX na entrega. Sáb: mercado (Selic/dólar) + o que vender. Dom: bastidor da @code.invention.'),
+('calendar', 'Semana padrão', 'Seg: problema do nicho. Ter: antes/depois. Qua: CodeCraft Gestão. Qui: prova social. Sex: oferta PIX na entrega. Sáb: mercado (Selic/dólar) + o que vender. Dom: bastidor da @code.invention.'),
 ('copy', 'Gancho', 'Primeira linha tem 3 segundos: “Sua clínica ainda manda orçamento no WhatsApp?”. Depois prova. Depois o que fazer. Hashtag no fim, nunca no começo.'),
 ('growth', 'Alcance', 'Reels ensina. Carrossel salva. Story pergunta. Feed posiciona. Não poste os 4 iguais. Um gancho, um CTA, um @code.invention. 4–6 posts/semana bate 1 viral.'),
 ('niche', 'Quem comprar', 'Clínica, loja de bairro, oficina, salão e MEI em BH/região. Quem vive de WhatsApp e perde cliente porque não tem site nem caixa. Não persegue empresa grande de ERP.'),
-('offer', 'Oferta', 'PIX na entrega. Preço de partida no site. Finanças CodeCraft para quem já tem site e ainda bagunça planilha. Uma oferta por post. Nunca duas.')
+('offer', 'Oferta', 'PIX na entrega. Preço de partida no site. CodeCraft Gestão para quem precisa de people, finanças e operações num só lugar. Uma oferta por post. Nunca duas.')
 on conflict do nothing;
 
 -- Arte da IA do Instagram (@code.invention). Bucket público para a Meta
