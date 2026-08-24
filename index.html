@@ -115,16 +115,12 @@
   .ccs-stage.done .track{background:var(--slate);}
   .ccs-stage.future .node{background:#fff; border-color:var(--line); color:var(--ink-soft);}
 
-  .ccs-about{display:grid; grid-template-columns:1fr 1fr; gap:96px; align-items:center;}
+  .ccs-about{display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:start;}
   .ccs-about .mark{font-family:'JetBrains Mono',monospace; font-size:120px; color:var(--paper-dim); font-weight:800; line-height:1; user-select:none;}
-  .ccs-financas-side{border-left:1px solid var(--line); padding-left:56px;}
-  .ccs-financas-side h2{max-width:none; font-size:26px;}
-  .ccs-financas-side .ccs-lede{margin-bottom:22px;}
-  .ccs-financas-side .ccs-btn{text-decoration:none; display:inline-block;}
-  .ccs-financas-side .ccs-gestao-mini{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 18px;}
-  .ccs-financas-side .ccs-gestao-mini span{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; padding:6px 10px; border-radius:999px; border:1.5px solid var(--line); background:var(--paper-dim); color:var(--ink);}
-  .ccs-financas-side .ccs-gestao-mini span.hot{border-color:var(--amber); background:#FFF7EC; color:#8a5a12;}
-  .ccs-financas-side .ccs-gestao-actions{display:flex; flex-wrap:wrap; gap:10px;}
+  .ccs-gestao-side{min-width:0;}
+  .ccs-gestao-side .ccs-gestao-wrap{margin-top:0; height:100%;}
+  .ccs-gestao-side .ccs-gestao-biz{grid-template-columns:1fr; max-width:none; margin:18px 0 20px;}
+  .ccs-gestao-side .ccs-gestao-wrap h2{font-size:22px; line-height:1.2;}
   .ccs-gestao-wrap{background:var(--panel); color:#fff; border-radius:18px; padding:36px 32px; margin-top:10px;}
   .ccs-gestao-wrap .ccs-eyebrow{color:var(--amber);}
   .ccs-gestao-wrap h2{color:#fff; max-width:720px;}
@@ -286,7 +282,8 @@
     .ccs-grid-3{grid-template-columns:1fr;}
     .ccs-price-grid{grid-template-columns:1fr;}
     .ccs-about, .ccs-contact-wrap{grid-template-columns:1fr;}
-    .ccs-financas-side{border-left:none; padding-left:0; border-top:1px solid var(--line); padding-top:36px;}
+    .ccs-about{grid-template-columns:1fr; gap:32px;}
+    .ccs-gestao-side .ccs-gestao-wrap{padding:28px 20px;}
     .ccs-about .mark{display:none;}
     .ccs-app-header{padding:16px 20px;}
   }
@@ -342,38 +339,23 @@
       <p class="ccs-lede">Somos uma equipe enxuta que prefere resolver o problema real do cliente a empilhar reunião. Cada projeto passa pelas mesmas três etapas — análise, construção e entrega — e você acompanha cada uma delas em tempo real, sem precisar perguntar "como está indo?".</p>
       <p class="ccs-lede">Atendemos negócios pequenos e médios que precisam de um sistema, um site ou um app funcionando de verdade — sem contrato complicado e sem letra miúda.</p>
     </div>
-    <div class="ccs-financas-side">
-      <div class="ccs-eyebrow">Nosso produto · só empresas</div>
-      <h2>CodeCraft Gestão</h2>
-      <p class="ccs-lede">ERP/HCM B2B para empresas: Financeiro, RH e Billing numa plataforma. Caixa, títulos, DRE, ponto e folha — multi-tenant com RLS. Sem IA no painel.</p>
-      <div class="ccs-gestao-mini">
-        <span>Essencial · R$ 280</span>
-        <span class="hot">Empresa · R$ 390</span>
-        <span>Corporativo · R$ 500</span>
-      </div>
-      <div class="ccs-gestao-actions">
+    <div class="ccs-gestao-side" id="gestao">
+      <div class="ccs-gestao-wrap">
+        <div class="ccs-eyebrow">Produto · só empresas</div>
+        <h2>CodeCraft Gestão</h2>
+        <p class="ccs-lede">ERP/HCM B2B multi-tenant: Financeiro, RH e Billing numa plataforma. Sem IA no painel. Planos de R$&nbsp;280 a R$&nbsp;500/mês.</p>
+        <div class="ccs-gestao-biz">
+          <div class="biz"><strong>01 · Financeiro</strong><span>Caixa, contas a pagar/receber e DRE gerencial.</span></div>
+          <div class="biz"><strong>02 · RH</strong><span>Cadastro, ponto eletrônico e fechamento de folha.</span></div>
+          <div class="biz"><strong>03 · Billing</strong><span>1º mês no PIX ou cartão · renovação automática no cartão · cancelamento no painel.</span></div>
+        </div>
+        <div class="ccs-gestao-plans">
+          <span class="plan">Essencial · R$ 280</span>
+          <span class="plan hot">Empresa · R$ 390</span>
+          <span class="plan">Corporativo · R$ 500</span>
+        </div>
         <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener">Abrir CodeCraft Gestão</a>
-        <a class="ccs-btn ghost" href="#gestao">Ver módulos</a>
       </div>
-    </div>
-  </section>
-
-  <section class="ccs-section ccs-section-tight" id="gestao">
-    <div class="ccs-gestao-wrap">
-      <div class="ccs-eyebrow">Produto · só empresas</div>
-      <h2>CodeCraft Gestão — os negócios da plataforma</h2>
-      <p class="ccs-lede">ERP/HCM B2B multi-tenant: Financeiro, RH e Billing numa plataforma. Sem IA no painel. Planos de R$&nbsp;280 a R$&nbsp;500/mês.</p>
-      <div class="ccs-gestao-biz">
-        <div class="biz"><strong>01 · Financeiro</strong><span>Caixa, contas a pagar/receber e DRE gerencial.</span></div>
-        <div class="biz"><strong>02 · RH</strong><span>Cadastro, ponto eletrônico e fechamento de folha.</span></div>
-        <div class="biz"><strong>03 · Billing</strong><span>1º mês no PIX ou cartão · renovação automática no cartão · cancelamento no painel.</span></div>
-      </div>
-      <div class="ccs-gestao-plans">
-        <span class="plan">Essencial · R$ 280</span>
-        <span class="plan hot">Empresa · R$ 390</span>
-        <span class="plan">Corporativo · R$ 500</span>
-      </div>
-      <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener">Abrir CodeCraft Gestão</a>
     </div>
   </section>
 
