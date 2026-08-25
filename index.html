@@ -348,18 +348,18 @@
       <div class="ccs-gestao-wrap">
         <div class="ccs-eyebrow">Produto · só empresas</div>
         <h2>CodeCraft Gestão</h2>
-        <p class="ccs-lede">ERP/HCM B2B multi-tenant: Financeiro, RH e Billing numa plataforma. Sem IA no painel. Planos de R$&nbsp;280 a R$&nbsp;500/mês.</p>
+        <p class="ccs-lede">ERP/HCM B2B multi-tenant: Financeiro, RH e assinatura mensal real (Asaas). Sem IA no painel. Planos de R$&nbsp;280 a R$&nbsp;500/mês.</p>
         <div class="ccs-gestao-biz">
           <div class="biz"><strong>01 · Financeiro</strong><span>Caixa, contas a pagar/receber e DRE gerencial.</span></div>
           <div class="biz"><strong>02 · RH</strong><span>Cadastro, ponto eletrônico e fechamento de folha.</span></div>
-          <div class="biz"><strong>03 · Billing</strong><span>1º mês no PIX ou cartão · renovação automática no cartão · cancelamento no painel.</span></div>
+          <div class="biz"><strong>03 · Assinatura</strong><span>Cobrança Asaas: 1º mês PIX ou cartão · renovação automática no cartão · cancele no painel.</span></div>
         </div>
         <div class="ccs-gestao-plans">
           <span class="plan">Essencial · R$ 280</span>
           <span class="plan hot">Empresa · R$ 390</span>
           <span class="plan">Corporativo · R$ 500</span>
         </div>
-        <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener">Abrir CodeCraft Gestão</a>
+        <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/app/planos/" target="_blank" rel="noopener">Assinar CodeCraft Gestão</a>
       </div>
     </div>
   </section>
@@ -426,10 +426,10 @@
         <ul>
           <li>Financeiro: caixa, títulos e DRE</li>
           <li>RH: cadastro, ponto e folha</li>
-          <li>1º mês no PIX ou cartão · renovação no cartão</li>
+          <li>Asaas: 1º mês PIX/cartão · renovação mensal no cartão</li>
           <li>Só empresas · sem IA no painel</li>
         </ul>
-        <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener">Assinar CodeCraft Gestão</a>
+        <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/app/planos/" target="_blank" rel="noopener">Assinar CodeCraft Gestão</a>
       </div>
       <div class="ccs-price-card">
         <div class="ccs-price-tag">Landing page</div>
@@ -1254,7 +1254,7 @@ function leadBotReply(text, isFirst){
   if(/pix|pagar|chave|pagamento/.test(t))
     return 'A chave PIX da CodeCraft é 31999758385 (Inter). Não pague outra chave. O valor do seu projeto aparece no portal quando a equipe cadastrar.';
   if(/financas|finanças|caixa|planilha|gastos|gestao|gestão/.test(t))
-    return 'O CodeCraft Gestão é o ERP/HCM da CodeCraft (Financeiro, RH e Billing, R$ 280–500): https://gustavosena972-wq.github.io/financas-codecraft/';
+    return 'O CodeCraft Gestão é o ERP/HCM da CodeCraft (Financeiro, RH e assinatura Asaas R$ 280–500): https://gustavosena972-wq.github.io/financas-codecraft/app/planos/';
   if(/whats|zap|telefone|contato/.test(t))
     return 'WhatsApp da CodeCraft: 31 99975-8385. Pode continuar neste chat também — a equipe vê em tempo real.';
   if(/bh|belo horizonte|contagem|nova lima|betim/.test(t) && /atend|cidade|onde/.test(t))
@@ -1905,6 +1905,7 @@ const HUNTS = [
 ];
 const TASKS_KEY = 'ccs-admin-tasks';
 const GESTAO_URL = 'https://gustavosena972-wq.github.io/financas-codecraft/';
+const GESTAO_PLANOS_URL = 'https://gustavosena972-wq.github.io/financas-codecraft/app/planos/';
 var aiMem = { unpaidI:0, lastHunt:null, lastChannel:null };
 
 function todayISO(){
