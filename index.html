@@ -115,12 +115,20 @@
   .ccs-stage.done .track{background:var(--slate);}
   .ccs-stage.future .node{background:#fff; border-color:var(--line); color:var(--ink-soft);}
 
-  .ccs-about{display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:start;}
+  .ccs-about{display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start;}
+  .ccs-about > div:first-child{max-width:520px;}
   .ccs-about .mark{font-family:'JetBrains Mono',monospace; font-size:120px; color:var(--paper-dim); font-weight:800; line-height:1; user-select:none;}
-  .ccs-gestao-side{min-width:0;}
-  .ccs-gestao-side .ccs-gestao-wrap{margin-top:0; height:100%;}
-  .ccs-gestao-side .ccs-gestao-biz{grid-template-columns:1fr; max-width:none; margin:18px 0 20px;}
-  .ccs-gestao-side .ccs-gestao-wrap h2{font-size:22px; line-height:1.2;}
+  .ccs-gestao-side{min-width:0; max-width:520px;}
+  .ccs-gestao-side .ccs-gestao-wrap{margin-top:0; height:auto; padding:22px 20px; border-radius:14px;}
+  .ccs-gestao-side .ccs-gestao-wrap h2{font-size:20px; line-height:1.25; max-width:100%;}
+  .ccs-gestao-side .ccs-gestao-wrap .ccs-lede{font-size:14.5px; margin-top:10px; max-width:100%;}
+  .ccs-gestao-side .ccs-gestao-biz{grid-template-columns:1fr; gap:8px; margin:14px 0 14px; max-width:none;}
+  .ccs-gestao-side .ccs-gestao-biz .biz{padding:10px 12px; border-radius:8px;}
+  .ccs-gestao-side .ccs-gestao-biz .biz strong{font-size:13px; margin-bottom:2px;}
+  .ccs-gestao-side .ccs-gestao-biz .biz span{font-size:12px; line-height:1.4;}
+  .ccs-gestao-side .ccs-gestao-plans{gap:6px; margin:0 0 14px;}
+  .ccs-gestao-side .ccs-gestao-plans .plan{font-size:11px; padding:5px 9px; border-radius:6px;}
+  .ccs-gestao-side .ccs-btn{padding:8px 14px; font-size:13px;}
   .ccs-gestao-wrap{background:var(--panel); color:#fff; border-radius:18px; padding:36px 32px; margin-top:10px;}
   .ccs-gestao-wrap .ccs-eyebrow{color:var(--amber);}
   .ccs-gestao-wrap h2{color:#fff; max-width:720px;}
@@ -135,6 +143,8 @@
   @media (max-width:860px){
     .ccs-gestao-biz{grid-template-columns:1fr;}
     .ccs-gestao-wrap{padding:28px 20px;}
+    .ccs-gestao-side{max-width:none;}
+    .ccs-about > div:first-child{max-width:none;}
   }
 
   .ccs-contact-wrap{display:grid; grid-template-columns:1fr 1fr; gap:50px;}
@@ -261,14 +271,30 @@
   .ccs-calc-grid button.eq{background:var(--amber); color:#221304; border-color:var(--amber);}
   .ccs-calc-grid button.wide{grid-column:span 2;}
   .ccs-ai-layout{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;}
-  .ccs-ai-box{display:flex; flex-direction:column; gap:8px; max-height:420px; overflow:auto; background:var(--paper-dim); border-radius:10px; padding:12px; min-height:280px;}
-  .ccs-ai-msg{font-size:14px; line-height:1.5; padding:10px 12px; border-radius:10px; background:#fff; border:1px solid var(--line);}
-  .ccs-ai-msg.me{background:var(--panel); color:#fff; border-color:var(--panel);}
+  .ccs-ia-shell{background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:0 10px 28px rgba(18,23,43,.05);}
+  .ccs-ia-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; padding:18px 20px; background:linear-gradient(135deg, var(--panel) 0%, #242B52 100%); color:#fff;}
+  .ccs-ia-head h2{font-size:18px; color:#fff; max-width:none;}
+  .ccs-ia-head p{margin:6px 0 0; font-size:13px; color:#B9BEDB; max-width:520px; line-height:1.45;}
+  .ccs-ia-status{display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); color:#E8ECFF; padding:7px 11px; border-radius:999px; white-space:nowrap;}
+  .ccs-ia-status .dot{width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 3px rgba(47,182,165,.25); animation:pulse 1.6s ease-in-out infinite;}
+  .ccs-ia-body{padding:16px 18px 18px;}
+  .ccs-ia-roles{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;}
+  .ccs-ia-roles span{font-size:11.5px; font-weight:700; color:var(--ink-soft); background:var(--paper-dim); border:1px solid var(--line); border-radius:999px; padding:5px 10px;}
+  .ccs-ia-toolbar{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; padding:10px; background:var(--paper-dim); border:1px solid var(--line); border-radius:12px;}
+  .ccs-ia-toolbar .ccs-btn.ghost{background:#fff; border-color:var(--line); color:var(--ink); font-weight:600;}
+  .ccs-ia-toolbar .ccs-btn.ghost:hover{border-color:var(--amber); color:var(--ink); background:#FFF8EE;}
+  .ccs-ai-box{display:flex; flex-direction:column; gap:10px; max-height:440px; overflow:auto; background:#F3F2EC; border:1px solid var(--line); border-radius:12px; padding:14px; min-height:300px;}
+  .ccs-ai-msg{font-size:14px; line-height:1.55; padding:12px 14px; border-radius:12px; background:#fff; border:1px solid var(--line); box-shadow:0 1px 0 rgba(18,23,43,.03); max-width:94%; align-self:flex-start;}
+  .ccs-ai-msg.me{align-self:flex-end; background:var(--panel); color:#fff; border-color:var(--panel); box-shadow:none;}
+  .ccs-ai-msg strong{color:var(--ink);}
+  .ccs-ai-msg.me strong{color:var(--amber);}
+  .ccs-ia-input-wrap{display:flex; gap:8px; margin-top:12px; padding:10px; border:1px solid var(--line); border-radius:12px; background:#fff;}
+  .ccs-ia-input-wrap input{flex:1; padding:11px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:'Inter',sans-serif; font-size:14px; background:var(--paper);}
+  .ccs-ia-input-wrap input:focus{outline:2px solid var(--amber); outline-offset:1px; border-color:var(--amber); background:#fff;}
   .ccs-ia-daily-head{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--amber); margin-bottom:6px;}
-  .ccs-ia-card{border:1.5px solid var(--line); border-left:4px solid var(--amber); border-radius:12px; padding:14px 16px; background:#fff; margin-top:8px;}
+  .ccs-ia-card{border:1.5px solid var(--line); border-left:4px solid var(--amber); border-radius:12px; padding:14px 16px; background:#fff; margin-top:4px;}
   .ccs-ia-card ul{margin:8px 0 0; padding-left:18px; line-height:1.55; font-size:13.5px;}
   .ccs-ia-card li{margin:4px 0;}
-  .ccs-ia-toolbar{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
   @media (max-width:900px){ .ccs-ai-layout{grid-template-columns:1fr;} }
   @media (max-width:760px){ .ccs-metrics{grid-template-columns:1fr 1fr;} }
 
@@ -287,8 +313,8 @@
     .ccs-grid-3{grid-template-columns:1fr;}
     .ccs-price-grid{grid-template-columns:1fr;}
     .ccs-about, .ccs-contact-wrap{grid-template-columns:1fr;}
-    .ccs-about{grid-template-columns:1fr; gap:32px;}
-    .ccs-gestao-side .ccs-gestao-wrap{padding:28px 20px;}
+    .ccs-about{grid-template-columns:1fr; gap:28px;}
+    .ccs-gestao-side .ccs-gestao-wrap{padding:20px 18px;}
     .ccs-about .mark{display:none;}
     .ccs-app-header{padding:16px 20px;}
   }
@@ -348,11 +374,11 @@
       <div class="ccs-gestao-wrap">
         <div class="ccs-eyebrow">Produto · só empresas</div>
         <h2>CodeCraft Gestão</h2>
-        <p class="ccs-lede">ERP/HCM B2B multi-tenant: Financeiro, RH e assinatura mensal real (Asaas). Sem IA no painel. Planos de R$&nbsp;280 a R$&nbsp;500/mês.</p>
+        <p class="ccs-lede">ERP/HCM B2B: Financeiro, RH e assinatura Asaas. Planos de R$&nbsp;280 a R$&nbsp;500/mês.</p>
         <div class="ccs-gestao-biz">
-          <div class="biz"><strong>01 · Financeiro</strong><span>Caixa, contas a pagar/receber e DRE gerencial.</span></div>
-          <div class="biz"><strong>02 · RH</strong><span>Cadastro, ponto eletrônico e fechamento de folha.</span></div>
-          <div class="biz"><strong>03 · Assinatura</strong><span>Cobrança Asaas: 1º mês PIX ou cartão · renovação automática no cartão · cancele no painel.</span></div>
+          <div class="biz"><strong>01 · Financeiro</strong><span>Caixa, pagar/receber e DRE.</span></div>
+          <div class="biz"><strong>02 · RH</strong><span>Cadastro, ponto e folha.</span></div>
+          <div class="biz"><strong>03 · Assinatura</strong><span>1º mês PIX/cartão · renovação no cartão.</span></div>
         </div>
         <div class="ccs-gestao-plans">
           <span class="plan">Essencial · R$ 280</span>
@@ -642,21 +668,41 @@
 
     <div class="ccs-admin-content">
     <div id="tab-ia">
-      <h2 style="font-size:20px; margin-bottom:8px;">IA Admin · Prospecção autônoma</h2>
-      <div class="ccs-help">
-        <strong>Missão:</strong> varredura diária em redes e web, filtrando dores reais e entregando leads qualificados neste chat.
-        Só no painel admin — isolado do app dos clientes. Conversa ilimitada, estilo consultor sênior.
-      </div>
-      <div class="ccs-ia-toolbar">
-        <button class="ccs-btn ghost small" onclick="runDailyScan(true)">Rodar varredura agora</button>
-        <button class="ccs-btn ghost small" onclick="iaDraftFromLastLead()">Redigir abordagem</button>
-        <button class="ccs-btn ghost small" onclick="runAiOrder('como está o mercado')">Mercado hoje</button>
-        <button class="ccs-btn ghost small" onclick="window.open(GESTAO_URL,'_blank')">Abrir Gestão</button>
-      </div>
-      <div class="ccs-ai-box" id="admin-ai-log" style="min-height:360px; max-height:520px;"></div>
-      <div class="ccs-chat-input" style="border:1px solid var(--line); border-radius:10px; margin-top:10px; background:#fff;">
-        <input id="admin-ai-input" placeholder="Tire dúvidas, peça estratégia, redação de abordagem, análise de lead…" onkeydown="if(event.key==='Enter')sendAdminAi()">
-        <button class="ccs-btn amber" onclick="sendAdminAi()">Enviar</button>
+      <div class="ccs-ia-shell">
+        <div class="ccs-ia-head">
+          <div>
+            <h2>IA Admin · Consultoria sênior</h2>
+            <p>50 anos de experiência acumulada · formal, clara e acionável. Só neste painel — isolada do app dos clientes.</p>
+          </div>
+          <div class="ccs-ia-status"><span class="dot"></span> Online</div>
+        </div>
+        <div class="ccs-ia-body">
+          <div class="ccs-ia-roles">
+            <span>Arquiteta de software</span>
+            <span>Analista de sistemas</span>
+            <span>Analista de software</span>
+            <span>Analista de código</span>
+            <span>Conversas com clientes</span>
+          </div>
+          <div class="ccs-ia-toolbar">
+            <button class="ccs-btn ghost small" onclick="runDailyScan(true)">Varredura</button>
+            <button class="ccs-btn ghost small" onclick="iaDraftFromLastLead()">Abordagem</button>
+            <button class="ccs-btn ghost small" onclick="runAiOrder('como está o mercado')">Mercado</button>
+            <button class="ccs-btn ghost small" onclick="runAiOrder('analise de projetos da fila')">Projetos</button>
+            <button class="ccs-btn ghost small" onclick="runAiOrder('analise de arquitetura do nosso produto')">Arquitetura</button>
+            <button class="ccs-btn ghost small" onclick="runAiOrder('analise de sistemas da operacao')">Sistemas</button>
+            <button class="ccs-btn ghost small" onclick="runAiOrder('analise de software e portfólio')">Software</button>
+            <button class="ccs-btn ghost small" onclick="runAiOrder('revise o codigo e a qualidade tecnica')">Código</button>
+            <button class="ccs-btn ghost small" onclick="runAiOrder('como responder o cliente de forma formal')">Resposta ao cliente</button>
+            <button class="ccs-btn ghost small" onclick="runAiOrder('ideias e estrategia')">Ideias</button>
+            <button class="ccs-btn ghost small" onclick="window.open(GESTAO_URL,'_blank')">Abrir Gestão</button>
+          </div>
+          <div class="ccs-ai-box" id="admin-ai-log"></div>
+          <div class="ccs-ia-input-wrap">
+            <input id="admin-ai-input" placeholder="Peça análise, estratégia, revisão técnica ou texto formal para o cliente…" onkeydown="if(event.key==='Enter')sendAdminAi()">
+            <button class="ccs-btn amber" onclick="sendAdminAi()">Enviar</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -712,7 +758,7 @@
 
     <div id="tab-conversas" style="display:none;">
       <h2 style="font-size:20px; margin-bottom:16px;">Conversas com clientes</h2>
-      <div class="ccs-help"><strong>Para que serve:</strong> é o chat em tempo real (tipo WhatsApp) com quem está no site. Inclui os <strong>novos contatos</strong> (clientes que começaram a conversar sem código) e as conversas por projeto. É aqui que você responde e <strong>envia o código de acompanhamento</strong> direto na conversa.</div>
+      <div class="ccs-help"><strong>Para que serve:</strong> é o chat em tempo real com quem está no site. Inclui os <strong>novos contatos</strong> e as conversas por projeto. Responda aqui e <strong>envie o código de acompanhamento</strong>. Tom recomendado: formal, claro e objetivo. Na aba <strong>IA Admin</strong>, use “Resposta ao cliente” para gerar o texto pronto.</div>
       <div class="ccs-chat-layout">
         <div class="ccs-chat-side">
           <div id="chat-project-list"></div>
@@ -1248,19 +1294,31 @@ async function startLead(){
 function leadBotReply(text, isFirst){
   const t = (text||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   if(/preco|preço|quanto custa|valor|orcamento|orçamento/.test(t))
-    return 'Preço de referência da CodeCraft: landing a partir de R$ 1.200, site a partir de R$ 1.800, loja a partir de R$ 2.800, sistema sob medida a partir de R$ 4.500. PIX só na chave 31999758385. Confirma o escopo com a equipe neste chat.';
+    return 'Obrigada pela pergunta. Valores de referência da CodeCraft Solutions: landing page a partir de R$ 1.200; site institucional a partir de R$ 1.800; loja virtual a partir de R$ 2.800; sistema sob medida a partir de R$ 4.500. O valor final depende do escopo aprovado. Pagamentos somente na chave PIX 31999758385. A equipe confirma o orçamento neste chat com clareza e formalidade.';
   if(/prazo|quando fica|quanto tempo|dias/.test(t))
-    return 'Prazo típico: landing 7 a 15 dias, site 15 a 30, loja e sistema a gente combina. Você acompanha pelo código no Portal do cliente.';
+    return 'Com prazer. Prazos típicos: landing de 7 a 15 dias; site de 15 a 30 dias; loja e sistemas sob medida são definidos após o briefing. Você acompanha o andamento com o código no Portal do cliente, de forma transparente.';
   if(/pix|pagar|chave|pagamento/.test(t))
-    return 'A chave PIX da CodeCraft é 31999758385 (Inter). Não pague outra chave. O valor do seu projeto aparece no portal quando a equipe cadastrar.';
-  if(/financas|finanças|caixa|planilha|gastos|gestao|gestão/.test(t))
-    return 'O CodeCraft Gestão é o ERP/HCM da CodeCraft (Financeiro, RH e assinatura Asaas R$ 280–500): https://gustavosena972-wq.github.io/financas-codecraft/app/planos/';
+    return 'A chave PIX oficial da CodeCraft Solutions é 31999758385 (banco Inter). Por segurança, não utilize outra chave. O valor do seu projeto aparece no portal quando a equipe cadastrar o serviço.';
+  if(/loja|e-?commerce|venda online|pedido/.test(t) && !/gestao|gestão/.test(t))
+    return 'Entendido. Para loja virtual, entregamos catálogo, pedido e PIX, com acompanhamento no portal. Informe se já possui produtos cadastrados e o prazo desejado; a equipe retorna com escopo e valor.';
+  if(/sistema|app|aplicativo|sob medida|portal/.test(t) && !/gestao|gestão|financ/.test(t))
+    return 'Perfeito. Sistemas sob medida são desenhados conforme o seu processo (agenda, estoque, portal interno etc.). Descreva o problema principal e quantas pessoas usarão; assim montamos a proposta com objetividade.';
+  if(/site|landing|pagina|página|institucional/.test(t) && !/loja|gestao|gestão/.test(t))
+    return 'Certo. Desenvolvemos sites e landing pages focados em conversão (WhatsApp e contato). Informe o segmento do negócio e se já possui domínio ou textos; a equipe segue com a orientação do próximo passo.';
+  if(/financas|finanças|caixa|planilha|gastos|gestao|gestão|erp|assinatura|plano|ponto|folha|rh/.test(t))
+    return 'O CodeCraft Gestão é nossa plataforma para empresas (CNPJ): Financeiro, RH e assinatura mensal via Asaas (R$ 280 a R$ 500). Acesso: https://gustavosena972-wq.github.io/financas-codecraft/app/planos/ . Posso esclarecer dúvidas ou a equipe comercial continua com você neste chat.';
   if(/whats|zap|telefone|contato/.test(t))
-    return 'WhatsApp da CodeCraft: 31 99975-8385. Pode continuar neste chat também — a equipe vê em tempo real.';
+    return 'Nosso WhatsApp comercial é (31) 99975-8385. Você também pode continuar por aqui: a equipe acompanha esta conversa em tempo real, com atenção e clareza.';
   if(/bh|belo horizonte|contagem|nova lima|betim/.test(t) && /atend|cidade|onde/.test(t))
-    return 'Atendemos BH e região (Contagem, Betim, Nova Lima) e também online. Conta o tipo de projeto que a equipe entra.';
+    return 'Atendemos Belo Horizonte e região (Contagem, Betim, Nova Lima) e também de forma online. Por favor, descreva o tipo de projeto desejado para a equipe orientar o próximo passo.';
+  if(/humano|pessoa|atendente|falar com|equipe/.test(t))
+    return 'Com certeza. Nossa equipe acompanha este chat agora. Enquanto isso, você pode resumir o que precisa (site, loja, sistema ou Gestão) para agilizarmos o atendimento.';
+  if(/obrigad|valeu|agrade/.test(t))
+    return 'Nós que agradecemos o contato. Estamos à disposição para seguir com o orçamento ou com o CodeCraft Gestão.';
+  if(/ola|oi|bom dia|boa tarde|boa noite|tudo bem/.test(t) && t.length < 40)
+    return 'Olá. Seja bem-vindo(a) à CodeCraft Solutions. Em que podemos ajudar: site, loja, sistema sob medida ou CodeCraft Gestão?';
   if(isFirst)
-    return 'Oi, aqui é o atendimento da CodeCraft Solutions em BH. Site, loja, sistema e CodeCraft Gestão. Conta o que você precisa — a equipe lê isto agora.';
+    return 'Olá. Aqui é o atendimento da CodeCraft Solutions, em Belo Horizonte. Oferecemos site, loja virtual, sistema sob medida e o CodeCraft Gestão (Financeiro + RH). Por favor, descreva com objetividade o que você precisa. Nossa equipe acompanha esta conversa agora e responde de forma clara e formal.';
   return null;
 }
 async function sendLead(){
@@ -2327,7 +2385,7 @@ async function replyStalledChat(){
   const stalled = await findStalledChats();
   if(!stalled.length){ showToast('Nenhuma conversa parada agora.'); return null; }
   const s = stalled[0];
-  const text = 'Oi, '+(s.name||'')+'! Aqui é da CodeCraft. Vi sua mensagem. Me confirma se é site, loja ou sistema que eu já te passo prazo e valor. PIX só na chave 31999758385.';
+  const text = 'Prezado(a) '+(s.name||'cliente')+',\n\nAgradecemos o contato com a CodeCraft Solutions. Recebemos sua mensagem e gostaríamos de dar continuidade.\n\nPor gentileza, confirme se a necessidade é site, loja virtual, sistema sob medida ou CodeCraft Gestão, para enviarmos prazo e valor com objetividade.\n\nPagamentos somente na chave PIX oficial 31999758385.\n\nAtenciosamente,\nEquipe CodeCraft Solutions';
   await insertChat(s.code, 'admin', text);
   currentChatCode = s.code;
   switchAdminTab('conversas');
@@ -2370,16 +2428,16 @@ function iaPickDailyLeads(count){
 function iaOpportunityCard(lead){
   try{ localStorage.setItem(IA_LAST_LEAD_KEY, JSON.stringify(lead)); }catch(e){}
   return `<div class="ccs-ia-card">
-    <div class="ccs-ia-daily-head">🤖 [Relatório Diário de Oportunidade - IA Admin]</div>
+    <div class="ccs-ia-daily-head">[Relatório diário de oportunidade — IA Admin · 50 anos de experiência]</div>
     <ul>
-      <li><strong>Empresa Identificada:</strong> ${escapeHtml(lead.company)}</li>
-      <li><strong>O Problema Específico (O que ela precisa):</strong> ${escapeHtml(lead.pain)}</li>
-      <li><strong>Plano Ideal Recomendado:</strong> ${escapeHtml(lead.plan)}</li>
-      <li><strong>Dados de Contato:</strong><br>
+      <li><strong>Empresa identificada:</strong> ${escapeHtml(lead.company)}</li>
+      <li><strong>Problema específico:</strong> ${escapeHtml(lead.pain)}</li>
+      <li><strong>Plano ideal recomendado:</strong> ${escapeHtml(lead.plan)}</li>
+      <li><strong>Dados de contato:</strong><br>
         - E-mail: ${escapeHtml(lead.email)}<br>
         - Telefone / WhatsApp: ${escapeHtml(lead.phone)}<br>
         - Responsável: ${escapeHtml(lead.contact)}</li>
-      <li><strong>Análise e Recomendação da IA:</strong> "${escapeHtml(lead.fit)} Quer que eu redija a mensagem de abordagem personalizada?"</li>
+      <li><strong>Análise (analista comercial + sistemas):</strong> "${escapeHtml(lead.fit)} Deseja que eu redija a mensagem de abordagem formal?"</li>
     </ul>
   </div>`;
 }
@@ -2394,7 +2452,7 @@ function renderIaAdminChat(){
   if(!log) return;
   const chat = loadIaChat();
   if(!chat.length){
-    log.innerHTML = '<div class="ccs-ai-msg"><strong>IA Admin online.</strong> Varredura diária ativa às 08h. Pergunte o que quiser — conversação ilimitada, estilo consultor sênior.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg"><strong>IA Admin online.</strong><br>Perfil: arquiteta de software · analista de sistemas · software · código. Use os atalhos acima ou digite um pedido — varredura, arquitetura, resposta formal ao cliente, etc.</div>';
     return;
   }
   log.innerHTML = chat.map(m=>'<div class="ccs-ai-msg '+(m.who==='me'?'me':'')+'">'+m.html+'</div>').join('');
@@ -2405,7 +2463,7 @@ async function runDailyScan(force){
   if(!force && localStorage.getItem(IA_DAILY_KEY) === today) return;
   const leads = iaPickDailyLeads(3);
   const chat = loadIaChat();
-  chat.push({ who:'ia', html:'<strong>📡 Varredura diária concluída</strong><br>Monitoramento de redes, vagas e fóruns · '+fmtDate(new Date().toISOString())+' · '+leads.length+' oportunidades com fit validado.', ts:Date.now() });
+  chat.push({ who:'ia', html:'<strong>Varredura diária concluída</strong><br>Monitoramento de redes, vagas e fóruns · '+fmtDate(new Date().toISOString())+' · '+leads.length+' oportunidades com fit validado.', ts:Date.now() });
   leads.forEach(lead=> chat.push({ who:'ia', html:iaOpportunityCard(lead), ts:Date.now() }));
   saveIaChat(chat);
   localStorage.setItem(IA_DAILY_KEY, today);
@@ -2431,11 +2489,13 @@ function pushAi(who, html){
   renderIaAdminChat();
 }
 function iaDraftOutreach(lead){
-  const svc = lead.service==='gestao' ? 'CodeCraft Gestão (Financeiro + RH + Billing)' : lead.service==='loja' ? 'loja virtual com pedido e PIX' : lead.service==='sistema' ? 'sistema sob medida com portal ao vivo' : 'site institucional que converte no WhatsApp';
-  return 'Olá, '+escapeHtml(lead.contact.split('(')[0].trim())+'! Aqui é da <strong>CodeCraft Solutions</strong>, BH.<br><br>'+
-    'Vi que a <strong>'+escapeHtml(lead.company)+'</strong> está lidando com: '+escapeHtml(lead.pain)+'.<br><br>'+
-    'A gente entrega <strong>'+svc+'</strong> com acompanhamento em tempo real e PIX na chave 31999758385.<br><br>'+
-    'Plano sugerido: <strong>'+escapeHtml(lead.plan)+'</strong>. Posso te mandar um escopo de 15 minutos ainda hoje?<br>WhatsApp 31 99975-8385.';
+  const svc = lead.service==='gestao' ? 'CodeCraft Gestão (Financeiro, RH e assinatura mensal)' : lead.service==='loja' ? 'loja virtual com pedido e PIX' : lead.service==='sistema' ? 'sistema sob medida com portal ao vivo' : 'site institucional voltado à conversão';
+  return 'Prezado(a) '+escapeHtml(lead.contact.split('(')[0].trim())+',<br><br>'+
+    'Sou da <strong>CodeCraft Solutions</strong>, em Belo Horizonte.<br><br>'+
+    'Identificamos que a <strong>'+escapeHtml(lead.company)+'</strong> enfrenta: '+escapeHtml(lead.pain)+'.<br><br>'+
+    'Podemos apoiar com <strong>'+svc+'</strong>, com acompanhamento em tempo real e pagamento via PIX (chave 31999758385).<br><br>'+
+    'Sugestão: <strong>'+escapeHtml(lead.plan)+'</strong>. Se preferir, agendamos 15 minutos ainda hoje para alinhar o escopo.<br><br>'+
+    'Atenciosamente,<br>Equipe CodeCraft Solutions<br>WhatsApp (31) 99975-8385';
 }
 function iaDraftFromLastLead(){
   try{
@@ -2444,23 +2504,124 @@ function iaDraftFromLastLead(){
     pushAi('ia', iaDraftOutreach(lead));
   }catch(e){ showToast('Sem lead recente. Rode a varredura.'); }
 }
+
+function iaWrap(title, body){
+  return '<strong>'+title+'</strong><br>'+body;
+}
+function iaArchitectAdvice(projects){
+  const open = (projects||[]).filter(p=>p.status!=='concluido').length;
+  return iaWrap('Arquitetura de software (visão sênior)',
+    'Princípios que aplico há décadas: (1) separar o que é produto recorrente (CodeCraft Gestão) do que é projeto sob medida; '+
+    '(2) cada entrega deve ter portal do cliente, PIX e status claros; '+
+    '(3) evitar monolito: site/loja/sistema como módulos com contrato de entrega explícito; '+
+    '(4) segurança: chaves e cobrança só no backend; '+
+    '(5) observabilidade: o cliente enxerga andamento sem pedir atualização.<br>'+
+    'Fila atual: '+open+' projeto(s) em aberto. Capacidade saudável: não prometer prazo curto se houver mais de 3 em andamento. '+
+    'Arquitetura comercial recomendada: pacote Site + Gestão para clínica/loja; sistema sob medida só com briefing escrito.');
+}
+function iaSystemsAnalysis(projects){
+  const by = {};
+  (projects||[]).forEach(p=>{ by[p.status]=(by[p.status]||0)+1; });
+  return iaWrap('Análise de sistemas (operação CodeCraft)',
+    'Mapeamento: entrada (chat do site / WhatsApp) → projeto cadastrado → status (análise/andamento/concluído) → PIX → link de entrega → portal do cliente.<br>'+
+    'Estado: '+(by.analise||0)+' em análise, '+(by.andamento||0)+' em andamento, '+(by.concluido||0)+' concluído(s).<br>'+
+    'Pontos de falha comuns: (a) projeto sem valor/PIX; (b) concluído sem URL; (c) lead sem código de acompanhamento; (d) conversa sem resposta formal.<br>'+
+    'Ação: padronizar checklist por projeto e responder clientes em tom formal e objetivo na aba Conversas.');
+}
+function iaSoftwareAnalysis(){
+  return iaWrap('Análise de software (produto)',
+    'Portfólio: (1) site institucional — conversão e presença local; (2) loja — pedido + PIX; (3) sistema sob medida — processo do cliente; (4) CodeCraft Gestão — SaaS B2B (Financeiro, RH, assinatura Asaas R$ 280–500).<br>'+
+    'Critérios de qualidade: requisitos claros, prazo honesto, pagamento seguro, entrega acompanhável.<br>'+
+    'Recomendação: priorizar Gestão para dor de ponto/caixa/folha; site/loja para captura comercial. Não misturar escopos no mesmo orçamento sem separar fases.');
+}
+function iaCodeAnalysis(){
+  return iaWrap('Análise de código e qualidade',
+    'Checklist sênior: nomes claros; fluxos de pagamento sem expor segredos; validação de entrada; estados de UI legíveis; logs só no admin; RLS no Supabase; build estático do Gestão em Pages; webhook Asaas com token.<br>'+
+    'Riscos: chave colada em chat; função Hello World em produção; webhook sem apikey; renovação local inventada sem gateway.<br>'+
+    'Boas práticas: secret só no Supabase; teste em sandbox quando possível; documentar externalReference userId:PLAN.');
+}
+function iaFormalClientReply(raw){
+  const t = (raw||'').toLowerCase();
+  let tema = 'o seu projeto';
+  if(/gestao|gestão|erp|assinatura/.test(t)) tema = 'o CodeCraft Gestão';
+  else if(/loja|e-?commerce/.test(t)) tema = 'a loja virtual';
+  else if(/site|landing/.test(t)) tema = 'o site / landing page';
+  else if(/sistema|app/.test(t)) tema = 'o sistema sob medida';
+  else if(/preco|preço|valor|orcamento|orçamento/.test(t)) tema = 'o orçamento solicitado';
+  return iaWrap('Texto formal para enviar ao cliente (copie na aba Conversas)',
+    'Prezado(a) cliente,<br><br>'+
+    'Agradecemos o contato com a CodeCraft Solutions.<br><br>'+
+    'Em relação a <strong>'+tema+'</strong>, nossa equipe está à disposição para esclarecer escopo, prazo e investimento com clareza. '+
+    'Trabalhamos com acompanhamento em tempo real pelo portal e pagamento via PIX na chave oficial 31999758385.<br><br>'+
+    'Por gentileza, confirme: (1) o objetivo do projeto; (2) o prazo desejado; (3) se prefere site, loja, sistema ou CodeCraft Gestão.<br><br>'+
+    'Assim que recebermos essas informações, encaminhamos a proposta objetiva.<br><br>'+
+    'Atenciosamente,<br>Equipe CodeCraft Solutions<br>WhatsApp (31) 99975-8385');
+}
+function iaConversationCoach(projects){
+  return iaWrap('Gestão de conversas com clientes',
+    'Regras de ouro (tom formal e fácil): cumprimente; use frases curtas; evite gíria; confirme o que o cliente pediu; diga próximo passo e prazo; nunca peça dados sensíveis no chat público; indique PIX só com a chave oficial.<br>'+
+    'Fluxo: lead no site → resposta automática clara → você assume na aba Conversas → envia código → cadastra projeto.<br>'+
+    'Se o cliente perguntar preço: use a tabela de referência e diga que o valor final depende do escopo.<br>'+
+    'Projetos no painel: '+(projects||[]).length+'. Peça “resposta ao cliente” + o tema para eu redigir o texto pronto.');
+}
+
 async function iaSeniorReply(text, projects, mkt){
   const t = text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  if(/varredura|scan|oportunidad|lead|diario|diária|monitor/.test(t)){
+  if(/varredura|scan|oportunidad|lead|diario|diaria|monitor/.test(t)){
     await runDailyScan(true);
     return 'Varredura executada. Cards de oportunidade postados acima com fit validado.';
   }
-  if(/redij|mensagem|abordagem|whatsapp|zap|contato/.test(t)){
+  if(/redij|mensagem de abordagem|abordagem|whatsapp comercial|zap comercial|contato do lead/.test(t)){
     const lead = iaPickDailyLeads(1)[0];
     return iaDraftOutreach(lead);
   }
+  if(/responder o cliente|resposta ao cliente|texto formal|mensagem formal|como responder/.test(t)){
+    return iaFormalClientReply(text);
+  }
+  if(/conversa|atendimento|tom formal|gestao de conversa|chat com cliente/.test(t)){
+    return iaConversationCoach(projects);
+  }
+  if(/arquitet|arquitetura|design de software|modular/.test(t)){
+    return iaArchitectAdvice(projects);
+  }
+  if(/analise de sistemas|análise de sistemas|sistemas da operacao|sistemas da operação|processo|fluxo operacional/.test(t)){
+    return iaSystemsAnalysis(projects);
+  }
+  if(/analise de software|análise de software|produto|portfolio|portfólio/.test(t) && !/codigo|código/.test(t)){
+    return iaSoftwareAnalysis();
+  }
+  if(/codigo|código|code review|qualidade tecnica|qualidade técnica|revise o codigo|bug|refator/.test(t)){
+    return iaCodeAnalysis();
+  }
+  if(/analista|experiencia|experiência|quem e voce|quem é você|seu perfil|50 anos/.test(t)){
+    return iaWrap('Perfil profissional',
+      'Atuo como consultora sênior com cinco décadas de experiência acumulada em: análise de sistemas, análise de software, análise de código, arquitetura de software, engenharia de requisitos, qualidade e operação comercial B2B.<br>'+
+      'Estilo: formal, claro e acionável. Objetivo: reduzir risco, acelerar entrega e melhorar a conversa com o cliente.');
+  }
   if(/mercado|dolar|dólar|selic|ibov|economia/.test(t)) return analyzeMarket(mkt).copy;
-  if(/projeto|fila|painel|cliente/.test(t)) return analyzeProjects(projects||[]);
-  if(/ideia|melhorar|estratégia|estrategia/.test(t)) return jarvisIdeas(projects||[], mkt, []).map((x,i)=>'• '+x).join('<br>');
+  if(/projeto|fila|painel|cliente/.test(t) && !/responder|resposta|conversa/.test(t)) return analyzeProjects(projects||[]);
+  if(/brief|briefing|preciso de|quero um|quero uma/.test(t)) return analyzeBrief(text, projects||[]);
+  if(/ideia|melhorar|estratégia|estrategia/.test(t)){
+    let msgs = [];
+    try{ msgs = await loadLeadChats(); }catch(e){ msgs = []; }
+    return '<strong>Ideias e estratégia (consultoria sênior)</strong><br>'+jarvisIdeas(projects||[], mkt, msgs||[]).map(function(x){ return '• '+x; }).join('<br>');
+  }
   if(/futuro|90 dias|trimestre/.test(t)) return jarvisFuture(mkt);
-  if(/financ|gestao|gestão|caixa|erp/.test(t)) return jarvisFinance(projects||[]);
-  if(/onde|posicion|ferramenta|plataforma/.test(t)) return 'Posicione <strong>CodeCraft Gestão</strong> para dor de ponto, caixa e folha (R$ 280–500). Site/loja para captura comercial. Tudo isolado: IA só aqui no admin; clientes nunca veem este chat.';
-  return 'Entendi. Como consultor sênior: foque em dor operacional real (ponto, caixa, site que não converte). Próximo passo concreto — cadastre o lead em Projetos ou peça <em>redija abordagem</em> que eu monto o WhatsApp.';
+  if(/financ|gestao|gestão|caixa|erp|assinatura/.test(t)) return jarvisFinance(projects||[]);
+  if(/requisito|engenhar|escopo|spec|especificacao|especificação/.test(t)){
+    return iaWrap('Engenharia de requisitos',
+      'Método: (1) objetivo do negócio em uma frase; (2) usuários e papéis; (3) fluxos principais (feliz e erro); (4) regras de negócio; (5) fora de escopo; (6) critério de aceite; (7) prazo e PIX.<br>'+
+      'Nunca inicie desenvolvimento sem checklist acima por escrito. Peça briefing livre que eu estruturo os requisitos.');
+  }
+  if(/onde|posicion|ferramenta|plataforma/.test(t)) return 'Posicione <strong>CodeCraft Gestão</strong> para dor de ponto, caixa e folha (R$ 280–500). Site/loja para captura comercial. Tudo isolado: IA só neste admin; clientes nunca veem este chat.';
+  if(/ajuda|o que voce faz|comandos|menu/.test(t)){
+    return iaWrap('Como posso ajudar',
+      'Peça: varredura · abordagem · mercado · projetos · arquitetura · sistemas · software · código · requisitos · resposta ao cliente · ideias · futuro · financeiro.<br>'+
+      'Também aceito briefing livre (ex.: “clínica precisa de site e ponto”).');
+  }
+  return iaWrap('Orientação sênior',
+    'Entendi. Com 50 anos de experiência em sistemas e software, o foco deve ser dor operacional real (ponto, caixa, site que não converte) e conversa formal com o cliente.<br>'+
+    'Próximo passo concreto: (1) rode a varredura ou cadastre o lead; (2) peça <em>redija abordagem</em> ou <em>resposta ao cliente</em>; (3) se for produto interno, peça análise de arquitetura/sistemas/código.');
 }
 function runAiOrder(text){
   const input = document.getElementById('admin-ai-input');
@@ -2487,26 +2648,27 @@ function analyzeMarket(mkt){
   const ibov = Number(mkt.ibovPct)||0;
   const selic = Number(mkt.selic)||0;
   const lines = [];
-  if(usd >= 0.6) lines.push('Dólar subindo ('+mkt.usdPct+'%). Venda sistema e loja com preço em real, sem surpresa.');
-  else if(usd <= -0.6) lines.push('Dólar caindo. Fecha projeto agora — o cliente para de esperar o câmbio.');
+  if(usd >= 0.6) lines.push('Dólar em alta ('+mkt.usdPct+'%). Recomendo precificar sistema e loja em real, com escopo fechado.');
+  else if(usd <= -0.6) lines.push('Dólar em queda. Momento favorável para fechar proposta — o cliente tende a deixar de esperar o câmbio.');
   else lines.push('Dólar estável em R$ '+moneyFx(mkt.usd)+'.');
-  if(ibov <= -1) lines.push('Ibovespa caiu. Empresa aperta custo: CodeCraft Gestão e site que captura pedido.');
-  else if(ibov >= 1) lines.push('Bolsa sobe. Clínica e loja olham crescimento: site e captura.');
-  if(selic >= 13) lines.push('Selic em '+selic+'%. Crédito caro — PIX à vista fecha mais.');
-  if(mkt.eur!=null) lines.push('Euro R$ '+moneyFx(mkt.eur)+'.');
-  return { lines, copy: lines.join(' ') };
+  if(ibov <= -1) lines.push('Ibovespa em queda. Empresas cortam custo: priorize CodeCraft Gestão e site que captura pedido.');
+  else if(ibov >= 1) lines.push('Bolsa em alta. Clínicas e lojas olham crescimento: site e captura comercial.');
+  if(selic >= 13) lines.push('Selic em '+selic+'%. Crédito caro — PIX à vista fecha com mais segurança.');
+  if(mkt.eur!=null) lines.push('Euro em R$ '+moneyFx(mkt.eur)+'.');
+  return { lines, copy: '<strong>Leitura de mercado (analista sênior)</strong><br>'+lines.join(' ') };
 }
 function analyzeProjects(projects){
-  if(!projects.length) return 'Nenhum projeto no painel. Manda o briefing aqui (cliente, o que precisa, prazo) que eu analiso como se fosse o dono da operação.';
+  if(!projects.length) return '<strong>Análise da fila</strong><br>Nenhum projeto no painel. Envie o briefing (cliente, necessidade, prazo) para análise operacional completa.';
   const by = {};
   projects.forEach(p=>{ by[p.status]=(by[p.status]||0)+1; });
   const unpaid = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
   const stuck = projects.filter(p=>p.status==='analise' || (p.status==='andamento' && !p.deliveryUrl));
   const paid = projects.filter(p=>p.paid).reduce((s,p)=>s+Number(p.pixValue||0),0);
   const open = unpaid.reduce((s,p)=>s+Number(p.pixValue||0),0);
-  let html = projects.length+' projeto(s): '+(by.analise||0)+' em análise, '+(by.andamento||0)+' em andamento, '+(by.concluido||0)+' concluído(s).<br>';
+  let html = '<strong>Análise de projetos (visão operacional)</strong><br>';
+  html += projects.length+' projeto(s): '+(by.analise||0)+' em análise, '+(by.andamento||0)+' em andamento, '+(by.concluido||0)+' concluído(s).<br>';
   html += 'Caixa da operação: recebido '+money(paid)+', em aberto '+money(open)+'.<br>';
-  html += stuck.length ? 'Travado: '+stuck.slice(0,5).map(p=>escapeHtml(p.clientName)+' · '+escapeHtml(p.projectName)).join('; ')+'.<br>' : 'Nada travado na produção.<br>';
+  html += stuck.length ? 'Atenção (travado): '+stuck.slice(0,5).map(p=>escapeHtml(p.clientName)+' · '+escapeHtml(p.projectName)).join('; ')+'.<br>' : 'Nada travado na produção.<br>';
   html += unpaid.length ? 'PIX em aberto: '+unpaid.slice(0,5).map(p=>escapeHtml(p.clientName)+' '+money(Number(p.pixValue))).join(', ')+'.' : 'Nenhum PIX em aberto.';
   return html;
 }
@@ -2514,22 +2676,22 @@ function analyzeBrief(raw, projects){
   const t = raw.toLowerCase();
   const kind = /loja|e-?commerce|pedido/.test(t) ? 'loja' : /sistema|app|agenda|gestao|gestão/.test(t) ? 'sistema' : /landing|captura/.test(t) ? 'landing' : /financ/.test(t) ? 'CodeCraft Gestão' : 'site';
   const prazo = kind==='landing' ? '7 a 12 dias' : kind==='loja' ? '15 a 25 dias' : kind==='sistema' || kind==='CodeCraft Gestão' ? '20 a 40 dias' : '10 a 18 dias';
-  const risco = projects.filter(p=>p.status!=='concluido').length >= 3 ? 'Fila cheia: não promete data curta.' : 'Fila ok para entrar agora.';
-  return 'Li o que você mandou como briefing de <strong>'+kind+'</strong>.<br>Prazo honesto: '+prazo+'. '+risco+'<br>Próximo passo: cadastra em Projetos com nome do cliente, valor e PIX. O cliente acompanha no portal.';
+  const risco = projects.filter(p=>p.status!=='concluido').length >= 3 ? 'Fila elevada: não prometa prazo curto.' : 'Fila adequada para iniciar agora.';
+  return '<strong>Briefing analisado (requisitos + prazo)</strong><br>Classificação: <strong>'+kind+'</strong>.<br>Prazo honesto: '+prazo+'. '+risco+'<br>Próximo passo: cadastrar em Projetos com nome do cliente, valor e PIX. O cliente acompanha no portal.';
 }
 function jarvisIdeas(projects, mkt, messages){
   const ideas = [];
-  ideas.push('Produto: pacote “site + CodeCraft Gestão” para clínica e loja — um fecha a cara, o outro a operação.');
-  if((messages||[]).length) ideas.push('Tem recado no site sem resposta. Fecha no chat antes de caçar gente nova.');
-  if(projects.filter(p=>p.status==='concluido' && !p.deliveryUrl).length) ideas.push('Projeto concluído sem link: o cliente não vê o site. Cola a URL na entrega.');
-  if(Number(mkt.selic)>=13) ideas.push('Oferta do trimestre: PIX à vista, sem parcelar. Selic alta mata proposta longa.');
-  if(Number(mkt.ibovPct)<=-1) ideas.push('Gancho de conteúdo: “cortar gasto” no @code.invention e no LinkedIn.');
+  ideas.push('Produto: pacote “site + CodeCraft Gestão” para clínica e loja — presença comercial e operação no mesmo ciclo.');
+  if((messages||[]).length) ideas.push('Há mensagem no site sem resposta. Priorize o retorno formal na aba Conversas antes de nova prospecção.');
+  if(projects.filter(p=>p.status==='concluido' && !p.deliveryUrl).length) ideas.push('Há projeto concluído sem link de entrega: inclua a URL para o cliente visualizar o resultado.');
+  if(Number(mkt.selic)>=13) ideas.push('Oferta do trimestre: PIX à vista. Selic elevada reduz adesão a propostas longas.');
+  if(Number(mkt.ibovPct)<=-1) ideas.push('Conteúdo sugerido: “reduzir custo operacional” no @code.invention e no LinkedIn.');
   ideas.push('Melhoria interna: todo projeto novo já nasce com recorrente de manutenção no painel Empresa.');
-  ideas.push('Futuro: loja com pedido no WhatsApp + painel ao vivo. BH ainda vende no zap e perde número.');
+  ideas.push('Horizonte: loja com pedido no WhatsApp + painel ao vivo — BH ainda vende no zap e perde registro.');
   return ideas;
 }
 function jarvisFuture(mkt){
-  return 'Olhando na frente: Selic em '+(mkt.selic!=null?mkt.selic+'%':'—')+', dólar R$ '+moneyFx(mkt.usd)+'. Empresa pequena em BH vai querer ferramenta barata que fecha caixa, não ERP. CodeCraft ganha com site rápido, loja simples e CodeCraft Gestão. Evita projeto gigante. No @code.invention, reels curtos de “antes/depois” e mercado. Daqui 90 dias: 1 oferta clara (site+Gestão), 1 nicho (clínica ou loja), 1 rotina de post na página.';
+  return '<strong>Visão de 90 dias</strong><br>Cenário: Selic em '+(mkt.selic!=null?mkt.selic+'%':'—')+', dólar R$ '+moneyFx(mkt.usd)+'. Pequenas empresas em BH buscam ferramenta acessível que feche caixa, não ERP pesado. CodeCraft ganha com site rápido, loja simples e CodeCraft Gestão. Evite escopos gigantes. No @code.invention, reels curtos de antes/depois e mercado. Meta do trimestre: 1 oferta clara (site+Gestão), 1 nicho (clínica ou loja), 1 rotina de publicação.';
 }
 function jarvisFinance(projects){
   const paid = projects.filter(p=>p.paid).reduce((s,p)=>s+Number(p.pixValue||0),0);
@@ -2537,7 +2699,7 @@ function jarvisFinance(projects){
   const bySvc = {};
   projects.forEach(p=>{ const k=p.serviceType||'site'; bySvc[k]=(bySvc[k]||0)+Number(p.pixValue||0); });
   const svc = Object.keys(bySvc).map(k=>k+' '+money(bySvc[k])).join(', ') || 'sem valor lançado';
-  return 'Resumo deste painel: recebido '+money(paid)+', em aberto '+open.length+' ('+money(open.reduce((s,p)=>s+Number(p.pixValue||0),0))+'). Por serviço: '+escapeHtml(svc)+'. PIX CodeCraft: 31999758385. CodeCraft Gestão: R$ 280–500/mês.';
+  return '<strong>Análise financeira da operação</strong><br>Recebido '+money(paid)+'; em aberto '+open.length+' ('+money(open.reduce((s,p)=>s+Number(p.pixValue||0),0))+'). Por serviço: '+escapeHtml(svc)+'. PIX oficial: 31999758385. CodeCraft Gestão: R$ 280–500/mês.';
 }
 
 async function sendAdminAi(){
