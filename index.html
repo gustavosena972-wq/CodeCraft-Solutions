@@ -27,10 +27,13 @@
     --slate:#6B7CA0;
     --danger:#D65B5B;
     --radius:14px;
+    --page-x: clamp(20px, 5vw, 56px);
+    --section-y: clamp(72px, 10vw, 112px);
+    --content: 1120px;
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
-  body{margin:0; background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; line-height:1.5; overflow-x:hidden;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; line-height:1.6; overflow-x:hidden;}
   .mono{font-family:'JetBrains Mono',monospace;}
   h1,h2,h3{font-family:'JetBrains Mono',monospace; margin:0; letter-spacing:-0.01em;}
   a{color:inherit;}
@@ -42,17 +45,41 @@
   }
   .ccs-config-banner.show{display:block;}
 
-  .ccs-nav{position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:14px 40px; background:rgba(247,246,242,0.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
-  .ccs-logo{display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:17px; text-decoration:none; color:var(--ink); cursor:pointer;}
-  .ccs-logo .mark{width:34px; height:34px; border-radius:9px; flex-shrink:0; overflow:hidden; background:var(--panel); display:grid; place-items:center; box-shadow:0 6px 16px rgba(18,23,43,.12);}
+  .ccs-nav{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:16px var(--page-x);
+    background:rgba(247,246,242,0.94); backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .ccs-nav > .ccs-logo{position:relative; z-index:2;}
+  .ccs-nav-actions{position:relative; z-index:2;}
+  .ccs-logo{display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:16px; text-decoration:none; color:var(--ink); cursor:pointer; flex-shrink:0;}
+  .ccs-logo .mark{width:36px; height:36px; border-radius:10px; flex-shrink:0; overflow:hidden; background:var(--panel); display:grid; place-items:center; box-shadow:0 6px 16px rgba(18,23,43,.12);}
   .ccs-logo .mark img{width:100%; height:100%; object-fit:cover; display:block;}
-  .ccs-logo .word{display:flex; flex-direction:column; line-height:1.1;}
+  .ccs-logo .word{display:flex; flex-direction:column; line-height:1.15;}
   .ccs-logo .word small{font-size:10px; font-weight:600; color:var(--ink-soft); letter-spacing:.08em; text-transform:uppercase;}
   .ccs-logo .dot{width:10px;height:10px;border-radius:2px;background:var(--amber); transform:rotate(45deg);}
-  .ccs-nav-links{display:flex; gap:22px; align-items:center; font-size:13.5px; flex-wrap:wrap; justify-content:flex-end;}
-  .ccs-nav-links a{text-decoration:none; color:var(--ink-soft); font-weight:600;}
+  .ccs-nav-actions{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+  .ccs-nav-toggle{
+    display:none; width:42px; height:42px; border-radius:10px; border:1.5px solid var(--line);
+    background:#fff; align-items:center; justify-content:center; padding:0;
+  }
+  .ccs-nav-toggle span{display:block; width:18px; height:2px; background:var(--ink); position:relative;}
+  .ccs-nav-toggle span::before, .ccs-nav-toggle span::after{
+    content:''; position:absolute; left:0; width:18px; height:2px; background:var(--ink);
+  }
+  .ccs-nav-toggle span::before{top:-6px;}
+  .ccs-nav-toggle span::after{top:6px;}
+  .ccs-nav-links{
+    display:flex; align-items:center; gap:8px 22px; font-size:13.5px;
+    flex:1; justify-content:flex-end; flex-wrap:nowrap;
+  }
+  .ccs-nav-links a{text-decoration:none; color:var(--ink-soft); font-weight:600; white-space:nowrap;}
   .ccs-nav-links a:hover{color:var(--ink);}
-  .ccs-btn{border:none; padding:10px 18px; border-radius:8px; font-weight:700; font-size:14px; background:var(--ink); color:var(--paper); transition:transform .15s ease, background .15s ease;}
+  .ccs-nav-links .ccs-nav-more{display:inline-flex; align-items:center; margin-left:4px;}
+  .ccs-nav-links .ccs-nav-more .ccs-btn{padding:8px 12px; font-size:12.5px;}
+  .ccs-btn{border:none; padding:11px 18px; border-radius:10px; font-weight:700; font-size:14px; background:var(--ink); color:var(--paper); transition:transform .15s ease, background .15s ease;}
   .ccs-btn:hover{transform:translateY(-1px); background:#000;}
   .ccs-btn.ghost{background:transparent; color:var(--ink); border:1.5px solid var(--ink);}
   .ccs-btn.amber{background:var(--amber); color:#221304;}
@@ -64,22 +91,24 @@
       radial-gradient(900px 420px at 85% -10%, rgba(232,163,61,.18), transparent 55%),
       radial-gradient(700px 380px at 10% 110%, rgba(47,182,165,.12), transparent 50%),
       var(--panel);
-    color:#EDEFFA; padding:64px 40px 84px; display:grid; grid-template-columns:1.1fr .9fr; gap:50px; align-items:center;
+    color:#EDEFFA;
+    padding: clamp(56px, 9vw, 96px) var(--page-x) clamp(64px, 10vw, 108px);
+    display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+    gap: clamp(36px, 6vw, 64px); align-items:center;
   }
-  .ccs-hero-brand{display:flex; align-items:center; gap:12px; margin-bottom:18px;}
-  .ccs-hero-brand .mark{width:48px; height:48px; border-radius:12px; overflow:hidden; box-shadow:0 10px 28px rgba(0,0,0,.35);}
+  .ccs-hero-brand{display:flex; align-items:center; gap:14px; margin-bottom:22px;}
+  .ccs-hero-brand .mark{width:52px; height:52px; border-radius:14px; overflow:hidden; box-shadow:0 10px 28px rgba(0,0,0,.35); flex-shrink:0;}
   .ccs-hero-brand .mark img{width:100%; height:100%; object-fit:cover; display:block;}
-  .ccs-hero-brand strong{font-family:'JetBrains Mono',monospace; font-size:20px; color:#fff; font-weight:800;}
-  .ccs-hero-brand span{display:block; font-size:12px; color:#B9BEDB; margin-top:2px;}
-  .ccs-hero-eyebrow{font-family:'JetBrains Mono',monospace; color:var(--amber); font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:14px;}
-  .ccs-hero h1{font-size:44px; line-height:1.12; font-weight:800; color:#fff;}
+  .ccs-hero-brand strong{font-family:'JetBrains Mono',monospace; font-size:22px; color:#fff; font-weight:800;}
+  .ccs-hero-brand span{display:block; font-size:13px; color:#B9BEDB; margin-top:4px;}
+  .ccs-hero-eyebrow{font-family:'JetBrains Mono',monospace; color:var(--amber); font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:16px;}
+  .ccs-hero h1{font-size:clamp(34px, 5vw, 48px); line-height:1.12; font-weight:800; color:#fff;}
   .ccs-hero h1 span{color:var(--amber);}
-  .ccs-hero p{font-size:17px; color:#B9BEDB; max-width:520px; margin-top:18px;}
-  .ccs-hero-ctas{display:flex; gap:14px; margin-top:30px; flex-wrap:wrap;}
-  .ccs-trust{display:flex; flex-wrap:wrap; gap:10px; margin-top:28px;}
-  .ccs-trust span{font-size:12px; font-weight:700; color:#D6DAF3; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:999px; padding:7px 12px;}
-  .ccs-terminal{background:var(--panel-2); border:1px solid var(--line-dark); border-radius:12px; padding:20px; font-family:'JetBrains Mono',monospace; font-size:13.5px; color:#D6DAF3; min-height:220px; box-shadow:0 20px 60px rgba(0,0,0,.35);}
-  .ccs-terminal .bar{display:flex; gap:6px; margin-bottom:14px;}
+  .ccs-hero p{font-size:17px; color:#B9BEDB; max-width:34em; margin-top:20px; line-height:1.65;}
+  .ccs-hero-ctas{display:flex; gap:12px; margin-top:32px; flex-wrap:wrap;}
+  .ccs-hero-ctas .ccs-btn{min-width:160px;}
+  .ccs-terminal{background:var(--panel-2); border:1px solid var(--line-dark); border-radius:16px; padding:24px; font-family:'JetBrains Mono',monospace; font-size:13.5px; color:#D6DAF3; min-height:240px; box-shadow:0 20px 60px rgba(0,0,0,.35);}
+  .ccs-terminal .bar{display:flex; gap:6px; margin-bottom:16px;}
   .ccs-terminal .bar span{width:10px;height:10px;border-radius:50%;background:#3A4272;}
   .ccs-terminal #ccs-typed{white-space:pre-wrap;}
   .ccs-cursor{display:inline-block; width:8px; background:var(--amber); animation:blink 1s steps(1) infinite;}
@@ -97,93 +126,91 @@
   .ccs-admin-login-card .brand-row img{width:44px; height:44px; border-radius:11px;}
   .ccs-card a{color:var(--panel); font-weight:700;}
 
-  .ccs-section{padding:80px 40px; max-width:1180px; margin:0 auto;}
-  .ccs-section-tight{padding-top:50px;}
-  .ccs-eyebrow{font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.12em; margin-bottom:10px;}
-  .ccs-section h2{font-size:30px; font-weight:800; max-width:640px;}
-  .ccs-lede{color:var(--ink-soft); font-size:16px; max-width:640px; margin-top:14px;}
+  .ccs-section{padding:var(--section-y) var(--page-x); max-width:var(--content); margin:0 auto;}
+  .ccs-section + .ccs-section{border-top:1px solid transparent;}
+  .ccs-eyebrow{font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.12em; margin-bottom:12px;}
+  .ccs-section h2{font-size:clamp(26px, 3.4vw, 34px); font-weight:800; max-width:18em; line-height:1.2;}
+  .ccs-lede{color:var(--ink-soft); font-size:16.5px; max-width:38em; margin-top:16px; line-height:1.65;}
 
-  .ccs-grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:38px;}
-  .ccs-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:26px;}
-  .ccs-card .num{font-family:'JetBrains Mono',monospace; color:var(--amber); font-weight:800; font-size:13px; margin-bottom:10px;}
+  .ccs-grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:44px;}
+  .ccs-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:28px 26px;}
+  .ccs-card .num{font-family:'JetBrains Mono',monospace; color:var(--amber); font-weight:800; font-size:13px; margin-bottom:12px;}
   .ccs-card h3{font-size:17px; font-weight:700;}
-  .ccs-card p{color:var(--ink-soft); font-size:14.5px; margin-top:8px;}
+  .ccs-card p{color:var(--ink-soft); font-size:14.5px; margin-top:10px; line-height:1.55;}
 
   /* ===== Tabela de preços ===== */
-  .ccs-price-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:38px;}
-  .ccs-price-card{position:relative; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:26px; display:flex; flex-direction:column;}
+  .ccs-price-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:48px;}
+  .ccs-price-card{position:relative; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:28px 26px; display:flex; flex-direction:column;}
   .ccs-price-card.featured{border:2px solid var(--amber); box-shadow:0 14px 40px rgba(232,163,61,.18);}
   .ccs-price-badge{position:absolute; top:-12px; right:18px; background:var(--amber); color:#221304; font-size:11.5px; font-weight:800; padding:5px 12px; border-radius:20px; text-transform:uppercase; letter-spacing:.05em;}
   .ccs-price-tag{font-size:15px; font-weight:700; color:var(--ink);}
-  .ccs-price{font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:800; margin:10px 0 4px; color:var(--panel);}
+  .ccs-price{font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:800; margin:12px 0 6px; color:var(--panel);}
   .ccs-price .from{display:block; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em;}
   .ccs-price .per{font-size:15px; color:var(--ink-soft);}
-  .ccs-price-card ul{list-style:none; padding:0; margin:14px 0 20px; flex:1;}
-  .ccs-price-card ul li{font-size:14px; color:var(--ink-soft); padding:6px 0 6px 22px; position:relative;}
+  .ccs-price-card ul{list-style:none; padding:0; margin:16px 0 22px; flex:1;}
+  .ccs-price-card ul li{font-size:14px; color:var(--ink-soft); padding:7px 0 7px 22px; position:relative;}
   .ccs-price-card ul li::before{content:'✓'; position:absolute; left:0; color:var(--teal); font-weight:800;}
   .ccs-price-card .ccs-btn{width:100%; text-align:center; justify-content:center;}
 
-  .ccs-help{background:var(--paper-dim); border:1px solid var(--line); border-left:3px solid var(--amber); border-radius:8px; padding:12px 14px; font-size:13.5px; color:var(--ink-soft); margin-bottom:18px; line-height:1.5;}
+  .ccs-help{background:var(--paper-dim); border:1px solid var(--line); border-left:3px solid var(--amber); border-radius:8px; padding:14px 16px; font-size:13.5px; color:var(--ink-soft); margin-bottom:20px; line-height:1.55;}
   .ccs-help strong{color:var(--ink);}
 
-  .ccs-steps{display:flex; flex-direction:column; gap:14px; margin-top:34px;}
-  .ccs-step{display:flex; gap:18px; align-items:flex-start; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:22px 24px;}
-  .ccs-step-num{flex:0 0 42px; height:42px; border-radius:50%; background:var(--amber); color:#221304; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:19px; display:flex; align-items:center; justify-content:center;}
-  .ccs-step h3{font-size:16.5px; color:var(--ink); margin-bottom:6px;}
-  .ccs-step p{font-size:14.5px; color:var(--ink-soft); line-height:1.55;}
+  .ccs-steps{display:flex; flex-direction:column; gap:16px; margin-top:40px;}
+  .ccs-step{display:flex; gap:20px; align-items:flex-start; background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:24px 26px;}
+  .ccs-step-num{flex:0 0 44px; height:44px; border-radius:50%; background:var(--amber); color:#221304; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:19px; display:flex; align-items:center; justify-content:center;}
+  .ccs-step h3{font-size:16.5px; color:var(--ink); margin-bottom:8px;}
+  .ccs-step p{font-size:14.5px; color:var(--ink-soft); line-height:1.6;}
 
-  .ccs-pipeline{display:flex; align-items:flex-start; gap:0; margin-top:44px; flex-wrap:wrap;}
-  .ccs-stage{flex:1; min-width:180px; position:relative; padding:0 18px 0 0;}
+  .ccs-pipeline{display:flex; align-items:flex-start; gap:0; margin-top:48px; flex-wrap:wrap;}
+  .ccs-stage{flex:1; min-width:180px; position:relative; padding:0 22px 0 0;}
   .ccs-stage .node{width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:13px; color:#fff; margin-bottom:14px; border:2px solid transparent;}
   .ccs-stage .track{position:absolute; top:17px; left:34px; right:0; height:2px; background:var(--line);}
   .ccs-stage:last-child .track{display:none;}
-  .ccs-stage h4{font-size:14.5px; font-weight:700; margin:0 0 4px;}
-  .ccs-stage p{font-size:13px; color:var(--ink-soft); margin:0;}
+  .ccs-stage h4{font-size:14.5px; font-weight:700; margin:0 0 6px;}
+  .ccs-stage p{font-size:13.5px; color:var(--ink-soft); margin:0; line-height:1.5;}
   .ccs-stage.done .node{background:var(--slate);}
   .ccs-stage.current .node{background:var(--amber); color:#221304;}
   .ccs-stage.current .track{background:var(--amber);}
   .ccs-stage.done .track{background:var(--slate);}
   .ccs-stage.future .node{background:#fff; border-color:var(--line); color:var(--ink-soft);}
 
-  .ccs-about{display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start;}
-  .ccs-about > div:first-child{max-width:520px;}
-  .ccs-about .mark{font-family:'JetBrains Mono',monospace; font-size:120px; color:var(--paper-dim); font-weight:800; line-height:1; user-select:none;}
-  .ccs-gestao-side{min-width:0; max-width:520px;}
-  .ccs-gestao-side .ccs-gestao-wrap{margin-top:0; height:auto; padding:22px 20px; border-radius:14px;}
-  .ccs-gestao-side .ccs-gestao-wrap h2{font-size:20px; line-height:1.25; max-width:100%;}
-  .ccs-gestao-side .ccs-gestao-wrap .ccs-lede{font-size:14.5px; margin-top:10px; max-width:100%;}
-  .ccs-gestao-side .ccs-gestao-biz{grid-template-columns:1fr; gap:8px; margin:14px 0 14px; max-width:none;}
-  .ccs-gestao-side .ccs-gestao-biz .biz{padding:10px 12px; border-radius:8px;}
-  .ccs-gestao-side .ccs-gestao-biz .biz strong{font-size:13px; margin-bottom:2px;}
-  .ccs-gestao-side .ccs-gestao-biz .biz span{font-size:12px; line-height:1.4;}
-  .ccs-gestao-side .ccs-gestao-plans{gap:6px; margin:0 0 14px;}
-  .ccs-gestao-side .ccs-gestao-plans .plan{font-size:11px; padding:5px 9px; border-radius:6px;}
-  .ccs-gestao-side .ccs-btn{padding:8px 14px; font-size:13px;}
-  .ccs-gestao-wrap{background:var(--panel); color:#fff; border-radius:18px; padding:36px 32px; margin-top:10px;}
+  .ccs-about{display:block; max-width:720px;}
+  .ccs-about .ccs-lede + .ccs-lede{margin-top:18px;}
+  .ccs-gestao-band{background:var(--paper-dim); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .ccs-gestao-band .ccs-section{max-width:var(--content);}
+  .ccs-band{
+    max-width:none; background:var(--paper-dim); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  .ccs-band > .ccs-eyebrow,
+  .ccs-band > h2,
+  .ccs-band > .ccs-lede,
+  .ccs-band > .ccs-pipeline{
+    max-width:var(--content); margin-left:auto; margin-right:auto;
+  }
+  .ccs-band > h2{margin-left:auto; margin-right:auto;}
+  .ccs-band > .ccs-pipeline{margin-top:48px;}
+  .ccs-gestao-wrap{background:var(--panel); color:#fff; border-radius:20px; padding:clamp(28px, 4vw, 44px);}
   .ccs-gestao-wrap .ccs-eyebrow{color:var(--amber);}
-  .ccs-gestao-wrap h2{color:#fff; max-width:720px;}
-  .ccs-gestao-wrap .ccs-lede{color:#B9BEDB; max-width:720px;}
-  .ccs-gestao-biz{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:22px 0 26px; max-width:920px;}
-  .ccs-gestao-biz .biz{background:var(--panel-2); border:1px solid var(--line-dark); border-radius:12px; padding:18px;}
-  .ccs-gestao-biz .biz strong{display:block; font-size:15px; margin-bottom:6px; color:#fff;}
-  .ccs-gestao-biz .biz span{display:block; font-size:13px; color:#B9BEDB; line-height:1.45;}
-  .ccs-gestao-plans{display:flex; flex-wrap:wrap; gap:10px; margin:0 0 22px;}
+  .ccs-gestao-wrap h2{color:#fff; max-width:20em;}
+  .ccs-gestao-wrap .ccs-lede{color:#B9BEDB; max-width:40em;}
+  .ccs-gestao-biz{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:28px 0 28px; max-width:920px;}
+  .ccs-gestao-biz .biz{background:var(--panel-2); border:1px solid var(--line-dark); border-radius:12px; padding:20px;}
+  .ccs-gestao-biz .biz strong{display:block; font-size:15px; margin-bottom:8px; color:#fff;}
+  .ccs-gestao-biz .biz span{display:block; font-size:13.5px; color:#B9BEDB; line-height:1.5;}
+  .ccs-gestao-plans{display:flex; flex-wrap:wrap; gap:10px; margin:0 0 24px;}
   .ccs-gestao-plans .plan{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; padding:8px 12px; border-radius:999px; border:1.5px solid var(--line-dark); background:transparent; color:#fff;}
   .ccs-gestao-plans .plan.hot{border-color:var(--amber); background:#3A2A12; color:var(--amber);}
   @media (max-width:860px){
     .ccs-gestao-biz{grid-template-columns:1fr;}
-    .ccs-gestao-wrap{padding:28px 20px;}
-    .ccs-gestao-side{max-width:none;}
-    .ccs-about > div:first-child{max-width:none;}
   }
 
-  .ccs-contact-wrap{display:grid; grid-template-columns:1fr 1fr; gap:50px;}
-  .ccs-field{display:flex; flex-direction:column; gap:6px; margin-bottom:16px;}
+  .ccs-contact-wrap{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:start;}
+  .ccs-field{display:flex; flex-direction:column; gap:8px; margin-bottom:18px;}
   .ccs-field label{font-size:12.5px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em;}
-  .ccs-field input, .ccs-field textarea, .ccs-field select{padding:11px 12px; border-radius:8px; border:1.5px solid var(--line); font-family:'Inter',sans-serif; font-size:14.5px; background:#fff;}
+  .ccs-field input, .ccs-field textarea, .ccs-field select{padding:12px 14px; border-radius:10px; border:1.5px solid var(--line); font-family:'Inter',sans-serif; font-size:14.5px; background:#fff;}
   .ccs-field input:focus, .ccs-field textarea:focus, .ccs-field select:focus{outline:2px solid var(--amber); outline-offset:1px; border-color:var(--amber);}
 
-  footer{padding:30px 40px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--ink-soft); flex-wrap:wrap; gap:10px;}
+  footer{padding:36px var(--page-x); border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--ink-soft); flex-wrap:wrap; gap:14px;}
 
   .ccs-app-header{display:flex; align-items:center; justify-content:space-between; padding:18px 40px; border-bottom:1px solid var(--line); background:#fff;}
   .ccs-shell{max-width:840px; margin:0 auto; padding:50px 24px;}
@@ -328,25 +355,36 @@
   @media (max-width:900px){ .ccs-ai-layout{grid-template-columns:1fr;} }
   @media (max-width:760px){ .ccs-metrics{grid-template-columns:1fr 1fr;} }
 
+  @media (max-width:980px){
+    .ccs-nav-toggle{display:inline-flex;}
+    .ccs-nav-links{
+      display:none; position:absolute; top:100%; left:0; right:0;
+      flex-direction:column; align-items:stretch; gap:0;
+      background:rgba(247,246,242,.98); border-bottom:1px solid var(--line);
+      padding:10px var(--page-x) 16px; box-shadow:0 16px 30px rgba(18,23,43,.08);
+    }
+    .ccs-nav.open .ccs-nav-links{display:flex;}
+    .ccs-nav-links a, .ccs-nav-links .ccs-nav-more{
+      display:block; padding:12px 4px; border-bottom:1px solid var(--line); white-space:normal;
+    }
+    .ccs-nav-links .ccs-nav-more{border-bottom:none; padding-top:14px;}
+    .ccs-nav-links .ccs-btn{width:100%;}
+  }
   @media (max-width:860px){
     .ccs-chat-layout{grid-template-columns:1fr;}
     .ccs-metrics{grid-template-columns:1fr 1fr;}
     .ccs-charts{grid-template-columns:1fr;}
     .ccs-chart-card[style*="span 2"]{grid-column:span 1 !important;}
-    .ccs-hero{grid-template-columns:1fr; padding:50px 22px 60px;}
-   .ccs-nav{padding:16px 20px; flex-wrap:wrap; gap:10px;}  
-    .ccs-nav-links{gap:12px; font-size:13px; width:100%; flex-wrap:wrap;}  
-    .ccs-hero h1{font-size:32px;}  
-    .ccs-section h2{font-size:24px;}  
+    .ccs-hero{grid-template-columns:1fr;}
+    .ccs-hero-ctas .ccs-btn{min-width:0; flex:1 1 auto;}
     img, canvas, table{max-width:100%;}
-    .ccs-section{padding:56px 22px;}
     .ccs-grid-3{grid-template-columns:1fr;}
     .ccs-price-grid{grid-template-columns:1fr;}
-    .ccs-about, .ccs-contact-wrap{grid-template-columns:1fr;}
-    .ccs-about{grid-template-columns:1fr; gap:28px;}
-    .ccs-gestao-side .ccs-gestao-wrap{padding:20px 18px;}
-    .ccs-about .mark{display:none;}
+    .ccs-contact-wrap{grid-template-columns:1fr; gap:36px;}
     .ccs-app-header{padding:16px 20px;}
+  }
+  @media (min-width:861px) and (max-width:1100px){
+    .ccs-grid-3, .ccs-price-grid{grid-template-columns:repeat(2,1fr);}
   }
 </style>
 </head>
@@ -358,31 +396,34 @@
 
 <!-- ================= LANDING ================= -->
 <div id="screen-landing">
-  <nav class="ccs-nav">
+  <nav class="ccs-nav" id="ccs-nav">
     <a class="ccs-logo" href="#" onclick="goHome(); return false;" aria-label="CodeCraft Solutions">
-      <span class="mark"><img src="logo.png" alt="" width="34" height="34"></span>
+      <span class="mark"><img src="logo.png" alt="" width="36" height="36"></span>
       <span class="word">CodeCraft Solutions<small>Estúdio de software</small></span>
     </a>
-    <div class="ccs-nav-links">
-      <a href="#quem-somos">Quem somos</a>
-      <a href="#servicos">Serviços</a>
-      <a href="#gestao">Gestão</a>
-      <a href="#como-comecar">Como começar</a>
-      <a href="#precos">Preços</a>
-      <a href="#como-funciona">Como funciona</a>
-      <a href="#contato">Contato</a>
-      <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" aria-label="Instagram da CodeCraft Solutions" style="display:flex; align-items:center;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
-      </a>
-      <button class="ccs-btn ghost" onclick="showScreen('admin')">Área admin</button>
-      <button class="ccs-btn amber" onclick="showScreen('client')">Portal do cliente</button>
+    <div class="ccs-nav-links" id="ccs-nav-links">
+      <a href="#quem-somos" onclick="closeSiteNav()">Quem somos</a>
+      <a href="#servicos" onclick="closeSiteNav()">Serviços</a>
+      <a href="#gestao" onclick="closeSiteNav()">Gestão</a>
+      <a href="#precos" onclick="closeSiteNav()">Preços</a>
+      <a href="#contato" onclick="closeSiteNav()">Contato</a>
+      <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" aria-label="Instagram da CodeCraft Solutions">Instagram</a>
+      <div class="ccs-nav-more">
+        <button class="ccs-btn ghost" onclick="closeSiteNav(); showScreen('admin')">Área admin</button>
+      </div>
+    </div>
+    <div class="ccs-nav-actions">
+      <button class="ccs-btn amber" onclick="showScreen('client')">Portal</button>
+      <button class="ccs-nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" onclick="toggleSiteNav(this)">
+        <span></span>
+      </button>
     </div>
   </nav>
 
   <section class="ccs-hero">
     <div class="ccs-hero-copy">
       <div class="ccs-hero-brand">
-        <span class="mark"><img src="logo.png" alt="Logo CodeCraft Solutions" width="48" height="48"></span>
+        <span class="mark"><img src="logo.png" alt="Logo CodeCraft Solutions" width="52" height="52"></span>
         <div>
           <strong>CodeCraft Solutions</strong>
           <span>Belo Horizonte · software sob medida</span>
@@ -392,15 +433,8 @@
       <h1>Sua ideia,<br>em <span>produção</span>.</h1>
       <p>Transformamos sistemas, sites e aplicativos em produtos reais — com acompanhamento aberto, do primeiro commit até a entrega.</p>
       <div class="ccs-hero-ctas">
-        <button class="ccs-btn amber" onclick="document.getElementById('contato').scrollIntoView({behavior:'smooth'})">Fale com a gente</button>
-        <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="showScreen('client')">Acompanhar meu projeto</button>
-        <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="document.getElementById('gestao').scrollIntoView({behavior:'smooth'})">Ver CodeCraft Gestão</button>
-      </div>
-      <div class="ccs-trust">
-        <span>Portal ao vivo</span>
-        <span>PIX oficial</span>
-        <span>Chat em tempo real</span>
-        <span>Admin com login seguro</span>
+        <button class="ccs-btn amber" onclick="toggleLeadWidget()">Fale com a gente</button>
+        <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="showScreen('client')">Acompanhar projeto</button>
       </div>
     </div>
     <div class="ccs-terminal">
@@ -410,13 +444,14 @@
   </section>
 
   <section class="ccs-section ccs-about" id="quem-somos">
-    <div>
-      <div class="ccs-eyebrow">Quem somos</div>
-      <h2>Um estúdio pequeno, focado em entregar certo.</h2>
-      <p class="ccs-lede">Somos uma equipe enxuta que prefere resolver o problema real do cliente a empilhar reunião. Cada projeto passa pelas mesmas três etapas — análise, construção e entrega — e você acompanha cada uma delas em tempo real, sem precisar perguntar "como está indo?".</p>
-      <p class="ccs-lede">Atendemos negócios pequenos e médios que precisam de um sistema, um site ou um app funcionando de verdade — sem contrato complicado e sem letra miúda.</p>
-    </div>
-    <div class="ccs-gestao-side" id="gestao">
+    <div class="ccs-eyebrow">Quem somos</div>
+    <h2>Um estúdio pequeno, focado em entregar certo.</h2>
+    <p class="ccs-lede">Somos uma equipe enxuta que prefere resolver o problema real do cliente a empilhar reunião. Cada projeto passa pelas mesmas três etapas — análise, construção e entrega — e você acompanha cada uma delas em tempo real.</p>
+    <p class="ccs-lede">Atendemos negócios pequenos e médios que precisam de um sistema, um site ou um app funcionando de verdade — sem contrato complicado e sem letra miúda.</p>
+  </section>
+
+  <div class="ccs-gestao-band" id="gestao">
+    <section class="ccs-section">
       <div class="ccs-gestao-wrap">
         <div class="ccs-eyebrow">Produto · só empresas</div>
         <h2>CodeCraft Gestão</h2>
@@ -433,10 +468,10 @@
         </div>
         <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/app/planos/" target="_blank" rel="noopener">Assinar CodeCraft Gestão</a>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
-  <section class="ccs-section ccs-section-tight" id="servicos">
+  <section class="ccs-section" id="servicos">
     <div class="ccs-eyebrow">O que fazemos</div>
     <h2>Serviços</h2>
     <p class="ccs-lede">Construímos o que o seu negócio precisa para rodar no dia a dia.</p>
@@ -450,7 +485,7 @@
     </div>
   </section>
 
-  <section class="ccs-section ccs-section-tight" id="como-comecar">
+  <section class="ccs-section" id="como-comecar">
     <div class="ccs-eyebrow">Como começar</div>
     <h2>Primeira vez aqui? É só seguir estes passos</h2>
     <p class="ccs-lede">Não precisa de cadastro nem de código pra começar. Siga a ordem abaixo — é rápido e sem complicação:</p>
@@ -486,7 +521,7 @@
     </div>
   </section>
 
-  <section class="ccs-section ccs-section-tight" id="precos">
+  <section class="ccs-section" id="precos">
     <div class="ccs-eyebrow">Preços</div>
     <h2>Tabela de preços</h2>
     <p class="ccs-lede">Valores <strong>a partir de</strong> — o preço final é combinado conforme o tamanho do projeto. Pediu mais coisa, a gente conversa e ajusta.</p>
@@ -558,16 +593,14 @@
     <p style="font-size:13px; color:var(--ink-soft); margin-top:18px;">Os valores são um ponto de partida, pensados pra caber no seu bolso. Projetos maiores ou com mais recursos aumentam conforme o escopo — podendo chegar a ~R$ 15 mil nos mais completos. <strong>Fale com a gente</strong> que montamos um preço justo e sob medida.</p>
   </section>
 
-  <section class="ccs-section" id="como-funciona" style="background:var(--paper-dim); max-width:none; margin-top:20px;">
-    <div style="max-width:1180px; margin:0 auto;">
-      <div class="ccs-eyebrow">O caminho do seu projeto</div>
-      <h2>Como funciona</h2>
-      <p class="ccs-lede">Três etapas, sempre visíveis para você no portal do cliente.</p>
-      <div class="ccs-pipeline">
-        <div class="ccs-stage current"><div class="track"></div><div class="node">1</div><h4>Em análise</h4><p>Entendemos o problema e desenhamos a solução.</p></div>
-        <div class="ccs-stage future"><div class="track"></div><div class="node">2</div><h4>Em andamento</h4><p>Construção do sistema, com checkpoints claros.</p></div>
-        <div class="ccs-stage future"><div class="track"></div><div class="node">3</div><h4>Concluído</h4><p>Entrega, testes finais e projeto no ar.</p></div>
-      </div>
+  <section class="ccs-section ccs-band" id="como-funciona">
+    <div class="ccs-eyebrow">O caminho do seu projeto</div>
+    <h2>Como funciona</h2>
+    <p class="ccs-lede">Três etapas, sempre visíveis para você no portal do cliente.</p>
+    <div class="ccs-pipeline">
+      <div class="ccs-stage current"><div class="track"></div><div class="node">1</div><h4>Em análise</h4><p>Entendemos o problema e desenhamos a solução.</p></div>
+      <div class="ccs-stage future"><div class="track"></div><div class="node">2</div><h4>Em andamento</h4><p>Construção do sistema, com checkpoints claros.</p></div>
+      <div class="ccs-stage future"><div class="track"></div><div class="node">3</div><h4>Concluído</h4><p>Entrega, testes finais e projeto no ar.</p></div>
     </div>
   </section>
 
@@ -1138,7 +1171,20 @@ function showScreen(name){
   if(name==='admin'){ renderAdminGate(); }
   if(name==='client'){ resetClientLookup(); }
 }
-function goHome(){ showScreen('landing'); }
+function goHome(){ showScreen('landing'); closeSiteNav(); }
+function toggleSiteNav(btn){
+  const nav = document.getElementById('ccs-nav');
+  if(!nav) return;
+  const open = nav.classList.toggle('open');
+  if(btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+function closeSiteNav(){
+  const nav = document.getElementById('ccs-nav');
+  if(!nav) return;
+  nav.classList.remove('open');
+  const btn = nav.querySelector('.ccs-nav-toggle');
+  if(btn) btn.setAttribute('aria-expanded', 'false');
+}
 
 /* ================= HERO TYPING ================= */
 const heroLines = [
