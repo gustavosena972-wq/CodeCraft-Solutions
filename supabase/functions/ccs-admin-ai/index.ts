@@ -1,5 +1,6 @@
-// CodeCraft Solutions — IA Admin (Gemini grátis + Claude opcional)
-// Secrets: GEMINI_API_KEY (recomendado, grátis) | ANTHROPIC_API_KEY (opcional, pago)
+// CodeCraft Solutions — IA Admin sênior
+// Secrets (grátis): GROQ_API_KEY (recomendado) | GEMINI_API_KEY (opcional)
+// Opcional pago: ANTHROPIC_API_KEY
 // Deploy: npx supabase functions deploy ccs-admin-ai --project-ref eqaoanbanhryhbldlbhc
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
@@ -30,35 +31,32 @@ Padrão de qualidade: consultor comercial + pesquisador. Respostas densas, preci
 
 ## Missões
 1. Achar clientes REAIS que precisam de site, loja, sistema ou Gestão
-2. Pesquisa profunda em: Google, Maps, Instagram, 99Freelas, Workana, GetNinjas, Freelancer, LinkedIn, sites de empresas BH/MG
-3. Relatório completo por oportunidade (obrigatório na caça)
-4. Priorizar leads inbound do snapshot (chat/formulário) antes de outbound
-5. Operação: projetos travados, PIX em aberto, chats sem resposta
-6. Sempre pesquisar na web quando o pedido for prospecção, caça, Instagram, freelance ou “achar clientes”
+2. Usar os RESULTADOS DE PESQUISA WEB fornecidos (Google/Maps/Instagram/freelance via links e snippets)
+3. Relatório completo por oportunidade
+4. Priorizar leads inbound do snapshot antes de outbound
+5. Operação: projetos travados, PIX, chats sem resposta
 
-## Relatório de oportunidade (obrigatório)
-Para cada lead:
+## Relatório de oportunidade (obrigatório na caça)
+Para cada lead real dos resultados/pesquisa:
 <strong>Oportunidade N</strong>
 <ul>
-<li><strong>Quem:</strong> nome real encontrado</li>
-<li><strong>O que precisa:</strong> dor concreta observada</li>
+<li><strong>Quem:</strong> nome real</li>
+<li><strong>O que precisa:</strong> dor concreta</li>
 <li><strong>Projeto CodeCraft:</strong> serviço + faixa de preço</li>
 <li><strong>Canal:</strong> origem</li>
-<li><strong>Contato:</strong> só se real (telefone, @, e-mail ou URL do anúncio)</li>
-<li><strong>Link:</strong> URL clicável da fonte</li>
-<li><strong>Por que agora:</strong> 1 frase de timing/urgência</li>
-<li><strong>Abordagem:</strong> mensagem pronta (WhatsApp/DM), tom formal BH, curta</li>
+<li><strong>Contato:</strong> só se real</li>
+<li><strong>Link:</strong> URL da fonte</li>
+<li><strong>Por que agora:</strong> timing</li>
+<li><strong>Abordagem:</strong> mensagem pronta WhatsApp/DM</li>
 </ul>
-Meta: 5 a 10 oportunidades sólidas por varredura. Qualidade > quantidade vazia.
+Meta: 5 a 10 oportunidades sólidas. Qualidade > quantidade vazia.
 
-## Regras de excelência
-- Português do Brasil, formal, claro, denso
-- NUNCA invente telefone, e-mail, @, CNPJ ou “empresa fictícia”
-- Se a busca não trouxe contato, diga “contato no anúncio/perfil” + link
-- Prefira BH / Grande BH / MG; freelance nacional ok se demanda forte
-- Cite fontes com links
-- HTML simples: <p>, <strong>, <em>, <ul>, <li>, <br>, <a href="...">. Sem scripts
-- Respostas longas e completas são esperadas`;
+## Regras
+- Português do Brasil, formal, denso
+- NUNCA invente telefone, e-mail, @, CNPJ ou empresa fictícia
+- Se não houver contato no snippet, diga “contato no anúncio/perfil” + link
+- Prefira BH / Grande BH / MG
+- HTML: <p>, <strong>, <em>, <ul>, <li>, <br>, <a href="...">. Sem scripts`;
 
 function scrubHtml(s: string) {
   return String(s || "")
@@ -85,6 +83,117 @@ function mdToHtml(text: string) {
   return scrubHtml(t);
 }
 
+function decodeHtml(s: string) {
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#x27;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
+async function duckSearch(query: string, limit = 8): Promise<Array<{ title: string; url: string; snippet: string }>> {
+  try {
+    const res = await fetch("https://html.duckduckgo.com/html/", {
+      method: "POST",
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+        "user-agent": "Mozilla/5.0 CodeCraftBot/1.0",
+      },
+      body: `q=${encodeURIComponent(query)}`,
+    });
+    const html = await res.text();
+    const out: Array<{ title: string; url: string; snippet: string }> = [];
+    const re =
+      /<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]*?(?:class="result__snippet"[^>]*>([\s\S]*?)<\/(?:a|td|div)> )?/gi;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(html)) && out.length < limit) {
+      let url = decodeHtml(m[1] || "");
+      // DuckDuckGo redirect URLs
+      const uddg = url.match(/uddg=([^&]+)/);
+      if (uddg) url = decodeURIComponent(uddg[1]);
+      const title = decodeHtml(String(m[2] || "").replace(/<[^>]+>/g, "")).trim();
+      const snippet = decodeHtml(String(m[3] || "").replace(/<[^>]+>/g, "")).trim();
+      if (title && url.startsWith("http")) out.push({ title, url, snippet });
+    }
+    // fallback simpler parse
+    if (!out.length) {
+      const simple = /<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
+      let sm: RegExpExecArray | null;
+      while ((sm = simple.exec(html)) && out.length < limit) {
+        let url = decodeHtml(sm[1] || "");
+        const uddg = url.match(/uddg=([^&]+)/);
+        if (uddg) url = decodeURIComponent(uddg[1]);
+        const title = decodeHtml(String(sm[2] || "").replace(/<[^>]+>/g, "")).trim();
+        if (title && url.startsWith("http")) out.push({ title, url, snippet: "" });
+      }
+    }
+    return out;
+  } catch {
+    return [];
+  }
+}
+
+async function gatherWebResearch(message: string) {
+  const queries = [
+    message.slice(0, 180),
+    "preciso de site OR loja virtual OR sistema site:99freelas.com.br",
+    "preciso de site OR landing page site:workana.com",
+    "criação de site Belo Horizonte",
+    "clínica dentista salão oficina Belo Horizonte site WhatsApp",
+    "site:instagram.com Belo Horizonte clínica OR salão OR oficina OR loja",
+  ];
+  const blocks: string[] = [];
+  for (const q of queries.slice(0, 5)) {
+    const hits = await duckSearch(q, 6);
+    if (!hits.length) continue;
+    blocks.push(
+      `### Busca: ${q}\n` +
+        hits
+          .map(
+            (h, i) =>
+              `${i + 1}. ${h.title}\n   URL: ${h.url}\n   Snippet: ${h.snippet || "(sem snippet)"}`,
+          )
+          .join("\n"),
+    );
+  }
+  return blocks.join("\n\n");
+}
+
+async function callGroq(opts: {
+  apiKey: string;
+  model: string;
+  prompt: string;
+}) {
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${opts.apiKey}`,
+    },
+    body: JSON.stringify({
+      model: opts.model,
+      temperature: 0.3,
+      max_tokens: 8000,
+      messages: [
+        { role: "system", content: SYSTEM },
+        { role: "user", content: opts.prompt },
+      ],
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    return {
+      ok: false as const,
+      error: data?.error?.message || `Groq HTTP ${res.status}`,
+    };
+  }
+  const text = data?.choices?.[0]?.message?.content?.trim() || "";
+  if (!text) return { ok: false as const, error: "Groq retornou vazio." };
+  return { ok: true as const, text };
+}
+
 async function callGemini(opts: {
   apiKey: string;
   model: string;
@@ -96,14 +205,9 @@ async function callGemini(opts: {
   const body: Record<string, unknown> = {
     systemInstruction: { parts: [{ text: SYSTEM }] },
     contents: [{ role: "user", parts: [{ text: opts.prompt }] }],
-    generationConfig: {
-      temperature: 0.35,
-      maxOutputTokens: 8192,
-    },
+    generationConfig: { temperature: 0.35, maxOutputTokens: 8192 },
   };
-  if (opts.withSearch) {
-    body.tools = [{ google_search: {} }];
-  }
+  if (opts.withSearch) body.tools = [{ google_search: {} }];
   const res = await fetch(url, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -114,80 +218,26 @@ async function callGemini(opts: {
     return {
       ok: false as const,
       error: data?.error?.message || `Gemini HTTP ${res.status}`,
-      data,
     };
   }
-  const parts = data?.candidates?.[0]?.content?.parts || [];
-  const text = parts.map((p: { text?: string }) => p.text || "").join("\n").trim();
-  if (!text) {
-    return { ok: false as const, error: "Gemini retornou vazio.", data };
-  }
-  return { ok: true as const, text, data, webSearch: opts.withSearch };
-}
-
-async function callClaude(opts: {
-  apiKey: string;
-  model: string;
-  prompt: string;
-  history: Array<{ role: string; content: string }>;
-  withSearch: boolean;
-  maxTokens: number;
-}) {
-  const messages = [
-    ...opts.history.map((h) => ({
-      role: h.role === "assistant" ? "assistant" : "user",
-      content: String(h.content || "").slice(0, 100_000),
-    })),
-    { role: "user", content: opts.prompt },
-  ];
-  const payload: Record<string, unknown> = {
-    model: opts.model,
-    max_tokens: opts.maxTokens,
-    system: SYSTEM,
-    messages,
-  };
-  if (opts.withSearch) {
-    payload.tools = [{
-      type: "web_search_20250305",
-      name: "web_search",
-      max_uses: 25,
-    }];
-  }
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": opts.apiKey,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify(payload),
-  });
-  const data = await res.json();
-  if (!res.ok) {
-    return {
-      ok: false as const,
-      error: data?.error?.message || `Claude HTTP ${res.status}`,
-      data,
-    };
-  }
-  const text = (Array.isArray(data.content) ? data.content : [])
-    .filter((p: { type?: string }) => p.type === "text")
+  const text = (data?.candidates?.[0]?.content?.parts || [])
     .map((p: { text?: string }) => p.text || "")
-    .join("\n\n")
+    .join("\n")
     .trim();
-  if (!text) return { ok: false as const, error: "Claude retornou vazio.", data };
-  return { ok: true as const, text, data, webSearch: opts.withSearch };
+  if (!text) return { ok: false as const, error: "Gemini retornou vazio." };
+  return { ok: true as const, text, webSearch: opts.withSearch };
 }
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
 
   try {
+    const groqKey = Deno.env.get("GROQ_API_KEY") || "";
     const geminiKey = Deno.env.get("GEMINI_API_KEY") || "";
     const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY") || "";
-    if (!geminiKey && !anthropicKey) {
+    if (!groqKey && !geminiKey && !anthropicKey) {
       return json({
-        error: "Configure GEMINI_API_KEY (grátis) ou ANTHROPIC_API_KEY no Supabase.",
+        error: "Configure GROQ_API_KEY (grátis) no Supabase Secrets.",
         code: "NO_KEY",
       }, 503);
     }
@@ -209,26 +259,52 @@ Deno.serve(async (req) => {
 
     const snapshot = body.snapshot || {};
     const market = body.market || {};
-    const history = Array.isArray(body.history) ? body.history.slice(-40) : [];
     const wantsHunt = /cacar|caçar|prospect|cliente|instagram|freelance|99freela|workana|getninjas|maps|varredura|oportunid|em tudo|achar/i
       .test(message);
 
+    let research = "";
+    if (wantsHunt || !geminiKey) {
+      research = await gatherWebResearch(message);
+    }
+
     const prompt = [
       "## Snapshot operacional (ao vivo)",
-      JSON.stringify(snapshot, null, 0).slice(0, 200_000),
+      JSON.stringify(snapshot, null, 0).slice(0, 150_000),
       "",
       "## Mercado",
-      JSON.stringify(market, null, 0).slice(0, 50_000),
+      JSON.stringify(market, null, 0).slice(0, 30_000),
+      "",
+      research
+        ? `## Resultados de pesquisa web (use estes dados; não invente)\n${research}`
+        : "",
       "",
       wantsHunt
-        ? "## Instrução de caça\nPesquise AGORA na web (Google/Maps/Instagram/freelance) oportunidades REAIS para CodeCraft. Entregue relatório completo com links. Não invente contatos."
+        ? "## Instrução de caça\nMonte relatório sênior com oportunidades REAIS a partir da pesquisa. Links obrigatórios. Sem contato inventado."
         : "## Instrução\nResponda com excelência operacional usando o snapshot.",
       "",
       "## Pedido do admin",
       message,
-    ].join("\n");
+    ].filter(Boolean).join("\n");
 
-    // 1) Gemini grátis (forte + Google Search) — caminho principal
+    // 1) Groq (grátis, forte) + nossa pesquisa web
+    if (groqKey) {
+      const model = Deno.env.get("GROQ_MODEL") || "llama-3.3-70b-versatile";
+      const result = await callGroq({ apiKey: groqKey, model, prompt });
+      if (result.ok) {
+        return json({
+          reply: result.text,
+          replyHtml: mdToHtml(result.text),
+          model,
+          provider: "groq",
+          webSearch: !!research,
+        });
+      }
+      if (!geminiKey && !anthropicKey) {
+        return json({ error: result.error, code: "GROQ_ERROR" }, 502);
+      }
+    }
+
+    // 2) Gemini (se tiver chave)
     if (geminiKey) {
       const model = Deno.env.get("GEMINI_MODEL") || "gemini-2.0-flash";
       let result = await callGemini({
@@ -251,49 +327,18 @@ Deno.serve(async (req) => {
           replyHtml: mdToHtml(result.text),
           model,
           provider: "gemini",
-          webSearch: !!result.webSearch,
+          webSearch: !!result.webSearch || !!research,
         });
       }
-      // se Gemini falhar e não houver Claude, devolve erro
       if (!anthropicKey) {
         return json({ error: result.error, code: "GEMINI_ERROR" }, 502);
       }
     }
 
-    // 2) Claude opcional (pago)
-    const model = Deno.env.get("ANTHROPIC_MODEL") || "claude-sonnet-4-5";
-    const maxTokens = Math.min(
-      Math.max(Number(Deno.env.get("ANTHROPIC_MAX_TOKENS") || 64000) || 64000, 1024),
-      64000,
-    );
-    let claude = await callClaude({
-      apiKey: anthropicKey,
-      model,
-      prompt,
-      history,
-      withSearch: true,
-      maxTokens,
-    });
-    if (!claude.ok) {
-      claude = await callClaude({
-        apiKey: anthropicKey,
-        model,
-        prompt,
-        history,
-        withSearch: false,
-        maxTokens,
-      });
-    }
-    if (!claude.ok) {
-      return json({ error: claude.error, code: "CLAUDE_ERROR" }, 502);
-    }
     return json({
-      reply: claude.text,
-      replyHtml: mdToHtml(claude.text),
-      model,
-      provider: "claude",
-      webSearch: !!claude.webSearch,
-    });
+      error: "Nenhum provedor respondeu. Configure GROQ_API_KEY.",
+      code: "NO_PROVIDER",
+    }, 502);
   } catch (e) {
     return json({
       error: e instanceof Error ? e.message : String(e),

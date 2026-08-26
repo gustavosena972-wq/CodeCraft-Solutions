@@ -1,30 +1,24 @@
-# CodeCraft IA Admin — qualidade sênior (sem pagar Claude)
+# CodeCraft IA — chave grátis (qualidade sênior)
 
-A IA do painel usa **Google Gemini** (grátis, sem cartão) + **pesquisa Google** no servidor.
-Não é chatbot raso: entrega relatório de oportunidades com contato e abordagem.
+## Por que o AI Studio falhou
+O Google mostrou **“request is suspicious”** / bloqueio por **solicitações automatizadas**.
+Isso trava a criação de chave **dentro do navegador do Cursor**.
 
-## 1) Chave Gemini (grátis)
-1. Abra https://aistudio.google.com/apikey
-2. Faça login com Google
-3. **Create API key**
-4. Copie a chave
+O projeto **codecraft-ia** já foi criado no Google Cloud. Continue no **Chrome normal** (fora do Cursor).
 
-## 2) Secret no Supabase
-Projeto `eqaoanbanhryhbldlbhc` → Edge Functions → Secrets:
+## Caminho A — Gemini (recomendado se desbloquear)
+1. Abra o **Chrome** (não o browser do Cursor)
+2. https://aistudio.google.com/apikey
+3. **Importar projetos** → marque **codecraft-ia** → importar
+4. **Criar chave de API** → projeto **codecraft-ia** → copiar
+5. Cole a chave aqui no chat **ou** no Supabase → Secrets → `GEMINI_API_KEY`
 
-| Nome | Valor |
-|------|--------|
-| `GEMINI_API_KEY` | sua chave Gemini |
-| `GEMINI_MODEL` (opcional) | padrão `gemini-2.0-flash` |
+## Caminho B — Groq (mais fácil, sem Cloud Project)
+1. Chrome: https://console.groq.com/keys
+2. Login com Google
+3. **Create API Key** → copiar (`gsk_...`)
+4. Cole aqui → eu configuro `GROQ_API_KEY`
+5. A IA usa **Llama 3.3 70B** + pesquisa web no servidor (nível profissional)
 
-## 3) Deploy da function
-```bash
-npx supabase functions deploy ccs-admin-ai --project-ref eqaoanbanhryhbldlbhc
-```
-
-## 4) Teste
-Admin → **IA Admin** → **Caçar em tudo**
-Status esperado: **Gemini · web** + relatório com oportunidades reais e links.
-
-## Claude (opcional, pago)
-Só se um dia quiser: `ANTHROPIC_API_KEY`. Gemini continua sendo o caminho principal sem custo.
+## Sem cartão
+Os dois caminhos têm faixa grátis. Não precisa Claude pago.
