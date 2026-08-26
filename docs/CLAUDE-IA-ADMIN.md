@@ -1,30 +1,20 @@
-# Claude na IA Admin (CodeCraft Solutions)
+# IA Admin CodeCraft — modo grátis
 
-A IA do painel chama a Edge Function `ccs-admin-ai` (Anthropic Claude + pesquisa web).
-A chave **nunca** vai no `index.html`.
+A IA do painel roda **sem pagar API** (modo local integrado).
 
-## O que ela faz na caça
-- Busca quem precisa de site / loja / sistema / Gestão
-- Canais: Google, Maps, Instagram, 99Freelas, Workana, GetNinjas, Freelancer, LinkedIn
-- Entrega **relatório**: o que a pessoa precisa, projeto CodeCraft, canal, contato (se real), link e abordagem
+## O que faz (grátis)
+- Caça em Google, Maps, Instagram, 99Freelas, Workana, GetNinjas, Freelancer, LinkedIn
+- Relatório por nicho: o que a pessoa precisa + projeto CodeCraft + link
+- Prioriza leads reais do site (chat / formulário)
+- CNPJ via BrasilAPI (grátis)
+- Abordagens WhatsApp/DM
 
-## 1) Secret no Supabase
-Dashboard → projeto **eqaoanbanhryhbldlbhc** → **Edge Functions** → **Secrets**:
-
-| Nome | Valor |
-|------|--------|
-| `ANTHROPIC_API_KEY` | sua chave `sk-ant-...` |
-| `ANTHROPIC_MODEL` (opcional) | padrão `claude-sonnet-4-5` |
-| `ANTHROPIC_MAX_TOKENS` (opcional) | padrão **64000** (máximo da saída; sem teto baixo) |
-| `ANTHROPIC_WEB_SEARCH_USES` (opcional) | padrão **25** buscas por pedido |
-
-## 2) Deploy
-```bash
-npx supabase login
-npx supabase functions deploy ccs-admin-ai --project-ref eqaoanbanhryhbldlbhc
-```
-
-## 3) Teste
+## Como usar
 Admin → **IA Admin** → **Caçar em tudo**
-- Com Claude: status “Claude · web” e relatório montado
-- Sem chave/function: motor local com links prontos para freelance/Instagram/Maps
+
+Status esperado: **Grátis · local**
+
+## Claude / cloud (opcional, pago)
+Não é necessário. Se um dia quiser Claude pago:
+1. Secret `ANTHROPIC_API_KEY` no Supabase
+2. No console do navegador (admin): `localStorage.setItem('ccs_ia_cloud','1')`

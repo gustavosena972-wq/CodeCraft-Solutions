@@ -788,9 +788,9 @@
           <div class="ccs-ia-head">
             <div>
               <h2>CodeCraft IA · Operações</h2>
-              <p>Caça clientes em freelance, Instagram, Google e Maps; prioriza leads reais do site; entrega relatório do que a pessoa precisa + contato + abordagem. Claude no servidor quando a function estiver ativa.</p>
+              <p>100% grátis e integrada: caça clientes em freelance, Instagram, Google e Maps; prioriza leads reais do site; monta relatório do que precisam + contato + abordagem.</p>
             </div>
-            <div class="ccs-ia-status" id="ccs-ia-status"><span class="dot"></span> <span id="ccs-ia-status-text">Integrada</span></div>
+            <div class="ccs-ia-status" id="ccs-ia-status"><span class="dot"></span> <span id="ccs-ia-status-text">Grátis · local</span></div>
           </div>
           <div class="ccs-ia-body">
             <div class="ccs-ia-roles">
@@ -798,7 +798,7 @@
               <span>Freelance / Instagram</span>
               <span>Atendimento</span>
               <span>Projetos</span>
-              <span>Claude</span>
+              <span>Sem custo</span>
             </div>
             <div class="ccs-ia-toolbar">
               <button class="ccs-btn ghost small" onclick="iaRun('caçar clientes em freelance Instagram Google e Maps em BH — relatório com o que precisam e contato')">Caçar em tudo</button>
@@ -2655,7 +2655,7 @@ function renderIaAdminChat(){
   if(!log) return;
   const chat = loadIaChat();
   if(!chat.length){
-    log.innerHTML = '<div class="ccs-ai-msg"><div class="ccs-ai-meta">CodeCraft IA</div><strong>Pronta e integrada ao painel.</strong><br>Caço clientes em Google, Maps, Instagram, 99Freelas, Workana e mais — e monto o <em>relatório</em> (o que precisam + contato). Peça: <em>caçar em tudo</em>, <em>leads do site</em>, <em>responder chats</em>, ou cole um CNPJ.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg"><div class="ccs-ai-meta">CodeCraft IA</div><strong>Pronta · grátis · integrada ao painel.</strong><br>Caço clientes em Google, Maps, Instagram, 99Freelas, Workana e mais — e monto o <em>relatório</em> (o que precisam + contato). Peça: <em>caçar em tudo</em>, <em>leads do site</em>, <em>responder chats</em>, ou cole um CNPJ. Sem taxa de API.</div>';
     return;
   }
   log.innerHTML = chat.map(m=>{
@@ -2833,10 +2833,9 @@ async function iaInboundLeadsHtml(snap){
 
 function iaHuntHtml(raw){
   const t = iaNorm(raw);
+  const emTudo = /em tudo|cacar|caçar|freelance|instagram|varredura|prospect/.test(t);
   let niche = IA_HUNT_NICHES.find(n=> t.includes(n.key) || t.includes(iaNorm(n.label).split(' ')[0]));
-  if(/freelance|99freela|workana|getninjas|instagram|cacar|caçar|em tudo|sites/.test(t) && !niche){
-    niche = IA_HUNT_NICHES.find(n=>n.key==='site') || IA_HUNT_NICHES[0];
-  }
+  if(emTudo && !niche) niche = IA_HUNT_NICHES.find(n=>n.key==='site') || IA_HUNT_NICHES[0];
   if(!niche) niche = IA_HUNT_NICHES[iaDaySeed() % IA_HUNT_NICHES.length];
   const prod = CCS_COMPANY.products.find(x=>x.id===niche.offer) || CCS_COMPANY.products[0];
   const freelanceQ = 'preciso de site OR loja virtual OR sistema OR landing page OR aplicativo';
@@ -2851,19 +2850,24 @@ function iaHuntHtml(raw){
     linkedin: niche.label + ' Belo Horizonte software OR site'
   };
 
-  [0,1,2].forEach(i=>{
+  const pack = emTudo
+    ? IA_HUNT_NICHES.filter(n=>n.key!=='site').slice(0,6)
+    : [niche];
+
+  pack.forEach((n,i)=>{
+    const p = CCS_COMPANY.products.find(x=>x.id===n.offer) || prod;
     iaPushProspect({
-      id:'hunt-'+niche.key+'-'+iaDaySeed()+'-'+i, source:'hunt',
-      company: niche.label+' · alvo '+(i+1),
-      pain: niche.need || 'Demanda digital — validar no canal (não invento contato).',
-      project:niche.project, offer:niche.offer, contact:'Ver anúncio / perfil / Maps',
-      phone:'', email:'', maps:niche.maps,
-      outreach:'Olá! Sou da CodeCraft Solutions (BH). Ajudamos '+niche.label.toLowerCase()+' com '+prod.name+' ('+prod.price+'). Posso te mostrar o portal em 15 min?'
+      id:'hunt-'+n.key+'-'+iaDaySeed()+'-'+i, source:'hunt',
+      company: n.label+' · alvo BH',
+      pain: n.need || 'Demanda digital — validar no canal (não invento contato).',
+      project:n.project, offer:n.offer, contact:'Ver anúncio / perfil / Maps',
+      phone:'', email:'', maps:n.maps,
+      outreach:'Olá! Sou da CodeCraft Solutions (BH). Ajudamos '+n.label.toLowerCase()+' com '+p.name+' ('+p.price+'). Posso te mostrar o portal em 15 min?'
     });
   });
 
-  let html = iaWrap('Caça multi-canal — '+niche.label,
-    '<span class="ccs-ia-badge warn">Relatório de pesquisa</span> Abra os canais, pegue <strong>contato real</strong> no anúncio/perfil e eu monto a abordagem. Com Claude ativa, a busca na web roda no servidor.<br><br>'+
+  let html = iaWrap('Caça multi-canal (grátis) — '+niche.label,
+    '<span class="ccs-ia-badge real">IA Grátis</span> Abra os canais, pegue o <strong>contato real</strong> no anúncio/perfil e cole aqui — eu monto o relatório e a abordagem. Não invento telefone.<br><br>'+
     '<strong>O que essa pessoa tipicamente precisa:</strong> '+escapeHtml(niche.need||niche.project)+'<br>'+
     '<strong>Projeto CodeCraft:</strong> '+escapeHtml(prod.name)+' — '+escapeHtml(prod.price)+'<br>'+
     '<strong>Entrega sugerida:</strong> '+escapeHtml(niche.project)+'<br><br>'+
@@ -2897,6 +2901,17 @@ function iaHuntHtml(raw){
     '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='linkedin').build(queries.linkedin)+'">LinkedIn</a>'+
     '</div></div>';
 
+  if(emTudo){
+    html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">5 · Relatório por nicho (BH)</div><ul>'+
+      pack.map(n=>{
+        const p = CCS_COMPANY.products.find(x=>x.id===n.offer) || prod;
+        return '<li><strong>'+escapeHtml(n.label)+'</strong> — precisa: '+escapeHtml(n.need)+
+          ' · projeto: '+escapeHtml(p.name)+' ('+escapeHtml(p.price)+') · '+
+          '<a target="_blank" rel="noopener" href="'+n.maps+'">abrir Maps</a></li>';
+      }).join('')+
+      '</ul></div>';
+  }
+
   html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">Modelo de relatório (preencha ao achar)</div><ul>'+
     '<li><strong>Quem:</strong> …</li>'+
     '<li><strong>O que precisa:</strong> …</li>'+
@@ -2906,9 +2921,8 @@ function iaHuntHtml(raw){
     '<li><strong>Link:</strong> URL</li></ul>'+
     '<p style="margin:8px 0 0;font-size:13px;color:var(--ink-soft)">Depois diga: <em>abordagem para [nome]</em> ou cole o contato aqui que eu redijo a mensagem.</p></div>';
 
-  html += '<br>'+iaWrap('Importante',
-    'Leads <strong>já no site</strong> (chat/formulário) são prioridade máxima — botão “Leads do site”. '+
-    'Com a function Claude + <code>ANTHROPIC_API_KEY</code>, a caça usa pesquisa web no servidor e devolve o relatório montado.');
+  html += '<br>'+iaWrap('Prioridade',
+    'Leads <strong>já no site</strong> (chat/formulário) vêm primeiro — botão “Leads do site”. Tudo isso roda <strong>sem pagar API</strong>.');
   return html;
 }
 
@@ -3159,32 +3173,24 @@ async function sendAdminAiCore(){
       iaSnapshot(),
       (typeof loadMarket==='function' ? loadMarket() : Promise.resolve({}))
     ]);
+    // Modo padrão: IA grátis local (sem Claude pago). Cloud só se ativar localStorage ccs_ia_cloud=1.
     let reply = null;
-    let usedClaude = false;
-    try{
-      const claude = await callClaudeAdminAi(text, snap, mkt||{});
-      if(claude && claude.ok){
-        usedClaude = true;
-        iaSetStatus(claude.webSearch ? 'Claude · web' : 'Claude');
-        reply = claude.html;
-        if(claude.webSearch){
-          reply = '<span class="ccs-ia-badge real">Claude + pesquisa web</span><br>' + reply;
-        } else {
-          reply = '<span class="ccs-ia-badge">Claude</span><br>' + reply;
+    const useCloud = localStorage.getItem('ccs_ia_cloud') === '1';
+    if(useCloud){
+      try{
+        const claude = await callClaudeAdminAi(text, snap, mkt||{});
+        if(claude && claude.ok){
+          iaSetStatus(claude.webSearch ? 'Claude · web' : 'Claude');
+          reply = '<span class="ccs-ia-badge">Cloud</span><br>' + claude.html;
         }
-      } else if(claude && claude.code === 'NO_KEY'){
-        iaSetStatus('Local (sem chave)');
-      } else if(claude && claude.error){
-        iaSetStatus('Local · fallback');
-        console.warn('Claude fallback:', claude.error);
-      }
-    }catch(err){
-      console.warn(err);
-      iaSetStatus('Local · fallback');
+      }catch(err){ console.warn(err); }
     }
     if(!reply){
       reply = await iaSeniorReply(text, snap, mkt||{});
-      if(!usedClaude) iaSetStatus('Integrada · local');
+      iaSetStatus('Grátis · local');
+      if(!String(reply).includes('ccs-ia-badge')){
+        reply = '<span class="ccs-ia-badge real">IA Grátis</span><br>' + reply;
+      }
     }
     const items = loadIaChat();
     if(items.length && items[items.length-1].who!=='me') items.pop();
