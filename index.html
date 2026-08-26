@@ -3,7 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CodeCraft Solutions — Sua ideia, em produção</title>
+<title>CodeCraft Solutions — Sites, lojas e sistemas em Belo Horizonte</title>
+<meta name="description" content="CodeCraft Solutions: sites, landing pages, lojas virtuais e sistemas sob medida em Belo Horizonte. CodeCraft Gestão (ERP) a partir de R$ 280/mês. Orçamento rápido no WhatsApp.">
+<meta name="keywords" content="criar site Belo Horizonte, loja virtual BH, sistema sob medida, landing page, ERP pequena empresa, CodeCraft Gestão, desenvolvimento web BH">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://gustavosena972-wq.github.io/CodeCraft-Solutions/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="CodeCraft Solutions — Sites e sistemas em BH">
+<meta property="og:description" content="Sites, lojas e ERP para empresas. Orçamento no WhatsApp (31) 99975-8385. Entrega com portal ao vivo.">
+<meta property="og:url" content="https://gustavosena972-wq.github.io/CodeCraft-Solutions/">
+<meta property="og:image" content="https://gustavosena972-wq.github.io/CodeCraft-Solutions/logo.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CodeCraft Solutions — BH">
+<meta name="twitter:description" content="Sites, lojas e CodeCraft Gestão. Fale no WhatsApp.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "CodeCraft Solutions",
+  "description": "Estúdio de software: sites, lojas virtuais, sistemas sob medida e CodeCraft Gestão (ERP/HCM).",
+  "url": "https://gustavosena972-wq.github.io/CodeCraft-Solutions/",
+  "telephone": "+5531999758385",
+  "address": { "@type": "PostalAddress", "addressLocality": "Belo Horizonte", "addressRegion": "MG", "addressCountry": "BR" },
+  "areaServed": "Belo Horizonte e Grande BH",
+  "priceRange": "R$ 280 – R$ 15.000",
+  "sameAs": ["https://instagram.com/code.invention"]
+}
+</script>
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -296,7 +323,18 @@
   .ccs-chat-input input{flex:1; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:'Inter',sans-serif; font-size:14px;}
 
   /* ===== Chat aberto (widget da landing) ===== */
-  #lead-widget{position:fixed; right:20px; bottom:20px; z-index:120;}
+  #lead-widget{position:fixed; right:20px; bottom:20px; z-index:120; display:flex; flex-direction:column; align-items:flex-end; gap:10px;}
+  #wa-fab{
+    border:none; background:#25D366; color:#fff; font-weight:800; padding:12px 16px; border-radius:30px;
+    box-shadow:0 10px 30px rgba(0,0,0,.22); font-size:13.5px; display:flex; align-items:center; gap:8px; text-decoration:none;
+  }
+  #wa-fab:hover{transform:translateY(-1px); filter:brightness(1.05);}
+  .ccs-urgency{
+    background:linear-gradient(90deg,#1a2038,#252d52); color:#EDEFFA; text-align:center;
+    padding:10px 20px; font-size:13px; font-weight:600; border-bottom:1px solid var(--line-dark);
+  }
+  .ccs-urgency a{color:var(--amber); font-weight:800; text-decoration:none;}
+  .ccs-urgency a:hover{text-decoration:underline;}
   #lead-fab{border:none; background:var(--amber); color:#221304; font-weight:800; padding:14px 18px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,.25); font-size:14px; display:flex; align-items:center; gap:8px;}
   #lead-fab:hover{transform:translateY(-1px);}
   #lead-panel{position:absolute; right:0; bottom:64px; width:330px; max-width:calc(100vw - 40px); background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.3); overflow:hidden;}
@@ -438,6 +476,12 @@
     </div>
   </nav>
 
+  <div class="ccs-urgency">
+    Orçamento em até 24h · Belo Horizonte ·
+    <a href="https://wa.me/5531999758385?text=Ol%C3%A1%2C%20vi%20o%20site%20da%20CodeCraft%20e%20preciso%20de%20um%20or%C3%A7amento." target="_blank" rel="noopener">WhatsApp (31) 99975-8385</a>
+    · Landing a partir de R$ 300 · Gestão R$ 280/mês
+  </div>
+
   <section class="ccs-hero">
     <div class="ccs-hero-copy">
       <div class="ccs-hero-brand">
@@ -447,11 +491,12 @@
           <span>Belo Horizonte · software sob medida</span>
         </div>
       </div>
-      <div class="ccs-hero-eyebrow">// da ideia ao ar</div>
-      <h1>Sua ideia,<br>em <span>produção</span>.</h1>
-      <p>Transformamos sistemas, sites e aplicativos em produtos reais — com acompanhamento aberto, do primeiro commit até a entrega.</p>
+      <div class="ccs-hero-eyebrow">// da ideia ao ar · BH</div>
+      <h1>Sites, lojas e sistemas<br>para sua empresa <span>em BH</span>.</h1>
+      <p>Landing page, loja virtual, sistema corporativo ou CodeCraft Gestão (financeiro + RH). Atendemos MEI, PME e grandes empresas em BH e Brasil — com portal ao vivo e resposta rápida no WhatsApp.</p>
       <div class="ccs-hero-ctas">
-        <button class="ccs-btn amber" onclick="toggleLeadWidget()">Fale com a gente</button>
+        <a class="ccs-btn amber" href="https://wa.me/5531999758385?text=Ol%C3%A1%2C%20preciso%20de%20um%20or%C3%A7amento%20com%20a%20CodeCraft." target="_blank" rel="noopener">WhatsApp agora</a>
+        <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="toggleLeadWidget()">Chat no site</button>
         <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="showScreen('client')">Acompanhar projeto</button>
       </div>
     </div>
@@ -463,9 +508,15 @@
 
   <section class="ccs-section ccs-about" id="quem-somos">
     <div class="ccs-eyebrow">Quem somos</div>
-    <h2>Um estúdio pequeno, focado em entregar certo.</h2>
-    <p class="ccs-lede">Somos uma equipe enxuta que prefere resolver o problema real do cliente a empilhar reunião. Cada projeto passa pelas mesmas três etapas — análise, construção e entrega — e você acompanha cada uma delas em tempo real.</p>
-    <p class="ccs-lede">Atendemos negócios pequenos e médios que precisam de um sistema, um site ou um app funcionando de verdade — sem contrato complicado e sem letra miúda.</p>
+    <h2>Software sob medida para empresas de todos os portes.</h2>
+    <p class="ccs-lede">Somos a <strong>CodeCraft Solutions</strong>, estúdio de software em Belo Horizonte. Criamos sites, lojas virtuais, sistemas web e o ERP <strong>CodeCraft Gestão</strong> — com portal de acompanhamento ao vivo, do primeiro contato à entrega.</p>
+    <p class="ccs-lede">Atendemos <strong>MEI, pequenas, médias e grandes empresas</strong> em Belo Horizonte, Grande BH e todo o Brasil. Não importa se você está começando ou se já tem operação grande: entregamos landing page, site institucional, e-commerce, sistema sob medida ou plataforma de gestão (financeiro + RH) no nível que o seu negócio exige.</p>
+    <p class="ccs-lede">Para <strong>grandes empresas</strong>, trabalhamos com escopo definido, integrações, múltiplos módulos, performance e governança — sem perder agilidade. Para MEI e PME, o mesmo padrão de qualidade, com preço e prazo acessíveis.</p>
+    <div class="ccs-grid-3" style="margin-top:28px;">
+      <div class="ccs-card"><div class="num">MEI</div><h3>Começando</h3><p>Landing, site simples e presença no Google + WhatsApp.</p></div>
+      <div class="ccs-card"><div class="num">PME</div><h3>Crescendo</h3><p>Loja virtual, sistema interno e CodeCraft Gestão (caixa + ponto).</p></div>
+      <div class="ccs-card featured"><div class="num">Grande</div><h3>Corporativo</h3><p>Portais, integrações, ERP e sistemas sob medida para operação ampla.</p></div>
+    </div>
   </section>
 
   <div class="ccs-gestao-band" id="gestao">
@@ -477,7 +528,7 @@
         <div class="ccs-gestao-biz">
           <div class="biz"><strong>01 · Financeiro</strong><span>Caixa, pagar/receber e DRE.</span></div>
           <div class="biz"><strong>02 · RH</strong><span>Cadastro, ponto e folha.</span></div>
-          <div class="biz"><strong>03 · Assinatura</strong><span>1º mês PIX/cartão · renovação no cartão.</span></div>
+          <div class="biz"><strong>03 · Assinatura</strong><span>PIX mensal ou cartão · renovação automática.</span></div>
         </div>
         <div class="ccs-gestao-plans">
           <span class="plan">Essencial · R$ 280</span>
@@ -551,7 +602,7 @@
         <ul>
           <li>Financeiro: caixa, títulos e DRE</li>
           <li>RH: cadastro, ponto e folha</li>
-          <li>Asaas: 1º mês PIX/cartão · renovação mensal no cartão</li>
+          <li>Asaas: PIX mensal ou cartão · renovação automática</li>
           <li>Só empresas · sem IA no painel</li>
         </ul>
         <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/app/planos/" target="_blank" rel="noopener">Assinar CodeCraft Gestão</a>
@@ -658,6 +709,10 @@
 
   <!-- ===== Chat aberto: cliente fala com a equipe sem precisar de código ===== -->
   <div id="lead-widget">
+    <a id="wa-fab" href="https://wa.me/5531999758385?text=Ol%C3%A1%2C%20vi%20o%20site%20da%20CodeCraft%20e%20quero%20falar%20sobre%20um%20projeto." target="_blank" rel="noopener" aria-label="WhatsApp CodeCraft">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+      WhatsApp
+    </a>
     <button id="lead-fab" onclick="toggleLeadWidget()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H8l-4 4V5a1 1 0 0 1 1-1Z"/></svg>
       Fale com a gente
@@ -912,7 +967,18 @@
           <button class="ccs-btn amber small" onclick="exportExcel()">↧ Exportar Excel</button>
         </div>
       </div>
-      <div class="ccs-help"><strong>Para que serve:</strong> é o painel de gestão da empresa. Mostra quanto você já recebeu e quanto tem a receber, quantos sites/lojas estão em produção e entregues, gráficos de faturamento (inclusive por tipo de serviço) e uma calculadora. O botão <strong>Exportar Excel</strong> baixa tudo em planilha (Resumo, Por serviço e Projetos).</div>
+      <div class="ccs-help"><strong>Para que serve:</strong> é o painel de gestão da CodeCraft Solutions. Mostra quanto você já recebeu e quanto tem a receber, quantos sites/lojas estão em produção e entregues, gráficos de faturamento (inclusive por tipo de serviço) e uma calculadora. O botão <strong>Exportar Excel</strong> baixa tudo em planilha (Resumo, Por serviço e Projetos).</div>
+
+      <div class="ccs-panel" style="margin-bottom:20px; border-left:4px solid var(--amber);">
+        <div class="ccs-eyebrow" style="margin-bottom:6px;">Posicionamento · CodeCraft Solutions</div>
+        <p style="margin:0 0 8px; font-size:14.5px; line-height:1.65;">
+          <strong>MEI, pequenas, médias e grandes empresas.</strong> Sites, lojas virtuais, sistemas sob medida e CodeCraft Gestão (ERP/HCM B2B).
+          BH e Brasil · WhatsApp (31) 99975-8385 · PIX 31999758385 · @code.invention
+        </p>
+        <p style="margin:0; font-size:13px; color:var(--ink-soft);">
+          Use este posicionamento no 99Freelas, GetNinjas, propostas e abordagens. A IA Admin e o marketing seguem o mesmo discurso.
+        </p>
+      </div>
 
       <div class="ccs-eyebrow" style="margin-bottom:10px;">Indicadores</div>
       <div class="ccs-metrics" id="empresa-metrics"></div>
@@ -2346,8 +2412,8 @@ function todayPosts(mkt){
   const day = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long' });
   const extra = mkt && mkt.usd!=null ? ('\nMercado agora: dólar R$ '+moneyFx(mkt.usd)+(mkt.selic!=null?', Selic '+mkt.selic+'%':'')+'. Quem controla gente, caixa e operação fecha o mês — CodeCraft Gestão.') : '';
   return {
-    linkedin: 'CodeCraft Solutions · '+day+'\n\nEmpresa da Grande BH ainda vende no WhatsApp e perde pedido porque o site não fecha o orçamento.\nA gente entrega site, loja e sistema com acompanhamento em tempo real e PIX na hora.'+extra+'\n\nSe você atende cliente em BH e quer um modelo este mês, chame: 31 99975-8385.',
-    instagram: 'Seu cliente pesquisa no Google. Se não acha a sua empresa, acha a do vizinho.\nSite + WhatsApp + PIX. Feito em BH.\nCodeCraft Solutions · 31 99975-8385',
+    linkedin: 'CodeCraft Solutions · '+day+'\n\nAtendemos MEI, PME e grandes empresas: site, loja virtual, sistema sob medida e ERP CodeCraft Gestão.\nEntrega com portal ao vivo, WhatsApp e PIX.\nBH e Brasil · 31 99975-8385'+extra,
+    instagram: 'Site, loja ou ERP para sua empresa — do MEI ao corporativo.\nCodeCraft Solutions · BH · WhatsApp 31 99975-8385',
     google: 'Criação de sites, lojas e sistemas em Belo Horizonte. Acompanhe o projeto ao vivo. PIX 31999758385. WhatsApp 31 99975-8385.',
     whatsapp: 'CodeCraft Solutions — site, loja e sistema em BH. Você acompanha o andamento no portal. Chama no 31 99975-8385.'
   };
@@ -2587,18 +2653,19 @@ const IA_LAST_LEAD_KEY = 'ccs-ia-last-prospect';
 
 const CCS_COMPANY = {
   name: 'CodeCraft Solutions',
-  city: 'Belo Horizonte / Grande BH',
+  city: 'Belo Horizonte / Grande BH · Brasil',
+  pitch: 'Sites, lojas, sistemas e ERP para MEI, PME e grandes empresas.',
   whatsapp: '31999758385',
   whatsappDisplay: '(31) 99975-8385',
   pix: '31999758385',
   instagram: '@code.invention',
   gestaoUrl: (typeof GESTAO_URL !== 'undefined' ? GESTAO_URL : ''),
   products: [
-    { id:'gestao', name:'CodeCraft Gestão', price:'R$ 280 a R$ 500/mês', forWhom:'Empresas (CNPJ)', pain:'ponto, caixa, folha, títulos', detail:'ERP/HCM B2B: Financeiro, RH e assinatura Asaas.' },
-    { id:'landing', name:'Landing page', price:'a partir de R$ 300', forWhom:'Captura de leads', pain:'não converte visita', detail:'Página única de alta conversão + WhatsApp.' },
-    { id:'site', name:'Site institucional', price:'a partir de R$ 500', forWhom:'Presença da marca', pain:'não aparece no Google', detail:'Várias páginas, identidade e redes.' },
-    { id:'loja', name:'Loja virtual', price:'a partir de R$ 500', forWhom:'Venda online', pain:'só vende no balcão', detail:'Catálogo, pedido, frete e PIX.' },
-    { id:'sistema', name:'Sistema / App sob medida', price:'R$ 1.500 a R$ 15.000', forWhom:'Processo próprio', pain:'planilha e caos', detail:'Painéis, cadastros e portal ao vivo.' },
+    { id:'gestao', name:'CodeCraft Gestão', price:'R$ 280 a R$ 500/mês', forWhom:'MEI, PME e empresas (CNPJ)', pain:'ponto, caixa, folha, títulos', detail:'ERP/HCM B2B: Financeiro, RH e assinatura Asaas.' },
+    { id:'landing', name:'Landing page', price:'a partir de R$ 300', forWhom:'MEI a grandes empresas', pain:'não converte visita', detail:'Página única de alta conversão + WhatsApp.' },
+    { id:'site', name:'Site institucional', price:'a partir de R$ 500', forWhom:'Pequenas, médias e grandes empresas', pain:'não aparece no Google', detail:'Várias páginas, identidade e redes.' },
+    { id:'loja', name:'Loja virtual', price:'a partir de R$ 500', forWhom:'Comércio local a operação grande', pain:'só vende no balcão', detail:'Catálogo, pedido, frete e PIX.' },
+    { id:'sistema', name:'Sistema / App sob medida', price:'R$ 1.500 a R$ 15.000', forWhom:'PME e corporativo', pain:'planilha e caos', detail:'Painéis, cadastros, integrações e portal ao vivo.' },
     { id:'manutencao', name:'Manutenção mensal', price:'a partir de R$ 100/mês', forWhom:'Pós-entrega', pain:'site parado', detail:'Ajustes, correções e suporte.' }
   ]
 };
@@ -3210,11 +3277,11 @@ async function sendAdminAiCore(){
 }
 
 const MKT_BANK = [
-  { cat:'strategy', title:'Posicionamento', body:'CodeCraft não vende site bonito. Vende site que fecha caixa em BH: clínica, loja e MEI que ainda só atendem no WhatsApp. Toda peça: 1 problema, 1 prova, 1 PIX na entrega.' },
+  { cat:'strategy', title:'Posicionamento', body:'CodeCraft Solutions atende MEI, PME e grandes empresas em BH e Brasil. Sites, lojas, sistemas sob medida e CodeCraft Gestão (ERP). Toda peça: 1 problema, 1 prova, 1 CTA (WhatsApp ou portal).' },
   { cat:'calendar', title:'Semana padrão', body:'Seg: problema do nicho. Ter: antes/depois. Qua: CodeCraft Gestão. Qui: prova social. Sex: oferta PIX na entrega. Sáb: mercado (Selic/dólar) e o que vender. Dom: bastidor da @code.invention. 1 CTA por post.' },
-  { cat:'copy', title:'Gancho', body:'3 segundos: “Sua clínica ainda manda orçamento no WhatsApp?” Depois a prova. Depois o que fazer. Hashtag só no fim. @code.invention uma vez. Sem enrolação.' },
+  { cat:'copy', title:'Gancho', body:'3 segundos: “Sua empresa ainda perde cliente sem site profissional?” Depois a prova. Depois o que fazer. Hashtag só no fim. @code.invention uma vez. Sem enrolação.' },
   { cat:'growth', title:'Alcance', body:'Reels ensina. Carrossel salva. Story pergunta. Feed posiciona. Não poste os quatro iguais. 4 a 6 posts por semana. Piloto no máximo 2/dia no feed, com 3h de folga.' },
-  { cat:'niche', title:'Quem comprar', body:'Clínica, loja de bairro, oficina, salão e MEI em BH. Quem vive de WhatsApp e perde cliente sem site e sem caixa. Não persegue empresa grande de ERP.' },
+  { cat:'niche', title:'Quem comprar', body:'MEI, pequenas, médias e grandes empresas: clínica, loja, indústria, SaaS, varejo e corporativo. Quem precisa de site, loja, sistema ou ERP (Gestão). Freelance + WhatsApp + inbound do site.' },
   { cat:'offer', title:'Oferta', body:'PIX na entrega. Preço de partida no site. CodeCraft Gestão para quem precisa de people, finanças e operações num só lugar. Uma oferta por post. Nunca duas.' },
   { cat:'funnel', title:'Funil', body:'Conteúdo → WhatsApp 31 99975-8385 → briefing no chat do site → PIX. Instagram não fecha contrato sozinho. O post tem que mandar para o WhatsApp ou para o portal.' },
   { cat:'tone', title:'Tom', body:'Português simples. BH. Sem jargão de agência. Fala como dono de oficina, não como MBA. Frase curta. Número na tela quando houver.' }

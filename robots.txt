@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gustavosena972-wq.github.io/CodeCraft-Solutions/sitemap.xml
