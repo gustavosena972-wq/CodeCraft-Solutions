@@ -1,8 +1,11 @@
 -- =====================================================================
 -- CodeCraft Solutions — configuração do Supabase (script completo)
 -- Rode UMA VEZ no Supabase: menu "SQL Editor" → New query → cole tudo →
--- RUN. Cria as 3 tabelas que o site usa (sem apagar dados existentes),
+-- RUN. Cria as tabelas que o site usa (sem apagar dados existentes),
 -- as permissões e liga a atualização em tempo real (realtime).
+--
+-- Depois, rode também supabase-harden.sql para trancar escrita anônima
+-- (projetos só com login admin).
 -- =====================================================================
 
 -- ================= TABELAS =================

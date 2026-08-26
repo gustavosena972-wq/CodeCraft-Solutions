@@ -858,7 +858,21 @@ const LIVE_POLL_MS = 3000;
 
 const configOk = !SUPABASE_URL.startsWith('COLE_AQUI') && !SUPABASE_ANON_KEY.startsWith('COLE_AQUI');
 if(!configOk){ document.getElementById('config-banner').classList.add('show'); }
-const supabaseClient = configOk ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+const supabaseClient = configOk ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    // Evita misturar sessão com o CodeCraft Gestão no mesmo domínio github.io
+    storageKey: 'ccs-site-auth-v1',
+  },
+}) : null;
+
+async function requireAdminSession(){
+  if(!supabaseClient) return null;
+  const { data } = await supabaseClient.auth.getSession();
+  return data && data.session ? data.session : null;
+}
 
 /* ================= UTIL ================= */
 function genCode(){
@@ -897,30 +911,34 @@ async function loadProjectByCode(code){
 }
 async function insertProject(p){
   if(!supabaseClient) return null;
+  if(!(await requireAdminSession())){ showToast('Faça login no admin para criar projetos.'); return null; }
   const { data, error } = await supabaseClient.from('projects').insert({
     tracking_code: p.trackingCode, client_name: p.clientName, project_name: p.projectName,
     service_type: p.serviceType || 'site',
     status:'analise', pix_key: p.pixKey, pix_value: p.pixValue || null, pix_city: p.pixCity, notes: p.notes, paid:false
   }).select().single();
-  if(error){ console.error(error); showToast('Erro ao salvar projeto.'); return null; }
+  if(error){ console.error(error); showToast('Erro ao salvar projeto. Confirme o login e o SQL do banco.'); return null; }
   return fromRow(data);
 }
 async function updateProject(id, fields){
   if(!supabaseClient) return;
+  if(!(await requireAdminSession())){ showToast('Faça login no admin para alterar projetos.'); return; }
   const dbFields = { updated_at: new Date().toISOString() };
   if('status' in fields) dbFields.status = fields.status;
   if('paid' in fields) dbFields.paid = fields.paid;
   if('delivery_url' in fields) dbFields.delivery_url = fields.delivery_url;
   const { error } = await supabaseClient.from('projects').update(dbFields).eq('id', id);
-  if(error) console.error(error);
+  if(error){ console.error(error); showToast('Não foi possível atualizar o projeto.'); }
 }
 async function deleteProjectRow(id){
   if(!supabaseClient) return;
+  if(!(await requireAdminSession())){ showToast('Faça login no admin para excluir.'); return; }
   const { error } = await supabaseClient.from('projects').delete().eq('id', id);
-  if(error) console.error(error);
+  if(error){ console.error(error); showToast('Não foi possível excluir o projeto.'); }
 }
 async function loadMessages(){
   if(!supabaseClient) return [];
+  if(!(await requireAdminSession())) return [];
   const { data, error } = await supabaseClient.from('messages').select('*').order('created_at', { ascending:false });
   if(error){ console.error(error); return []; }
   return data.map(m=>({ id:m.id, name:m.name, contact:m.contact, msg:m.msg, createdAt:m.created_at }));
@@ -1077,9 +1095,10 @@ function typeHero(){
 async function submitContact(e){
   e.preventDefault();
   if(!configOk){ showToast('Configure o Supabase primeiro (topo do script).'); return; }
-  const name = document.getElementById('c-name').value.trim();
-  const contact = document.getElementById('c-contact').value.trim();
-  const msg = document.getElementById('c-msg').value.trim();
+  const name = document.getElementById('c-name').value.trim().slice(0, 80);
+  const contact = document.getElementById('c-contact').value.trim().slice(0, 120);
+  const msg = document.getElementById('c-msg').value.trim().slice(0, 2000);
+  if(!name || !contact || !msg){ showToast('Preencha todos os campos.'); return; }
   await insertMessage({ name, contact, msg });
   document.getElementById('c-name').value = '';
   document.getElementById('c-contact').value = '';
@@ -1412,13 +1431,20 @@ async function adminLogout(){
   if(supabaseClient){ await supabaseClient.auth.signOut(); }
   renderAdminGate();
 }
-/* Restaura a sessão do admin se ele já estiver logado (Supabase Auth). */
+/* Restaura / sincroniza a sessão do admin (Supabase Auth). */
 if(configOk){
   supabaseClient.auth.getSession().then(({ data })=>{
     adminLoggedIn = !!(data && data.session);
     if(adminLoggedIn && document.getElementById('screen-admin').style.display === 'block'){
       migrateCrmLeads();
       renderAdminGate();
+    }
+  });
+  supabaseClient.auth.onAuthStateChange((_event, session)=>{
+    adminLoggedIn = !!session;
+    if(!session){
+      stopRealtime();
+      if(document.getElementById('screen-admin').style.display === 'block') renderAdminGate();
     }
   });
 }
