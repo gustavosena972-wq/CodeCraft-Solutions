@@ -288,7 +288,7 @@ Deno.serve(async (req) => {
 
     // 1) Groq (grátis, forte) + nossa pesquisa web
     if (groqKey) {
-      const model = Deno.env.get("GROQ_MODEL") || "llama-3.3-70b-versatile";
+      const model = Deno.env.get("GROQ_MODEL") || "openai/gpt-oss-120b";
       const result = await callGroq({ apiKey: groqKey, model, prompt });
       if (result.ok) {
         return json({
@@ -298,6 +298,26 @@ Deno.serve(async (req) => {
           provider: "groq",
           webSearch: !!research,
         });
+      }
+      // Fallback se o modelo padrão sair da lista da conta
+      const fallbacks = [
+        "openai/gpt-oss-20b",
+        "qwen/qwen3.8-27b",
+        "qwen/qwen3.6-27b",
+        "groq/compound",
+      ];
+      for (const fb of fallbacks) {
+        if (fb === model) continue;
+        const again = await callGroq({ apiKey: groqKey, model: fb, prompt });
+        if (again.ok) {
+          return json({
+            reply: again.text,
+            replyHtml: mdToHtml(again.text),
+            model: fb,
+            provider: "groq",
+            webSearch: !!research,
+          });
+        }
       }
       if (!geminiKey && !anthropicKey) {
         return json({ error: result.error, code: "GROQ_ERROR" }, 502);
