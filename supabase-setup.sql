@@ -138,11 +138,11 @@ begin
 end $$;
 
 insert into public.marketing_intel (cat, title, body) values
-('strategy', 'Posicionamento', 'CodeCraft Solutions atende MEI, PME e grandes empresas em BH e Brasil. Sites, lojas, sistemas sob medida e CodeCraft Gestão (ERP). Toda peça: 1 problema, 1 prova, 1 CTA (WhatsApp ou portal).'),
+('strategy', 'Posicionamento', 'CodeCraft Solutions atende MEI, PME e grandes empresas em BH e Brasil. Sites, lojas, sistemas sob medida e CodeCraft Gestão (ERP). Toda peça: 1 problema, 1 prova, 1 CTA (chat do site ou portal).'),
 ('calendar', 'Semana padrão', 'Seg: problema do nicho. Ter: antes/depois. Qua: CodeCraft Gestão. Qui: prova social. Sex: oferta PIX na entrega. Sáb: mercado (Selic/dólar) + o que vender. Dom: bastidor da @code.invention.'),
 ('copy', 'Gancho', 'Primeira linha tem 3 segundos: “Sua empresa ainda perde cliente sem site profissional?”. Depois prova. Depois o que fazer. Hashtag no fim, nunca no começo.'),
 ('growth', 'Alcance', 'Reels ensina. Carrossel salva. Story pergunta. Feed posiciona. Não poste os 4 iguais. Um gancho, um CTA, um @code.invention. 4–6 posts/semana bate 1 viral.'),
-('niche', 'Quem comprar', 'MEI, pequenas, médias e grandes empresas: clínica, loja, indústria, SaaS, varejo e corporativo. Site, loja, sistema ou ERP (Gestão). Freelance + WhatsApp + inbound do site.'),
+('niche', 'Quem comprar', 'MEI, pequenas, médias e grandes empresas: clínica, loja, indústria, SaaS, varejo e corporativo. Site, loja, sistema ou ERP (Gestão). Freelance + chat do site + inbound.'),
 ('offer', 'Oferta', 'PIX na entrega. Preço de partida no site. CodeCraft Gestão para quem precisa de people, finanças e operações num só lugar. Uma oferta por post. Nunca duas.')
 on conflict do nothing;
 

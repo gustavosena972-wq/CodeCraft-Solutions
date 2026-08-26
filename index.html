@@ -4,19 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CodeCraft Solutions — Sites, lojas e sistemas em Belo Horizonte</title>
-<meta name="description" content="CodeCraft Solutions: sites, landing pages, lojas virtuais e sistemas sob medida em Belo Horizonte. CodeCraft Gestão (ERP) a partir de R$ 280/mês. Orçamento rápido no WhatsApp.">
+<meta name="description" content="CodeCraft Solutions: sites, landing pages, lojas virtuais e sistemas sob medida em Belo Horizonte. CodeCraft Gestão (ERP) a partir de R$ 280/mês. Orçamento pelo chat do site.">
 <meta name="keywords" content="criar site Belo Horizonte, loja virtual BH, sistema sob medida, landing page, ERP pequena empresa, CodeCraft Gestão, desenvolvimento web BH">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://gustavosena972-wq.github.io/CodeCraft-Solutions/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:title" content="CodeCraft Solutions — Sites e sistemas em BH">
-<meta property="og:description" content="Sites, lojas e ERP para empresas. Orçamento no WhatsApp (31) 99975-8385. Entrega com portal ao vivo.">
+<meta property="og:description" content="Sites, lojas e ERP para empresas. Fale pelo chat do site. Entrega com portal ao vivo.">
 <meta property="og:url" content="https://gustavosena972-wq.github.io/CodeCraft-Solutions/">
 <meta property="og:image" content="https://gustavosena972-wq.github.io/CodeCraft-Solutions/logo.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CodeCraft Solutions — BH">
-<meta name="twitter:description" content="Sites, lojas e CodeCraft Gestão. Fale no WhatsApp.">
+<meta name="twitter:description" content="Sites, lojas e CodeCraft Gestão. Atendimento no chat do site.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -24,7 +24,6 @@
   "name": "CodeCraft Solutions",
   "description": "Estúdio de software: sites, lojas virtuais, sistemas sob medida e CodeCraft Gestão (ERP/HCM).",
   "url": "https://gustavosena972-wq.github.io/CodeCraft-Solutions/",
-  "telephone": "+5531999758385",
   "address": { "@type": "PostalAddress", "addressLocality": "Belo Horizonte", "addressRegion": "MG", "addressCountry": "BR" },
   "areaServed": "Belo Horizonte e Grande BH",
   "priceRange": "R$ 280 – R$ 15.000",
@@ -323,13 +322,7 @@
   .ccs-chat-input input{flex:1; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:'Inter',sans-serif; font-size:14px;}
 
   /* ===== Chat aberto (widget da landing) ===== */
-  #lead-widget{position:fixed; right:20px; bottom:20px; z-index:120; display:flex; flex-direction:column; align-items:flex-end; gap:10px;}
-  #wa-fab{
-    border:none; background:#25D366; color:#fff; font-weight:800; padding:12px 16px; border-radius:30px;
-    box-shadow:0 10px 30px rgba(0,0,0,.22); font-size:13.5px; display:flex; align-items:center; gap:8px; text-decoration:none;
-  }
-  #wa-fab:hover{transform:translateY(-1px); filter:brightness(1.05);}
-  .ccs-urgency{
+  #lead-widget{position:fixed; right:20px; bottom:20px; z-index:120;}
     background:linear-gradient(90deg,#1a2038,#252d52); color:#EDEFFA; text-align:center;
     padding:10px 20px; font-size:13px; font-weight:600; border-bottom:1px solid var(--line-dark);
   }
@@ -478,7 +471,7 @@
 
   <div class="ccs-urgency">
     Orçamento em até 24h · Belo Horizonte ·
-    <a href="https://wa.me/5531999758385?text=Ol%C3%A1%2C%20vi%20o%20site%20da%20CodeCraft%20e%20preciso%20de%20um%20or%C3%A7amento." target="_blank" rel="noopener">WhatsApp (31) 99975-8385</a>
+    <a href="#" onclick="toggleLeadWidget(); return false;">Fale no chat do site</a>
     · Landing a partir de R$ 300 · Gestão R$ 280/mês
   </div>
 
@@ -493,10 +486,9 @@
       </div>
       <div class="ccs-hero-eyebrow">// da ideia ao ar · BH</div>
       <h1>Sites, lojas e sistemas<br>para sua empresa <span>em BH</span>.</h1>
-      <p>Landing page, loja virtual, sistema corporativo ou CodeCraft Gestão (financeiro + RH). Atendemos MEI, PME e grandes empresas em BH e Brasil — com portal ao vivo e resposta rápida no WhatsApp.</p>
+      <p>Landing page, loja virtual, sistema corporativo ou CodeCraft Gestão (financeiro + RH). Atendemos MEI, PME e grandes empresas em BH e Brasil — com portal ao vivo e atendimento no chat do site.</p>
       <div class="ccs-hero-ctas">
-        <a class="ccs-btn amber" href="https://wa.me/5531999758385?text=Ol%C3%A1%2C%20preciso%20de%20um%20or%C3%A7amento%20com%20a%20CodeCraft." target="_blank" rel="noopener">WhatsApp agora</a>
-        <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="toggleLeadWidget()">Chat no site</button>
+        <button class="ccs-btn amber" onclick="toggleLeadWidget()">Fale no chat</button>
         <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="showScreen('client')">Acompanhar projeto</button>
       </div>
     </div>
@@ -513,7 +505,7 @@
     <p class="ccs-lede">Atendemos <strong>MEI, pequenas, médias e grandes empresas</strong> em Belo Horizonte, Grande BH e todo o Brasil. Não importa se você está começando ou se já tem operação grande: entregamos landing page, site institucional, e-commerce, sistema sob medida ou plataforma de gestão (financeiro + RH) no nível que o seu negócio exige.</p>
     <p class="ccs-lede">Para <strong>grandes empresas</strong>, trabalhamos com escopo definido, integrações, múltiplos módulos, performance e governança — sem perder agilidade. Para MEI e PME, o mesmo padrão de qualidade, com preço e prazo acessíveis.</p>
     <div class="ccs-grid-3" style="margin-top:28px;">
-      <div class="ccs-card"><div class="num">MEI</div><h3>Começando</h3><p>Landing, site simples e presença no Google + WhatsApp.</p></div>
+      <div class="ccs-card"><div class="num">MEI</div><h3>Começando</h3><p>Landing, site simples e presença no Google + chat no site.</p></div>
       <div class="ccs-card"><div class="num">PME</div><h3>Crescendo</h3><p>Loja virtual, sistema interno e CodeCraft Gestão (caixa + ponto).</p></div>
       <div class="ccs-card featured"><div class="num">Grande</div><h3>Corporativo</h3><p>Portais, integrações, ERP e sistemas sob medida para operação ampla.</p></div>
     </div>
@@ -612,7 +604,7 @@
         <div class="ccs-price"><span class="from">a partir de</span> R$ 300</div>
         <ul>
           <li>Página única de alta conversão</li>
-          <li>Formulário de contato / WhatsApp</li>
+          <li>Formulário de contato / chat no site</li>
           <li>Otimizada para celular</li>
         </ul>
         <button class="ccs-btn amber" onclick="openLeadFromPricing('Landing page')">Quero um orçamento</button>
@@ -682,7 +674,7 @@
       </div>
       <form class="ccs-panel" onsubmit="submitContact(event)">
         <div class="ccs-field"><label>Nome</label><input required id="c-name" placeholder="Seu nome"></div>
-        <div class="ccs-field"><label>Contato (e-mail ou whatsapp)</label><input required id="c-contact" placeholder="Como podemos te chamar"></div>
+        <div class="ccs-field"><label>Contato (e-mail ou telefone)</label><input required id="c-contact" placeholder="Como podemos te chamar"></div>
         <div class="ccs-field"><label>Mensagem</label><textarea required id="c-msg" rows="4" placeholder="Conte o que você precisa"></textarea></div>
         <button class="ccs-btn amber" type="submit" style="width:100%;">Enviar mensagem</button>
       </form>
@@ -709,10 +701,6 @@
 
   <!-- ===== Chat aberto: cliente fala com a equipe sem precisar de código ===== -->
   <div id="lead-widget">
-    <a id="wa-fab" href="https://wa.me/5531999758385?text=Ol%C3%A1%2C%20vi%20o%20site%20da%20CodeCraft%20e%20quero%20falar%20sobre%20um%20projeto." target="_blank" rel="noopener" aria-label="WhatsApp CodeCraft">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
-      WhatsApp
-    </a>
     <button id="lead-fab" onclick="toggleLeadWidget()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H8l-4 4V5a1 1 0 0 1 1-1Z"/></svg>
       Fale com a gente
@@ -904,7 +892,7 @@
         <div style="margin-top:10px;"><strong>Passo a passo:</strong></div>
         <ol style="margin:6px 0 0 18px; padding:0; line-height:1.75;">
           <li><strong>Criar o projeto:</strong> clique em <strong>+ Novo projeto</strong>, preencha o nome do cliente, o tipo de serviço, o valor e a chave PIX, e clique em Salvar. O sistema gera um <strong>código</strong> pro cliente.</li>
-          <li><strong>Enviar o código:</strong> mande o código pro cliente pelo WhatsApp ou pela aba <strong>Conversas</strong> (chat).</li>
+          <li><strong>Enviar o código:</strong> mande o código pro cliente pela aba <strong>Conversas</strong> (chat do app).</li>
           <li><strong>Atualizar o andamento:</strong> use os botões <strong>Em análise → Em andamento → Concluído</strong>. O cliente vê a mudança na hora.</li>
           <li><strong>Marcar o pagamento:</strong> quando o cliente pagar o PIX, clique em <strong>Marcar como pago</strong>.</li>
           <li><strong>Entregar o projeto:</strong> quando o site estiver pronto, cole o endereço dele no campo <strong>🔗 Link de entrega</strong> (logo abaixo de cada projeto) e clique em <strong>Salvar link</strong>. Aí aparece o botão <strong>"Acessar meu site"</strong> pro cliente no portal, na hora.</li>
@@ -940,7 +928,7 @@
 
     <div id="tab-mensagens" style="display:none;">
       <h2 style="font-size:20px; margin-bottom:16px;">Mensagens do site</h2>
-      <div class="ccs-help"><strong>Para que serve:</strong> é a caixa de entrada do formulário "Fale com a gente" da página inicial. Quando alguém preenche nome, contato e mensagem, o recado cai aqui pra você responder pelo WhatsApp ou e-mail.</div>
+      <div class="ccs-help"><strong>Para que serve:</strong> é a caixa de entrada do formulário "Fale com a gente" da página inicial. Quando alguém preenche nome, contato e mensagem, o recado cai aqui pra você responder pela aba <strong>Conversas</strong> (chat do app).</div>
       <div id="messages-list"></div>
     </div>
 
@@ -973,7 +961,7 @@
         <div class="ccs-eyebrow" style="margin-bottom:6px;">Posicionamento · CodeCraft Solutions</div>
         <p style="margin:0 0 8px; font-size:14.5px; line-height:1.65;">
           <strong>MEI, pequenas, médias e grandes empresas.</strong> Sites, lojas virtuais, sistemas sob medida e CodeCraft Gestão (ERP/HCM B2B).
-          BH e Brasil · WhatsApp (31) 99975-8385 · PIX 31999758385 · @code.invention
+          BH e Brasil · Chat no site · PIX 31999758385 · @code.invention
         </p>
         <p style="margin:0; font-size:13px; color:var(--ink-soft);">
           Use este posicionamento no 99Freelas, GetNinjas, propostas e abordagens. A IA Admin e o marketing seguem o mesmo discurso.
@@ -1026,9 +1014,8 @@
     <div style="background:var(--paper-dim); padding:20px; border-radius:12px; margin-bottom:16px;">
       <div style="font-family:'JetBrains Mono',monospace; font-size:32px; font-weight:800; color:var(--amber); letter-spacing:4px;" id="modal-code"></div>
     </div>
-    <button class="ccs-btn" id="modal-wa-btn" onclick="sendCodeWhatsApp()" style="width:100%; background:#25D366; color:#04310F; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.55-3.7 8.24-8.24 8.24Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.65.31-.22.25-.86.84-.86 2.05 0 1.21.88 2.38 1 2.54.12.16 1.73 2.64 4.19 3.7.59.25 1.04.4 1.4.52.59.19 1.12.16 1.54.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29Z"/></svg>
-      Enviar código pelo WhatsApp
+    <button class="ccs-btn amber" id="modal-chat-btn" onclick="sendCodeInApp()" style="width:100%; margin-bottom:10px;">
+      Enviar código no chat
     </button>
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <button class="ccs-btn amber" onclick="copyCode()" style="flex:1;">Copiar código</button>
@@ -1547,11 +1534,11 @@ function leadBotReply(text, isFirst){
   if(/sistema|app|aplicativo|sob medida|portal/.test(t) && !/gestao|gestão|financ/.test(t))
     return 'Perfeito. Sistemas sob medida são desenhados conforme o seu processo (agenda, estoque, portal interno etc.). Descreva o problema principal e quantas pessoas usarão; assim montamos a proposta com objetividade.';
   if(/site|landing|pagina|página|institucional/.test(t) && !/loja|gestao|gestão/.test(t))
-    return 'Certo. Desenvolvemos sites e landing pages focados em conversão (WhatsApp e contato). Informe o segmento do negócio e se já possui domínio ou textos; a equipe segue com a orientação do próximo passo.';
+    return 'Certo. Desenvolvemos sites e landing pages focados em conversão (chat no site e formulário). Informe o segmento do negócio e se já possui domínio ou textos; a equipe segue com a orientação do próximo passo.';
   if(/financas|finanças|caixa|planilha|gastos|gestao|gestão|erp|assinatura|plano|ponto|folha|rh/.test(t))
     return 'O CodeCraft Gestão é nossa plataforma para empresas (CNPJ): Financeiro, RH e assinatura mensal via Asaas (R$ 280 a R$ 500). Acesso: https://gustavosena972-wq.github.io/financas-codecraft/app/planos/ . Posso esclarecer dúvidas ou a equipe comercial continua com você neste chat.';
   if(/whats|zap|telefone|contato/.test(t))
-    return 'Nosso WhatsApp comercial é (31) 99975-8385. Você também pode continuar por aqui: a equipe acompanha esta conversa em tempo real, com atenção e clareza.';
+    return 'O atendimento é por aqui mesmo, neste chat do site — em tempo real. A equipe acompanha esta conversa e responde com clareza.';
   if(/bh|belo horizonte|contagem|nova lima|betim/.test(t) && /atend|cidade|onde/.test(t))
     return 'Atendemos Belo Horizonte e região (Contagem, Betim, Nova Lima) e também de forma online. Por favor, descreva o tipo de projeto desejado para a equipe orientar o próximo passo.';
   if(/humano|pessoa|atendente|falar com|equipe/.test(t))
@@ -1796,26 +1783,15 @@ function copyCode(){
     navigator.clipboard.writeText(currentCode).then(()=>showToast('Código copiado!'));
   }
 }
-/* Converte um contato em número para o wa.me (só dígitos, com DDI 55). */
-function waPhone(str){
-  let d = (str||'').replace(/\D/g, '');
-  if(!d) return '';
-  if(d.length <= 11) d = '55' + d;      // sem DDI → adiciona Brasil
-  return d;
+function openAppConversas(){
+  showScreen('admin');
+  switchAdminTab('conversas');
 }
-function waLink(contact, text){
-  const phone = waPhone(contact);
-  const msg = encodeURIComponent(text || '');
-  return phone ? `https://wa.me/${phone}?text=${msg}` : `https://wa.me/?text=${msg}`;
-}
-function sendCodeWhatsApp(){
-  let contact = modalContact;
-  if(!waPhone(contact)){
-    contact = prompt('Digite o número de WhatsApp do cliente (com DDD):', '') || '';
-    if(!waPhone(contact)){ showToast('Número inválido.'); return; }
-  }
-  const text = `Olá! Aqui é da CodeCraft Solutions. Seu código de acompanhamento é: ${currentCode}\nAcompanhe seu projeto em tempo real pelo nosso site, na área "Portal do cliente".`;
-  window.open(waLink(contact, text), '_blank');
+function sendCodeInApp(){
+  copyCode();
+  closeCodeModal();
+  openAppConversas();
+  showToast('Código copiado. Envie na aba Conversas.');
 }
 function createProjectFromMessage(msgId, name, contact, msg){
   switchAdminTab('projetos');
@@ -1836,9 +1812,7 @@ async function renderMessagesList(){
     const nameJs = m.name.replace(/'/g, "\\'");
     const contactJs = m.contact.replace(/'/g, "\\'");
     const msgJs = m.msg.replace(/'/g, "\\'").replace(/\n/g, "\\n");
-    const wa = waPhone(m.contact)
-      ? `<a class="ccs-btn small" href="${waLink(m.contact, 'Olá! Aqui é da CodeCraft Solutions.')}" target="_blank" rel="noopener" style="background:#25D366; color:#04310F; text-decoration:none;">Responder no WhatsApp</a>`
-      : '';
+    const replyChat = `<button class="ccs-btn amber small" onclick="openAppConversas()">Responder no chat</button>`;
     return `
     <div class="ccs-panel" style="margin-bottom:14px;">
       <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;">
@@ -1849,7 +1823,7 @@ async function renderMessagesList(){
       <div style="font-size:14.5px; margin-bottom:12px;">${escapeHtml(m.msg)}</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="ccs-btn amber small" onclick="createProjectFromMessage('${m.id}', '${nameJs}', '${contactJs}', '${msgJs}')">Criar projeto</button>
-        ${wa}
+        ${replyChat}
       </div>
     </div>`;
   }).join('');
@@ -1937,7 +1911,6 @@ async function openAdminChat(code){
         <span style="font-size:12px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace;">${code}</span></div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="ccs-btn ghost small" onclick="sendCodeInChat()">Enviar código</button>
-        ${contact && waPhone(contact) ? `<a class="ccs-btn small" href="${waLink(contact,'')}" target="_blank" rel="noopener" style="background:#25D366; color:#04310F; text-decoration:none;">WhatsApp</a>` : ''}
       </div>
     </div>
     <div id="admin-chat-messages" class="ccs-chat-messages"></div>
@@ -2340,9 +2313,8 @@ async function saveLeadAndPing(){
   await persistCrmLead(lead);
   document.getElementById('lead-name').value=''; document.getElementById('lead-phone').value='';
   await renderLeads();
-  window.open(waLink(phone, pitchFor(name, niche)), '_blank');
   addTask('Retornar '+name+(niche?' · '+niche:''), todayISO(), 'lead');
-  showToast('Lead salvo no painel ao vivo. WhatsApp aberto.');
+  showToast('Lead salvo. Responda na aba Conversas quando o cliente falar no chat.');
 }
 async function markLead(id, status){
   const list = await loadCrmLeads();
@@ -2360,7 +2332,10 @@ async function openLeadWa(id){
   const list = await loadCrmLeads();
   const l = list.find(x=>x.id===id);
   if(!l) return;
-  window.open(waLink(l.phone, pitchFor(l.name, l.niche)), '_blank');
+  const text = pitchFor(l.name, l.niche);
+  await navigator.clipboard.writeText(text).catch(()=>{});
+  openAppConversas();
+  showToast('Texto copiado. Responda na aba Conversas.');
 }
 async function renderLeads(){
   const el = document.getElementById('leads-list');
@@ -2369,9 +2344,9 @@ async function renderLeads(){
   if(!list.length){ el.innerHTML = '<div class="ccs-panel ccs-empty">Nenhum lead ainda. Caçe um nicho e cole o nome aqui.</div>'; return; }
   el.innerHTML = list.map(l=>`
     <div class="ccs-panel" style="margin-bottom:10px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-      <div><strong>${escapeHtml(l.name)}</strong> · ${escapeHtml(l.niche||'—')}<br><span style="color:var(--ink-soft); font-size:13px;">${escapeHtml(l.phone||'sem WhatsApp')} · ${l.status}</span></div>
+      <div><strong>${escapeHtml(l.name)}</strong> · ${escapeHtml(l.niche||'—')}<br><span style="color:var(--ink-soft); font-size:13px;">${escapeHtml(l.phone||'sem telefone')} · ${l.status}</span></div>
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
-        <button class="ccs-btn amber small" onclick="openLeadWa('${l.id}')">WhatsApp</button>
+        <button class="ccs-btn amber small" onclick="openLeadWa('${l.id}')">Abrir chat</button>
         <button class="ccs-btn ghost small" onclick="markLead('${l.id}','respondeu')">Respondeu</button>
         <button class="ccs-btn ghost small" onclick="removeLead('${l.id}')">Tirar</button>
       </div>
@@ -2412,10 +2387,10 @@ function todayPosts(mkt){
   const day = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long' });
   const extra = mkt && mkt.usd!=null ? ('\nMercado agora: dólar R$ '+moneyFx(mkt.usd)+(mkt.selic!=null?', Selic '+mkt.selic+'%':'')+'. Quem controla gente, caixa e operação fecha o mês — CodeCraft Gestão.') : '';
   return {
-    linkedin: 'CodeCraft Solutions · '+day+'\n\nAtendemos MEI, PME e grandes empresas: site, loja virtual, sistema sob medida e ERP CodeCraft Gestão.\nEntrega com portal ao vivo, WhatsApp e PIX.\nBH e Brasil · 31 99975-8385'+extra,
-    instagram: 'Site, loja ou ERP para sua empresa — do MEI ao corporativo.\nCodeCraft Solutions · BH · WhatsApp 31 99975-8385',
-    google: 'Criação de sites, lojas e sistemas em Belo Horizonte. Acompanhe o projeto ao vivo. PIX 31999758385. WhatsApp 31 99975-8385.',
-    whatsapp: 'CodeCraft Solutions — site, loja e sistema em BH. Você acompanha o andamento no portal. Chama no 31 99975-8385.'
+    linkedin: 'CodeCraft Solutions · '+day+'\n\nAtendemos MEI, PME e grandes empresas: site, loja virtual, sistema sob medida e ERP CodeCraft Gestão.\nEntrega com portal ao vivo e chat no site.\nhttps://gustavosena972-wq.github.io/CodeCraft-Solutions/'+extra,
+    instagram: 'Site, loja ou ERP para sua empresa — do MEI ao corporativo.\nFale no chat do site · CodeCraft Solutions · BH',
+    google: 'Criação de sites, lojas e sistemas em Belo Horizonte. Acompanhe o projeto ao vivo. Atendimento no chat do site.',
+    chat: 'CodeCraft Solutions — site, loja e sistema. Fale no chat do site e acompanhe no portal.'
   };
 }
 function bestChannel(projects, messages, mkt){
@@ -2424,8 +2399,8 @@ function bestChannel(projects, messages, mkt){
   const inbound = (messages||[]).length;
   const usd = Number(mkt && mkt.usdPct) || 0;
   const ibov = Number(mkt && mkt.ibovPct) || 0;
-  if(unpaid >= 1) return { id:'whatsapp', label:'WhatsApp', why:'Tem cobrança em aberto. Fechar o que já começou rende mais do que post novo.' };
-  if(inbound > 0 && hour >= 9 && hour <= 18) return { id:'whatsapp', label:'WhatsApp', why:'Já chega pedido pelo site. Responder e cobrar fecha mais do que postar agora.' };
+  if(unpaid >= 1) return { id:'chat', label:'Chat do site', why:'Tem cobrança em aberto. Responda no chat antes de postar.' };
+  if(inbound > 0 && hour >= 9 && hour <= 18) return { id:'chat', label:'Chat do site', why:'Já chega pedido pelo site. Responder no chat fecha mais do que postar agora.' };
   if(Math.abs(usd) >= 0.8 || ibov <= -1) return { id:'linkedin', label:'LinkedIn', why:'Mercado mexeu. Post de caixa e preço em real fecha mais no LinkedIn agora.' };
   if(hour >= 8 && hour <= 11) return { id:'google', label:'Google Meu Negócio', why:'Manhã é hora de busca local: “criar site BH”.' };
   if(hour >= 11 && hour <= 14) return { id:'linkedin', label:'LinkedIn', why:'Horário comercial B2B. Ticket maior.' };
@@ -2433,7 +2408,7 @@ function bestChannel(projects, messages, mkt){
 }
 function copyPost(kind, mkt){
   const p = todayPosts(mkt || marketCache);
-  const text = p[kind] || p.whatsapp;
+  const text = p[kind] || p.chat;
   navigator.clipboard.writeText(text).then(()=>{
     const done = JSON.parse(localStorage.getItem(POSTS_KEY)||'{}');
     done[new Date().toISOString().slice(0,10)+'-'+kind] = true;
@@ -2448,9 +2423,9 @@ function openPost(kind, mkt){
     linkedin:'https://www.linkedin.com/feed/',
     instagram:'https://www.instagram.com/',
     google:'https://business.google.com/posts',
-    whatsapp:'https://web.whatsapp.com/'
+    chat:'https://gustavosena972-wq.github.io/CodeCraft-Solutions/'
   };
-  window.open(urls[kind]||urls.whatsapp, '_blank');
+  window.open(urls[kind]||urls.chat, '_blank');
 }
 async function renderPostar(){
   const el = document.getElementById('postar-box');
@@ -2460,7 +2435,7 @@ async function renderPostar(){
   const mkt = await loadMarket();
   const ch = bestChannel(projects, messages, mkt);
   const posts = todayPosts(mkt);
-  const keys = [['linkedin','LinkedIn'],['instagram','Instagram'],['google','Google'],['whatsapp','WhatsApp Status']];
+  const keys = [['linkedin','LinkedIn'],['instagram','Instagram'],['google','Google'],['chat','Site · chat']];
   el.innerHTML = `
     <div class="ccs-panel" style="margin-bottom:14px; border-color:var(--amber);">
       <div class="ccs-eyebrow">Canal de agora</div>
@@ -2548,12 +2523,22 @@ async function renderHoje(){
   `;
 }
 function chaseText(p){
-  return 'Olá, '+p.clientName+'! Aqui é da CodeCraft. O PIX do projeto '+p.projectName+' é '+money(Number(p.pixValue))+' na chave 31999758385. Quando puder, me avisa que confirmo no painel.';
+  return 'Olá, '+p.clientName+'! Aqui é da CodeCraft. O PIX do projeto '+p.projectName+' é '+money(Number(p.pixValue))+' na chave 31999758385. Quando pagar, me avisa aqui no chat que confirmo no painel.';
 }
-function chaseProject(p){
+async function chaseProject(p){
   if(!p) return false;
-  const contact = ((p.notes||'').match(/Contato:\s*(.+)/)||[])[1] || '';
-  window.open(waLink(contact, chaseText(p)), '_blank');
+  const text = chaseText(p);
+  if(p.trackingCode){
+    await insertChat(p.trackingCode, 'admin', text);
+    showScreen('admin');
+    switchAdminTab('conversas');
+    await openAdminChat(p.trackingCode);
+    showToast('Cobrança enviada no chat: '+p.clientName);
+  } else {
+    await navigator.clipboard.writeText(text).catch(()=>{});
+    openAppConversas();
+    showToast('Texto copiado. Envie na aba Conversas.');
+  }
   addTask('Cobrar '+p.clientName+' · '+money(Number(p.pixValue)), todayISO(), 'cobranca');
   return true;
 }
@@ -2563,8 +2548,7 @@ async function chaseUnpaid(){
   if(!unpaid.length){ showToast('Nada a cobrar.'); return null; }
   const p = unpaid[aiMem.unpaidI % unpaid.length];
   aiMem.unpaidI++;
-  chaseProject(p);
-  showToast('WhatsApp de cobrança aberto: '+p.clientName);
+  await chaseProject(p);
   return p;
 }
 async function chaseAllUnpaid(){
@@ -2578,32 +2562,31 @@ async function chaseAllUnpaid(){
 function proposalText(name, service){
   const map = {
     site: 'site institucional com acompanhamento ao vivo e PIX na entrega',
-    loja: 'loja virtual com pedido, WhatsApp e PIX',
+    loja: 'loja virtual com pedido, chat no site e PIX',
     landing: 'landing page para captar cliente',
     sistema: 'sistema sob medida para o dia a dia da empresa',
     gestao: 'CodeCraft Gestão — ERP/HCM (Financeiro, RH e Billing, R$ 280–500)'
   };
   const what = map[service] || map.site;
-  return 'Olá'+(name?', '+name:'')+'! Sou da CodeCraft Solutions, em BH.\n\nPosso te entregar um '+what+'. Você acompanha cada etapa no portal e paga só na chave PIX 31999758385.\n\nMe fala o que você precisa que eu fecho o escopo e o prazo.\nWhatsApp 31 99975-8385';
+  return 'Olá'+(name?', '+name:'')+'! Sou da CodeCraft Solutions, em BH.\n\nPosso te entregar um '+what+'. Você acompanha cada etapa no portal e paga só na chave PIX 31999758385.\n\nMe fala o que você precisa que eu fecho o escopo e o prazo.\nAtendimento pelo chat do site.';
 }
 function sendProposal(){
   const nameEl = document.getElementById('prop-name');
   if(!nameEl) return;
   const name = (nameEl.value||'').trim();
-  const phone = (document.getElementById('prop-phone').value||'').trim();
   const service = document.getElementById('prop-service').value;
   const text = proposalText(name, service);
   navigator.clipboard.writeText(text).catch(()=>{});
-  window.open(waLink(phone, text), '_blank');
+  openAppConversas();
   addTask('Proposta '+service+(name?' · '+name:''), todayISO(), 'proposta');
-  showToast('Proposta copiada e WhatsApp aberto.');
+  showToast('Proposta copiada. Cole na aba Conversas.');
 }
 
 function renderTools(){
   const el = document.getElementById('tools-grid');
   if(!el) return;
   el.innerHTML = [
-    ['Cobrar quem deve','Abre o WhatsApp do próximo PIX em aberto.','chaseUnpaid()'],
+    ['Cobrar quem deve','Envia cobrança PIX no chat do próximo cliente.','chaseUnpaid()'],
     ['Cobrar todos','Abre até 6 cobranças em sequência.','chaseAllUnpaid()'],
     ['Achar clínicas BH','Maps + Google + Instagram já filtrados.','runHunt("clinica")'],
     ['Postar no melhor canal','Copia o texto e abre o canal de agora.','(async()=>{const p=await loadProjects();const m=await loadMessages();const k=await loadMarket();openPost(bestChannel(p,m,k).id,k);})()'],
@@ -2655,14 +2638,13 @@ const CCS_COMPANY = {
   name: 'CodeCraft Solutions',
   city: 'Belo Horizonte / Grande BH · Brasil',
   pitch: 'Sites, lojas, sistemas e ERP para MEI, PME e grandes empresas.',
-  whatsapp: '31999758385',
-  whatsappDisplay: '(31) 99975-8385',
   pix: '31999758385',
+  chatSite: 'Atendimento pelo chat do site (sem WhatsApp)',
   instagram: '@code.invention',
   gestaoUrl: (typeof GESTAO_URL !== 'undefined' ? GESTAO_URL : ''),
   products: [
     { id:'gestao', name:'CodeCraft Gestão', price:'R$ 280 a R$ 500/mês', forWhom:'MEI, PME e empresas (CNPJ)', pain:'ponto, caixa, folha, títulos', detail:'ERP/HCM B2B: Financeiro, RH e assinatura Asaas.' },
-    { id:'landing', name:'Landing page', price:'a partir de R$ 300', forWhom:'MEI a grandes empresas', pain:'não converte visita', detail:'Página única de alta conversão + WhatsApp.' },
+    { id:'landing', name:'Landing page', price:'a partir de R$ 300', forWhom:'MEI a grandes empresas', pain:'não converte visita', detail:'Página única de alta conversão + chat no site.' },
     { id:'site', name:'Site institucional', price:'a partir de R$ 500', forWhom:'Pequenas, médias e grandes empresas', pain:'não aparece no Google', detail:'Várias páginas, identidade e redes.' },
     { id:'loja', name:'Loja virtual', price:'a partir de R$ 500', forWhom:'Comércio local a operação grande', pain:'só vende no balcão', detail:'Catálogo, pedido, frete e PIX.' },
     { id:'sistema', name:'Sistema / App sob medida', price:'R$ 1.500 a R$ 15.000', forWhom:'PME e corporativo', pain:'planilha e caos', detail:'Painéis, cadastros, integrações e portal ao vivo.' },
@@ -2685,10 +2667,10 @@ const IA_HUNT_NICHES = [
   { key:'clinica', label:'Clínicas e consultórios', query:'clínica médica Belo Horizonte', offer:'gestao', project:'CodeCraft Gestão (ponto + folha) ou site com agenda', need:'controle de ponto/folha ou presença digital fraca', maps:'https://www.google.com/maps/search/cl%C3%ADnica+m%C3%A9dica+Belo+Horizonte' },
   { key:'odontologia', label:'Consultórios odontológicos', query:'dentista Belo Horizonte', offer:'gestao', project:'Gestão Essencial + site institucional', need:'agenda/site e RH simples', maps:'https://www.google.com/maps/search/dentista+Belo+Horizonte' },
   { key:'oficina', label:'Oficinas e auto peças', query:'oficina mecânica Belo Horizonte', offer:'loja', project:'Loja virtual com pedido e PIX', need:'vender além do balcão', maps:'https://www.google.com/maps/search/oficina+mec%C3%A2nica+Belo+Horizonte' },
-  { key:'salao', label:'Salões e estética', query:'salão de beleza Belo Horizonte', offer:'site', project:'Site com WhatsApp e agenda', need:'perder cliente no Google / só WhatsApp', maps:'https://www.google.com/maps/search/sal%C3%A3o+de+beleza+Belo+Horizonte' },
+  { key:'salao', label:'Salões e estética', query:'salão de beleza Belo Horizonte', offer:'site', project:'Site com chat e agenda', need:'perder cliente no Google / só WhatsApp', maps:'https://www.google.com/maps/search/sal%C3%A3o+de+beleza+Belo+Horizonte' },
   { key:'loja', label:'Lojas de bairro', query:'loja Belo Horizonte', offer:'loja', project:'Loja virtual + Gestão de caixa', need:'catálogo e pedido online', maps:'https://www.google.com/maps/search/loja+Belo+Horizonte' },
   { key:'contabilidade', label:'Contabilidades', query:'contabilidade Belo Horizonte', offer:'sistema', project:'Portal sob medida para clientes', need:'portal e processos manuais', maps:'https://www.google.com/maps/search/contabilidade+Belo+Horizonte' },
-  { key:'restaurante', label:'Restaurantes', query:'restaurante Belo Horizonte', offer:'site', project:'Site + cardápio + pedidos WhatsApp', need:'cardápio/pedido digital', maps:'https://www.google.com/maps/search/restaurante+Belo+Horizonte' },
+  { key:'restaurante', label:'Restaurantes', query:'restaurante Belo Horizonte', offer:'site', project:'Site + cardápio + pedidos online', need:'cardápio/pedido digital', maps:'https://www.google.com/maps/search/restaurante+Belo+Horizonte' },
   { key:'advocacia', label:'Escritórios de advocacia', query:'advocacia Belo Horizonte', offer:'site', project:'Site institucional + captura', need:'captação de leads jurídicos', maps:'https://www.google.com/maps/search/advocacia+Belo+Horizonte' },
   { key:'imobiliaria', label:'Imobiliárias', query:'imobiliária Belo Horizonte', offer:'sistema', project:'Catálogo de imóveis + CRM leve', need:'vitrine de imóveis online', maps:'https://www.google.com/maps/search/imobili%C3%A1ria+Belo+Horizonte' },
   { key:'academia', label:'Academias', query:'academia Belo Horizonte', offer:'gestao', project:'Gestão + site de matrículas', need:'matrícula e ponto/caixa', maps:'https://www.google.com/maps/search/academia+Belo+Horizonte' },
@@ -2739,12 +2721,6 @@ function pushAi(who, html){
   renderIaAdminChat();
 }
 function iaWrap(title, body){ return '<strong>'+title+'</strong><br>'+body; }
-function iaPhoneDigits(phone){ return String(phone||'').replace(/\D/g,''); }
-function iaWaLink(phone, text){
-  let d = iaPhoneDigits(phone);
-  if(d.length===10 || d.length===11) d = '55'+d;
-  return 'https://wa.me/'+d+'?text='+encodeURIComponent(text||'');
-}
 function iaDaySeed(){
   const d = new Date();
   return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
@@ -2805,7 +2781,7 @@ function iaRenderPipeline(){
     const badge = p.source==='inbound' ? '<span class="ccs-ia-badge real">Lead real</span>'
       : p.source==='cnpj' ? '<span class="ccs-ia-badge">CNPJ</span>'
       : '<span class="ccs-ia-badge warn">Alvo</span>';
-    const wa = p.phone ? '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+iaWaLink(p.phone, p.outreach||'')+'">WhatsApp</a>' : '';
+  const chatBtn = p.phone ? '<button class="ccs-btn amber small" type="button" onclick="navigator.clipboard.writeText('+JSON.stringify(p.outreach||'')+');openAppConversas();">Copiar e abrir chat</button>' : '';
     const maps = p.maps ? '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+p.maps+'">Maps</a>' : '';
     const chat = p.chatCode ? '<button class="ccs-btn ghost small" onclick="iaOpenChatCode(\''+String(p.chatCode).replace(/'/g,"\\'")+'\')">Chat</button>' : '';
     return '<div class="ccs-ia-lead">'+badge+
@@ -2813,7 +2789,7 @@ function iaRenderPipeline(){
       '<span>'+escapeHtml(p.project||p.pain||'')+'</span>'+
       (p.contact? '<span>'+escapeHtml(p.contact)+'</span>':'')+
       (p.phone||p.email? '<span>'+escapeHtml([p.phone,p.email].filter(Boolean).join(' · '))+'</span>':'')+
-      '<div class="acts">'+wa+maps+chat+
+      '<div class="acts">'+chatBtn+maps+chat+
       '<button class="ccs-btn ghost small" onclick="iaDraftProspect(\''+String(p.id).replace(/'/g,"\\'")+'\')">Abordagem</button></div></div>';
   }).join('');
 }
@@ -2836,21 +2812,21 @@ function iaOutreachHtml(p){
     '.\n\nIdentificamos oportunidade para '+(p.company||'sua empresa')+': '+(p.pain||p.project||'melhorar operação digital')+
     '.\n\nPodemos entregar '+prod.name+' ('+prod.price+') com portal em tempo real e PIX '+CCS_COMPANY.pix+
     '.\n\nProjeto sugerido: '+(p.project||prod.detail)+
-    '.\n\nPodemos falar 15 minutos ainda hoje?\n\nAtenciosamente,\nEquipe '+CCS_COMPANY.name+'\nWhatsApp '+CCS_COMPANY.whatsappDisplay;
+    '.\n\nPodemos falar 15 minutos ainda hoje?\n\nAtenciosamente,\nEquipe '+CCS_COMPANY.name+'\nChat: gustavosena972-wq.github.io/CodeCraft-Solutions/';
   p.outreach = plain;
   iaPushProspect(p);
   const body = plain.replace(/\n/g,'<br>');
-  const wa = p.phone ? '<div class="ccs-ia-actions"><a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+iaWaLink(p.phone, plain)+'">Abrir WhatsApp</a></div>' : '';
-  return iaWrap('Abordagem pronta', body)+wa;
+  const chatAct = '<div class="ccs-ia-actions"><button class="ccs-btn amber small" type="button" onclick="navigator.clipboard.writeText('+JSON.stringify(plain)+');openAppConversas();">Copiar e abrir chat</button></div>';
+  return iaWrap('Abordagem pronta', body)+chatAct;
 }
 
 function iaCompanyCard(){
   return iaWrap('O que a CodeCraft Solutions vende',
-    CCS_COMPANY.city+' · WhatsApp '+CCS_COMPANY.whatsappDisplay+' · PIX '+CCS_COMPANY.pix+' · '+CCS_COMPANY.instagram+'<br><br>'+
+    CCS_COMPANY.city+' · Chat no site · PIX '+CCS_COMPANY.pix+' · '+CCS_COMPANY.instagram+'<br><br>'+
     CCS_COMPANY.products.map(p=>
       '• <strong>'+p.name+'</strong> — '+p.price+' · '+p.forWhom+' · dor: '+p.pain+'<br><span style="color:var(--ink-soft)">'+p.detail+'</span>'
     ).join('<br><br>')+
-    '<br><br>Não sou IA solta: leio a fila deste admin e preparo ações (WhatsApp, chat, Gestão).'
+    '<br><br>Não sou IA solta: leio a fila deste admin e preparo ações (chat, portal, Gestão).'
   );
 }
 
@@ -2892,7 +2868,7 @@ async function iaInboundLeadsHtml(snap){
       (p.phone||p.email? '<li><strong>Contato:</strong> '+escapeHtml([p.phone,p.email].filter(Boolean).join(' · '))+'</li>':'')+
       '</ul><div class="ccs-ia-actions">'+
       (p.chatCode? '<button class="ccs-btn amber small" onclick="iaOpenChatCode(\''+p.chatCode+'\')">Abrir e responder</button>':'')+
-      (p.phone? '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+iaWaLink(p.phone,p.outreach)+'">WhatsApp</a>':'')+
+      (!p.chatCode && p.outreach ? '<button class="ccs-btn ghost small" type="button" onclick="navigator.clipboard.writeText('+JSON.stringify(p.outreach||'')+');openAppConversas();">Copiar resposta</button>':'')+
       '</div></div>';
   });
   return html;
@@ -3013,7 +2989,7 @@ async function iaLookupCnpj(cnpj){
       '<li><strong>Projeto sugerido:</strong> '+escapeHtml(p.project)+'</li>'+
       '<li><strong>Contato:</strong> '+escapeHtml(p.contact)+'</li></ul>'+
       '<div class="ccs-ia-actions">'+
-      (p.phone? '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+iaWaLink(p.phone,p.outreach)+'">WhatsApp</a>':'')+
+      (p.phone? '<button class="ccs-btn amber small" type="button" onclick="navigator.clipboard.writeText('+JSON.stringify(p.outreach||'')+');openAppConversas();">Copiar abordagem</button>':'')+
       '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+p.maps+'">Maps</a>'+
       '<button class="ccs-btn ghost small" onclick="iaDraftProspect(\''+p.id+'\')">Abordagem</button></div></div>';
   }catch(e){
@@ -3051,7 +3027,7 @@ async function iaAttendChats(snap){
     const draft =
       'Prezado(a) '+c.name+',\n\nAgradecemos o contato com a CodeCraft Solutions.\n\n'+
       'Recebemos sua mensagem e queremos entender: (1) objetivo do projeto; (2) prazo; (3) se prefere site, loja, sistema ou CodeCraft Gestão.\n\n'+
-      'Com isso, enviamos a proposta com clareza.\n\nAtenciosamente,\nEquipe CodeCraft Solutions\nWhatsApp '+CCS_COMPANY.whatsappDisplay;
+      'Com isso, enviamos a proposta com clareza.\n\nAtenciosamente,\nEquipe CodeCraft Solutions\nChat: gustavosena972-wq.github.io/CodeCraft-Solutions/';
     window.__iaDrafts = window.__iaDrafts || {};
     window.__iaDrafts[c.code] = draft;
     html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">Chat '+escapeHtml(c.code)+'</div>'+
@@ -3172,7 +3148,7 @@ function iaCompactSnapshot(snap){
     leads: (snap.leads||[]).map(l=>({ code:l.code, name:l.name })),
     openChats: (snap.openChats||[]).map(c=>({ code:c.code, name:c.name, unanswered:c.unanswered, last:c.last||'' })),
     messages: (snap.messages||[]).map(m=>({ name:m.name, contact:m.contact, msg:m.msg||'' })),
-    company: { name:CCS_COMPANY.name, pix:CCS_COMPANY.pix, whatsapp:CCS_COMPANY.whatsappDisplay, products:CCS_COMPANY.products }
+    company: { name:CCS_COMPANY.name, pix:CCS_COMPANY.pix, contact:CCS_COMPANY.chatSite, products:CCS_COMPANY.products }
   };
 }
 async function callClaudeAdminAi(text, snap, mkt){
@@ -3277,13 +3253,13 @@ async function sendAdminAiCore(){
 }
 
 const MKT_BANK = [
-  { cat:'strategy', title:'Posicionamento', body:'CodeCraft Solutions atende MEI, PME e grandes empresas em BH e Brasil. Sites, lojas, sistemas sob medida e CodeCraft Gestão (ERP). Toda peça: 1 problema, 1 prova, 1 CTA (WhatsApp ou portal).' },
+  { cat:'strategy', title:'Posicionamento', body:'CodeCraft Solutions atende MEI, PME e grandes empresas em BH e Brasil. Sites, lojas, sistemas sob medida e CodeCraft Gestão (ERP). Toda peça: 1 problema, 1 prova, 1 CTA (chat do site ou portal).' },
   { cat:'calendar', title:'Semana padrão', body:'Seg: problema do nicho. Ter: antes/depois. Qua: CodeCraft Gestão. Qui: prova social. Sex: oferta PIX na entrega. Sáb: mercado (Selic/dólar) e o que vender. Dom: bastidor da @code.invention. 1 CTA por post.' },
   { cat:'copy', title:'Gancho', body:'3 segundos: “Sua empresa ainda perde cliente sem site profissional?” Depois a prova. Depois o que fazer. Hashtag só no fim. @code.invention uma vez. Sem enrolação.' },
   { cat:'growth', title:'Alcance', body:'Reels ensina. Carrossel salva. Story pergunta. Feed posiciona. Não poste os quatro iguais. 4 a 6 posts por semana. Piloto no máximo 2/dia no feed, com 3h de folga.' },
-  { cat:'niche', title:'Quem comprar', body:'MEI, pequenas, médias e grandes empresas: clínica, loja, indústria, SaaS, varejo e corporativo. Quem precisa de site, loja, sistema ou ERP (Gestão). Freelance + WhatsApp + inbound do site.' },
+  { cat:'niche', title:'Quem comprar', body:'MEI, pequenas, médias e grandes empresas: clínica, loja, indústria, SaaS, varejo e corporativo. Quem precisa de site, loja, sistema ou ERP (Gestão). Freelance + chat do site + inbound.' },
   { cat:'offer', title:'Oferta', body:'PIX na entrega. Preço de partida no site. CodeCraft Gestão para quem precisa de people, finanças e operações num só lugar. Uma oferta por post. Nunca duas.' },
-  { cat:'funnel', title:'Funil', body:'Conteúdo → WhatsApp 31 99975-8385 → briefing no chat do site → PIX. Instagram não fecha contrato sozinho. O post tem que mandar para o WhatsApp ou para o portal.' },
+  { cat:'funnel', title:'Funil', body:'Conteúdo → chat do site → briefing → PIX → portal. Instagram não fecha contrato sozinho. O post tem que mandar para o chat ou para o portal.' },
   { cat:'tone', title:'Tom', body:'Português simples. BH. Sem jargão de agência. Fala como dono de oficina, não como MBA. Frase curta. Número na tela quando houver.' }
 ];
 let mktBankLive = MKT_BANK.slice();
@@ -3315,7 +3291,7 @@ function mktStrategyReply(raw, mkt){
   if(/hook|gancho|legenda|copy|caption|escreve/.test(t)) return mktPick('copy');
   if(/reels|algorit|alcance|seguidor|crescer/.test(t)) return mktPick('growth');
   if(/oferta|preco|pix na entrega/.test(t)) return mktPick('offer');
-  if(/funil|whatsapp|vender/.test(t)) return mktPick('funnel');
+  if(/funil|chat do site|vender/.test(t)) return mktPick('funnel');
   if(/tom|como falar|linguagem/.test(t)) return mktPick('tone');
   const extra = mkt && mkt.usd!=null ? (' Mercado agora: dólar R$ '+moneyFx(mkt.usd)+(mkt.selic!=null?', Selic '+mkt.selic+'%.':'')+' Com Selic alta, venda PIX à vista e CodeCraft Gestão.') : '';
   return mktPick('strategy')+extra;
