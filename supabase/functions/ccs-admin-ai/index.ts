@@ -48,13 +48,14 @@ Para cada lead encontrado, use este bloco:
 <li><strong>Link:</strong> URL clicável</li>
 <li><strong>Abordagem:</strong> texto pronto em português formal</li>
 </ul>
-Entregue 3 a 6 oportunidades por varredura.
+Entregue o máximo de oportunidades úteis na varredura (sem teto artificial de quantidade). Seja completo nos relatórios.
 
 ## Regras
 - Português do Brasil, formal, claro, acionável
 - NUNCA invente telefone, e-mail, @ ou CNPJ. Se a busca não trouxe contato, diga “contato no anúncio/perfil” e dê o link
 - Prefira BH / Grande BH / MG, sem limitar se achar demanda forte em freelance nacional
 - Quando sugerir abordagem, texto pronto para WhatsApp/DM
+- Respostas longas e completas são bem-vindas — não encurte por economia de tokens
 - HTML simples: <p>, <strong>, <em>, <ul>, <li>, <br>, <a href="...">. Sem scripts.`;
 
 function scrubHtml(s: string) {
@@ -106,27 +107,29 @@ Deno.serve(async (req) => {
     if (userError || !userData.user) return json({ error: "Não autenticado" }, 401);
 
     const body = await req.json().catch(() => ({}));
-    const message = String(body.message || "").trim().slice(0, 8000);
+    // Sem teto artificial de mensagem — só evita payload absurdo de segurança
+    const message = String(body.message || "").trim().slice(0, 500_000);
     if (!message) return json({ error: "Mensagem vazia" }, 400);
 
     const snapshot = body.snapshot || {};
     const market = body.market || {};
-    const history = Array.isArray(body.history) ? body.history.slice(-12) : [];
+    // Histórico amplo (janela do modelo ~200k; sem corte curto por mensagem)
+    const history = Array.isArray(body.history) ? body.history.slice(-80) : [];
 
     const contextBlock = [
       "## Snapshot operacional (ao vivo do painel)",
-      JSON.stringify(snapshot, null, 0).slice(0, 12000),
+      JSON.stringify(snapshot, null, 0).slice(0, 200_000),
       "",
       "## Mercado",
-      JSON.stringify(market, null, 0).slice(0, 2000),
+      JSON.stringify(market, null, 0).slice(0, 50_000),
       "",
-      "Responda à mensagem do admin abaixo com base nesse snapshot e no conhecimento da CodeCraft.",
+      "Responda à mensagem do admin abaixo com base nesse snapshot e no conhecimento da CodeCraft. Seja completo — sem economizar tokens.",
     ].join("\n");
 
     const messages: Array<{ role: "user" | "assistant"; content: string }> = [];
     for (const h of history) {
       const role = h.role === "assistant" ? "assistant" : "user";
-      const content = String(h.content || "").slice(0, 4000);
+      const content = String(h.content || "").slice(0, 100_000);
       if (content) messages.push({ role, content });
     }
     messages.push({
@@ -135,25 +138,34 @@ Deno.serve(async (req) => {
     });
 
     const model = Deno.env.get("ANTHROPIC_MODEL") || "claude-sonnet-4-5";
+    // Máximo de saída do modelo (Claude Sonnet 4.x). Sem limite baixo nosso.
+    const maxTokens = Math.min(
+      Math.max(Number(Deno.env.get("ANTHROPIC_MAX_TOKENS") || 64000) || 64000, 1024),
+      64000,
+    );
+    const webSearchUses = Math.min(
+      Math.max(Number(Deno.env.get("ANTHROPIC_WEB_SEARCH_USES") || 25) || 25, 1),
+      50,
+    );
 
     // 1ª tentativa: com web search (se a conta permitir)
     const payloadWithSearch = {
       model,
-      max_tokens: 2200,
+      max_tokens: maxTokens,
       system: SYSTEM,
       messages,
       tools: [
         {
           type: "web_search_20250305",
           name: "web_search",
-          max_uses: 3,
+          max_uses: webSearchUses,
         },
       ],
     };
 
     const payloadPlain = {
       model,
-      max_tokens: 2200,
+      max_tokens: maxTokens,
       system: SYSTEM,
       messages,
     };
@@ -172,6 +184,15 @@ Deno.serve(async (req) => {
       return { ok: res.ok, status: res.status, data };
     }
 
+    function extractText(data: { content?: Array<{ type?: string; text?: string }> }) {
+      const parts = Array.isArray(data?.content) ? data.content : [];
+      return parts
+        .filter((p) => p.type === "text")
+        .map((p) => p.text || "")
+        .join("\n\n")
+        .trim();
+    }
+
     let usedSearch = true;
     let result = await callClaude(payloadWithSearch);
     if (!result.ok) {
@@ -187,12 +208,33 @@ Deno.serve(async (req) => {
       return json({ error: errMsg, code: "CLAUDE_ERROR" }, 502);
     }
 
-    const parts = Array.isArray(result.data?.content) ? result.data.content : [];
-    const textOut = parts
-      .filter((p: { type?: string }) => p.type === "text")
-      .map((p: { text?: string }) => p.text || "")
-      .join("\n\n")
-      .trim();
+    let textOut = extractText(result.data);
+    let continuations = 0;
+    // Se a API cortou por max_tokens, continua até completar (até 4 rodadas extras)
+    while (
+      result.data?.stop_reason === "max_tokens" &&
+      textOut &&
+      continuations < 4
+    ) {
+      continuations++;
+      const contMessages = [
+        ...messages,
+        { role: "assistant" as const, content: textOut },
+        {
+          role: "user" as const,
+          content:
+            "Continue exatamente de onde parou. Não repita o que já escreveu. Complete o relatório/resposta até o fim.",
+        },
+      ];
+      const contPayload = usedSearch
+        ? { ...payloadWithSearch, messages: contMessages }
+        : { ...payloadPlain, messages: contMessages };
+      result = await callClaude(contPayload);
+      if (!result.ok) break;
+      const more = extractText(result.data);
+      if (!more) break;
+      textOut = textOut + "\n\n" + more;
+    }
 
     if (!textOut) {
       return json({ error: "Claude retornou vazio.", code: "EMPTY" }, 502);
@@ -202,6 +244,8 @@ Deno.serve(async (req) => {
       reply: textOut,
       replyHtml: mdToHtml(textOut),
       model,
+      maxTokens,
+      continuations,
       webSearch: usedSearch,
       provider: "claude",
     });

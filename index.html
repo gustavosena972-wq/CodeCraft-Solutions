@@ -3101,15 +3101,15 @@ function iaSetStatus(label){
 }
 function iaCompactSnapshot(snap){
   return {
-    projects: (snap.projects||[]).slice(0,20).map(p=>({
+    projects: (snap.projects||[]).map(p=>({
       code:p.trackingCode, client:p.clientName, project:p.projectName, status:p.status,
       paid:!!p.paid, value:Number(p.pixValue||0), delivery:!!p.deliveryUrl
     })),
     unpaid: (snap.unpaid||[]).length,
     stuck: (snap.stuck||[]).map(p=>({ code:p.trackingCode, client:p.clientName, status:p.status })),
-    leads: (snap.leads||[]).slice(0,15).map(l=>({ code:l.code, name:l.name })),
-    openChats: (snap.openChats||[]).map(c=>({ code:c.code, name:c.name, unanswered:c.unanswered, last:(c.last||'').slice(0,200) })),
-    messages: (snap.messages||[]).slice(0,10).map(m=>({ name:m.name, contact:m.contact, msg:(m.msg||'').slice(0,240) })),
+    leads: (snap.leads||[]).map(l=>({ code:l.code, name:l.name })),
+    openChats: (snap.openChats||[]).map(c=>({ code:c.code, name:c.name, unanswered:c.unanswered, last:c.last||'' })),
+    messages: (snap.messages||[]).map(m=>({ name:m.name, contact:m.contact, msg:m.msg||'' })),
     company: { name:CCS_COMPANY.name, pix:CCS_COMPANY.pix, whatsapp:CCS_COMPANY.whatsappDisplay, products:CCS_COMPANY.products }
   };
 }
@@ -3117,9 +3117,9 @@ async function callClaudeAdminAi(text, snap, mkt){
   if(!supabaseClient) return null;
   const session = await requireAdminSession();
   if(!session) return null;
-  const history = loadIaChat().slice(-10).map(m=>({
+  const history = loadIaChat().slice(-60).map(m=>({
     role: m.who==='me' ? 'user' : 'assistant',
-    content: String(m.html||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,1500)
+    content: String(m.html||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()
   })).filter(h=>h.content);
   const { data, error } = await supabaseClient.functions.invoke('ccs-admin-ai', {
     body: {

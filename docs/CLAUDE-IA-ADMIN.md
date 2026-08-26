@@ -15,6 +15,8 @@ Dashboard → projeto **eqaoanbanhryhbldlbhc** → **Edge Functions** → **Secr
 |------|--------|
 | `ANTHROPIC_API_KEY` | sua chave `sk-ant-...` |
 | `ANTHROPIC_MODEL` (opcional) | padrão `claude-sonnet-4-5` |
+| `ANTHROPIC_MAX_TOKENS` (opcional) | padrão **64000** (máximo da saída; sem teto baixo) |
+| `ANTHROPIC_WEB_SEARCH_USES` (opcional) | padrão **25** buscas por pedido |
 
 ## 2) Deploy
 ```bash
