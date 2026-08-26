@@ -1,0 +1,214 @@
+// CodeCraft Solutions — IA Admin (Claude)
+// Secrets no Supabase: ANTHROPIC_API_KEY
+// Deploy: npx supabase functions deploy ccs-admin-ai --project-ref eqaoanbanhryhbldlbhc
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+
+const cors = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+};
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...cors, "Content-Type": "application/json" },
+  });
+}
+
+const SYSTEM = `Você é a CodeCraft IA — agente operacional da CodeCraft Solutions (Belo Horizonte).
+Você NÃO é uma IA genérica solta: você opera o painel admin da empresa.
+
+## Empresa
+- Nome: CodeCraft Solutions · estúdio de software em BH
+- WhatsApp: (31) 99975-8385 · PIX oficial: 31999758385
+- Instagram: @code.invention
+- Produto SaaS: CodeCraft Gestão (só empresas/CNPJ) — Financeiro, RH, assinatura Asaas · R$ 280 / R$ 390 / R$ 500
+- Serviços: landing (a partir de R$ 300), site (a partir de R$ 500), loja (a partir de R$ 500), sistema sob medida (R$ 1.500–15.000), manutenção (a partir de R$ 100/mês)
+- Diferencial: portal do cliente ao vivo, chat, PIX, acompanhamento de status
+- Gestão URL: https://gustavosena972-wq.github.io/financas-codecraft/
+
+## Suas missões
+1. Achar clientes reais que precisam dos serviços CodeCraft (site, loja, sistema, Gestão)
+2. Caçar em vários canais: Google, Maps, Instagram, sites de freelance (99freelas, Workana, GetNinjas, Freelancer), LinkedIn, anúncios e sites de empresas BH/MG
+3. Entregar RELATÓRIO por oportunidade: o que a pessoa/empresa precisa, projeto sugerido CodeCraft, canal, contato (ou como obter), link e mensagem de abordagem
+4. Priorizar leads inbound do site (chat/formulário) antes de outbound
+5. Gerir operação: projetos travados, PIX, chats sem resposta
+6. Usar web_search sempre que o admin pedir prospecção, caça, varredura, Instagram, freelance ou “achar clientes”
+
+## Formato do relatório de oportunidade (obrigatório na caça)
+Para cada lead encontrado, use este bloco:
+<strong>Oportunidade N</strong>
+<ul>
+<li><strong>Quem:</strong> nome da empresa ou pessoa</li>
+<li><strong>O que precisa:</strong> dor / pedido observado</li>
+<li><strong>Projeto CodeCraft:</strong> serviço + faixa de preço</li>
+<li><strong>Canal:</strong> Instagram / 99freelas / Maps / Google / etc.</li>
+<li><strong>Contato:</strong> telefone, @instagram, e-mail ou URL do anúncio (só se real)</li>
+<li><strong>Link:</strong> URL clicável</li>
+<li><strong>Abordagem:</strong> texto pronto em português formal</li>
+</ul>
+Entregue 3 a 6 oportunidades por varredura.
+
+## Regras
+- Português do Brasil, formal, claro, acionável
+- NUNCA invente telefone, e-mail, @ ou CNPJ. Se a busca não trouxe contato, diga “contato no anúncio/perfil” e dê o link
+- Prefira BH / Grande BH / MG, sem limitar se achar demanda forte em freelance nacional
+- Quando sugerir abordagem, texto pronto para WhatsApp/DM
+- HTML simples: <p>, <strong>, <em>, <ul>, <li>, <br>, <a href="...">. Sem scripts.`;
+
+function scrubHtml(s: string) {
+  return String(s || "")
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/javascript:/gi, "");
+}
+
+function mdToHtml(text: string) {
+  let t = String(text || "").trim();
+  if (/<[a-z][\s\S]*>/i.test(t)) return scrubHtml(t);
+  t = t
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  t = t.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  t = t.replace(/\*(.+?)\*/g, "<em>$1</em>");
+  t = t.replace(/`([^`]+)`/g, "<code>$1</code>");
+  t = t.replace(/^### (.+)$/gm, "<strong>$1</strong>");
+  t = t.replace(/^## (.+)$/gm, "<strong>$1</strong>");
+  t = t.replace(/^# (.+)$/gm, "<strong>$1</strong>");
+  t = t.replace(/^\s*[-*] (.+)$/gm, "• $1");
+  t = t.replace(/\n{2,}/g, "<br><br>").replace(/\n/g, "<br>");
+  return scrubHtml(t);
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
+
+  try {
+    const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!anthropicKey) {
+      return json({
+        error: "ANTHROPIC_API_KEY não configurada no Supabase.",
+        code: "NO_KEY",
+      }, 503);
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY") || "";
+    const auth = req.headers.get("Authorization") || "";
+    if (!auth) return json({ error: "Não autenticado" }, 401);
+
+    const userClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: auth } },
+    });
+    const { data: userData, error: userError } = await userClient.auth.getUser();
+    if (userError || !userData.user) return json({ error: "Não autenticado" }, 401);
+
+    const body = await req.json().catch(() => ({}));
+    const message = String(body.message || "").trim().slice(0, 8000);
+    if (!message) return json({ error: "Mensagem vazia" }, 400);
+
+    const snapshot = body.snapshot || {};
+    const market = body.market || {};
+    const history = Array.isArray(body.history) ? body.history.slice(-12) : [];
+
+    const contextBlock = [
+      "## Snapshot operacional (ao vivo do painel)",
+      JSON.stringify(snapshot, null, 0).slice(0, 12000),
+      "",
+      "## Mercado",
+      JSON.stringify(market, null, 0).slice(0, 2000),
+      "",
+      "Responda à mensagem do admin abaixo com base nesse snapshot e no conhecimento da CodeCraft.",
+    ].join("\n");
+
+    const messages: Array<{ role: "user" | "assistant"; content: string }> = [];
+    for (const h of history) {
+      const role = h.role === "assistant" ? "assistant" : "user";
+      const content = String(h.content || "").slice(0, 4000);
+      if (content) messages.push({ role, content });
+    }
+    messages.push({
+      role: "user",
+      content: contextBlock + "\n\n## Pedido do admin\n" + message,
+    });
+
+    const model = Deno.env.get("ANTHROPIC_MODEL") || "claude-sonnet-4-5";
+
+    // 1ª tentativa: com web search (se a conta permitir)
+    const payloadWithSearch = {
+      model,
+      max_tokens: 2200,
+      system: SYSTEM,
+      messages,
+      tools: [
+        {
+          type: "web_search_20250305",
+          name: "web_search",
+          max_uses: 3,
+        },
+      ],
+    };
+
+    const payloadPlain = {
+      model,
+      max_tokens: 2200,
+      system: SYSTEM,
+      messages,
+    };
+
+    async function callClaude(payload: unknown) {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": anthropicKey!,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      return { ok: res.ok, status: res.status, data };
+    }
+
+    let usedSearch = true;
+    let result = await callClaude(payloadWithSearch);
+    if (!result.ok) {
+      usedSearch = false;
+      result = await callClaude(payloadPlain);
+    }
+
+    if (!result.ok) {
+      const errMsg =
+        result.data?.error?.message ||
+        result.data?.message ||
+        `Claude HTTP ${result.status}`;
+      return json({ error: errMsg, code: "CLAUDE_ERROR" }, 502);
+    }
+
+    const parts = Array.isArray(result.data?.content) ? result.data.content : [];
+    const textOut = parts
+      .filter((p: { type?: string }) => p.type === "text")
+      .map((p: { text?: string }) => p.text || "")
+      .join("\n\n")
+      .trim();
+
+    if (!textOut) {
+      return json({ error: "Claude retornou vazio.", code: "EMPTY" }, 502);
+    }
+
+    return json({
+      reply: textOut,
+      replyHtml: mdToHtml(textOut),
+      model,
+      webSearch: usedSearch,
+      provider: "claude",
+    });
+  } catch (e) {
+    return json({
+      error: e instanceof Error ? e.message : String(e),
+      code: "EXCEPTION",
+    }, 500);
+  }
+});

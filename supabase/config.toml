@@ -1,0 +1,5 @@
+# CodeCraft Solutions — Supabase Edge Functions
+# project-ref: eqaoanbanhryhbldlbhc
+
+[functions.ccs-admin-ai]
+verify_jwt = true

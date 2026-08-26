@@ -788,32 +788,31 @@
           <div class="ccs-ia-head">
             <div>
               <h2>CodeCraft IA · Operações</h2>
-              <p>Integrada a projetos, chats e mensagens. Conhece o que vendemos. Prioriza leads reais do site, pesquisa CNPJ e monta alvos em BH — sem inventar telefone. Só neste painel.</p>
+              <p>Caça clientes em freelance, Instagram, Google e Maps; prioriza leads reais do site; entrega relatório do que a pessoa precisa + contato + abordagem. Claude no servidor quando a function estiver ativa.</p>
             </div>
-            <div class="ccs-ia-status"><span class="dot"></span> Integrada</div>
+            <div class="ccs-ia-status" id="ccs-ia-status"><span class="dot"></span> <span id="ccs-ia-status-text">Integrada</span></div>
           </div>
           <div class="ccs-ia-body">
             <div class="ccs-ia-roles">
-              <span>Operações</span>
-              <span>Prospecção</span>
+              <span>Caça de clientes</span>
+              <span>Freelance / Instagram</span>
               <span>Atendimento</span>
               <span>Projetos</span>
-              <span>Arquitetura</span>
+              <span>Claude</span>
             </div>
             <div class="ccs-ia-toolbar">
-              <button class="ccs-btn ghost small" onclick="iaRun('prospectar clientes agora')">Prospectar</button>
+              <button class="ccs-btn ghost small" onclick="iaRun('caçar clientes em freelance Instagram Google e Maps em BH — relatório com o que precisam e contato')">Caçar em tudo</button>
+              <button class="ccs-btn ghost small" onclick="iaRun('prospectar no Instagram empresas que precisam de site em BH')">Instagram</button>
+              <button class="ccs-btn ghost small" onclick="iaRun('prospectar em sites de freelance 99freelas Workana GetNinjas pedidos de site loja sistema')">Freelance</button>
               <button class="ccs-btn ghost small" onclick="iaRun('mostrar leads reais do site')">Leads do site</button>
               <button class="ccs-btn ghost small" onclick="iaRun('responder conversas abertas')">Atender chats</button>
               <button class="ccs-btn ghost small" onclick="iaRun('analisar projetos da fila')">Projetos</button>
-              <button class="ccs-btn ghost small" onclick="iaRun('painel da empresa')">Painel</button>
-              <button class="ccs-btn ghost small" onclick="iaRun('como está o mercado')">Mercado</button>
-              <button class="ccs-btn ghost small" onclick="iaRun('o que a codecraft vende')">O que vendemos</button>
               <button class="ccs-btn ghost small" onclick="iaRun('redigir abordagem')">Abordagem</button>
               <button class="ccs-btn ghost small" onclick="window.open(GESTAO_URL,'_blank')">Abrir Gestão</button>
             </div>
             <div class="ccs-ai-box" id="admin-ai-log"></div>
             <div class="ccs-ia-input-wrap">
-              <textarea id="admin-ai-input" rows="2" placeholder="Ex.: prospectar clínicas em BH · analisar projetos · responder chats · CNPJ 00.000.000/0001-00" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendAdminAi();}"></textarea>
+              <textarea id="admin-ai-input" rows="2" placeholder="Ex.: caçar quem precisa de site em BH · freelance Instagram · CNPJ · responder chats" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendAdminAi();}"></textarea>
               <button class="ccs-btn amber" onclick="sendAdminAi()">Enviar</button>
             </div>
           </div>
@@ -2604,17 +2603,29 @@ const CCS_COMPANY = {
   ]
 };
 
+const IA_HUNT_SOURCES = [
+  { id:'google', label:'Google', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent(q) },
+  { id:'maps', label:'Google Maps', build:(q)=>'https://www.google.com/maps/search/'+encodeURIComponent(q) },
+  { id:'instagram', label:'Instagram', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent('site:instagram.com '+q) },
+  { id:'99freelas', label:'99Freelas', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent('site:99freelas.com.br '+q) },
+  { id:'workana', label:'Workana', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent('site:workana.com '+q) },
+  { id:'getninjas', label:'GetNinjas', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent('site:getninjas.com.br '+q) },
+  { id:'freelancer', label:'Freelancer', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent('site:freelancer.com.br OR site:freelancer.com '+q) },
+  { id:'linkedin', label:'LinkedIn', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent('site:linkedin.com/company OR site:linkedin.com/in '+q+' Belo Horizonte') }
+];
+
 const IA_HUNT_NICHES = [
-  { key:'clinica', label:'Clínicas e consultórios', query:'clínica médica Belo Horizonte', offer:'gestao', project:'CodeCraft Gestão (ponto + folha) ou site com agenda', maps:'https://www.google.com/maps/search/cl%C3%ADnica+m%C3%A9dica+Belo+Horizonte' },
-  { key:'odontologia', label:'Consultórios odontológicos', query:'dentista Belo Horizonte', offer:'gestao', project:'Gestão Essencial + site institucional', maps:'https://www.google.com/maps/search/dentista+Belo+Horizonte' },
-  { key:'oficina', label:'Oficinas e auto peças', query:'oficina mecânica Belo Horizonte', offer:'loja', project:'Loja virtual com pedido e PIX', maps:'https://www.google.com/maps/search/oficina+mec%C3%A2nica+Belo+Horizonte' },
-  { key:'salao', label:'Salões e estética', query:'salão de beleza Belo Horizonte', offer:'site', project:'Site com WhatsApp e agenda', maps:'https://www.google.com/maps/search/sal%C3%A3o+de+beleza+Belo+Horizonte' },
-  { key:'loja', label:'Lojas de bairro', query:'loja Belo Horizonte', offer:'loja', project:'Loja virtual + Gestão de caixa', maps:'https://www.google.com/maps/search/loja+Belo+Horizonte' },
-  { key:'contabilidade', label:'Contabilidades', query:'contabilidade Belo Horizonte', offer:'sistema', project:'Portal sob medida para clientes', maps:'https://www.google.com/maps/search/contabilidade+Belo+Horizonte' },
-  { key:'restaurante', label:'Restaurantes', query:'restaurante Belo Horizonte', offer:'site', project:'Site + cardápio + pedidos WhatsApp', maps:'https://www.google.com/maps/search/restaurante+Belo+Horizonte' },
-  { key:'advocacia', label:'Escritórios de advocacia', query:'advocacia Belo Horizonte', offer:'site', project:'Site institucional + captura', maps:'https://www.google.com/maps/search/advocacia+Belo+Horizonte' },
-  { key:'imobiliaria', label:'Imobiliárias', query:'imobiliária Belo Horizonte', offer:'sistema', project:'Catálogo de imóveis + CRM leve', maps:'https://www.google.com/maps/search/imobili%C3%A1ria+Belo+Horizonte' },
-  { key:'academia', label:'Academias', query:'academia Belo Horizonte', offer:'gestao', project:'Gestão + site de matrículas', maps:'https://www.google.com/maps/search/academia+Belo+Horizonte' }
+  { key:'clinica', label:'Clínicas e consultórios', query:'clínica médica Belo Horizonte', offer:'gestao', project:'CodeCraft Gestão (ponto + folha) ou site com agenda', need:'controle de ponto/folha ou presença digital fraca', maps:'https://www.google.com/maps/search/cl%C3%ADnica+m%C3%A9dica+Belo+Horizonte' },
+  { key:'odontologia', label:'Consultórios odontológicos', query:'dentista Belo Horizonte', offer:'gestao', project:'Gestão Essencial + site institucional', need:'agenda/site e RH simples', maps:'https://www.google.com/maps/search/dentista+Belo+Horizonte' },
+  { key:'oficina', label:'Oficinas e auto peças', query:'oficina mecânica Belo Horizonte', offer:'loja', project:'Loja virtual com pedido e PIX', need:'vender além do balcão', maps:'https://www.google.com/maps/search/oficina+mec%C3%A2nica+Belo+Horizonte' },
+  { key:'salao', label:'Salões e estética', query:'salão de beleza Belo Horizonte', offer:'site', project:'Site com WhatsApp e agenda', need:'perder cliente no Google / só WhatsApp', maps:'https://www.google.com/maps/search/sal%C3%A3o+de+beleza+Belo+Horizonte' },
+  { key:'loja', label:'Lojas de bairro', query:'loja Belo Horizonte', offer:'loja', project:'Loja virtual + Gestão de caixa', need:'catálogo e pedido online', maps:'https://www.google.com/maps/search/loja+Belo+Horizonte' },
+  { key:'contabilidade', label:'Contabilidades', query:'contabilidade Belo Horizonte', offer:'sistema', project:'Portal sob medida para clientes', need:'portal e processos manuais', maps:'https://www.google.com/maps/search/contabilidade+Belo+Horizonte' },
+  { key:'restaurante', label:'Restaurantes', query:'restaurante Belo Horizonte', offer:'site', project:'Site + cardápio + pedidos WhatsApp', need:'cardápio/pedido digital', maps:'https://www.google.com/maps/search/restaurante+Belo+Horizonte' },
+  { key:'advocacia', label:'Escritórios de advocacia', query:'advocacia Belo Horizonte', offer:'site', project:'Site institucional + captura', need:'captação de leads jurídicos', maps:'https://www.google.com/maps/search/advocacia+Belo+Horizonte' },
+  { key:'imobiliaria', label:'Imobiliárias', query:'imobiliária Belo Horizonte', offer:'sistema', project:'Catálogo de imóveis + CRM leve', need:'vitrine de imóveis online', maps:'https://www.google.com/maps/search/imobili%C3%A1ria+Belo+Horizonte' },
+  { key:'academia', label:'Academias', query:'academia Belo Horizonte', offer:'gestao', project:'Gestão + site de matrículas', need:'matrícula e ponto/caixa', maps:'https://www.google.com/maps/search/academia+Belo+Horizonte' },
+  { key:'site', label:'Quem pede site / loja / sistema', query:'preciso de site OR landing page OR loja virtual OR sistema Belo Horizonte', offer:'site', project:'Site / loja / sistema sob medida', need:'demanda explícita de criação digital', maps:'https://www.google.com/search?q=preciso+de+site+Belo+Horizonte' }
 ];
 
 function iaNorm(s){
@@ -2644,7 +2655,7 @@ function renderIaAdminChat(){
   if(!log) return;
   const chat = loadIaChat();
   if(!chat.length){
-    log.innerHTML = '<div class="ccs-ai-msg"><div class="ccs-ai-meta">CodeCraft IA</div><strong>Pronta e integrada ao painel.</strong><br>Leio projetos, chats do site e mensagens. Peça: <em>prospectar clientes</em>, <em>leads do site</em>, <em>responder chats</em>, <em>analisar projetos</em>, ou cole um CNPJ.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg"><div class="ccs-ai-meta">CodeCraft IA</div><strong>Pronta e integrada ao painel.</strong><br>Caço clientes em Google, Maps, Instagram, 99Freelas, Workana e mais — e monto o <em>relatório</em> (o que precisam + contato). Peça: <em>caçar em tudo</em>, <em>leads do site</em>, <em>responder chats</em>, ou cole um CNPJ.</div>';
     return;
   }
   log.innerHTML = chat.map(m=>{
@@ -2823,27 +2834,82 @@ async function iaInboundLeadsHtml(snap){
 function iaHuntHtml(raw){
   const t = iaNorm(raw);
   let niche = IA_HUNT_NICHES.find(n=> t.includes(n.key) || t.includes(iaNorm(n.label).split(' ')[0]));
+  if(/freelance|99freela|workana|getninjas|instagram|cacar|caçar|em tudo|sites/.test(t) && !niche){
+    niche = IA_HUNT_NICHES.find(n=>n.key==='site') || IA_HUNT_NICHES[0];
+  }
   if(!niche) niche = IA_HUNT_NICHES[iaDaySeed() % IA_HUNT_NICHES.length];
   const prod = CCS_COMPANY.products.find(x=>x.id===niche.offer) || CCS_COMPANY.products[0];
+  const freelanceQ = 'preciso de site OR loja virtual OR sistema OR landing page OR aplicativo';
+  const queries = {
+    google: niche.query + ' telefone contato',
+    maps: niche.query,
+    instagram: niche.label + ' Belo Horizonte site OR WhatsApp',
+    '99freelas': freelanceQ,
+    workana: freelanceQ + ' Brasil',
+    getninjas: 'criação de site OR loja virtual Belo Horizonte',
+    freelancer: freelanceQ,
+    linkedin: niche.label + ' Belo Horizonte software OR site'
+  };
+
   [0,1,2].forEach(i=>{
     iaPushProspect({
       id:'hunt-'+niche.key+'-'+iaDaySeed()+'-'+i, source:'hunt',
-      company: niche.label+' · alvo '+(i+1)+' (BH)',
-      pain:'Negócio local — validar telefone/nome no Maps (não invento contato).',
-      project:niche.project, offer:niche.offer, contact:'Responsável / dono',
+      company: niche.label+' · alvo '+(i+1),
+      pain: niche.need || 'Demanda digital — validar no canal (não invento contato).',
+      project:niche.project, offer:niche.offer, contact:'Ver anúncio / perfil / Maps',
       phone:'', email:'', maps:niche.maps,
       outreach:'Olá! Sou da CodeCraft Solutions (BH). Ajudamos '+niche.label.toLowerCase()+' com '+prod.name+' ('+prod.price+'). Posso te mostrar o portal em 15 min?'
     });
   });
-  return iaWrap('Prospecção — '+niche.label,
-    '<span class="ccs-ia-badge warn">Alvos de pesquisa</span> Não invento telefone. Abra o Maps, escolha empresas reais, anote o contato e peça a abordagem.<br><br>'+
-    'Busca: <strong>'+escapeHtml(niche.query)+'</strong><br>'+
-    'Produto: <strong>'+escapeHtml(prod.name)+'</strong> — '+escapeHtml(prod.price)+'<br>'+
-    'Projeto típico: '+escapeHtml(niche.project)+'<br><br>'+
-    '<div class="ccs-ia-actions"><a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+niche.maps+'">Abrir Google Maps</a> '+
-    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="https://www.google.com/search?q='+encodeURIComponent(niche.query+' telefone')+'">Buscar no Google</a></div><br>'+
-    'Leads <strong>com conversa real</strong> vêm de “Leads do site”. Contatos do Maps você confirma — aí entram na fila com WhatsApp.'
+
+  let html = iaWrap('Caça multi-canal — '+niche.label,
+    '<span class="ccs-ia-badge warn">Relatório de pesquisa</span> Abra os canais, pegue <strong>contato real</strong> no anúncio/perfil e eu monto a abordagem. Com Claude ativa, a busca na web roda no servidor.<br><br>'+
+    '<strong>O que essa pessoa tipicamente precisa:</strong> '+escapeHtml(niche.need||niche.project)+'<br>'+
+    '<strong>Projeto CodeCraft:</strong> '+escapeHtml(prod.name)+' — '+escapeHtml(prod.price)+'<br>'+
+    '<strong>Entrega sugerida:</strong> '+escapeHtml(niche.project)+'<br><br>'+
+    '<strong>Canais para caçar agora:</strong>'
   );
+
+  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">1 · Google &amp; Maps</div>'+
+    '<div class="ccs-ia-actions">'+
+    '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='google').build(queries.google)+'">Google</a>'+
+    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+niche.maps+'">Maps (empresas reais)</a>'+
+    '</div></div>';
+
+  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">2 · Instagram</div>'+
+    '<p style="margin:0 0 8px;font-size:13.5px;color:var(--ink-soft)">Perfis de negócios locais sem site bom / só link na bio WhatsApp.</p>'+
+    '<div class="ccs-ia-actions">'+
+    '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='instagram').build(queries.instagram)+'">Buscar no Instagram</a>'+
+    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="https://www.instagram.com/explore/search/keyword/?q='+encodeURIComponent(niche.label+' BH')+'">Explore Instagram</a>'+
+    '</div></div>';
+
+  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">3 · Sites de freelance (pedidos reais)</div>'+
+    '<p style="margin:0 0 8px;font-size:13.5px;color:var(--ink-soft)">Pessoas pedindo site, loja, sistema — leia o brief e anote o contato do anúncio.</p>'+
+    '<div class="ccs-ia-actions">'+
+    '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='99freelas').build(queries['99freelas'])+'">99Freelas</a>'+
+    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='workana').build(queries.workana)+'">Workana</a>'+
+    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='getninjas').build(queries.getninjas)+'">GetNinjas</a>'+
+    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='freelancer').build(queries.freelancer)+'">Freelancer</a>'+
+    '</div></div>';
+
+  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">4 · LinkedIn / empresas</div>'+
+    '<div class="ccs-ia-actions">'+
+    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='linkedin').build(queries.linkedin)+'">LinkedIn</a>'+
+    '</div></div>';
+
+  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">Modelo de relatório (preencha ao achar)</div><ul>'+
+    '<li><strong>Quem:</strong> …</li>'+
+    '<li><strong>O que precisa:</strong> …</li>'+
+    '<li><strong>Projeto CodeCraft:</strong> '+escapeHtml(prod.name)+'</li>'+
+    '<li><strong>Canal:</strong> Instagram / 99Freelas / Maps / …</li>'+
+    '<li><strong>Contato:</strong> telefone, @ ou e-mail do anúncio</li>'+
+    '<li><strong>Link:</strong> URL</li></ul>'+
+    '<p style="margin:8px 0 0;font-size:13px;color:var(--ink-soft)">Depois diga: <em>abordagem para [nome]</em> ou cole o contato aqui que eu redijo a mensagem.</p></div>';
+
+  html += '<br>'+iaWrap('Importante',
+    'Leads <strong>já no site</strong> (chat/formulário) são prioridade máxima — botão “Leads do site”. '+
+    'Com a function Claude + <code>ANTHROPIC_API_KEY</code>, a caça usa pesquisa web no servidor e devolve o relatório montado.');
+  return html;
 }
 
 async function iaLookupCnpj(cnpj){
@@ -2965,7 +3031,7 @@ async function iaSeniorReply(text, snap, mkt){
     return iaCompanyCard();
   if(/lead(s)? do site|inbound|mensagens do formulario|mensagens do formulário|contatos do site|mostrar leads/.test(t))
     return await iaInboundLeadsHtml(snap);
-  if(/prospect|prospec|achar cliente|encontrar cliente|buscar cliente|cacar|caçar|varredura|scan|oportunidad|prospectar/.test(t)){
+  if(/prospect|prospec|achar cliente|encontrar cliente|buscar cliente|cacar|caçar|varredura|scan|oportunidad|prospectar|freelance|99freela|workana|getninjas|instagram|em tudo/.test(t)){
     const inbound = await iaInboundLeadsHtml(snap);
     return inbound + '<br><br>' + iaHuntHtml(text);
   }
@@ -3029,6 +3095,52 @@ function bootAdminAi(){
   renderIaAdminChat();
   iaRefreshSide();
 }
+function iaSetStatus(label){
+  const el = document.getElementById('ccs-ia-status-text');
+  if(el) el.textContent = label;
+}
+function iaCompactSnapshot(snap){
+  return {
+    projects: (snap.projects||[]).slice(0,20).map(p=>({
+      code:p.trackingCode, client:p.clientName, project:p.projectName, status:p.status,
+      paid:!!p.paid, value:Number(p.pixValue||0), delivery:!!p.deliveryUrl
+    })),
+    unpaid: (snap.unpaid||[]).length,
+    stuck: (snap.stuck||[]).map(p=>({ code:p.trackingCode, client:p.clientName, status:p.status })),
+    leads: (snap.leads||[]).slice(0,15).map(l=>({ code:l.code, name:l.name })),
+    openChats: (snap.openChats||[]).map(c=>({ code:c.code, name:c.name, unanswered:c.unanswered, last:(c.last||'').slice(0,200) })),
+    messages: (snap.messages||[]).slice(0,10).map(m=>({ name:m.name, contact:m.contact, msg:(m.msg||'').slice(0,240) })),
+    company: { name:CCS_COMPANY.name, pix:CCS_COMPANY.pix, whatsapp:CCS_COMPANY.whatsappDisplay, products:CCS_COMPANY.products }
+  };
+}
+async function callClaudeAdminAi(text, snap, mkt){
+  if(!supabaseClient) return null;
+  const session = await requireAdminSession();
+  if(!session) return null;
+  const history = loadIaChat().slice(-10).map(m=>({
+    role: m.who==='me' ? 'user' : 'assistant',
+    content: String(m.html||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,1500)
+  })).filter(h=>h.content);
+  const { data, error } = await supabaseClient.functions.invoke('ccs-admin-ai', {
+    body: {
+      message: text,
+      snapshot: iaCompactSnapshot(snap),
+      market: mkt||{},
+      history
+    }
+  });
+  if(error){
+    console.warn('ccs-admin-ai', error);
+    return { ok:false, error: error.message||String(error) };
+  }
+  if(data && data.error){
+    return { ok:false, error: data.error, code: data.code };
+  }
+  if(data && (data.replyHtml || data.reply)){
+    return { ok:true, html: data.replyHtml || data.reply, webSearch: !!data.webSearch, model: data.model };
+  }
+  return { ok:false, error: 'Resposta vazia da Claude.' };
+}
 async function sendAdminAi(){
   return sendAdminAiCore();
 }
@@ -3041,13 +3153,39 @@ async function sendAdminAiCore(){
   chat.push({ who:'me', html:escapeHtml(text).replace(/\n/g,'<br>'), ts:Date.now() });
   saveIaChat(chat);
   renderIaAdminChat();
-  pushAi('ia', '<span style="color:var(--ink-soft)">Analisando painel…</span>');
+  pushAi('ia', '<span style="color:var(--ink-soft)">Analisando painel e caçando oportunidades…</span>');
   try{
     const [snap, mkt] = await Promise.all([
       iaSnapshot(),
       (typeof loadMarket==='function' ? loadMarket() : Promise.resolve({}))
     ]);
-    const reply = await iaSeniorReply(text, snap, mkt||{});
+    let reply = null;
+    let usedClaude = false;
+    try{
+      const claude = await callClaudeAdminAi(text, snap, mkt||{});
+      if(claude && claude.ok){
+        usedClaude = true;
+        iaSetStatus(claude.webSearch ? 'Claude · web' : 'Claude');
+        reply = claude.html;
+        if(claude.webSearch){
+          reply = '<span class="ccs-ia-badge real">Claude + pesquisa web</span><br>' + reply;
+        } else {
+          reply = '<span class="ccs-ia-badge">Claude</span><br>' + reply;
+        }
+      } else if(claude && claude.code === 'NO_KEY'){
+        iaSetStatus('Local (sem chave)');
+      } else if(claude && claude.error){
+        iaSetStatus('Local · fallback');
+        console.warn('Claude fallback:', claude.error);
+      }
+    }catch(err){
+      console.warn(err);
+      iaSetStatus('Local · fallback');
+    }
+    if(!reply){
+      reply = await iaSeniorReply(text, snap, mkt||{});
+      if(!usedClaude) iaSetStatus('Integrada · local');
+    }
     const items = loadIaChat();
     if(items.length && items[items.length-1].who!=='me') items.pop();
     items.push({ who:'ia', html:reply, ts:Date.now() });
