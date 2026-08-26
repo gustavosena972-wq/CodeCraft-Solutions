@@ -788,9 +788,9 @@
           <div class="ccs-ia-head">
             <div>
               <h2>CodeCraft IA · Operações</h2>
-              <p>100% grátis e integrada: caça clientes em freelance, Instagram, Google e Maps; prioriza leads reais do site; monta relatório do que precisam + contato + abordagem.</p>
+              <p>Agente sênior de prospecção: pesquisa real na web, relatório do que o cliente precisa, contato e abordagem. Qualidade de consultoria — não atalho genérico.</p>
             </div>
-            <div class="ccs-ia-status" id="ccs-ia-status"><span class="dot"></span> <span id="ccs-ia-status-text">Grátis · local</span></div>
+            <div class="ccs-ia-status" id="ccs-ia-status"><span class="dot"></span> <span id="ccs-ia-status-text">Gemini</span></div>
           </div>
           <div class="ccs-ia-body">
             <div class="ccs-ia-roles">
@@ -798,7 +798,7 @@
               <span>Freelance / Instagram</span>
               <span>Atendimento</span>
               <span>Projetos</span>
-              <span>Sem custo</span>
+              <span>Pesquisa web</span>
             </div>
             <div class="ccs-ia-toolbar">
               <button class="ccs-btn ghost small" onclick="iaRun('caçar clientes em freelance Instagram Google e Maps em BH — relatório com o que precisam e contato')">Caçar em tudo</button>
@@ -2655,7 +2655,7 @@ function renderIaAdminChat(){
   if(!log) return;
   const chat = loadIaChat();
   if(!chat.length){
-    log.innerHTML = '<div class="ccs-ai-msg"><div class="ccs-ai-meta">CodeCraft IA</div><strong>Pronta · grátis · integrada ao painel.</strong><br>Caço clientes em Google, Maps, Instagram, 99Freelas, Workana e mais — e monto o <em>relatório</em> (o que precisam + contato). Peça: <em>caçar em tudo</em>, <em>leads do site</em>, <em>responder chats</em>, ou cole um CNPJ. Sem taxa de API.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg"><div class="ccs-ai-meta">CodeCraft IA</div><strong>Agente sênior pronto.</strong><br>Pesquisa web + relatório profissional (quem / o que precisa / projeto CodeCraft / contato / abordagem). Peça: <em>caçar em tudo</em>, <em>leads do site</em>, <em>responder chats</em>, ou cole um CNPJ.</div>';
     return;
   }
   log.innerHTML = chat.map(m=>{
@@ -3151,7 +3151,13 @@ async function callClaudeAdminAi(text, snap, mkt){
     return { ok:false, error: data.error, code: data.code };
   }
   if(data && (data.replyHtml || data.reply)){
-    return { ok:true, html: data.replyHtml || data.reply, webSearch: !!data.webSearch, model: data.model };
+    return {
+      ok:true,
+      html: data.replyHtml || data.reply,
+      webSearch: !!data.webSearch,
+      model: data.model,
+      provider: data.provider || 'claude'
+    };
   }
   return { ok:false, error: 'Resposta vazia da Claude.' };
 }
@@ -3167,29 +3173,44 @@ async function sendAdminAiCore(){
   chat.push({ who:'me', html:escapeHtml(text).replace(/\n/g,'<br>'), ts:Date.now() });
   saveIaChat(chat);
   renderIaAdminChat();
-  pushAi('ia', '<span style="color:var(--ink-soft)">Analisando painel e caçando oportunidades…</span>');
+  pushAi('ia', '<span style="color:var(--ink-soft)">Pesquisando e montando relatório sênior…</span>');
   try{
     const [snap, mkt] = await Promise.all([
       iaSnapshot(),
       (typeof loadMarket==='function' ? loadMarket() : Promise.resolve({}))
     ]);
-    // Modo padrão: IA grátis local (sem Claude pago). Cloud só se ativar localStorage ccs_ia_cloud=1.
     let reply = null;
-    const useCloud = localStorage.getItem('ccs_ia_cloud') === '1';
-    if(useCloud){
-      try{
-        const claude = await callClaudeAdminAi(text, snap, mkt||{});
-        if(claude && claude.ok){
-          iaSetStatus(claude.webSearch ? 'Claude · web' : 'Claude');
-          reply = '<span class="ccs-ia-badge">Cloud</span><br>' + claude.html;
-        }
-      }catch(err){ console.warn(err); }
+    try{
+      const cloud = await callClaudeAdminAi(text, snap, mkt||{});
+      if(cloud && cloud.ok){
+        const label = cloud.provider === 'gemini'
+          ? (cloud.webSearch ? 'Gemini · web' : 'Gemini')
+          : (cloud.webSearch ? 'Claude · web' : 'Claude');
+        iaSetStatus(label);
+        const badge = cloud.provider === 'gemini'
+          ? '<span class="ccs-ia-badge real">Gemini + pesquisa</span>'
+          : '<span class="ccs-ia-badge real">Claude + pesquisa</span>';
+        reply = badge + '<br>' + cloud.html;
+      } else if(cloud && cloud.code === 'NO_KEY'){
+        iaSetStatus('Aguardando chave Gemini');
+      } else if(cloud && cloud.error){
+        console.warn('IA cloud:', cloud.error);
+        iaSetStatus('Local · apoio');
+      }
+    }catch(err){
+      console.warn(err);
+      iaSetStatus('Local · apoio');
     }
     if(!reply){
       reply = await iaSeniorReply(text, snap, mkt||{});
-      iaSetStatus('Grátis · local');
       if(!String(reply).includes('ccs-ia-badge')){
-        reply = '<span class="ccs-ia-badge real">IA Grátis</span><br>' + reply;
+        reply = '<span class="ccs-ia-badge warn">Aguardando GEMINI_API_KEY</span><br>' +
+          '<p>Para a IA sênior com pesquisa web (grátis, sem cartão): crie a chave em <a target="_blank" rel="noopener" href="https://aistudio.google.com/apikey">Google AI Studio</a>, cole no chat ou no Secret <code>GEMINI_API_KEY</code> do Supabase.</p>' +
+          reply;
+      }
+      if(!document.getElementById('ccs-ia-status-text')?.textContent?.includes('Gemini') &&
+         !document.getElementById('ccs-ia-status-text')?.textContent?.includes('Claude')){
+        iaSetStatus('Local · apoio');
       }
     }
     const items = loadIaChat();

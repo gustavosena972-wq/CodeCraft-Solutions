@@ -1,20 +1,30 @@
-# IA Admin CodeCraft — modo grátis
+# CodeCraft IA Admin — qualidade sênior (sem pagar Claude)
 
-A IA do painel roda **sem pagar API** (modo local integrado).
+A IA do painel usa **Google Gemini** (grátis, sem cartão) + **pesquisa Google** no servidor.
+Não é chatbot raso: entrega relatório de oportunidades com contato e abordagem.
 
-## O que faz (grátis)
-- Caça em Google, Maps, Instagram, 99Freelas, Workana, GetNinjas, Freelancer, LinkedIn
-- Relatório por nicho: o que a pessoa precisa + projeto CodeCraft + link
-- Prioriza leads reais do site (chat / formulário)
-- CNPJ via BrasilAPI (grátis)
-- Abordagens WhatsApp/DM
+## 1) Chave Gemini (grátis)
+1. Abra https://aistudio.google.com/apikey
+2. Faça login com Google
+3. **Create API key**
+4. Copie a chave
 
-## Como usar
+## 2) Secret no Supabase
+Projeto `eqaoanbanhryhbldlbhc` → Edge Functions → Secrets:
+
+| Nome | Valor |
+|------|--------|
+| `GEMINI_API_KEY` | sua chave Gemini |
+| `GEMINI_MODEL` (opcional) | padrão `gemini-2.0-flash` |
+
+## 3) Deploy da function
+```bash
+npx supabase functions deploy ccs-admin-ai --project-ref eqaoanbanhryhbldlbhc
+```
+
+## 4) Teste
 Admin → **IA Admin** → **Caçar em tudo**
+Status esperado: **Gemini · web** + relatório com oportunidades reais e links.
 
-Status esperado: **Grátis · local**
-
-## Claude / cloud (opcional, pago)
-Não é necessário. Se um dia quiser Claude pago:
-1. Secret `ANTHROPIC_API_KEY` no Supabase
-2. No console do navegador (admin): `localStorage.setItem('ccs_ia_cloud','1')`
+## Claude (opcional, pago)
+Só se um dia quiser: `ANTHROPIC_API_KEY`. Gemini continua sendo o caminho principal sem custo.
