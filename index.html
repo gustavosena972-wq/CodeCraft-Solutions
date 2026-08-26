@@ -327,32 +327,50 @@
   .ccs-calc-grid button.op{background:var(--panel); color:#fff; border-color:var(--panel);}
   .ccs-calc-grid button.eq{background:var(--amber); color:#221304; border-color:var(--amber);}
   .ccs-calc-grid button.wide{grid-column:span 2;}
-  .ccs-ai-layout{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;}
-  .ccs-ia-shell{background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:0 10px 28px rgba(18,23,43,.05);}
-  .ccs-ia-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; padding:18px 20px; background:linear-gradient(135deg, var(--panel) 0%, #242B52 100%); color:#fff;}
-  .ccs-ia-head h2{font-size:18px; color:#fff; max-width:none;}
-  .ccs-ia-head p{margin:6px 0 0; font-size:13px; color:#B9BEDB; max-width:520px; line-height:1.45;}
+
+  .ccs-ai-layout{display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:16px; align-items:start;}
+  .ccs-ia-shell{background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 12px 32px rgba(18,23,43,.06); display:flex; flex-direction:column; min-height:640px;}
+  .ccs-ia-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; padding:18px 20px; background:linear-gradient(135deg, #1A1F3A 0%, #2A3158 100%); color:#fff;}
+  .ccs-ia-head h2{font-size:18px; color:#fff; max-width:none; font-weight:700;}
+  .ccs-ia-head p{margin:6px 0 0; font-size:13px; color:#C5CAE3; max-width:560px; line-height:1.5;}
   .ccs-ia-status{display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); color:#E8ECFF; padding:7px 11px; border-radius:999px; white-space:nowrap;}
   .ccs-ia-status .dot{width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 3px rgba(47,182,165,.25); animation:pulse 1.6s ease-in-out infinite;}
-  .ccs-ia-body{padding:16px 18px 18px;}
-  .ccs-ia-roles{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;}
-  .ccs-ia-roles span{font-size:11.5px; font-weight:700; color:var(--ink-soft); background:var(--paper-dim); border:1px solid var(--line); border-radius:999px; padding:5px 10px;}
-  .ccs-ia-toolbar{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; padding:10px; background:var(--paper-dim); border:1px solid var(--line); border-radius:12px;}
+  .ccs-ia-body{padding:14px 16px 16px; display:flex; flex-direction:column; gap:10px; flex:1;}
+  .ccs-ia-roles{display:flex; flex-wrap:wrap; gap:6px;}
+  .ccs-ia-roles span{font-size:11px; font-weight:700; color:var(--ink-soft); background:var(--paper-dim); border:1px solid var(--line); border-radius:999px; padding:5px 10px;}
+  .ccs-ia-toolbar{display:flex; flex-wrap:wrap; gap:6px; padding:10px; background:var(--paper-dim); border:1px solid var(--line); border-radius:12px;}
   .ccs-ia-toolbar .ccs-btn.ghost{background:#fff; border-color:var(--line); color:var(--ink); font-weight:600;}
-  .ccs-ia-toolbar .ccs-btn.ghost:hover{border-color:var(--amber); color:var(--ink); background:#FFF8EE;}
-  .ccs-ai-box{display:flex; flex-direction:column; gap:10px; max-height:440px; overflow:auto; background:#F3F2EC; border:1px solid var(--line); border-radius:12px; padding:14px; min-height:300px;}
-  .ccs-ai-msg{font-size:14px; line-height:1.55; padding:12px 14px; border-radius:12px; background:#fff; border:1px solid var(--line); box-shadow:0 1px 0 rgba(18,23,43,.03); max-width:94%; align-self:flex-start;}
-  .ccs-ai-msg.me{align-self:flex-end; background:var(--panel); color:#fff; border-color:var(--panel); box-shadow:none;}
+  .ccs-ia-toolbar .ccs-btn.ghost:hover{border-color:var(--amber); background:#FFF8EE;}
+  .ccs-ai-box{display:flex; flex-direction:column; gap:12px; flex:1; overflow:auto; background:#F7F6F1; border:1px solid var(--line); border-radius:14px; padding:16px; min-height:360px; max-height:min(58vh,560px);}
+  .ccs-ai-msg{font-size:14.5px; line-height:1.65; padding:14px 16px; border-radius:14px; background:#fff; border:1px solid var(--line); max-width:92%; align-self:flex-start; color:var(--ink);}
+  .ccs-ai-msg.me{align-self:flex-end; background:#1A1F3A; color:#F4F5FA; border-color:#1A1F3A;}
   .ccs-ai-msg strong{color:var(--ink);}
   .ccs-ai-msg.me strong{color:var(--amber);}
-  .ccs-ia-input-wrap{display:flex; gap:8px; margin-top:12px; padding:10px; border:1px solid var(--line); border-radius:12px; background:#fff;}
-  .ccs-ia-input-wrap input{flex:1; padding:11px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:'Inter',sans-serif; font-size:14px; background:var(--paper);}
-  .ccs-ia-input-wrap input:focus{outline:2px solid var(--amber); outline-offset:1px; border-color:var(--amber); background:#fff;}
-  .ccs-ia-daily-head{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--amber); margin-bottom:6px;}
-  .ccs-ia-card{border:1.5px solid var(--line); border-left:4px solid var(--amber); border-radius:12px; padding:14px 16px; background:#fff; margin-top:4px;}
+  .ccs-ai-meta{font-size:11px; color:var(--ink-soft); margin-bottom:6px; font-family:'JetBrains Mono',monospace;}
+  .ccs-ai-msg.me .ccs-ai-meta{color:#A8AED0;}
+  .ccs-ia-input-wrap{display:flex; gap:8px; padding:12px; border:1px solid var(--line); border-radius:14px; background:#fff; align-items:flex-end;}
+  .ccs-ia-input-wrap textarea{flex:1; padding:12px; border:1.5px solid var(--line); border-radius:10px; font-family:'Inter',sans-serif; font-size:14.5px; background:var(--paper); resize:none; min-height:52px; max-height:140px; line-height:1.45;}
+  .ccs-ia-input-wrap textarea:focus{outline:2px solid var(--amber); outline-offset:1px; border-color:var(--amber); background:#fff;}
+  .ccs-ia-side{display:flex; flex-direction:column; gap:12px;}
+  .ccs-ia-panel{background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 14px 12px;}
+  .ccs-ia-panel h3{font-size:12px; margin:0 0 10px; font-family:'JetBrains Mono',monospace; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft);}
+  .ccs-ia-pulse-row{display:flex; justify-content:space-between; gap:8px; font-size:13px; padding:7px 0; border-bottom:1px solid var(--line);}
+  .ccs-ia-pulse-row:last-child{border-bottom:none;}
+  .ccs-ia-pulse-row b{font-family:'JetBrains Mono',monospace; font-size:12.5px;}
+  .ccs-ia-lead{border:1px solid var(--line); border-radius:10px; padding:10px; margin-bottom:8px; background:var(--paper);}
+  .ccs-ia-lead strong{display:block; font-size:13.5px; margin-bottom:4px;}
+  .ccs-ia-lead span{display:block; font-size:12px; color:var(--ink-soft); line-height:1.4;}
+  .ccs-ia-lead .acts{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .ccs-ia-card{border:1.5px solid var(--line); border-left:4px solid var(--amber); border-radius:12px; padding:14px 16px; background:#fff; margin-top:8px;}
   .ccs-ia-card ul{margin:8px 0 0; padding-left:18px; line-height:1.55; font-size:13.5px;}
   .ccs-ia-card li{margin:4px 0;}
-  @media (max-width:900px){ .ccs-ai-layout{grid-template-columns:1fr;} }
+  .ccs-ia-daily-head{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--amber); margin-bottom:6px;}
+  .ccs-ia-actions{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+  .ccs-ia-badge{display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; padding:3px 8px; border-radius:999px; background:#E8F7F4; color:#0F6B5F; margin-bottom:6px;}
+  .ccs-ia-badge.warn{background:#FFF3E0; color:#9A5B00;}
+  .ccs-ia-badge.real{background:#E7F0FF; color:#1E4B9A;}
+  @media (max-width:980px){ .ccs-ai-layout{grid-template-columns:1fr;} }
+
   @media (max-width:760px){ .ccs-metrics{grid-template-columns:1fr 1fr;} }
 
   @media (max-width:980px){
@@ -765,41 +783,60 @@
 
     <div class="ccs-admin-content">
     <div id="tab-ia">
-      <div class="ccs-ia-shell">
-        <div class="ccs-ia-head">
-          <div>
-            <h2>IA Admin · Consultoria sênior</h2>
-            <p>50 anos de experiência acumulada · formal, clara e acionável. Só neste painel — isolada do app dos clientes.</p>
+      <div class="ccs-ai-layout">
+        <div class="ccs-ia-shell">
+          <div class="ccs-ia-head">
+            <div>
+              <h2>CodeCraft IA · Operações</h2>
+              <p>Integrada a projetos, chats e mensagens. Conhece o que vendemos. Prioriza leads reais do site, pesquisa CNPJ e monta alvos em BH — sem inventar telefone. Só neste painel.</p>
+            </div>
+            <div class="ccs-ia-status"><span class="dot"></span> Integrada</div>
           </div>
-          <div class="ccs-ia-status"><span class="dot"></span> Online</div>
+          <div class="ccs-ia-body">
+            <div class="ccs-ia-roles">
+              <span>Operações</span>
+              <span>Prospecção</span>
+              <span>Atendimento</span>
+              <span>Projetos</span>
+              <span>Arquitetura</span>
+            </div>
+            <div class="ccs-ia-toolbar">
+              <button class="ccs-btn ghost small" onclick="iaRun('prospectar clientes agora')">Prospectar</button>
+              <button class="ccs-btn ghost small" onclick="iaRun('mostrar leads reais do site')">Leads do site</button>
+              <button class="ccs-btn ghost small" onclick="iaRun('responder conversas abertas')">Atender chats</button>
+              <button class="ccs-btn ghost small" onclick="iaRun('analisar projetos da fila')">Projetos</button>
+              <button class="ccs-btn ghost small" onclick="iaRun('painel da empresa')">Painel</button>
+              <button class="ccs-btn ghost small" onclick="iaRun('como está o mercado')">Mercado</button>
+              <button class="ccs-btn ghost small" onclick="iaRun('o que a codecraft vende')">O que vendemos</button>
+              <button class="ccs-btn ghost small" onclick="iaRun('redigir abordagem')">Abordagem</button>
+              <button class="ccs-btn ghost small" onclick="window.open(GESTAO_URL,'_blank')">Abrir Gestão</button>
+            </div>
+            <div class="ccs-ai-box" id="admin-ai-log"></div>
+            <div class="ccs-ia-input-wrap">
+              <textarea id="admin-ai-input" rows="2" placeholder="Ex.: prospectar clínicas em BH · analisar projetos · responder chats · CNPJ 00.000.000/0001-00" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendAdminAi();}"></textarea>
+              <button class="ccs-btn amber" onclick="sendAdminAi()">Enviar</button>
+            </div>
+          </div>
         </div>
-        <div class="ccs-ia-body">
-          <div class="ccs-ia-roles">
-            <span>Arquiteta de software</span>
-            <span>Analista de sistemas</span>
-            <span>Analista de software</span>
-            <span>Analista de código</span>
-            <span>Conversas com clientes</span>
+        <aside class="ccs-ia-side">
+          <div class="ccs-ia-panel">
+            <h3>Pulso ao vivo</h3>
+            <div id="ia-pulse">Carregando…</div>
           </div>
-          <div class="ccs-ia-toolbar">
-            <button class="ccs-btn ghost small" onclick="runDailyScan(true)">Varredura</button>
-            <button class="ccs-btn ghost small" onclick="iaDraftFromLastLead()">Abordagem</button>
-            <button class="ccs-btn ghost small" onclick="runAiOrder('como está o mercado')">Mercado</button>
-            <button class="ccs-btn ghost small" onclick="runAiOrder('analise de projetos da fila')">Projetos</button>
-            <button class="ccs-btn ghost small" onclick="runAiOrder('analise de arquitetura do nosso produto')">Arquitetura</button>
-            <button class="ccs-btn ghost small" onclick="runAiOrder('analise de sistemas da operacao')">Sistemas</button>
-            <button class="ccs-btn ghost small" onclick="runAiOrder('analise de software e portfólio')">Software</button>
-            <button class="ccs-btn ghost small" onclick="runAiOrder('revise o codigo e a qualidade tecnica')">Código</button>
-            <button class="ccs-btn ghost small" onclick="runAiOrder('como responder o cliente de forma formal')">Resposta ao cliente</button>
-            <button class="ccs-btn ghost small" onclick="runAiOrder('ideias e estrategia')">Ideias</button>
-            <button class="ccs-btn ghost small" onclick="window.open(GESTAO_URL,'_blank')">Abrir Gestão</button>
+          <div class="ccs-ia-panel">
+            <h3>Fila de prospecção</h3>
+            <div id="ia-pipeline">Nenhum alvo ainda. Peça “prospectar”.</div>
           </div>
-          <div class="ccs-ai-box" id="admin-ai-log"></div>
-          <div class="ccs-ia-input-wrap">
-            <input id="admin-ai-input" placeholder="Peça análise, estratégia, revisão técnica ou texto formal para o cliente…" onkeydown="if(event.key==='Enter')sendAdminAi()">
-            <button class="ccs-btn amber" onclick="sendAdminAi()">Enviar</button>
+          <div class="ccs-ia-panel">
+            <h3>Ações rápidas</h3>
+            <div class="ccs-ia-actions">
+              <button class="ccs-btn ghost small" onclick="iaRun('prospectar clientes agora')">Buscar alvos</button>
+              <button class="ccs-btn ghost small" onclick="iaRefreshSide()">Atualizar</button>
+              <button class="ccs-btn ghost small" onclick="switchAdminTab('conversas')">Abrir chats</button>
+              <button class="ccs-btn ghost small" onclick="switchAdminTab('projetos')">Projetos</button>
+            </div>
           </div>
-        </div>
+        </aside>
       </div>
     </div>
 
@@ -2543,325 +2580,483 @@ async function replyStalledChat(){
   return s;
 }
 
+/* ================= IA ADMIN — CodeCraft Ops (integrada) ================= */
 let adminAiBooted = false;
-const IA_ADMIN_KEY = 'ccs-ia-admin-chat';
-const IA_DAILY_KEY = 'ccs-ia-daily-scan';
-const IA_LAST_LEAD_KEY = 'ccs-ia-last-lead';
+const IA_ADMIN_KEY = 'ccs-ia-admin-chat-v2';
+const IA_PIPELINE_KEY = 'ccs-ia-pipeline-v1';
+const IA_LAST_LEAD_KEY = 'ccs-ia-last-prospect';
 
-const IA_LEAD_POOL = [
-  { company:'Distribuidora São José Ltda.', pain:'Controle de ponto manual em planilhas e gargalo no fechamento de caixa.', plan:'Plano Empresa · R$ 390/mês', email:'contato@distribuidorasj.com.br', phone:'(31) 99876-5432', contact:'Carlos Alberto (Diretor Operacional)', fit:'Lead com altíssimo fit e dor urgente. Recomendo contato imediato focando na automação do ponto.', score:96, service:'gestao' },
-  { company:'Clínica Vida Plena', pain:'Folha de pagamento atrasada todo mês por falta de sistema integrado RH + financeiro.', plan:'Plano Essencial · R$ 280/mês', email:'rh@clinicavidaplena.com.br', phone:'(31) 99112-3344', contact:'Dra. Fernanda (Sócia)', fit:'Dor clássica de clínica em crescimento. Gestão fecha ponto e folha no mesmo lugar.', score:91, service:'gestao' },
-  { company:'Auto Peças Minas Centro', pain:'Busca sistema para títulos a pagar/receber — hoje tudo no caderno.', plan:'Plano Empresa · R$ 390/mês', email:'financeiro@autopecasmc.com.br', phone:'(31) 98765-1122', contact:'Roberto (Gerente)', fit:'Fit financeiro forte. Ofereça DRE gerencial + caixa unificado.', score:88, service:'gestao' },
-  { company:'Salão Elegance BH', pain:'Precisa de site com WhatsApp e agenda — perde cliente que pesquisa no Google.', plan:'Site institucional · a partir de R$ 500', email:'contato@salaoelegance.com.br', phone:'(31) 99222-8877', contact:'Juliana (Proprietária)', fit:'Comercial + presença digital. Combine site + manutenção mensal.', score:84, service:'site' },
-  { company:'Oficina Roda Certa', pain:'Quer loja virtual simples com pedido e PIX — vende só no balcão.', plan:'Loja virtual · a partir de R$ 500', email:'oficina@rodacerta.com.br', phone:'(31) 99333-4455', contact:'Marcos (Dono)', fit:'E-commerce enxuto encaixa. PIX na entrega fecha rápido.', score:82, service:'loja' },
-  { company:'Contabilidade Horizonte', pain:'Cliente pediu portal para acompanhar projeto de sistema interno.', plan:'Sistema sob medida · sob orçamento', email:'projetos@contahorizonte.com.br', phone:'(31) 99444-5566', contact:'Ana Paula (Coordenação)', fit:'Projeto B2B sob medida. Portal ao vivo é diferencial CodeCraft.', score:79, service:'sistema' },
-  { company:'Padaria do Bairro Ltda.', pain:'Funcionários batem ponto no papel — fechamento demora e dá erro.', plan:'Plano Essencial · R$ 280/mês', email:'adm@padariadobairro.com.br', phone:'(31) 99555-6677', contact:'Seu João (Sócio)', fit:'MEI/pequena operação ideal para Essencial. Dor de ponto é entrada fácil.', score:90, service:'gestao' },
-  { company:'Logística Rápida MG', pain:'Procurando ERP leve — ERP grande é caro demais para 25 colaboradores.', plan:'Plano Corporativo · R$ 500/mês', email:'ti@logisticarapida.com.br', phone:'(31) 99666-7788', contact:'Ricardo (TI)', fit:'Corporativo com multi-tenant e RH completo. Posicione vs ERP pesado.', score:93, service:'gestao' }
+const CCS_COMPANY = {
+  name: 'CodeCraft Solutions',
+  city: 'Belo Horizonte / Grande BH',
+  whatsapp: '31999758385',
+  whatsappDisplay: '(31) 99975-8385',
+  pix: '31999758385',
+  instagram: '@code.invention',
+  gestaoUrl: (typeof GESTAO_URL !== 'undefined' ? GESTAO_URL : ''),
+  products: [
+    { id:'gestao', name:'CodeCraft Gestão', price:'R$ 280 a R$ 500/mês', forWhom:'Empresas (CNPJ)', pain:'ponto, caixa, folha, títulos', detail:'ERP/HCM B2B: Financeiro, RH e assinatura Asaas.' },
+    { id:'landing', name:'Landing page', price:'a partir de R$ 300', forWhom:'Captura de leads', pain:'não converte visita', detail:'Página única de alta conversão + WhatsApp.' },
+    { id:'site', name:'Site institucional', price:'a partir de R$ 500', forWhom:'Presença da marca', pain:'não aparece no Google', detail:'Várias páginas, identidade e redes.' },
+    { id:'loja', name:'Loja virtual', price:'a partir de R$ 500', forWhom:'Venda online', pain:'só vende no balcão', detail:'Catálogo, pedido, frete e PIX.' },
+    { id:'sistema', name:'Sistema / App sob medida', price:'R$ 1.500 a R$ 15.000', forWhom:'Processo próprio', pain:'planilha e caos', detail:'Painéis, cadastros e portal ao vivo.' },
+    { id:'manutencao', name:'Manutenção mensal', price:'a partir de R$ 100/mês', forWhom:'Pós-entrega', pain:'site parado', detail:'Ajustes, correções e suporte.' }
+  ]
+};
+
+const IA_HUNT_NICHES = [
+  { key:'clinica', label:'Clínicas e consultórios', query:'clínica médica Belo Horizonte', offer:'gestao', project:'CodeCraft Gestão (ponto + folha) ou site com agenda', maps:'https://www.google.com/maps/search/cl%C3%ADnica+m%C3%A9dica+Belo+Horizonte' },
+  { key:'odontologia', label:'Consultórios odontológicos', query:'dentista Belo Horizonte', offer:'gestao', project:'Gestão Essencial + site institucional', maps:'https://www.google.com/maps/search/dentista+Belo+Horizonte' },
+  { key:'oficina', label:'Oficinas e auto peças', query:'oficina mecânica Belo Horizonte', offer:'loja', project:'Loja virtual com pedido e PIX', maps:'https://www.google.com/maps/search/oficina+mec%C3%A2nica+Belo+Horizonte' },
+  { key:'salao', label:'Salões e estética', query:'salão de beleza Belo Horizonte', offer:'site', project:'Site com WhatsApp e agenda', maps:'https://www.google.com/maps/search/sal%C3%A3o+de+beleza+Belo+Horizonte' },
+  { key:'loja', label:'Lojas de bairro', query:'loja Belo Horizonte', offer:'loja', project:'Loja virtual + Gestão de caixa', maps:'https://www.google.com/maps/search/loja+Belo+Horizonte' },
+  { key:'contabilidade', label:'Contabilidades', query:'contabilidade Belo Horizonte', offer:'sistema', project:'Portal sob medida para clientes', maps:'https://www.google.com/maps/search/contabilidade+Belo+Horizonte' },
+  { key:'restaurante', label:'Restaurantes', query:'restaurante Belo Horizonte', offer:'site', project:'Site + cardápio + pedidos WhatsApp', maps:'https://www.google.com/maps/search/restaurante+Belo+Horizonte' },
+  { key:'advocacia', label:'Escritórios de advocacia', query:'advocacia Belo Horizonte', offer:'site', project:'Site institucional + captura', maps:'https://www.google.com/maps/search/advocacia+Belo+Horizonte' },
+  { key:'imobiliaria', label:'Imobiliárias', query:'imobiliária Belo Horizonte', offer:'sistema', project:'Catálogo de imóveis + CRM leve', maps:'https://www.google.com/maps/search/imobili%C3%A1ria+Belo+Horizonte' },
+  { key:'academia', label:'Academias', query:'academia Belo Horizonte', offer:'gestao', project:'Gestão + site de matrículas', maps:'https://www.google.com/maps/search/academia+Belo+Horizonte' }
 ];
 
-function iaDaySeed(){
-  const d = new Date();
-  return d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate();
-}
-function iaPickDailyLeads(count){
-  const seed = iaDaySeed();
-  const pool = IA_LEAD_POOL.filter(l=>l.score >= 75).slice();
-  pool.sort((a,b)=>{
-    const ha = ((a.company.charCodeAt(0)*31 + seed) ^ a.score) % 997;
-    const hb = ((b.company.charCodeAt(0)*31 + seed) ^ b.score) % 997;
-    return ha - hb;
-  });
-  return pool.slice(0, count || 3);
-}
-function iaOpportunityCard(lead){
-  try{ localStorage.setItem(IA_LAST_LEAD_KEY, JSON.stringify(lead)); }catch(e){}
-  return `<div class="ccs-ia-card">
-    <div class="ccs-ia-daily-head">[Relatório diário de oportunidade — IA Admin · 50 anos de experiência]</div>
-    <ul>
-      <li><strong>Empresa identificada:</strong> ${escapeHtml(lead.company)}</li>
-      <li><strong>Problema específico:</strong> ${escapeHtml(lead.pain)}</li>
-      <li><strong>Plano ideal recomendado:</strong> ${escapeHtml(lead.plan)}</li>
-      <li><strong>Dados de contato:</strong><br>
-        - E-mail: ${escapeHtml(lead.email)}<br>
-        - Telefone / WhatsApp: ${escapeHtml(lead.phone)}<br>
-        - Responsável: ${escapeHtml(lead.contact)}</li>
-      <li><strong>Análise (analista comercial + sistemas):</strong> "${escapeHtml(lead.fit)} Deseja que eu redija a mensagem de abordagem formal?"</li>
-    </ul>
-  </div>`;
+function iaNorm(s){
+  return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 }
 function loadIaChat(){
   try{ return JSON.parse(localStorage.getItem(IA_ADMIN_KEY)||'[]'); }catch(e){ return []; }
 }
 function saveIaChat(items){
-  try{ localStorage.setItem(IA_ADMIN_KEY, JSON.stringify(items.slice(-250))); }catch(e){}
+  try{ localStorage.setItem(IA_ADMIN_KEY, JSON.stringify((items||[]).slice(-200))); }catch(e){}
+}
+function loadIaPipeline(){
+  try{ return JSON.parse(localStorage.getItem(IA_PIPELINE_KEY)||'[]'); }catch(e){ return []; }
+}
+function saveIaPipeline(items){
+  try{ localStorage.setItem(IA_PIPELINE_KEY, JSON.stringify((items||[]).slice(0,40))); }catch(e){}
+  iaRenderPipeline();
+}
+function iaPushProspect(p){
+  const list = loadIaPipeline().filter(x=>x.id !== p.id);
+  list.unshift(p);
+  saveIaPipeline(list);
+  try{ localStorage.setItem(IA_LAST_LEAD_KEY, JSON.stringify(p)); }catch(e){}
 }
 function renderIaAdminChat(){
   const log = document.getElementById('admin-ai-log');
   if(!log) return;
   const chat = loadIaChat();
   if(!chat.length){
-    log.innerHTML = '<div class="ccs-ai-msg"><strong>IA Admin online.</strong><br>Perfil: arquiteta de software · analista de sistemas · software · código. Use os atalhos acima ou digite um pedido — varredura, arquitetura, resposta formal ao cliente, etc.</div>';
+    log.innerHTML = '<div class="ccs-ai-msg"><div class="ccs-ai-meta">CodeCraft IA</div><strong>Pronta e integrada ao painel.</strong><br>Leio projetos, chats do site e mensagens. Peça: <em>prospectar clientes</em>, <em>leads do site</em>, <em>responder chats</em>, <em>analisar projetos</em>, ou cole um CNPJ.</div>';
     return;
   }
-  log.innerHTML = chat.map(m=>'<div class="ccs-ai-msg '+(m.who==='me'?'me':'')+'">'+m.html+'</div>').join('');
+  log.innerHTML = chat.map(m=>{
+    const who = m.who==='me' ? 'me' : '';
+    const meta = m.who==='me' ? 'Você' : 'CodeCraft IA';
+    return '<div class="ccs-ai-msg '+who+'"><div class="ccs-ai-meta">'+meta+'</div>'+m.html+'</div>';
+  }).join('');
   log.scrollTop = log.scrollHeight;
-}
-async function runDailyScan(force){
-  const today = todayISO();
-  if(!force && localStorage.getItem(IA_DAILY_KEY) === today) return;
-  const leads = iaPickDailyLeads(3);
-  const chat = loadIaChat();
-  chat.push({ who:'ia', html:'<strong>Varredura diária concluída</strong><br>Monitoramento de redes, vagas e fóruns · '+fmtDate(new Date().toISOString())+' · '+leads.length+' oportunidades com fit validado.', ts:Date.now() });
-  leads.forEach(lead=> chat.push({ who:'ia', html:iaOpportunityCard(lead), ts:Date.now() }));
-  saveIaChat(chat);
-  localStorage.setItem(IA_DAILY_KEY, today);
-  renderIaAdminChat();
-  showToast('Varredura diária: '+leads.length+' leads no chat.');
-}
-function startIaAdminAutopilot(){
-  runDailyScan(false);
-  if(window.__iaDailyTimer) clearInterval(window.__iaDailyTimer);
-  window.__iaDailyTimer = setInterval(function(){ runDailyScan(false); }, 60*60*1000);
-}
-function bootAdminAi(){
-  if(!adminAiBooted){
-    runDailyScan(false);
-    adminAiBooted = true;
-  }
-  renderIaAdminChat();
 }
 function pushAi(who, html){
   const chat = loadIaChat();
-  chat.push({ who: who||'ia', html, ts:Date.now() });
+  chat.push({ who: who||'ia', html, ts: Date.now() });
   saveIaChat(chat);
   renderIaAdminChat();
 }
-function iaDraftOutreach(lead){
-  const svc = lead.service==='gestao' ? 'CodeCraft Gestão (Financeiro, RH e assinatura mensal)' : lead.service==='loja' ? 'loja virtual com pedido e PIX' : lead.service==='sistema' ? 'sistema sob medida com portal ao vivo' : 'site institucional voltado à conversão';
-  return 'Prezado(a) '+escapeHtml(lead.contact.split('(')[0].trim())+',<br><br>'+
-    'Sou da <strong>CodeCraft Solutions</strong>, em Belo Horizonte.<br><br>'+
-    'Identificamos que a <strong>'+escapeHtml(lead.company)+'</strong> enfrenta: '+escapeHtml(lead.pain)+'.<br><br>'+
-    'Podemos apoiar com <strong>'+svc+'</strong>, com acompanhamento em tempo real e pagamento via PIX (chave 31999758385).<br><br>'+
-    'Sugestão: <strong>'+escapeHtml(lead.plan)+'</strong>. Se preferir, agendamos 15 minutos ainda hoje para alinhar o escopo.<br><br>'+
-    'Atenciosamente,<br>Equipe CodeCraft Solutions<br>WhatsApp (31) 99975-8385';
+function iaWrap(title, body){ return '<strong>'+title+'</strong><br>'+body; }
+function iaPhoneDigits(phone){ return String(phone||'').replace(/\D/g,''); }
+function iaWaLink(phone, text){
+  let d = iaPhoneDigits(phone);
+  if(d.length===10 || d.length===11) d = '55'+d;
+  return 'https://wa.me/'+d+'?text='+encodeURIComponent(text||'');
+}
+function iaDaySeed(){
+  const d = new Date();
+  return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
+}
+
+async function iaSnapshot(){
+  const [projects, messages, leads] = await Promise.all([
+    loadProjects().catch(()=>[]),
+    loadMessages().catch(()=>[]),
+    loadLeadChats().catch(()=>[])
+  ]);
+  const openChats = [];
+  for(const l of (leads||[]).slice(0,10)){
+    const msgs = await loadChat(l.code).catch(()=>[]);
+    const last = msgs[msgs.length-1];
+    const sender = last ? (last.sender||last.from||'') : '';
+    openChats.push({
+      code: l.code,
+      name: l.name || l.code,
+      count: msgs.length,
+      unanswered: !!(last && sender !== 'admin'),
+      last: last ? (last.body||last.message||'') : ''
+    });
+  }
+  const unpaid = (projects||[]).filter(p=>!p.paid && Number(p.pixValue)>0);
+  const stuck = (projects||[]).filter(p=>p.status==='analise' || (p.status==='andamento' && !p.deliveryUrl));
+  return { projects: projects||[], messages: messages||[], leads: leads||[], openChats, unpaid, stuck };
+}
+
+async function iaRefreshSide(){
+  const pulse = document.getElementById('ia-pulse');
+  if(pulse){
+    try{
+      const s = await iaSnapshot();
+      const waiting = s.openChats.filter(c=>c.unanswered).length;
+      pulse.innerHTML =
+        '<div class="ccs-ia-pulse-row"><span>Projetos</span><b>'+s.projects.length+'</b></div>'+
+        '<div class="ccs-ia-pulse-row"><span>Travados</span><b>'+s.stuck.length+'</b></div>'+
+        '<div class="ccs-ia-pulse-row"><span>PIX a receber</span><b>'+s.unpaid.length+'</b></div>'+
+        '<div class="ccs-ia-pulse-row"><span>Chats do site</span><b>'+s.leads.length+'</b></div>'+
+        '<div class="ccs-ia-pulse-row"><span>Aguardando resposta</span><b>'+waiting+'</b></div>'+
+        '<div class="ccs-ia-pulse-row"><span>Mensagens</span><b>'+s.messages.length+'</b></div>';
+    }catch(e){
+      pulse.innerHTML = '<span style="color:var(--ink-soft);font-size:13px;">Sem leitura do banco agora.</span>';
+    }
+  }
+  iaRenderPipeline();
+}
+function iaRenderPipeline(){
+  const el = document.getElementById('ia-pipeline');
+  if(!el) return;
+  const list = loadIaPipeline();
+  if(!list.length){
+    el.innerHTML = '<span style="font-size:13px;color:var(--ink-soft);">Nenhum alvo. Peça “prospectar clientes”.</span>';
+    return;
+  }
+  el.innerHTML = list.slice(0,6).map(p=>{
+    const badge = p.source==='inbound' ? '<span class="ccs-ia-badge real">Lead real</span>'
+      : p.source==='cnpj' ? '<span class="ccs-ia-badge">CNPJ</span>'
+      : '<span class="ccs-ia-badge warn">Alvo</span>';
+    const wa = p.phone ? '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+iaWaLink(p.phone, p.outreach||'')+'">WhatsApp</a>' : '';
+    const maps = p.maps ? '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+p.maps+'">Maps</a>' : '';
+    const chat = p.chatCode ? '<button class="ccs-btn ghost small" onclick="iaOpenChatCode(\''+String(p.chatCode).replace(/'/g,"\\'")+'\')">Chat</button>' : '';
+    return '<div class="ccs-ia-lead">'+badge+
+      '<strong>'+escapeHtml(p.company||p.name||'Alvo')+'</strong>'+
+      '<span>'+escapeHtml(p.project||p.pain||'')+'</span>'+
+      (p.contact? '<span>'+escapeHtml(p.contact)+'</span>':'')+
+      (p.phone||p.email? '<span>'+escapeHtml([p.phone,p.email].filter(Boolean).join(' · '))+'</span>':'')+
+      '<div class="acts">'+wa+maps+chat+
+      '<button class="ccs-btn ghost small" onclick="iaDraftProspect(\''+String(p.id).replace(/'/g,"\\'")+'\')">Abordagem</button></div></div>';
+  }).join('');
+}
+
+function iaOpenChatCode(code){
+  switchAdminTab('conversas');
+  if(typeof openAdminLeadChat==='function') openAdminLeadChat(code);
+  else if(typeof openAdminChat==='function') openAdminChat(code);
+}
+function iaDraftProspect(id){
+  const p = loadIaPipeline().find(x=>x.id===id);
+  if(!p){ showToast('Alvo não encontrado.'); return; }
+  pushAi('ia', iaOutreachHtml(p));
+}
+function iaOutreachHtml(p){
+  const nome = (p.contact||'responsável').split('(')[0].trim();
+  const prod = CCS_COMPANY.products.find(x=>x.id===p.offer) || CCS_COMPANY.products[0];
+  const plain =
+    'Prezado(a) '+nome+',\n\nSou da '+CCS_COMPANY.name+', em '+CCS_COMPANY.city+
+    '.\n\nIdentificamos oportunidade para '+(p.company||'sua empresa')+': '+(p.pain||p.project||'melhorar operação digital')+
+    '.\n\nPodemos entregar '+prod.name+' ('+prod.price+') com portal em tempo real e PIX '+CCS_COMPANY.pix+
+    '.\n\nProjeto sugerido: '+(p.project||prod.detail)+
+    '.\n\nPodemos falar 15 minutos ainda hoje?\n\nAtenciosamente,\nEquipe '+CCS_COMPANY.name+'\nWhatsApp '+CCS_COMPANY.whatsappDisplay;
+  p.outreach = plain;
+  iaPushProspect(p);
+  const body = plain.replace(/\n/g,'<br>');
+  const wa = p.phone ? '<div class="ccs-ia-actions"><a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+iaWaLink(p.phone, plain)+'">Abrir WhatsApp</a></div>' : '';
+  return iaWrap('Abordagem pronta', body)+wa;
+}
+
+function iaCompanyCard(){
+  return iaWrap('O que a CodeCraft Solutions vende',
+    CCS_COMPANY.city+' · WhatsApp '+CCS_COMPANY.whatsappDisplay+' · PIX '+CCS_COMPANY.pix+' · '+CCS_COMPANY.instagram+'<br><br>'+
+    CCS_COMPANY.products.map(p=>
+      '• <strong>'+p.name+'</strong> — '+p.price+' · '+p.forWhom+' · dor: '+p.pain+'<br><span style="color:var(--ink-soft)">'+p.detail+'</span>'
+    ).join('<br><br>')+
+    '<br><br>Não sou IA solta: leio a fila deste admin e preparo ações (WhatsApp, chat, Gestão).'
+  );
+}
+
+async function iaInboundLeadsHtml(snap){
+  const inbound = [];
+  (snap.openChats||[]).forEach(c=>{
+    const p = {
+      id: 'chat-'+c.code, source:'inbound', company:c.name, name:c.name, chatCode:c.code,
+      pain: c.unanswered ? 'Mensagem sem resposta no chat do site' : 'Conversa ativa no site',
+      project:'Qualificar necessidade e converter em projeto CodeCraft', offer:'site',
+      contact:c.name, phone:'', email:'',
+      outreach:'Olá, '+c.name+'! Aqui é da CodeCraft Solutions. Vi sua mensagem no site e quero te ajudar no próximo passo.'
+    };
+    inbound.push(p); iaPushProspect(p);
+  });
+  (snap.messages||[]).slice(0,8).forEach((m,i)=>{
+    const contact = m.contact || m.email || m.phone || '';
+    const p = {
+      id:'msg-'+(m.id||i), source:'inbound', company:m.name||'Contato do formulário', name:m.name||'',
+      pain:(m.msg||m.message||m.body||'').slice(0,160),
+      project:'Retornar formulário e abrir proposta', offer:'site', contact:m.name||'',
+      phone: /\d{10,}/.test(contact) ? contact : '',
+      email: /@/.test(contact) ? contact : '',
+      outreach:'Olá'+(m.name?', '+m.name:'')+'! Recebemos sua mensagem na CodeCraft Solutions e retornamos agora.'
+    };
+    inbound.push(p); iaPushProspect(p);
+  });
+  if(!inbound.length){
+    return iaWrap('Leads reais do site',
+      'Não há chats/mensagens novos agora. Use <strong>prospectar</strong> (Maps por nicho) ou cole um CNPJ para buscar empresa na Receita (BrasilAPI).');
+  }
+  let html = '<span class="ccs-ia-badge real">Leads reais</span> '+inbound.length+' contato(s) do site — prioridade máxima.';
+  inbound.slice(0,6).forEach(p=>{
+    html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">Lead inbound</div><ul>'+
+      '<li><strong>Nome:</strong> '+escapeHtml(p.company)+'</li>'+
+      '<li><strong>Mensagem / dor:</strong> '+escapeHtml(p.pain||'—')+'</li>'+
+      '<li><strong>Projeto sugerido:</strong> '+escapeHtml(p.project)+'</li>'+
+      (p.chatCode? '<li><strong>Chat:</strong> '+escapeHtml(p.chatCode)+'</li>':'')+
+      (p.phone||p.email? '<li><strong>Contato:</strong> '+escapeHtml([p.phone,p.email].filter(Boolean).join(' · '))+'</li>':'')+
+      '</ul><div class="ccs-ia-actions">'+
+      (p.chatCode? '<button class="ccs-btn amber small" onclick="iaOpenChatCode(\''+p.chatCode+'\')">Abrir e responder</button>':'')+
+      (p.phone? '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+iaWaLink(p.phone,p.outreach)+'">WhatsApp</a>':'')+
+      '</div></div>';
+  });
+  return html;
+}
+
+function iaHuntHtml(raw){
+  const t = iaNorm(raw);
+  let niche = IA_HUNT_NICHES.find(n=> t.includes(n.key) || t.includes(iaNorm(n.label).split(' ')[0]));
+  if(!niche) niche = IA_HUNT_NICHES[iaDaySeed() % IA_HUNT_NICHES.length];
+  const prod = CCS_COMPANY.products.find(x=>x.id===niche.offer) || CCS_COMPANY.products[0];
+  [0,1,2].forEach(i=>{
+    iaPushProspect({
+      id:'hunt-'+niche.key+'-'+iaDaySeed()+'-'+i, source:'hunt',
+      company: niche.label+' · alvo '+(i+1)+' (BH)',
+      pain:'Negócio local — validar telefone/nome no Maps (não invento contato).',
+      project:niche.project, offer:niche.offer, contact:'Responsável / dono',
+      phone:'', email:'', maps:niche.maps,
+      outreach:'Olá! Sou da CodeCraft Solutions (BH). Ajudamos '+niche.label.toLowerCase()+' com '+prod.name+' ('+prod.price+'). Posso te mostrar o portal em 15 min?'
+    });
+  });
+  return iaWrap('Prospecção — '+niche.label,
+    '<span class="ccs-ia-badge warn">Alvos de pesquisa</span> Não invento telefone. Abra o Maps, escolha empresas reais, anote o contato e peça a abordagem.<br><br>'+
+    'Busca: <strong>'+escapeHtml(niche.query)+'</strong><br>'+
+    'Produto: <strong>'+escapeHtml(prod.name)+'</strong> — '+escapeHtml(prod.price)+'<br>'+
+    'Projeto típico: '+escapeHtml(niche.project)+'<br><br>'+
+    '<div class="ccs-ia-actions"><a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+niche.maps+'">Abrir Google Maps</a> '+
+    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="https://www.google.com/search?q='+encodeURIComponent(niche.query+' telefone')+'">Buscar no Google</a></div><br>'+
+    'Leads <strong>com conversa real</strong> vêm de “Leads do site”. Contatos do Maps você confirma — aí entram na fila com WhatsApp.'
+  );
+}
+
+async function iaLookupCnpj(cnpj){
+  const digits = String(cnpj).replace(/\D/g,'');
+  if(digits.length!==14) return iaWrap('CNPJ inválido', 'Envie 14 dígitos para consultar na BrasilAPI.');
+  try{
+    const res = await fetch('https://brasilapi.com.br/api/cnpj/v1/'+digits);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const j = await res.json();
+    const company = j.razao_social || j.nome_fantasia || 'Empresa';
+    const phone = (j.ddd_telefone_1||'').replace(/\D/g,'');
+    const email = j.email || '';
+    const city = ((j.municipio||'')+'/'+(j.uf||'')).replace(/^\/|\/$/g,'');
+    const cnae = j.cnae_fiscal_descricao || '';
+    const cnaeN = iaNorm(cnae);
+    let offer = 'site';
+    if(/saude|clinic|medic|odont|hospital/.test(cnaeN)) offer = 'gestao';
+    else if(/comerc|varej|loja/.test(cnaeN)) offer = 'loja';
+    else if(/contab|software|tecnolog/.test(cnaeN)) offer = 'sistema';
+    const prod = CCS_COMPANY.products.find(x=>x.id===offer);
+    const p = {
+      id:'cnpj-'+digits, source:'cnpj', company,
+      pain:'Empresa ativa ('+cnae+') em '+city,
+      project: prod ? prod.name+' · '+prod.detail : 'Diagnóstico CodeCraft',
+      offer, contact:(j.qsa && j.qsa[0] && j.qsa[0].nome_socio) || 'Comercial',
+      phone: phone.length>=10 ? phone : '', email,
+      maps:'https://www.google.com/maps/search/'+encodeURIComponent(company+' '+(j.municipio||'Belo Horizonte')),
+      outreach:'Olá! Sou da CodeCraft Solutions. Vi a '+company+' e posso ajudar com '+((prod&&prod.name)||'soluções digitais')+'. Combinamos 15 minutos?'
+    };
+    iaPushProspect(p);
+    return '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">Pesquisa CNPJ · dados públicos</div><ul>'+
+      '<li><strong>Empresa:</strong> '+escapeHtml(company)+'</li>'+
+      '<li><strong>Fantasia:</strong> '+escapeHtml(j.nome_fantasia||'—')+'</li>'+
+      '<li><strong>CNAE:</strong> '+escapeHtml(cnae||'—')+'</li>'+
+      '<li><strong>Situação:</strong> '+escapeHtml(j.descricao_situacao_cadastral||'—')+'</li>'+
+      '<li><strong>Cidade:</strong> '+escapeHtml(city||'—')+'</li>'+
+      '<li><strong>Telefone Receita:</strong> '+escapeHtml(phone||'não informado')+'</li>'+
+      '<li><strong>E-mail:</strong> '+escapeHtml(email||'não informado')+'</li>'+
+      '<li><strong>Projeto sugerido:</strong> '+escapeHtml(p.project)+'</li>'+
+      '<li><strong>Contato:</strong> '+escapeHtml(p.contact)+'</li></ul>'+
+      '<div class="ccs-ia-actions">'+
+      (p.phone? '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+iaWaLink(p.phone,p.outreach)+'">WhatsApp</a>':'')+
+      '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+p.maps+'">Maps</a>'+
+      '<button class="ccs-btn ghost small" onclick="iaDraftProspect(\''+p.id+'\')">Abordagem</button></div></div>';
+  }catch(e){
+    return iaWrap('Falha na consulta CNPJ', 'BrasilAPI indisponível agora. Tente de novo em instantes.');
+  }
+}
+
+async function iaAnalyzeProjects(snap){
+  const projects = snap.projects||[];
+  if(!projects.length) return iaWrap('Fila de projetos', 'Nenhum projeto no painel ainda.');
+  const by = {};
+  projects.forEach(p=>{ by[p.status]=(by[p.status]||0)+1; });
+  let html = iaWrap('Análise da fila',
+    projects.length+' projeto(s): '+(by.analise||0)+' análise · '+(by.andamento||0)+' andamento · '+(by.concluido||0)+' concluído.<br>'+
+    'PIX em aberto: '+snap.unpaid.length+' · Travados: '+snap.stuck.length+'.');
+  projects.slice(0,8).forEach(p=>{
+    const risks = [];
+    if(!p.paid && Number(p.pixValue)>0) risks.push('PIX pendente');
+    if(p.status==='concluido' && !p.deliveryUrl) risks.push('sem link de entrega');
+    if(p.status==='analise') risks.push('ainda em análise');
+    html += '<div class="ccs-ia-card"><strong>'+escapeHtml(p.clientName)+'</strong> · '+escapeHtml(p.projectName)+
+      '<br><span style="font-size:12.5px;color:var(--ink-soft)">'+escapeHtml(p.trackingCode)+' · '+escapeHtml(p.status)+' · '+money(Number(p.pixValue||0))+(p.paid?' · pago':'')+'</span>'+
+      (risks.length? '<br>⚠ '+risks.join(' · '):' <br>✓ ok')+
+      '<div class="ccs-ia-actions"><button class="ccs-btn ghost small" onclick="switchAdminTab(\'projetos\')">Projetos</button>'+
+      '<button class="ccs-btn ghost small" onclick="iaOpenChatCode(\''+escapeHtml(p.trackingCode)+'\')">Chat</button></div></div>';
+  });
+  return html;
+}
+
+async function iaAttendChats(snap){
+  const waiting = (snap.openChats||[]).filter(c=>c.unanswered);
+  if(!waiting.length) return iaWrap('Atendimento', 'Nenhum chat aguardando resposta agora.');
+  let html = iaWrap('Conversas aguardando', waiting.length+' chat(s) com última mensagem do cliente.');
+  waiting.slice(0,5).forEach(c=>{
+    const draft =
+      'Prezado(a) '+c.name+',\n\nAgradecemos o contato com a CodeCraft Solutions.\n\n'+
+      'Recebemos sua mensagem e queremos entender: (1) objetivo do projeto; (2) prazo; (3) se prefere site, loja, sistema ou CodeCraft Gestão.\n\n'+
+      'Com isso, enviamos a proposta com clareza.\n\nAtenciosamente,\nEquipe CodeCraft Solutions\nWhatsApp '+CCS_COMPANY.whatsappDisplay;
+    window.__iaDrafts = window.__iaDrafts || {};
+    window.__iaDrafts[c.code] = draft;
+    html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">Chat '+escapeHtml(c.code)+'</div>'+
+      '<strong>'+escapeHtml(c.name)+'</strong><br>'+
+      '<span style="font-size:13px;color:var(--ink-soft)">Última: '+escapeHtml((c.last||'').slice(0,180))+'</span>'+
+      '<div class="ccs-ia-actions">'+
+      '<button class="ccs-btn amber small" onclick="iaSendDraftToChat(\''+c.code+'\')">Enviar resposta no chat</button>'+
+      '<button class="ccs-btn ghost small" onclick="iaOpenChatCode(\''+c.code+'\')">Abrir</button></div></div>';
+  });
+  return html;
+}
+
+async function iaSendDraftToChat(code){
+  const text = (window.__iaDrafts && window.__iaDrafts[code]) || '';
+  if(!text){ showToast('Rascunho não encontrado.'); return; }
+  const ok = await insertChat(code, 'admin', text);
+  if(ok){ showToast('Resposta enviada.'); iaOpenChatCode(code); iaRefreshSide(); }
+  else showToast('Falha ao enviar.');
+}
+
+function iaPanelHtml(snap, mkt){
+  const paid = (snap.projects||[]).filter(p=>p.paid).reduce((s,p)=>s+Number(p.pixValue||0),0);
+  const open = snap.unpaid.reduce((s,p)=>s+Number(p.pixValue||0),0);
+  return iaWrap('Painel da empresa',
+    'Projetos: '+snap.projects.length+' · Chats: '+snap.leads.length+' · Formulários: '+snap.messages.length+'<br>'+
+    'Recebido: '+money(paid)+' · A receber: '+money(open)+'<br>'+
+    'Travados: '+snap.stuck.length+' · Sem resposta: '+snap.openChats.filter(c=>c.unanswered).length+'<br><br>'+
+    (mkt && mkt.usd!=null ? ('Mercado: dólar R$ '+Number(mkt.usd).toFixed(2)+(mkt.selic!=null?' · Selic '+mkt.selic+'%':'')+'<br><br>') : '')+
+    'Prioridade: 1) responder chats reais 2) cobrar PIX 3) prospectar 1 nicho 4) destravar projetos'
+  );
+}
+
+async function iaSeniorReply(text, snap, mkt){
+  const t = iaNorm(text);
+  const cnpjMatch = text.match(/\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}/) || text.match(/\b\d{14}\b/);
+  if(cnpjMatch) return await iaLookupCnpj(cnpjMatch[0]);
+
+  if(/o que (a )?codecraft|o que (voces|vocês) fazem|o que vendemos|produtos|servicos|serviços|quem somos/.test(t))
+    return iaCompanyCard();
+  if(/lead(s)? do site|inbound|mensagens do formulario|mensagens do formulário|contatos do site|mostrar leads/.test(t))
+    return await iaInboundLeadsHtml(snap);
+  if(/prospect|prospec|achar cliente|encontrar cliente|buscar cliente|cacar|caçar|varredura|scan|oportunidad|prospectar/.test(t)){
+    const inbound = await iaInboundLeadsHtml(snap);
+    return inbound + '<br><br>' + iaHuntHtml(text);
+  }
+  if(/responder conversa|atender chat|conversas abertas|chats abertos|atendimento|responder conversas/.test(t))
+    return await iaAttendChats(snap);
+  if(/analise de projeto|análise de projeto|analise de projetos|análise de projetos|projetos da fila|analisar projeto|analisar projetos/.test(t))
+    return await iaAnalyzeProjects(snap);
+  if(/painel|empresa|operacao|operação|caixa/.test(t) && !/gestao|gestão/.test(t))
+    return iaPanelHtml(snap, mkt);
+  if(/mercado|dolar|dólar|selic|ibov|economia/.test(t)){
+    if(typeof analyzeMarket==='function') return analyzeMarket(mkt||{}).copy;
+    if(typeof analyzeMarket==='undefined' && mkt && mkt.usd!=null){
+      return iaWrap('Mercado', 'Dólar R$ '+Number(mkt.usd).toFixed(2)+(mkt.selic!=null?' · Selic '+mkt.selic+'%':'')+'. Com Selic alta, priorize PIX à vista e CodeCraft Gestão.');
+    }
+    return iaWrap('Mercado', 'Sem cotação no momento.');
+  }
+  if(/abordagem|redig|mensagem comercial|whatsapp comercial|redigir abordagem/.test(t)){
+    let lead = null;
+    try{ lead = JSON.parse(localStorage.getItem(IA_LAST_LEAD_KEY)||'null'); }catch(e){}
+    if(!lead) lead = loadIaPipeline()[0];
+    if(!lead) return iaWrap('Sem alvo', 'Rode prospectar ou leads do site primeiro.');
+    return iaOutreachHtml(lead);
+  }
+  if(/arquitet/.test(t)) return iaWrap('Arquitetura', 'Separar SaaS (Gestão) de sob medida. Cada entrega: portal + status + PIX '+CCS_COMPANY.pix+'. Segredos só no Supabase.');
+  if(/codigo|código|code review|qualidade tecnica|qualidade técnica/.test(t)) return iaWrap('Código', 'Validação, RLS, webhook Asaas com token, sem secret no front, UI com estados claros.');
+  if(/gestao|gestão|erp|asaas/.test(t))
+    return iaWrap('CodeCraft Gestão', 'SaaS B2B: Financeiro, RH e Billing Asaas (R$ 280–500/mês).<br><a class="ccs-btn amber small" href="'+CCS_COMPANY.gestaoUrl+'" target="_blank" rel="noopener">Abrir Gestão</a>');
+  if(/ajuda|o que voce faz|o que você faz|comandos|menu|como funciona/.test(t))
+    return iaWrap('Como trabalho',
+      '• Prospectar — leads reais + Maps por nicho<br>• CNPJ — dados públicos BrasilAPI<br>• Atender chats — redijo e envio<br>• Projetos/Painel — operação ao vivo<br>• Conheço o catálogo CodeCraft<br>Não invento telefone.');
+  return iaWrap('CodeCraft IA',
+    'Entendi: “'+escapeHtml(text.slice(0,200))+'”.<br><br>'+
+    'Painel: '+snap.projects.length+' projetos, '+snap.leads.length+' chats, '+snap.openChats.filter(c=>c.unanswered).length+' sem resposta.<br><br>'+
+    'Diga: <em>prospectar clientes</em>, <em>leads do site</em>, <em>responder conversas</em> ou cole um CNPJ.'
+  );
+}
+
+async function runDailyScan(force){
+  const snap = await iaSnapshot();
+  const html = (await iaInboundLeadsHtml(snap)) + '<br><br>' + iaHuntHtml('prospectar');
+  pushAi('ia', '<strong>Varredura operacional</strong><br>'+html);
+  await iaRefreshSide();
+  showToast('Varredura concluída.');
 }
 function iaDraftFromLastLead(){
-  try{
-    const lead = JSON.parse(localStorage.getItem(IA_LAST_LEAD_KEY)||'null');
-    if(!lead) { showToast('Rode a varredura primeiro.'); return; }
-    pushAi('ia', iaDraftOutreach(lead));
-  }catch(e){ showToast('Sem lead recente. Rode a varredura.'); }
+  let lead = null;
+  try{ lead = JSON.parse(localStorage.getItem(IA_LAST_LEAD_KEY)||'null'); }catch(e){}
+  if(!lead) lead = loadIaPipeline()[0];
+  if(!lead){ showToast('Sem alvo. Prospecte primeiro.'); return; }
+  pushAi('ia', iaOutreachHtml(lead));
 }
-
-function iaWrap(title, body){
-  return '<strong>'+title+'</strong><br>'+body;
-}
-function iaArchitectAdvice(projects){
-  const open = (projects||[]).filter(p=>p.status!=='concluido').length;
-  return iaWrap('Arquitetura de software (visão sênior)',
-    'Princípios que aplico há décadas: (1) separar o que é produto recorrente (CodeCraft Gestão) do que é projeto sob medida; '+
-    '(2) cada entrega deve ter portal do cliente, PIX e status claros; '+
-    '(3) evitar monolito: site/loja/sistema como módulos com contrato de entrega explícito; '+
-    '(4) segurança: chaves e cobrança só no backend; '+
-    '(5) observabilidade: o cliente enxerga andamento sem pedir atualização.<br>'+
-    'Fila atual: '+open+' projeto(s) em aberto. Capacidade saudável: não prometer prazo curto se houver mais de 3 em andamento. '+
-    'Arquitetura comercial recomendada: pacote Site + Gestão para clínica/loja; sistema sob medida só com briefing escrito.');
-}
-function iaSystemsAnalysis(projects){
-  const by = {};
-  (projects||[]).forEach(p=>{ by[p.status]=(by[p.status]||0)+1; });
-  return iaWrap('Análise de sistemas (operação CodeCraft)',
-    'Mapeamento: entrada (chat do site / WhatsApp) → projeto cadastrado → status (análise/andamento/concluído) → PIX → link de entrega → portal do cliente.<br>'+
-    'Estado: '+(by.analise||0)+' em análise, '+(by.andamento||0)+' em andamento, '+(by.concluido||0)+' concluído(s).<br>'+
-    'Pontos de falha comuns: (a) projeto sem valor/PIX; (b) concluído sem URL; (c) lead sem código de acompanhamento; (d) conversa sem resposta formal.<br>'+
-    'Ação: padronizar checklist por projeto e responder clientes em tom formal e objetivo na aba Conversas.');
-}
-function iaSoftwareAnalysis(){
-  return iaWrap('Análise de software (produto)',
-    'Portfólio: (1) site institucional — conversão e presença local; (2) loja — pedido + PIX; (3) sistema sob medida — processo do cliente; (4) CodeCraft Gestão — SaaS B2B (Financeiro, RH, assinatura Asaas R$ 280–500).<br>'+
-    'Critérios de qualidade: requisitos claros, prazo honesto, pagamento seguro, entrega acompanhável.<br>'+
-    'Recomendação: priorizar Gestão para dor de ponto/caixa/folha; site/loja para captura comercial. Não misturar escopos no mesmo orçamento sem separar fases.');
-}
-function iaCodeAnalysis(){
-  return iaWrap('Análise de código e qualidade',
-    'Checklist sênior: nomes claros; fluxos de pagamento sem expor segredos; validação de entrada; estados de UI legíveis; logs só no admin; RLS no Supabase; build estático do Gestão em Pages; webhook Asaas com token.<br>'+
-    'Riscos: chave colada em chat; função Hello World em produção; webhook sem apikey; renovação local inventada sem gateway.<br>'+
-    'Boas práticas: secret só no Supabase; teste em sandbox quando possível; documentar externalReference userId:PLAN.');
-}
-function iaFormalClientReply(raw){
-  const t = (raw||'').toLowerCase();
-  let tema = 'o seu projeto';
-  if(/gestao|gestão|erp|assinatura/.test(t)) tema = 'o CodeCraft Gestão';
-  else if(/loja|e-?commerce/.test(t)) tema = 'a loja virtual';
-  else if(/site|landing/.test(t)) tema = 'o site / landing page';
-  else if(/sistema|app/.test(t)) tema = 'o sistema sob medida';
-  else if(/preco|preço|valor|orcamento|orçamento/.test(t)) tema = 'o orçamento solicitado';
-  return iaWrap('Texto formal para enviar ao cliente (copie na aba Conversas)',
-    'Prezado(a) cliente,<br><br>'+
-    'Agradecemos o contato com a CodeCraft Solutions.<br><br>'+
-    'Em relação a <strong>'+tema+'</strong>, nossa equipe está à disposição para esclarecer escopo, prazo e investimento com clareza. '+
-    'Trabalhamos com acompanhamento em tempo real pelo portal e pagamento via PIX na chave oficial 31999758385.<br><br>'+
-    'Por gentileza, confirme: (1) o objetivo do projeto; (2) o prazo desejado; (3) se prefere site, loja, sistema ou CodeCraft Gestão.<br><br>'+
-    'Assim que recebermos essas informações, encaminhamos a proposta objetiva.<br><br>'+
-    'Atenciosamente,<br>Equipe CodeCraft Solutions<br>WhatsApp (31) 99975-8385');
-}
-function iaConversationCoach(projects){
-  return iaWrap('Gestão de conversas com clientes',
-    'Regras de ouro (tom formal e fácil): cumprimente; use frases curtas; evite gíria; confirme o que o cliente pediu; diga próximo passo e prazo; nunca peça dados sensíveis no chat público; indique PIX só com a chave oficial.<br>'+
-    'Fluxo: lead no site → resposta automática clara → você assume na aba Conversas → envia código → cadastra projeto.<br>'+
-    'Se o cliente perguntar preço: use a tabela de referência e diga que o valor final depende do escopo.<br>'+
-    'Projetos no painel: '+(projects||[]).length+'. Peça “resposta ao cliente” + o tema para eu redigir o texto pronto.');
-}
-
-async function iaSeniorReply(text, projects, mkt){
-  const t = text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  if(/varredura|scan|oportunidad|lead|diario|diaria|monitor/.test(t)){
-    await runDailyScan(true);
-    return 'Varredura executada. Cards de oportunidade postados acima com fit validado.';
-  }
-  if(/redij|mensagem de abordagem|abordagem|whatsapp comercial|zap comercial|contato do lead/.test(t)){
-    const lead = iaPickDailyLeads(1)[0];
-    return iaDraftOutreach(lead);
-  }
-  if(/responder o cliente|resposta ao cliente|texto formal|mensagem formal|como responder/.test(t)){
-    return iaFormalClientReply(text);
-  }
-  if(/conversa|atendimento|tom formal|gestao de conversa|chat com cliente/.test(t)){
-    return iaConversationCoach(projects);
-  }
-  if(/arquitet|arquitetura|design de software|modular/.test(t)){
-    return iaArchitectAdvice(projects);
-  }
-  if(/analise de sistemas|análise de sistemas|sistemas da operacao|sistemas da operação|processo|fluxo operacional/.test(t)){
-    return iaSystemsAnalysis(projects);
-  }
-  if(/analise de software|análise de software|produto|portfolio|portfólio/.test(t) && !/codigo|código/.test(t)){
-    return iaSoftwareAnalysis();
-  }
-  if(/codigo|código|code review|qualidade tecnica|qualidade técnica|revise o codigo|bug|refator/.test(t)){
-    return iaCodeAnalysis();
-  }
-  if(/analista|experiencia|experiência|quem e voce|quem é você|seu perfil|50 anos/.test(t)){
-    return iaWrap('Perfil profissional',
-      'Atuo como consultora sênior com cinco décadas de experiência acumulada em: análise de sistemas, análise de software, análise de código, arquitetura de software, engenharia de requisitos, qualidade e operação comercial B2B.<br>'+
-      'Estilo: formal, claro e acionável. Objetivo: reduzir risco, acelerar entrega e melhorar a conversa com o cliente.');
-  }
-  if(/mercado|dolar|dólar|selic|ibov|economia/.test(t)) return analyzeMarket(mkt).copy;
-  if(/projeto|fila|painel|cliente/.test(t) && !/responder|resposta|conversa/.test(t)) return analyzeProjects(projects||[]);
-  if(/brief|briefing|preciso de|quero um|quero uma/.test(t)) return analyzeBrief(text, projects||[]);
-  if(/ideia|melhorar|estratégia|estrategia/.test(t)){
-    let msgs = [];
-    try{ msgs = await loadLeadChats(); }catch(e){ msgs = []; }
-    return '<strong>Ideias e estratégia (consultoria sênior)</strong><br>'+jarvisIdeas(projects||[], mkt, msgs||[]).map(function(x){ return '• '+x; }).join('<br>');
-  }
-  if(/futuro|90 dias|trimestre/.test(t)) return jarvisFuture(mkt);
-  if(/financ|gestao|gestão|caixa|erp|assinatura/.test(t)) return jarvisFinance(projects||[]);
-  if(/requisito|engenhar|escopo|spec|especificacao|especificação/.test(t)){
-    return iaWrap('Engenharia de requisitos',
-      'Método: (1) objetivo do negócio em uma frase; (2) usuários e papéis; (3) fluxos principais (feliz e erro); (4) regras de negócio; (5) fora de escopo; (6) critério de aceite; (7) prazo e PIX.<br>'+
-      'Nunca inicie desenvolvimento sem checklist acima por escrito. Peça briefing livre que eu estruturo os requisitos.');
-  }
-  if(/onde|posicion|ferramenta|plataforma/.test(t)) return 'Posicione <strong>CodeCraft Gestão</strong> para dor de ponto, caixa e folha (R$ 280–500). Site/loja para captura comercial. Tudo isolado: IA só neste admin; clientes nunca veem este chat.';
-  if(/ajuda|o que voce faz|comandos|menu/.test(t)){
-    return iaWrap('Como posso ajudar',
-      'Peça: varredura · abordagem · mercado · projetos · arquitetura · sistemas · software · código · requisitos · resposta ao cliente · ideias · futuro · financeiro.<br>'+
-      'Também aceito briefing livre (ex.: “clínica precisa de site e ponto”).');
-  }
-  return iaWrap('Orientação sênior',
-    'Entendi. Com 50 anos de experiência em sistemas e software, o foco deve ser dor operacional real (ponto, caixa, site que não converte) e conversa formal com o cliente.<br>'+
-    'Próximo passo concreto: (1) rode a varredura ou cadastre o lead; (2) peça <em>redija abordagem</em> ou <em>resposta ao cliente</em>; (3) se for produto interno, peça análise de arquitetura/sistemas/código.');
-}
-function runAiOrder(text){
+function runAiOrder(text){ iaRun(text); }
+function iaRun(text){
   const input = document.getElementById('admin-ai-input');
   if(input) input.value = text;
   switchAdminTab('ia');
   sendAdminAi();
 }
-function pickHunt(t){
-  const pairs = [
-    ['clinica','clinic'],['adv','advog'],['imob','imob'],['rest','rest'],['auto','oficin'],
-    ['loja','loja'],['saude','academ'],['cont','contab'],['dent','dent'],['salao','salao'],
-    ['pet','pet'],['obra','constru']
-  ];
-  for(const [id, key] of pairs){ if(t.includes(key) || t.includes(id)) return HUNTS.find(h=>h.id===id); }
-  return HUNTS.find(h=> t.includes((h.niche||'').toLowerCase())) || HUNTS[0];
+function bootAdminAi(){
+  adminAiBooted = true;
+  renderIaAdminChat();
+  iaRefreshSide();
 }
-function pickCity(t){
-  const cities = [['contagem','Contagem'],['betim','Betim'],['nova lima','Nova Lima'],['savassi','Savassi'],['belo horizonte','Belo Horizonte'],['bh','Belo Horizonte']];
-  for(const [k,v] of cities){ if(t.includes(k)) return v; }
-  return 'Belo Horizonte';
-}
-function analyzeMarket(mkt){
-  const usd = Number(mkt.usdPct)||0;
-  const ibov = Number(mkt.ibovPct)||0;
-  const selic = Number(mkt.selic)||0;
-  const lines = [];
-  if(usd >= 0.6) lines.push('Dólar em alta ('+mkt.usdPct+'%). Recomendo precificar sistema e loja em real, com escopo fechado.');
-  else if(usd <= -0.6) lines.push('Dólar em queda. Momento favorável para fechar proposta — o cliente tende a deixar de esperar o câmbio.');
-  else lines.push('Dólar estável em R$ '+moneyFx(mkt.usd)+'.');
-  if(ibov <= -1) lines.push('Ibovespa em queda. Empresas cortam custo: priorize CodeCraft Gestão e site que captura pedido.');
-  else if(ibov >= 1) lines.push('Bolsa em alta. Clínicas e lojas olham crescimento: site e captura comercial.');
-  if(selic >= 13) lines.push('Selic em '+selic+'%. Crédito caro — PIX à vista fecha com mais segurança.');
-  if(mkt.eur!=null) lines.push('Euro em R$ '+moneyFx(mkt.eur)+'.');
-  return { lines, copy: '<strong>Leitura de mercado (analista sênior)</strong><br>'+lines.join(' ') };
-}
-function analyzeProjects(projects){
-  if(!projects.length) return '<strong>Análise da fila</strong><br>Nenhum projeto no painel. Envie o briefing (cliente, necessidade, prazo) para análise operacional completa.';
-  const by = {};
-  projects.forEach(p=>{ by[p.status]=(by[p.status]||0)+1; });
-  const unpaid = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
-  const stuck = projects.filter(p=>p.status==='analise' || (p.status==='andamento' && !p.deliveryUrl));
-  const paid = projects.filter(p=>p.paid).reduce((s,p)=>s+Number(p.pixValue||0),0);
-  const open = unpaid.reduce((s,p)=>s+Number(p.pixValue||0),0);
-  let html = '<strong>Análise de projetos (visão operacional)</strong><br>';
-  html += projects.length+' projeto(s): '+(by.analise||0)+' em análise, '+(by.andamento||0)+' em andamento, '+(by.concluido||0)+' concluído(s).<br>';
-  html += 'Caixa da operação: recebido '+money(paid)+', em aberto '+money(open)+'.<br>';
-  html += stuck.length ? 'Atenção (travado): '+stuck.slice(0,5).map(p=>escapeHtml(p.clientName)+' · '+escapeHtml(p.projectName)).join('; ')+'.<br>' : 'Nada travado na produção.<br>';
-  html += unpaid.length ? 'PIX em aberto: '+unpaid.slice(0,5).map(p=>escapeHtml(p.clientName)+' '+money(Number(p.pixValue))).join(', ')+'.' : 'Nenhum PIX em aberto.';
-  return html;
-}
-function analyzeBrief(raw, projects){
-  const t = raw.toLowerCase();
-  const kind = /loja|e-?commerce|pedido/.test(t) ? 'loja' : /sistema|app|agenda|gestao|gestão/.test(t) ? 'sistema' : /landing|captura/.test(t) ? 'landing' : /financ/.test(t) ? 'CodeCraft Gestão' : 'site';
-  const prazo = kind==='landing' ? '7 a 12 dias' : kind==='loja' ? '15 a 25 dias' : kind==='sistema' || kind==='CodeCraft Gestão' ? '20 a 40 dias' : '10 a 18 dias';
-  const risco = projects.filter(p=>p.status!=='concluido').length >= 3 ? 'Fila elevada: não prometa prazo curto.' : 'Fila adequada para iniciar agora.';
-  return '<strong>Briefing analisado (requisitos + prazo)</strong><br>Classificação: <strong>'+kind+'</strong>.<br>Prazo honesto: '+prazo+'. '+risco+'<br>Próximo passo: cadastrar em Projetos com nome do cliente, valor e PIX. O cliente acompanha no portal.';
-}
-function jarvisIdeas(projects, mkt, messages){
-  const ideas = [];
-  ideas.push('Produto: pacote “site + CodeCraft Gestão” para clínica e loja — presença comercial e operação no mesmo ciclo.');
-  if((messages||[]).length) ideas.push('Há mensagem no site sem resposta. Priorize o retorno formal na aba Conversas antes de nova prospecção.');
-  if(projects.filter(p=>p.status==='concluido' && !p.deliveryUrl).length) ideas.push('Há projeto concluído sem link de entrega: inclua a URL para o cliente visualizar o resultado.');
-  if(Number(mkt.selic)>=13) ideas.push('Oferta do trimestre: PIX à vista. Selic elevada reduz adesão a propostas longas.');
-  if(Number(mkt.ibovPct)<=-1) ideas.push('Conteúdo sugerido: “reduzir custo operacional” no @code.invention e no LinkedIn.');
-  ideas.push('Melhoria interna: todo projeto novo já nasce com recorrente de manutenção no painel Empresa.');
-  ideas.push('Horizonte: loja com pedido no WhatsApp + painel ao vivo — BH ainda vende no zap e perde registro.');
-  return ideas;
-}
-function jarvisFuture(mkt){
-  return '<strong>Visão de 90 dias</strong><br>Cenário: Selic em '+(mkt.selic!=null?mkt.selic+'%':'—')+', dólar R$ '+moneyFx(mkt.usd)+'. Pequenas empresas em BH buscam ferramenta acessível que feche caixa, não ERP pesado. CodeCraft ganha com site rápido, loja simples e CodeCraft Gestão. Evite escopos gigantes. No @code.invention, reels curtos de antes/depois e mercado. Meta do trimestre: 1 oferta clara (site+Gestão), 1 nicho (clínica ou loja), 1 rotina de publicação.';
-}
-function jarvisFinance(projects){
-  const paid = projects.filter(p=>p.paid).reduce((s,p)=>s+Number(p.pixValue||0),0);
-  const open = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
-  const bySvc = {};
-  projects.forEach(p=>{ const k=p.serviceType||'site'; bySvc[k]=(bySvc[k]||0)+Number(p.pixValue||0); });
-  const svc = Object.keys(bySvc).map(k=>k+' '+money(bySvc[k])).join(', ') || 'sem valor lançado';
-  return '<strong>Análise financeira da operação</strong><br>Recebido '+money(paid)+'; em aberto '+open.length+' ('+money(open.reduce((s,p)=>s+Number(p.pixValue||0),0))+'). Por serviço: '+escapeHtml(svc)+'. PIX oficial: 31999758385. CodeCraft Gestão: R$ 280–500/mês.';
-}
-
 async function sendAdminAi(){
+  return sendAdminAiCore();
+}
+async function sendAdminAiCore(){
   const input = document.getElementById('admin-ai-input');
   const text = (input && input.value || '').trim();
   if(!text) return;
   input.value = '';
   const chat = loadIaChat();
-  chat.push({ who:'me', html:escapeHtml(text), ts:Date.now() });
+  chat.push({ who:'me', html:escapeHtml(text).replace(/\n/g,'<br>'), ts:Date.now() });
   saveIaChat(chat);
   renderIaAdminChat();
-  const [projects, mkt] = await Promise.all([loadProjects(), loadMarket()]);
-  const reply = await iaSeniorReply(text, projects, mkt);
-  pushAi('ia', reply);
+  pushAi('ia', '<span style="color:var(--ink-soft)">Analisando painel…</span>');
+  try{
+    const [snap, mkt] = await Promise.all([
+      iaSnapshot(),
+      (typeof loadMarket==='function' ? loadMarket() : Promise.resolve({}))
+    ]);
+    const reply = await iaSeniorReply(text, snap, mkt||{});
+    const items = loadIaChat();
+    if(items.length && items[items.length-1].who!=='me') items.pop();
+    items.push({ who:'ia', html:reply, ts:Date.now() });
+    saveIaChat(items);
+    renderIaAdminChat();
+    await iaRefreshSide();
+  }catch(e){
+    pushAi('ia', 'Falha: '+escapeHtml(e.message||String(e)));
+  }
 }
 
 const MKT_BANK = [
