@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CodeCraft Solutions — Sua ideia, em produção</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -40,10 +42,14 @@
   }
   .ccs-config-banner.show{display:block;}
 
-  .ccs-nav{position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:18px 40px; background:rgba(247,246,242,0.9); backdrop-filter:blur(6px); border-bottom:1px solid var(--line);}
-  .ccs-logo{display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:18px;}
+  .ccs-nav{position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:14px 40px; background:rgba(247,246,242,0.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  .ccs-logo{display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:17px; text-decoration:none; color:var(--ink); cursor:pointer;}
+  .ccs-logo .mark{width:34px; height:34px; border-radius:9px; flex-shrink:0; overflow:hidden; background:var(--panel); display:grid; place-items:center; box-shadow:0 6px 16px rgba(18,23,43,.12);}
+  .ccs-logo .mark img{width:100%; height:100%; object-fit:cover; display:block;}
+  .ccs-logo .word{display:flex; flex-direction:column; line-height:1.1;}
+  .ccs-logo .word small{font-size:10px; font-weight:600; color:var(--ink-soft); letter-spacing:.08em; text-transform:uppercase;}
   .ccs-logo .dot{width:10px;height:10px;border-radius:2px;background:var(--amber); transform:rotate(45deg);}
-  .ccs-nav-links{display:flex; gap:28px; align-items:center; font-size:14px; flex-wrap:wrap; justify-content:flex-end;}
+  .ccs-nav-links{display:flex; gap:22px; align-items:center; font-size:13.5px; flex-wrap:wrap; justify-content:flex-end;}
   .ccs-nav-links a{text-decoration:none; color:var(--ink-soft); font-weight:600;}
   .ccs-nav-links a:hover{color:var(--ink);}
   .ccs-btn{border:none; padding:10px 18px; border-radius:8px; font-weight:700; font-size:14px; background:var(--ink); color:var(--paper); transition:transform .15s ease, background .15s ease;}
@@ -53,12 +59,25 @@
   .ccs-btn.small{padding:7px 12px; font-size:12.5px; border-radius:6px;}
   .ccs-btn:disabled{opacity:.5; cursor:not-allowed; transform:none;}
 
-  .ccs-hero{background:var(--panel); color:#EDEFFA; padding:70px 40px 90px; display:grid; grid-template-columns:1.1fr .9fr; gap:50px; align-items:center;}
+  .ccs-hero{
+    background:
+      radial-gradient(900px 420px at 85% -10%, rgba(232,163,61,.18), transparent 55%),
+      radial-gradient(700px 380px at 10% 110%, rgba(47,182,165,.12), transparent 50%),
+      var(--panel);
+    color:#EDEFFA; padding:64px 40px 84px; display:grid; grid-template-columns:1.1fr .9fr; gap:50px; align-items:center;
+  }
+  .ccs-hero-brand{display:flex; align-items:center; gap:12px; margin-bottom:18px;}
+  .ccs-hero-brand .mark{width:48px; height:48px; border-radius:12px; overflow:hidden; box-shadow:0 10px 28px rgba(0,0,0,.35);}
+  .ccs-hero-brand .mark img{width:100%; height:100%; object-fit:cover; display:block;}
+  .ccs-hero-brand strong{font-family:'JetBrains Mono',monospace; font-size:20px; color:#fff; font-weight:800;}
+  .ccs-hero-brand span{display:block; font-size:12px; color:#B9BEDB; margin-top:2px;}
   .ccs-hero-eyebrow{font-family:'JetBrains Mono',monospace; color:var(--amber); font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:14px;}
   .ccs-hero h1{font-size:44px; line-height:1.12; font-weight:800; color:#fff;}
   .ccs-hero h1 span{color:var(--amber);}
   .ccs-hero p{font-size:17px; color:#B9BEDB; max-width:520px; margin-top:18px;}
   .ccs-hero-ctas{display:flex; gap:14px; margin-top:30px; flex-wrap:wrap;}
+  .ccs-trust{display:flex; flex-wrap:wrap; gap:10px; margin-top:28px;}
+  .ccs-trust span{font-size:12px; font-weight:700; color:#D6DAF3; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:999px; padding:7px 12px;}
   .ccs-terminal{background:var(--panel-2); border:1px solid var(--line-dark); border-radius:12px; padding:20px; font-family:'JetBrains Mono',monospace; font-size:13.5px; color:#D6DAF3; min-height:220px; box-shadow:0 20px 60px rgba(0,0,0,.35);}
   .ccs-terminal .bar{display:flex; gap:6px; margin-bottom:14px;}
   .ccs-terminal .bar span{width:10px;height:10px;border-radius:50%;background:#3A4272;}
@@ -66,6 +85,17 @@
   .ccs-cursor{display:inline-block; width:8px; background:var(--amber); animation:blink 1s steps(1) infinite;}
   @keyframes blink{50%{opacity:0;}}
   @media (prefers-reduced-motion:reduce){.ccs-cursor{animation:none;}}
+
+  .ccs-db-status{display:none; align-items:center; gap:8px; font-size:12px; font-family:'JetBrains Mono',monospace;}
+  .ccs-db-status.show{display:inline-flex;}
+  .ccs-db-status .p{width:7px;height:7px;border-radius:50%; background:var(--teal);}
+  .ccs-db-status.warn .p{background:var(--danger);}
+  .ccs-db-status.warn{color:var(--danger);}
+  footer .foot-brand{display:flex; align-items:center; gap:10px;}
+  footer .foot-brand img{width:28px; height:28px; border-radius:7px;}
+  .ccs-admin-login-card .brand-row{display:flex; align-items:center; gap:12px; margin-bottom:18px;}
+  .ccs-admin-login-card .brand-row img{width:44px; height:44px; border-radius:11px;}
+  .ccs-card a{color:var(--panel); font-weight:700;}
 
   .ccs-section{padding:80px 40px; max-width:1180px; margin:0 auto;}
   .ccs-section-tight{padding-top:50px;}
@@ -329,7 +359,10 @@
 <!-- ================= LANDING ================= -->
 <div id="screen-landing">
   <nav class="ccs-nav">
-    <div class="ccs-logo"><span class="dot"></span> CodeCraft Solutions</div>
+    <a class="ccs-logo" href="#" onclick="goHome(); return false;" aria-label="CodeCraft Solutions">
+      <span class="mark"><img src="logo.png" alt="" width="34" height="34"></span>
+      <span class="word">CodeCraft Solutions<small>Estúdio de software</small></span>
+    </a>
     <div class="ccs-nav-links">
       <a href="#quem-somos">Quem somos</a>
       <a href="#servicos">Serviços</a>
@@ -348,13 +381,26 @@
 
   <section class="ccs-hero">
     <div class="ccs-hero-copy">
-      <div class="ccs-hero-eyebrow">// software sob medida</div>
+      <div class="ccs-hero-brand">
+        <span class="mark"><img src="logo.png" alt="Logo CodeCraft Solutions" width="48" height="48"></span>
+        <div>
+          <strong>CodeCraft Solutions</strong>
+          <span>Belo Horizonte · software sob medida</span>
+        </div>
+      </div>
+      <div class="ccs-hero-eyebrow">// da ideia ao ar</div>
       <h1>Sua ideia,<br>em <span>produção</span>.</h1>
-      <p>A CodeCraft Solutions transforma sistemas, sites e aplicativos em produtos reais — com acompanhamento aberto, do primeiro commit até a entrega.</p>
+      <p>Transformamos sistemas, sites e aplicativos em produtos reais — com acompanhamento aberto, do primeiro commit até a entrega.</p>
       <div class="ccs-hero-ctas">
-        <button class="ccs-btn amber" onclick="document.getElementById('gestao').scrollIntoView({behavior:'smooth'})">Ver CodeCraft Gestão</button>
+        <button class="ccs-btn amber" onclick="document.getElementById('contato').scrollIntoView({behavior:'smooth'})">Fale com a gente</button>
         <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="showScreen('client')">Acompanhar meu projeto</button>
-        <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="document.getElementById('contato').scrollIntoView()">Fale com a gente</button>
+        <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="document.getElementById('gestao').scrollIntoView({behavior:'smooth'})">Ver CodeCraft Gestão</button>
+      </div>
+      <div class="ccs-trust">
+        <span>Portal ao vivo</span>
+        <span>PIX oficial</span>
+        <span>Chat em tempo real</span>
+        <span>Admin com login seguro</span>
       </div>
     </div>
     <div class="ccs-terminal">
@@ -542,14 +588,20 @@
   </section>
 
   <footer>
-    <div class="ccs-logo" style="font-size:14px;"><span class="dot" style="width:8px;height:8px;"></span> CodeCraft Solutions</div>
+    <div class="foot-brand">
+      <img src="logo.png" alt="" width="28" height="28">
+      <div>
+        <div class="ccs-logo" style="font-size:14px; gap:0;">CodeCraft Solutions</div>
+        <div style="font-size:12px; margin-top:2px;">Feito sob medida, projeto por projeto.</div>
+      </div>
+    </div>
     <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-      <a href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener" style="text-decoration:none; color:var(--ink-soft); font-weight:600;">CodeCraft Gestão · ERP para empresas</a>
+      <a href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener" style="text-decoration:none; color:var(--ink-soft); font-weight:600;">CodeCraft Gestão</a>
       <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" style="display:flex; align-items:center; gap:6px; text-decoration:none; color:var(--ink-soft); font-weight:600;">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
         @code.invention
       </a>
-      <div>Feito sob medida, projeto por projeto.</div>
+      <a href="#contato" style="text-decoration:none; color:var(--ink-soft); font-weight:600;">Contato</a>
     </div>
   </footer>
 
@@ -583,7 +635,10 @@
 <!-- ================= CLIENT PORTAL ================= -->
 <div id="screen-client" style="display:none;">
   <div class="ccs-app-header">
-    <div class="ccs-logo" style="font-size:15px;"><span class="dot" style="width:8px;height:8px;"></span> CodeCraft Solutions</div>
+    <div class="ccs-logo" style="font-size:15px;" onclick="goHome()">
+      <span class="mark"><img src="logo.png" alt="" width="34" height="34"></span>
+      <span class="word">CodeCraft Solutions<small>Portal do cliente</small></span>
+    </div>
     <button class="ccs-btn ghost small" onclick="goHome()">← Voltar ao site</button>
   </div>
   <div class="ccs-shell">
@@ -636,8 +691,12 @@
 <!-- ================= ADMIN ================= -->
 <div id="screen-admin" style="display:none;">
   <div class="ccs-app-header">
-    <div class="ccs-logo" style="font-size:15px;"><span class="dot" style="width:8px;height:8px;"></span> CodeCraft Solutions <span style="color:var(--ink-soft); font-weight:600;">/ admin</span></div>
-    <div style="display:flex; gap:10px; align-items:center;">
+    <div class="ccs-logo" style="font-size:15px;" onclick="goHome()">
+      <span class="mark"><img src="logo.png" alt="" width="34" height="34"></span>
+      <span class="word">CodeCraft Solutions<small>Painel admin</small></span>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <span id="ccs-db-status" class="ccs-db-status" title="Status do banco"><span class="p"></span> <span id="ccs-db-status-text">banco</span></span>
       <span id="admin-live" class="ccs-live-dot" style="display:none;"><span class="d"></span> ao vivo</span>
       <button class="ccs-btn ghost small" id="admin-logout-btn" style="display:none;" onclick="adminLogout()">Sair</button>
       <button class="ccs-btn ghost small" onclick="goHome()">← Voltar ao site</button>
@@ -645,10 +704,15 @@
   </div>
 
   <div class="ccs-shell" id="admin-login-shell">
-    <div class="ccs-panel" style="max-width:380px; margin:0 auto;">
-      <div class="ccs-eyebrow">Acesso restrito</div>
-      <h2 style="font-size:20px;">Entrar no painel</h2>
-      <p style="color:var(--ink-soft); font-size:13.5px; margin:10px 0 18px;">Entre com o e-mail e a senha do seu usuário. Seu usuário é criado no Supabase (Authentication → Users) — a senha não fica mais no código.</p>
+    <div class="ccs-panel ccs-admin-login-card" style="max-width:420px; margin:0 auto;">
+      <div class="brand-row">
+        <img src="logo.png" alt="CodeCraft Solutions" width="44" height="44">
+        <div>
+          <div class="ccs-eyebrow" style="margin:0;">Acesso restrito</div>
+          <h2 style="font-size:20px;">Entrar no painel</h2>
+        </div>
+      </div>
+      <p style="color:var(--ink-soft); font-size:13.5px; margin:0 0 18px;">Use o e-mail e a senha do usuário criado no Supabase (Authentication → Users). A senha não fica no código do site.</p>
       <div class="ccs-field"><label>E-mail</label><input id="admin-email" type="email" placeholder="seu@email.com" autocomplete="username"></div>
       <div class="ccs-field"><label>Senha</label><input id="admin-pass" type="password" placeholder="Sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()"></div>
       <button class="ccs-btn amber" style="width:100%;" onclick="adminLogin()">Entrar</button>
@@ -944,9 +1008,15 @@ async function loadMessages(){
   return data.map(m=>({ id:m.id, name:m.name, contact:m.contact, msg:m.msg, createdAt:m.created_at }));
 }
 async function insertMessage(m){
-  if(!supabaseClient) return;
-  const { error } = await supabaseClient.from('messages').insert({ name:m.name, contact:m.contact, msg:m.msg });
-  if(error){ console.error(error); showToast('Erro ao enviar mensagem.'); }
+  if(!supabaseClient) return false;
+  const row = { name: String(m.name||'').slice(0,80), contact: String(m.contact||'').slice(0,120), msg: String(m.msg||'').slice(0,2000) };
+  let { error } = await supabaseClient.from('messages').insert(row);
+  if(error){
+    await new Promise(r=>setTimeout(r, 600));
+    ({ error } = await supabaseClient.from('messages').insert(row));
+  }
+  if(error){ console.error(error); showToast('Erro ao enviar mensagem. Tente de novo em instantes.'); return false; }
+  return true;
 }
 /* Chat por projeto (tabela chat_messages). Sinaliza se a tabela não existe
    ainda, para o site continuar funcionando sem quebrar. */
@@ -963,8 +1033,14 @@ async function loadChat(code){
 }
 async function insertChat(code, sender, body){
   if(!supabaseClient) return false;
-  const { error } = await supabaseClient.from('chat_messages')
-    .insert({ tracking_code: code, sender, body });
+  const clean = String(body||'').slice(0, 4000);
+  let { error } = await supabaseClient.from('chat_messages')
+    .insert({ tracking_code: code, sender, body: clean });
+  if(error){
+    await new Promise(r=>setTimeout(r, 600));
+    ({ error } = await supabaseClient.from('chat_messages')
+      .insert({ tracking_code: code, sender, body: clean }));
+  }
   if(error){
     if((error.message||'').toLowerCase().includes('chat_messages')) chatTableMissing = true;
     console.error(error); showToast('Não foi possível enviar. Verifique a tabela de conversas.'); return false;
@@ -2788,8 +2864,28 @@ function mktStrategyReply(raw, mkt){
 }
 
 /* ================= INIT ================= */
+async function probeDbHealth(){
+  const el = document.getElementById('ccs-db-status');
+  const txt = document.getElementById('ccs-db-status-text');
+  if(!el || !txt) return;
+  if(!supabaseClient){
+    el.classList.add('show','warn');
+    txt.textContent = 'sem banco';
+    return;
+  }
+  try{
+    const { error } = await supabaseClient.from('projects').select('id', { count:'exact', head:true });
+    el.classList.add('show');
+    if(error){ el.classList.add('warn'); txt.textContent = 'banco com falha'; }
+    else { el.classList.remove('warn'); txt.textContent = 'banco ok'; }
+  }catch(e){
+    el.classList.add('show','warn');
+    txt.textContent = 'banco offline';
+  }
+}
 typeHero();
 initLead();
+probeDbHealth();
 if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   document.querySelectorAll('.ccs-card, .ccs-price-card, .ccs-step, .ccs-about, .ccs-grid-3, .ccs-price-grid').forEach((el)=>el.classList.add('ccs-reveal'));
   const io = new IntersectionObserver((entries)=>{
