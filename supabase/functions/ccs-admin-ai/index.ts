@@ -17,46 +17,39 @@ function json(body: unknown, status = 200) {
   });
 }
 
-const SYSTEM = `Você é a CodeCraft IA — agente sênior de operações e prospecção da CodeCraft Solutions (Belo Horizonte).
-Padrão de qualidade: consultor comercial + pesquisador. Respostas densas, precisas, acionáveis. Nunca rasas, genéricas ou “fuleiras”.
+const SYSTEM = `Você é a CodeCraft IA — agente sênior de prospecção da CodeCraft Solutions (Belo Horizonte).
+Você caça DEMANDA REAL, não vitrine de empresas bem avaliadas.
 
 ## Empresa
-- Nome: CodeCraft Solutions · estúdio de software em BH
-- WhatsApp: (31) 99975-8385 · PIX oficial: 31999758385
-- Instagram: @code.invention
-- SaaS: CodeCraft Gestão (CNPJ) — Financeiro, RH, Asaas · R$ 280 / R$ 390 / R$ 500
-- Serviços: landing (a partir de R$ 300), site (a partir de R$ 500), loja (a partir de R$ 500), sistema sob medida (R$ 1.500–15.000), manutenção (a partir de R$ 100/mês)
-- Diferencial: portal do cliente ao vivo, chat, PIX, status em tempo real
-- Gestão: https://gustavosena972-wq.github.io/financas-codecraft/
+- CodeCraft Solutions · BH · WhatsApp (31) 99975-8385 · PIX 31999758385 · @code.invention
+- Serviços: landing (≥R$300), site (≥R$500), loja (≥R$500), sistema (R$1.500–15.000), manutenção (≥R$100/mês)
+- SaaS: CodeCraft Gestão (CNPJ) R$280 / R$390 / R$500 — https://gustavosena972-wq.github.io/financas-codecraft/
 
-## Missões
-1. Achar clientes REAIS que precisam de site, loja, sistema ou Gestão
-2. Usar os RESULTADOS DE PESQUISA WEB fornecidos (Google/Maps/Instagram/freelance via links e snippets)
-3. Relatório completo por oportunidade
-4. Priorizar leads inbound do snapshot antes de outbound
-5. Operação: projetos travados, PIX, chats sem resposta
+## O que é uma oportunidade válida
+Inclua SOMENTE se houver sinal claro de necessidade:
+- Pedido explícito: “preciso de site”, “quero loja virtual”, “contratar desenvolvedor”, anúncio em 99Freelas/Workana/GetNinjas
+- Negócio local que parece operar só no WhatsApp / Instagram / Maps, sem site próprio claro no resultado
+- Lead inbound do snapshot (chat/formulário do site)
 
-## Relatório de oportunidade (obrigatório na caça)
-Para cada lead real dos resultados/pesquisa:
+## PROIBIDO
+- Listar clínicas/salões/oficinas só porque têm 4–5 estrelas no Maps/Google
+- Inventar telefone, WhatsApp, @, e-mail ou CNPJ
+- Inventar “o que precisa” sem base no anúncio/snippet
+- Relatório genérico de nicho sem nome real + link da fonte
+
+## Relatório (obrigatório)
+Para cada lead REAL:
 <strong>Oportunidade N</strong>
 <ul>
-<li><strong>Quem:</strong> nome real</li>
-<li><strong>O que precisa:</strong> dor concreta</li>
-<li><strong>Projeto CodeCraft:</strong> serviço + faixa de preço</li>
-<li><strong>Canal:</strong> origem</li>
-<li><strong>Contato:</strong> só se real</li>
-<li><strong>Link:</strong> URL da fonte</li>
-<li><strong>Por que agora:</strong> timing</li>
-<li><strong>Abordagem:</strong> mensagem pronta WhatsApp/DM</li>
+<li><strong>Quem:</strong> nome exato do anúncio/perfil/empresa</li>
+<li><strong>O que precisa:</strong> frase do pedido ou dor observada no texto</li>
+<li><strong>Projeto CodeCraft:</strong> serviço + preço</li>
+<li><strong>Canal:</strong> 99Freelas / Workana / GetNinjas / Instagram / Google / chat do site</li>
+<li><strong>Contato:</strong> telefone/@/e-mail SÓ se aparecer no resultado; senão “abrir link e pegar contato no anúncio”</li>
+<li><strong>Link:</strong> URL clicável da fonte (obrigatório)</li>
+<li><strong>Abordagem:</strong> mensagem curta pronta</li>
 </ul>
-Meta: 5 a 10 oportunidades sólidas. Qualidade > quantidade vazia.
-
-## Regras
-- Português do Brasil, formal, denso
-- NUNCA invente telefone, e-mail, @, CNPJ ou empresa fictícia
-- Se não houver contato no snippet, diga “contato no anúncio/perfil” + link
-- Prefira BH / Grande BH / MG
-- HTML: <p>, <strong>, <em>, <ul>, <li>, <br>, <a href="...">. Sem scripts`;
+Priorize freelance e pedidos explícitos. Se a pesquisa trouxe só Maps 5 estrelas, diga isso e foque nos anúncios de demanda. HTML simples apenas.`;
 
 function scrubHtml(s: string) {
   return String(s || "")
@@ -93,31 +86,62 @@ function decodeHtml(s: string) {
     .replace(/&#39;/g, "'");
 }
 
-async function duckSearch(query: string, limit = 8): Promise<Array<{ title: string; url: string; snippet: string }>> {
+function extractContacts(text: string) {
+  const t = String(text || "");
+  const phones = Array.from(
+    t.matchAll(/(?:\+?55\s?)?(?:\(?\d{2}\)?\s?)?(?:9\s?\d{4}|\d{4})[-\s]?\d{4}/g),
+  ).map((m) => m[0].replace(/\s+/g, " ").trim());
+  const emails = Array.from(
+    t.matchAll(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g),
+  ).map((m) => m[0]);
+  const ig = Array.from(t.matchAll(/@[a-zA-Z0-9._]{3,30}/g)).map((m) => m[0]);
+  const uniq = (arr: string[]) => [...new Set(arr)].slice(0, 5);
+  return {
+    phones: uniq(phones),
+    emails: uniq(emails),
+    instagram: uniq(ig),
+  };
+}
+
+async function duckSearch(query: string, limit = 8): Promise<Array<{ title: string; url: string; snippet: string; contacts: ReturnType<typeof extractContacts> }>> {
   try {
     const res = await fetch("https://html.duckduckgo.com/html/", {
       method: "POST",
       headers: {
         "content-type": "application/x-www-form-urlencoded",
-        "user-agent": "Mozilla/5.0 CodeCraftBot/1.0",
+        "user-agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36",
       },
       body: `q=${encodeURIComponent(query)}`,
     });
     const html = await res.text();
-    const out: Array<{ title: string; url: string; snippet: string }> = [];
-    const re =
-      /<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]*?(?:class="result__snippet"[^>]*>([\s\S]*?)<\/(?:a|td|div)> )?/gi;
-    let m: RegExpExecArray | null;
-    while ((m = re.exec(html)) && out.length < limit) {
-      let url = decodeHtml(m[1] || "");
-      // DuckDuckGo redirect URLs
+    const out: Array<{ title: string; url: string; snippet: string; contacts: ReturnType<typeof extractContacts> }> = [];
+
+    const blocks = html.split(/class="result__body"|class="result results_links/);
+    for (const block of blocks) {
+      if (out.length >= limit) break;
+      const a = block.match(/class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/i);
+      if (!a) continue;
+      let url = decodeHtml(a[1] || "");
       const uddg = url.match(/uddg=([^&]+)/);
       if (uddg) url = decodeURIComponent(uddg[1]);
-      const title = decodeHtml(String(m[2] || "").replace(/<[^>]+>/g, "")).trim();
-      const snippet = decodeHtml(String(m[3] || "").replace(/<[^>]+>/g, "")).trim();
-      if (title && url.startsWith("http")) out.push({ title, url, snippet });
+      const title = decodeHtml(String(a[2] || "").replace(/<[^>]+>/g, "")).trim();
+      const sn = block.match(/class="result__snippet"[^>]*>([\s\S]*?)<\//i);
+      const snippet = decodeHtml(String(sn?.[1] || "").replace(/<[^>]+>/g, "")).trim();
+      if (!title || !url.startsWith("http")) continue;
+      // Filtra páginas de “melhor clínica 5 estrelas” genéricas
+      const blob = (title + " " + snippet).toLowerCase();
+      if (/melhores|ranking|top\s*\d|5\s*estrelas|avalia[cç][aã]o/.test(blob) && !/preciso|contratar|or[cç]amento|freela/.test(blob)) {
+        continue;
+      }
+      out.push({
+        title,
+        url,
+        snippet,
+        contacts: extractContacts(title + " " + snippet + " " + url),
+      });
     }
-    // fallback simpler parse
+
     if (!out.length) {
       const simple = /<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
       let sm: RegExpExecArray | null;
@@ -126,7 +150,9 @@ async function duckSearch(query: string, limit = 8): Promise<Array<{ title: stri
         const uddg = url.match(/uddg=([^&]+)/);
         if (uddg) url = decodeURIComponent(uddg[1]);
         const title = decodeHtml(String(sm[2] || "").replace(/<[^>]+>/g, "")).trim();
-        if (title && url.startsWith("http")) out.push({ title, url, snippet: "" });
+        if (title && url.startsWith("http")) {
+          out.push({ title, url, snippet: "", contacts: extractContacts(title) });
+        }
       }
     }
     return out;
@@ -135,26 +161,100 @@ async function duckSearch(query: string, limit = 8): Promise<Array<{ title: stri
   }
 }
 
-async function gatherWebResearch(message: string) {
-  const queries = [
-    message.slice(0, 180),
-    "preciso de site OR loja virtual OR sistema site:99freelas.com.br",
-    "preciso de site OR landing page site:workana.com",
-    "criação de site Belo Horizonte",
-    "clínica dentista salão oficina Belo Horizonte site WhatsApp",
-    "site:instagram.com Belo Horizonte clínica OR salão OR oficina OR loja",
+async function scrapeFreelancePages() {
+  const targets = [
+    {
+      label: "99Freelas",
+      url: "https://www.99freelas.com.br/projects?q=site&order=mais-recentes&categoria=web-mobile-e-software",
+    },
+    {
+      label: "99Freelas loja",
+      url: "https://www.99freelas.com.br/projects?q=loja+virtual&order=mais-recentes",
+    },
+    {
+      label: "Workana",
+      url: "https://www.workana.com/jobs?query=criar%20site&category=it-programming",
+    },
   ];
   const blocks: string[] = [];
-  for (const q of queries.slice(0, 5)) {
-    const hits = await duckSearch(q, 6);
+  for (const t of targets) {
+    try {
+      const res = await fetch(t.url, {
+        headers: {
+          "user-agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36",
+          accept: "text/html",
+        },
+      });
+      if (!res.ok) continue;
+      const html = await res.text();
+      const links: Array<{ title: string; url: string }> = [];
+      const re = /<a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(html)) && links.length < 12) {
+        let href = decodeHtml(m[1] || "");
+        const title = decodeHtml(String(m[2] || "").replace(/<[^>]+>/g, "")).trim();
+        if (title.length < 12 || title.length > 140) continue;
+        if (!/site|loja|landing|sistema|aplicativo|app|wordpress|ecommerce|e-commerce|web/i.test(title)) {
+          continue;
+        }
+        if (href.startsWith("/")) {
+          const base = new URL(t.url);
+          href = base.origin + href;
+        }
+        if (!href.startsWith("http")) continue;
+        if (/login|cadastro|como-funciona|premium|blog/i.test(href)) continue;
+        links.push({ title, url: href });
+      }
+      // unique by url
+      const seen = new Set<string>();
+      const uniq = links.filter((l) => {
+        if (seen.has(l.url)) return false;
+        seen.add(l.url);
+        return true;
+      }).slice(0, 8);
+      if (!uniq.length) continue;
+      blocks.push(
+        `### Pedidos em ${t.label}\nFonte: ${t.url}\n` +
+          uniq.map((l, i) => `${i + 1}. ${l.title}\n   URL: ${l.url}`).join("\n"),
+      );
+    } catch {
+      // ignore scrape failures
+    }
+  }
+  return blocks.join("\n\n");
+}
+
+async function gatherWebResearch(message: string) {
+  // Consultas de DEMANDA (não “melhores empresas 5 estrelas”)
+  const queries = [
+    'site:99freelas.com.br preciso de site OR loja virtual OR sistema OR landing',
+    'site:workana.com criar site OR loja virtual OR landing page Brasil',
+    'site:getninjas.com.br criação de site OR loja virtual Belo Horizonte',
+    '"preciso de site" OR "quero um site" OR "orçamento de site" Belo Horizonte OR BH',
+    '"contratar" (site OR "loja virtual" OR landing) (BH OR "Belo Horizonte" OR Minas)',
+    'site:instagram.com ("preciso de site" OR "alguém faz site" OR "orçamento site") Brasil',
+    message.slice(0, 160),
+  ];
+  const blocks: string[] = [];
+  const freelance = await scrapeFreelancePages();
+  if (freelance) blocks.push(freelance);
+
+  for (const q of queries) {
+    const hits = await duckSearch(q, 8);
     if (!hits.length) continue;
     blocks.push(
-      `### Busca: ${q}\n` +
+      `### Busca demanda: ${q}\n` +
         hits
-          .map(
-            (h, i) =>
-              `${i + 1}. ${h.title}\n   URL: ${h.url}\n   Snippet: ${h.snippet || "(sem snippet)"}`,
-          )
+          .map((h, i) => {
+            const c = h.contacts;
+            const contactLine = [
+              c.phones.length ? `tel: ${c.phones.join(", ")}` : "",
+              c.emails.length ? `email: ${c.emails.join(", ")}` : "",
+              c.instagram.length ? `ig: ${c.instagram.join(", ")}` : "",
+            ].filter(Boolean).join(" | ") || "contato: abrir o link do anúncio";
+            return `${i + 1}. ${h.title}\n   URL: ${h.url}\n   Snippet: ${h.snippet || "(sem snippet)"}\n   Contatos detectados: ${contactLine}`;
+          })
           .join("\n"),
     );
   }
@@ -279,7 +379,7 @@ Deno.serve(async (req) => {
         : "",
       "",
       wantsHunt
-        ? "## Instrução de caça\nMonte relatório sênior com oportunidades REAIS a partir da pesquisa. Links obrigatórios. Sem contato inventado."
+        ? "## Instrução de caça\nUse PRIORITARIAMENTE pedidos de freelance e frases “preciso de site”. Proibido relatório de empresas 5 estrelas do Maps. Para cada lead: quem, o que precisa (do texto), projeto, canal, contato (só se detectado), link, abordagem."
         : "## Instrução\nResponda com excelência operacional usando o snapshot.",
       "",
       "## Pedido do admin",

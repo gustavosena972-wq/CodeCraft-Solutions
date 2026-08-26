@@ -2838,16 +2838,16 @@ function iaHuntHtml(raw){
   if(emTudo && !niche) niche = IA_HUNT_NICHES.find(n=>n.key==='site') || IA_HUNT_NICHES[0];
   if(!niche) niche = IA_HUNT_NICHES[iaDaySeed() % IA_HUNT_NICHES.length];
   const prod = CCS_COMPANY.products.find(x=>x.id===niche.offer) || CCS_COMPANY.products[0];
-  const freelanceQ = 'preciso de site OR loja virtual OR sistema OR landing page OR aplicativo';
+  const freelanceQ = '"preciso de site" OR "loja virtual" OR "landing page" OR sistema OR aplicativo';
   const queries = {
-    google: niche.query + ' telefone contato',
-    maps: niche.query,
-    instagram: niche.label + ' Belo Horizonte site OR WhatsApp',
+    google: '"preciso de site" OR "quero um site" OR "orçamento site" Belo Horizonte',
+    maps: niche.query + ' (sem site OR só WhatsApp)',
+    instagram: '"preciso de site" OR "alguém faz site" OR "orçamento" Belo Horizonte',
     '99freelas': freelanceQ,
     workana: freelanceQ + ' Brasil',
-    getninjas: 'criação de site OR loja virtual Belo Horizonte',
+    getninjas: '"criação de site" OR "loja virtual" pedido Belo Horizonte',
     freelancer: freelanceQ,
-    linkedin: niche.label + ' Belo Horizonte software OR site'
+    linkedin: '"preciso de site" OR "contratar desenvolvedor" Belo Horizonte'
   };
 
   const pack = emTudo
@@ -2858,71 +2858,52 @@ function iaHuntHtml(raw){
     const p = CCS_COMPANY.products.find(x=>x.id===n.offer) || prod;
     iaPushProspect({
       id:'hunt-'+n.key+'-'+iaDaySeed()+'-'+i, source:'hunt',
-      company: n.label+' · alvo BH',
-      pain: n.need || 'Demanda digital — validar no canal (não invento contato).',
-      project:n.project, offer:n.offer, contact:'Ver anúncio / perfil / Maps',
+      company: n.label+' · demanda a validar',
+      pain: n.need || 'Buscar pedido real no freelance (não empresa 5 estrelas).',
+      project:n.project, offer:n.offer, contact:'Abrir anúncio e copiar contato',
       phone:'', email:'', maps:n.maps,
-      outreach:'Olá! Sou da CodeCraft Solutions (BH). Ajudamos '+n.label.toLowerCase()+' com '+p.name+' ('+p.price+'). Posso te mostrar o portal em 15 min?'
+      outreach:'Olá! Vi que você busca '+n.project.toLowerCase()+'. Sou da CodeCraft Solutions (BH). Posso te mostrar opções com preço e prazo?'
     });
   });
 
-  let html = iaWrap('Caça multi-canal (grátis) — '+niche.label,
-    '<span class="ccs-ia-badge real">IA Grátis</span> Abra os canais, pegue o <strong>contato real</strong> no anúncio/perfil e cole aqui — eu monto o relatório e a abordagem. Não invento telefone.<br><br>'+
-    '<strong>O que essa pessoa tipicamente precisa:</strong> '+escapeHtml(niche.need||niche.project)+'<br>'+
-    '<strong>Projeto CodeCraft:</strong> '+escapeHtml(prod.name)+' — '+escapeHtml(prod.price)+'<br>'+
-    '<strong>Entrega sugerida:</strong> '+escapeHtml(niche.project)+'<br><br>'+
-    '<strong>Canais para caçar agora:</strong>'
+  let html = iaWrap('Caça de DEMANDA real — '+niche.label,
+    '<span class="ccs-ia-badge real">Pedidos reais</span> Foque em quem <strong>está pedindo</strong> site/loja/sistema — não em empresas 5 estrelas do Maps.<br><br>'+
+    '<strong>O que procurar no anúncio:</strong> o que a pessoa quer + telefone/@/e-mail do brief.<br>'+
+    '<strong>Projeto CodeCraft:</strong> '+escapeHtml(prod.name)+' — '+escapeHtml(prod.price)+'<br><br>'+
+    '<strong>Canais (prioridade freelance):</strong>'
   );
 
-  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">1 · Google &amp; Maps</div>'+
-    '<div class="ccs-ia-actions">'+
-    '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='google').build(queries.google)+'">Google</a>'+
-    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+niche.maps+'">Maps (empresas reais)</a>'+
-    '</div></div>';
-
-  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">2 · Instagram</div>'+
-    '<p style="margin:0 0 8px;font-size:13.5px;color:var(--ink-soft)">Perfis de negócios locais sem site bom / só link na bio WhatsApp.</p>'+
-    '<div class="ccs-ia-actions">'+
-    '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='instagram').build(queries.instagram)+'">Buscar no Instagram</a>'+
-    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="https://www.instagram.com/explore/search/keyword/?q='+encodeURIComponent(niche.label+' BH')+'">Explore Instagram</a>'+
-    '</div></div>';
-
-  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">3 · Sites de freelance (pedidos reais)</div>'+
-    '<p style="margin:0 0 8px;font-size:13.5px;color:var(--ink-soft)">Pessoas pedindo site, loja, sistema — leia o brief e anote o contato do anúncio.</p>'+
+  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">1 · Freelance (melhor fonte)</div>'+
+    '<p style="margin:0 0 8px;font-size:13.5px;color:var(--ink-soft)">Aqui tem gente pedindo de verdade. Abra o projeto, copie o que precisam e o contato.</p>'+
     '<div class="ccs-ia-actions">'+
     '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='99freelas').build(queries['99freelas'])+'">99Freelas</a>'+
-    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='workana').build(queries.workana)+'">Workana</a>'+
+    '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='workana').build(queries.workana)+'">Workana</a>'+
     '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='getninjas').build(queries.getninjas)+'">GetNinjas</a>'+
     '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='freelancer').build(queries.freelancer)+'">Freelancer</a>'+
     '</div></div>';
 
-  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">4 · LinkedIn / empresas</div>'+
+  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">2 · Pedidos explícitos no Google</div>'+
     '<div class="ccs-ia-actions">'+
-    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='linkedin').build(queries.linkedin)+'">LinkedIn</a>'+
+    '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='google').build(queries.google)+'">“Preciso de site” BH</a>'+
+    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='instagram').build(queries.instagram)+'">Instagram (pedidos)</a>'+
     '</div></div>';
 
-  if(emTudo){
-    html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">5 · Relatório por nicho (BH)</div><ul>'+
-      pack.map(n=>{
-        const p = CCS_COMPANY.products.find(x=>x.id===n.offer) || prod;
-        return '<li><strong>'+escapeHtml(n.label)+'</strong> — precisa: '+escapeHtml(n.need)+
-          ' · projeto: '+escapeHtml(p.name)+' ('+escapeHtml(p.price)+') · '+
-          '<a target="_blank" rel="noopener" href="'+n.maps+'">abrir Maps</a></li>';
-      }).join('')+
-      '</ul></div>';
-  }
+  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">3 · Maps (só se for validar negócio sem site)</div>'+
+    '<p style="margin:0 0 8px;font-size:13.5px;color:var(--ink-soft)">Não use ranking 5 estrelas. Procure negócio que só tem WhatsApp/Instagram.</p>'+
+    '<div class="ccs-ia-actions">'+
+    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+niche.maps+'">Maps · '+escapeHtml(niche.label)+'</a>'+
+    '</div></div>';
 
-  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">Modelo de relatório (preencha ao achar)</div><ul>'+
-    '<li><strong>Quem:</strong> …</li>'+
-    '<li><strong>O que precisa:</strong> …</li>'+
+  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">Modelo do relatório (obrigatório)</div><ul>'+
+    '<li><strong>Quem:</strong> nome do anúncio</li>'+
+    '<li><strong>O que precisa:</strong> texto do pedido</li>'+
     '<li><strong>Projeto CodeCraft:</strong> '+escapeHtml(prod.name)+'</li>'+
-    '<li><strong>Canal:</strong> Instagram / 99Freelas / Maps / …</li>'+
-    '<li><strong>Contato:</strong> telefone, @ ou e-mail do anúncio</li>'+
-    '<li><strong>Link:</strong> URL</li></ul>'+
-    '<p style="margin:8px 0 0;font-size:13px;color:var(--ink-soft)">Depois diga: <em>abordagem para [nome]</em> ou cole o contato aqui que eu redijo a mensagem.</p></div>';
+    '<li><strong>Canal:</strong> 99Freelas / Workana / …</li>'+
+    '<li><strong>Contato:</strong> do anúncio (não inventar)</li>'+
+    '<li><strong>Link:</strong> URL do projeto</li></ul></div>';
 
   html += '<br>'+iaWrap('Prioridade',
-    'Leads <strong>já no site</strong> (chat/formulário) vêm primeiro — botão “Leads do site”. Tudo isso roda <strong>sem pagar API</strong>.');
+    'Leads do <strong>chat/formulário do site</strong> primeiro. Depois freelance. Maps 5 estrelas não conta como lead.');
   return html;
 }
 
