@@ -393,6 +393,53 @@
     .ccs-contact-wrap{grid-template-columns:1fr; gap:36px;}
     .ccs-app-header{padding:16px 20px;}
   }
+
+  /* ===== Trust + ops upgrade ===== */
+  .ccs-trust{
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px;
+    max-width:var(--content); margin:-28px auto 0; padding:0 var(--page-x) 8px; position:relative; z-index:2;
+  }
+  .ccs-trust .item{
+    background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px 16px 14px;
+    box-shadow:0 10px 28px rgba(18,23,43,.06);
+  }
+  .ccs-trust .item strong{display:block; font-size:14px; margin-bottom:4px;}
+  .ccs-trust .item span{font-size:12.5px; color:var(--ink-soft); line-height:1.45;}
+  .ccs-filter-bar{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 14px;}
+  .ccs-chip{
+    border:1.5px solid var(--line); background:#fff; color:var(--ink-soft); border-radius:999px;
+    padding:7px 12px; font-size:12.5px; font-weight:700; cursor:pointer;
+  }
+  .ccs-chip.active{background:var(--panel); color:#fff; border-color:var(--panel);}
+  .ccs-chip:hover{border-color:var(--amber);}
+  .ccs-navitem .badge{
+    margin-left:6px; display:inline-grid; place-items:center; min-width:18px; height:18px; padding:0 5px;
+    border-radius:999px; background:var(--amber); color:#221304; font-size:10.5px; font-weight:800;
+  }
+  .ccs-reply-chips{display:flex; flex-wrap:wrap; gap:6px; padding:0 12px 10px;}
+  .ccs-reply-chips button{
+    border:1px solid var(--line); background:var(--paper-dim); border-radius:999px; padding:6px 10px;
+    font-size:12px; font-weight:600; color:var(--ink); cursor:pointer;
+  }
+  .ccs-reply-chips button:hover{border-color:var(--amber); background:#FFF7EC;}
+  .ccs-ops-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:16px;}
+  .ccs-ops-grid .full{grid-column:1 / -1;}
+  .ccs-admin-nav{background:linear-gradient(180deg,#161B33 0%, #1A2140 100%);}
+  .ccs-admin-nav-title{color:#A8AED0;}
+  .ccs-navitem{color:#D7DBF0; border-color:transparent;}
+  .ccs-navitem:hover{background:rgba(255,255,255,.06); color:#fff;}
+  .ccs-navitem.active{background:rgba(232,163,61,.16); color:#fff; border-color:rgba(232,163,61,.35);}
+  .ccs-admin-login-card .brand-row{display:flex; gap:12px; align-items:center; margin-bottom:8px;}
+  .ccs-admin-login-card .brand-row img{border-radius:10px;}
+  @media (max-width:900px){
+    .ccs-trust{grid-template-columns:1fr 1fr;}
+    .ccs-ops-grid{grid-template-columns:1fr;}
+    #hunt-grid{grid-template-columns:1fr 1fr !important;}
+  }
+  @media (max-width:560px){
+    .ccs-trust{grid-template-columns:1fr;}
+    #hunt-grid{grid-template-columns:1fr !important;}
+  }
   @media (min-width:861px) and (max-width:1100px){
     .ccs-grid-3, .ccs-price-grid{grid-template-columns:repeat(2,1fr);}
   }
@@ -458,6 +505,13 @@
       <div id="ccs-typed" class="mono"></div>
     </div>
   </section>
+
+  <div class="ccs-trust" aria-label="Por que CodeCraft">
+    <div class="item"><strong>Portal ao vivo</strong><span>Cliente vê status e PIX em tempo real, sem e-mail perdido.</span></div>
+    <div class="item"><strong>Chat no site</strong><span>Orçamento e atendimento no mesmo lugar — resposta humana.</span></div>
+    <div class="item"><strong>Entrega com link</strong><span>Quando o site sobe, o cliente acessa com um clique.</span></div>
+    <div class="item"><strong>BH e Brasil</strong><span>Estúdio local com preço claro e processo transparente.</span></div>
+  </div>
 
   <section class="ccs-section ccs-about" id="quem-somos">
     <div class="ccs-eyebrow">Quem somos</div>
@@ -778,9 +832,10 @@
   <div class="ccs-admin-layout" id="admin-main" style="display:none;">
     <aside class="ccs-admin-nav">
       <div class="ccs-admin-nav-title">Painel</div>
-      <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')">Projetos</button>
-      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')">Conversas</button>
-      <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')">Mensagens</button>
+      <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')">Projetos <span class="badge" id="badge-projetos" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')">Conversas <span class="badge" id="badge-conversas" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')">Mensagens <span class="badge" id="badge-mensagens" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-operacoes" onclick="switchAdminTab('operacoes')">Operações</button>
       <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')">Empresa</button>
     </aside>
 
@@ -794,6 +849,15 @@
         <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
       </div>
       <div class="ccs-admin-overview" id="admin-overview"></div>
+
+      <div class="ccs-filter-bar" id="project-filters">
+        <button type="button" class="ccs-chip active" data-filter="all" onclick="setProjectFilter('all')">Todos</button>
+        <button type="button" class="ccs-chip" data-filter="analise" onclick="setProjectFilter('analise')">Em análise</button>
+        <button type="button" class="ccs-chip" data-filter="andamento" onclick="setProjectFilter('andamento')">Em andamento</button>
+        <button type="button" class="ccs-chip" data-filter="concluido" onclick="setProjectFilter('concluido')">Concluído</button>
+        <button type="button" class="ccs-chip" data-filter="unpaid" onclick="setProjectFilter('unpaid')">PIX a receber</button>
+      </div>
+
       <div class="ccs-help">
         <strong>Para que serve:</strong> aqui você cadastra e acompanha cada trabalho (site, loja, landing…). Tudo que você mudar aparece <strong>na hora</strong> pro cliente no portal dele — em tempo real, sem ele precisar atualizar a página.
         <div style="margin-top:10px;"><strong>Passo a passo:</strong></div>
@@ -848,6 +912,50 @@
         </div>
         <div class="ccs-chat-main" id="admin-chat-main">
           <div class="ccs-empty">Selecione uma conversa ao lado para responder.</div>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="tab-operacoes" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <div>
+          <h2 style="font-size:20px; margin:0;">Operações do dia</h2>
+          <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Agenda, prospecção e cadastro de leads — sem IA.</div>
+        </div>
+      </div>
+      <div class="ccs-help"><strong>Rotina sugerida:</strong> 1) responder Conversas e Mensagens · 2) atualizar status dos projetos · 3) caçar 3 empresas em BH e salvar em Clientes · 4) marcar PIX quando cair.</div>
+      <div class="ccs-ops-grid">
+        <div>
+          <div class="ccs-eyebrow" style="margin-bottom:10px;">Agenda</div>
+          <div class="ccs-panel" style="margin-bottom:14px;">
+            <div class="ccs-field"><label>O que fazer</label><input id="task-title" placeholder="Ex: Retornar clínica Savassi"></div>
+            <div class="ccs-field"><label>Quando</label><input id="task-when" type="date"></div>
+            <button class="ccs-btn amber small" onclick="addTaskFromForm()">Adicionar na agenda</button>
+          </div>
+          <div id="agenda-list"></div>
+        </div>
+        <div>
+          <div class="ccs-eyebrow" style="margin-bottom:10px;">Clientes / leads</div>
+          <div class="ccs-panel" style="margin-bottom:14px;">
+            <div class="ccs-field"><label>Nome da empresa</label><input id="lead-name" placeholder="Ex: Clínica Horizonte"></div>
+            <div class="ccs-field"><label>Telefone / contato</label><input id="lead-phone" placeholder="Opcional"></div>
+            <div class="ccs-field"><label>Nicho</label><input id="lead-niche" placeholder="Ex: Odontologia"></div>
+            <button class="ccs-btn amber small" onclick="saveLeadAndPing()">Salvar lead</button>
+          </div>
+          <div id="leads-list"></div>
+        </div>
+        <div class="full">
+          <div class="ccs-eyebrow" style="margin:8px 0 10px;">Prospecção BH</div>
+          <p style="font-size:13.5px; color:var(--ink-soft); margin:0 0 12px;">Atalhos para Maps / Google / Instagram. Achou uma empresa? Salve em Clientes e use o texto pronto.</p>
+          <div id="hunt-grid" style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px;"></div>
+        </div>
+        <div class="full">
+          <div class="ccs-eyebrow" style="margin:8px 0 10px;">Respostas prontas (chat)</div>
+          <div class="ccs-panel" id="ops-templates">
+            <p style="margin:0 0 10px; font-size:13.5px; color:var(--ink-soft);">Na aba Conversas, use os chips acima do campo de mensagem. Aqui você vê o texto completo:</p>
+            <ul style="margin:0; padding-left:18px; font-size:13.5px; line-height:1.6;" id="ops-templates-list"></ul>
+          </div>
         </div>
       </div>
     </div>
@@ -1062,6 +1170,10 @@ async function loadChat(code){
 }
 async function insertChat(code, sender, body){
   if(!supabaseClient) return false;
+  if(sender === 'admin' && !(await requireAdminSession())){
+    showToast('Faça login no admin para responder.');
+    return false;
+  }
   const clean = String(body||'').slice(0, 4000);
   let { error } = await supabaseClient.from('chat_messages')
     .insert({ tracking_code: code, sender, body: clean });
@@ -1212,6 +1324,9 @@ function typeHero(){
 /* ================= CONTACT FORM ================= */
 async function submitContact(e){
   e.preventDefault();
+  const now = Date.now();
+  if(window.__ccsLastContact && now - window.__ccsLastContact < 20000){ showToast('Aguarde alguns segundos antes de enviar de novo.'); return; }
+  window.__ccsLastContact = now;
   if(!configOk){ showToast('Configure o Supabase primeiro (topo do script).'); return; }
   const name = document.getElementById('c-name').value.trim().slice(0, 80);
   const contact = document.getElementById('c-contact').value.trim().slice(0, 120);
@@ -1566,7 +1681,15 @@ if(configOk){
   });
 }
 
-const ADMIN_TABS = ['projetos','conversas','mensagens','empresa'];
+const ADMIN_TABS = ['projetos','conversas','mensagens','operacoes','empresa'];
+let projectFilter = 'all';
+const REPLY_TEMPLATES = [
+  { id:'ola', label:'Saudação', body:'Olá! Obrigado pelo contato. Sou da CodeCraft Solutions (BH). Pode me contar em uma frase o que você precisa (site, loja ou sistema)?' },
+  { id:'orc', label:'Orçamento', body:'Perfeito. Para montar um orçamento justo, me diga: 1) tipo de projeto, 2) prazo desejado, 3) se já tem identidade visual. Em seguida te envio as opções.' },
+  { id:'codigo', label:'Código', body:'Seu código de acompanhamento é: [COLE_O_CODIGO]. Abra Portal do cliente no site, cole o código e clique em Ver status.' },
+  { id:'pix', label:'PIX', body:'Quando estiver tudo certo, o pagamento é via PIX no portal do projeto. Assim que confirmar, marcamos como pago e seguimos a entrega.' },
+  { id:'entrega', label:'Entrega', body:'Seu projeto está no ar. No portal do cliente aparece o botão Acessar meu site. Qualquer ajuste fino nos primeiros dias, fale por aqui.' }
+];
 function switchAdminTab(tab){
   if(!ADMIN_TABS.includes(tab)) tab = 'projetos';
   ADMIN_TABS.forEach(t=>{
@@ -1578,9 +1701,10 @@ function switchAdminTab(tab){
   if(tab==='projetos'){ renderProjectsList(); renderAdminOverview(); }
   if(tab==='conversas') renderChatProjectList();
   if(tab==='mensagens') renderMessagesList();
+  if(tab==='operacoes'){ renderAgenda(); renderLeads(); renderHunt(); renderOpsTemplates(); }
   if(tab==='empresa'){ renderEmpresa(); buildCalculator(); }
 }
-async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); await renderAdminOverview(); }
+async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); await renderAdminOverview(); renderAgenda(); await renderLeads(); renderHunt(); renderOpsTemplates(); }
 async function renderAdminOverview(){
   const el = document.getElementById('admin-overview');
   if(!el) return;
@@ -1597,9 +1721,47 @@ async function renderAdminOverview(){
       '<div class="ccs-metric receber"><div class="lbl">PIX a receber</div><div class="val">'+unpaid+'</div><div class="sub">sem pagamento marcado</div></div>'+
       '<div class="ccs-metric"><div class="lbl">Conversas</div><div class="val">'+(leads||[]).length+'</div><div class="sub">contatos pelo site</div></div>'+
       '<div class="ccs-metric"><div class="lbl">Mensagens</div><div class="val">'+(messages||[]).length+'</div><div class="sub">formulário da home</div></div>';
+    setNavBadge('badge-projetos', open);
+    setNavBadge('badge-conversas', (leads||[]).length);
+    setNavBadge('badge-mensagens', (messages||[]).length);
   }catch(e){
     el.innerHTML = '<div class="ccs-panel ccs-empty" style="grid-column:1/-1; padding:18px;">Não foi possível carregar o resumo agora.</div>';
   }
+}
+function setNavBadge(id, n){
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(n > 0){ el.style.display = 'inline-grid'; el.textContent = String(n > 99 ? '99+' : n); }
+  else { el.style.display = 'none'; }
+}
+function setProjectFilter(f){
+  projectFilter = f || 'all';
+  document.querySelectorAll('#project-filters .ccs-chip').forEach(btn=>{
+    btn.classList.toggle('active', btn.getAttribute('data-filter') === projectFilter);
+  });
+  renderProjectsList();
+}
+function renderOpsTemplates(){
+  const el = document.getElementById('ops-templates-list');
+  if(!el) return;
+  el.innerHTML = REPLY_TEMPLATES.map(t=>'<li><strong>'+escapeHtml(t.label)+':</strong> '+escapeHtml(t.body)+'</li>').join('');
+}
+function replyChipsHtml(){
+  return '<div class="ccs-reply-chips">'+REPLY_TEMPLATES.map(t=>
+    '<button type="button" onclick="useReplyTemplate(\''+t.id+'\')">'+escapeHtml(t.label)+'</button>'
+  ).join('')+'</div>';
+}
+function useReplyTemplate(id){
+  const t = REPLY_TEMPLATES.find(x=>x.id===id);
+  const input = document.getElementById('admin-chat-input');
+  if(!t || !input) return;
+  let body = t.body;
+  if(currentChatCode) body = body.replace('[COLE_O_CODIGO]', currentChatCode);
+  input.value = body;
+  input.focus();
+}
+function copyTrackingCode(code){
+  navigator.clipboard.writeText(code).then(()=>showToast('Código copiado: '+code));
 }
 function toggleNewProjectForm(){
   const f = document.getElementById('new-project-form');
@@ -1651,19 +1813,25 @@ async function deleteProject(id){
 }
 async function renderProjectsList(){
   const container = document.getElementById('projects-list');
-  const projects = await loadProjects();
+  let projects = await loadProjects();
+  if(projectFilter === 'analise' || projectFilter === 'andamento' || projectFilter === 'concluido'){
+    projects = projects.filter(p=>p.status === projectFilter);
+  } else if(projectFilter === 'unpaid'){
+    projects = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
+  }
   if(projects.length === 0){
-    container.innerHTML = '<div class="ccs-panel ccs-empty"><strong>Nenhum projeto ainda.</strong><br>Clique em <em>+ Novo projeto</em> para cadastrar o primeiro trabalho. O cliente acompanha pelo portal com o código gerado.</div>';
+    container.innerHTML = '<div class="ccs-panel ccs-empty"><strong>Nenhum projeto neste filtro.</strong><br>Ajuste o filtro ou clique em <em>+ Novo projeto</em>.</div>';
     return;
   }
   container.innerHTML = `<div class="ccs-panel" style="overflow-x:auto;">
     <table class="ccs-table">
-      <thead><tr><th>Código</th><th>Cliente / Projeto</th><th>Status</th><th>PIX</th><th></th></tr></thead>
+      <thead><tr><th>Código</th><th>Cliente / Projeto</th><th>Serviço</th><th>Status</th><th>PIX</th><th></th></tr></thead>
       <tbody>
         ${projects.map(p=>`
           <tr>
-            <td class="mono">${p.trackingCode}</td>
-            <td><strong>${p.clientName}</strong><br><span style="color:var(--ink-soft); font-size:13px;">${p.projectName}</span></td>
+            <td class="mono"><button class="ccs-btn ghost small" style="font-family:inherit;" onclick="copyTrackingCode('${escapeHtml(p.trackingCode)}')">${escapeHtml(p.trackingCode)}</button></td>
+            <td><strong>${escapeHtml(p.clientName)}</strong><br><span style="color:var(--ink-soft); font-size:13px;">${escapeHtml(p.projectName)}</span></td>
+            <td style="font-size:13px;">${escapeHtml((typeof SERVICE_LABELS!=='undefined' && SERVICE_LABELS[p.serviceType]) ? SERVICE_LABELS[p.serviceType] : (p.serviceType||'—'))}</td>
             <td>
               <div class="ccs-status-btns">
                 <button class="${p.status==='analise'?'active-analise':''}" onclick="setStatus('${p.id}','analise')">Em análise</button>
@@ -1677,7 +1845,7 @@ async function renderProjectsList(){
             <td><button class="ccs-btn ghost small" onclick="deleteProject('${p.id}')">Excluir</button></td>
           </tr>
           <tr>
-            <td colspan="5" style="background:var(--paper-dim); border-bottom:2px solid var(--line);">
+            <td colspan="6" style="background:var(--paper-dim); border-bottom:2px solid var(--line);">
               <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                 <span style="font-size:13px; color:var(--ink-soft); font-weight:700;">Link de entrega:</span>
                 <input id="delivery-${p.id}" value="${escapeHtml(p.deliveryUrl||'')}" placeholder="https://site-do-cliente.com" style="flex:1; min-width:220px; padding:8px 10px; border:1.5px solid var(--line); border-radius:8px; font-size:13.5px;">
@@ -1692,7 +1860,7 @@ async function renderProjectsList(){
     </table>
   </div>`;
 }
-let currentCode = null;
+let currentCodelet currentCode = null;
 let modalContact = '';
 function showCodeModal(code, clientName, contact){
   currentCode = code;
@@ -1806,6 +1974,7 @@ async function openAdminLeadChat(code){
       </div>
     </div>
     <div id="admin-chat-messages" class="ccs-chat-messages"></div>
+    ${replyChipsHtml()}
     <div class="ccs-chat-input">
       <input id="admin-chat-input" placeholder="Escreva para o cliente..." onkeydown="if(event.key==='Enter')sendAdminChat()">
       <button class="ccs-btn amber" onclick="sendAdminChat()">Enviar</button>
@@ -1841,6 +2010,7 @@ async function openAdminChat(code){
       </div>
     </div>
     <div id="admin-chat-messages" class="ccs-chat-messages"></div>
+    ${replyChipsHtml()}
     <div class="ccs-chat-input">
       <input id="admin-chat-input" placeholder="Escreva para o cliente..." onkeydown="if(event.key==='Enter')sendAdminChat()">
       <button class="ccs-btn amber" onclick="sendAdminChat()">Enviar</button>
