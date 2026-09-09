@@ -26,10 +26,30 @@ const supabaseClient = configOk ? window.supabase.createClient(SUPABASE_URL, SUP
   },
 }) : null;
 
+/* Contas autorizadas no painel (Gustavo + Lucas). Criar/resetar senha no Supabase → Authentication → Users. */
+const ADMIN_ALLOWED_EMAILS = [
+  'gustavosena972@gmail.com',
+  'lucashdhdhdhdhdbddb@gmail.com'
+];
+function normalizeEmail(email){
+  return String(email || '').trim().toLowerCase();
+}
+function isAllowedAdminEmail(email){
+  return ADMIN_ALLOWED_EMAILS.includes(normalizeEmail(email));
+}
+function sessionAdminEmail(session){
+  return session && session.user ? normalizeEmail(session.user.email) : '';
+}
 async function requireAdminSession(){
   if(!supabaseClient) return null;
   const { data } = await supabaseClient.auth.getSession();
-  return data && data.session ? data.session : null;
+  const session = data && data.session ? data.session : null;
+  if(!session) return null;
+  if(!isAllowedAdminEmail(sessionAdminEmail(session))){
+    await supabaseClient.auth.signOut();
+    return null;
+  }
+  return session;
 }
 
 /* ================= UTIL ================= */
@@ -605,9 +625,20 @@ async function adminLogin(){
     errEl.style.display = 'block';
     return;
   }
+  if(!isAllowedAdminEmail(email)){
+    errEl.textContent = 'Este e-mail não tem acesso ao admin.';
+    errEl.style.display = 'block';
+    return;
+  }
   const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if(error){
     errEl.textContent = 'E-mail ou senha incorretos.';
+    errEl.style.display = 'block';
+    return;
+  }
+  const session = await requireAdminSession();
+  if(!session){
+    errEl.textContent = 'Este e-mail não tem acesso ao admin.';
     errEl.style.display = 'block';
     return;
   }
@@ -623,21 +654,32 @@ async function adminLogout(){
   if(supabaseClient){ await supabaseClient.auth.signOut(); }
   renderAdminGate();
 }
+async function syncAdminSessionFromAuth(session){
+  const ok = !!(session && isAllowedAdminEmail(sessionAdminEmail(session)));
+  if(session && !ok){
+    await supabaseClient.auth.signOut();
+    adminLoggedIn = false;
+  } else {
+    adminLoggedIn = ok;
+  }
+  const onAdmin = window.CCS_PAGE === 'admin' || (document.getElementById('screen-admin') && document.getElementById('screen-admin').style.display === 'block');
+  if(!adminLoggedIn){
+    stopRealtime();
+    if(onAdmin) renderAdminGate();
+    return;
+  }
+  if(onAdmin){
+    migrateCrmLeads();
+    renderAdminGate();
+  }
+}
 /* Restaura / sincroniza a sessão do admin (Supabase Auth). */
 if(configOk){
   supabaseClient.auth.getSession().then(({ data })=>{
-    adminLoggedIn = !!(data && data.session);
-    if(adminLoggedIn && (window.CCS_PAGE === 'admin' || (document.getElementById('screen-admin') && document.getElementById('screen-admin').style.display === 'block'))){
-      migrateCrmLeads();
-      renderAdminGate();
-    }
+    syncAdminSessionFromAuth(data && data.session);
   });
   supabaseClient.auth.onAuthStateChange((_event, session)=>{
-    adminLoggedIn = !!session;
-    if(!session){
-      stopRealtime();
-      if(window.CCS_PAGE === 'admin' || (document.getElementById('screen-admin') && document.getElementById('screen-admin').style.display === 'block')) renderAdminGate();
-    }
+    syncAdminSessionFromAuth(session);
   });
 }
 
