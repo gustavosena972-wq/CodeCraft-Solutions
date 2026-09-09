@@ -1,5 +1,3 @@
-# CodeCraft Solutions — Supabase Edge Functions
+# CodeCraft Solutions — Supabase local config
 # project-ref: eqaoanbanhryhbldlbhc
-
-[functions.ccs-admin-ai]
-verify_jwt = true
+# (ccs-admin-ai edge function removed; chats/projects use DB + Auth only)

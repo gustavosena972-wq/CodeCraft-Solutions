@@ -360,49 +360,9 @@
   .ccs-calc-grid button.eq{background:var(--amber); color:#221304; border-color:var(--amber);}
   .ccs-calc-grid button.wide{grid-column:span 2;}
 
-  .ccs-ai-layout{display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:16px; align-items:start;}
-  .ccs-ia-shell{background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 12px 32px rgba(18,23,43,.06); display:flex; flex-direction:column; min-height:640px;}
-  .ccs-ia-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; padding:18px 20px; background:linear-gradient(135deg, #1A1F3A 0%, #2A3158 100%); color:#fff;}
-  .ccs-ia-head h2{font-size:18px; color:#fff; max-width:none; font-weight:700;}
-  .ccs-ia-head p{margin:6px 0 0; font-size:13px; color:#C5CAE3; max-width:560px; line-height:1.5;}
-  .ccs-ia-status{display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); color:#E8ECFF; padding:7px 11px; border-radius:999px; white-space:nowrap;}
-  .ccs-ia-status .dot{width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 3px rgba(47,182,165,.25); animation:pulse 1.6s ease-in-out infinite;}
-  .ccs-ia-body{padding:14px 16px 16px; display:flex; flex-direction:column; gap:10px; flex:1;}
-  .ccs-ia-roles{display:flex; flex-wrap:wrap; gap:6px;}
-  .ccs-ia-roles span{font-size:11px; font-weight:700; color:var(--ink-soft); background:var(--paper-dim); border:1px solid var(--line); border-radius:999px; padding:5px 10px;}
-  .ccs-ia-toolbar{display:flex; flex-wrap:wrap; gap:6px; padding:10px; background:var(--paper-dim); border:1px solid var(--line); border-radius:12px;}
-  .ccs-ia-toolbar .ccs-btn.ghost{background:#fff; border-color:var(--line); color:var(--ink); font-weight:600;}
-  .ccs-ia-toolbar .ccs-btn.ghost:hover{border-color:var(--amber); background:#FFF8EE;}
-  .ccs-ai-box{display:flex; flex-direction:column; gap:12px; flex:1; overflow:auto; background:#F7F6F1; border:1px solid var(--line); border-radius:14px; padding:16px; min-height:360px; max-height:min(58vh,560px);}
-  .ccs-ai-msg{font-size:14.5px; line-height:1.65; padding:14px 16px; border-radius:14px; background:#fff; border:1px solid var(--line); max-width:92%; align-self:flex-start; color:var(--ink);}
-  .ccs-ai-msg.me{align-self:flex-end; background:#1A1F3A; color:#F4F5FA; border-color:#1A1F3A;}
-  .ccs-ai-msg strong{color:var(--ink);}
-  .ccs-ai-msg.me strong{color:var(--amber);}
-  .ccs-ai-meta{font-size:11px; color:var(--ink-soft); margin-bottom:6px; font-family:'JetBrains Mono',monospace;}
-  .ccs-ai-msg.me .ccs-ai-meta{color:#A8AED0;}
-  .ccs-ia-input-wrap{display:flex; gap:8px; padding:12px; border:1px solid var(--line); border-radius:14px; background:#fff; align-items:flex-end;}
-  .ccs-ia-input-wrap textarea{flex:1; padding:12px; border:1.5px solid var(--line); border-radius:10px; font-family:'Inter',sans-serif; font-size:14.5px; background:var(--paper); resize:none; min-height:52px; max-height:140px; line-height:1.45;}
-  .ccs-ia-input-wrap textarea:focus{outline:2px solid var(--amber); outline-offset:1px; border-color:var(--amber); background:#fff;}
-  .ccs-ia-side{display:flex; flex-direction:column; gap:12px;}
-  .ccs-ia-panel{background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 14px 12px;}
-  .ccs-ia-panel h3{font-size:12px; margin:0 0 10px; font-family:'JetBrains Mono',monospace; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft);}
-  .ccs-ia-pulse-row{display:flex; justify-content:space-between; gap:8px; font-size:13px; padding:7px 0; border-bottom:1px solid var(--line);}
-  .ccs-ia-pulse-row:last-child{border-bottom:none;}
-  .ccs-ia-pulse-row b{font-family:'JetBrains Mono',monospace; font-size:12.5px;}
-  .ccs-ia-lead{border:1px solid var(--line); border-radius:10px; padding:10px; margin-bottom:8px; background:var(--paper);}
-  .ccs-ia-lead strong{display:block; font-size:13.5px; margin-bottom:4px;}
-  .ccs-ia-lead span{display:block; font-size:12px; color:var(--ink-soft); line-height:1.4;}
-  .ccs-ia-lead .acts{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
-  .ccs-ia-card{border:1.5px solid var(--line); border-left:4px solid var(--amber); border-radius:12px; padding:14px 16px; background:#fff; margin-top:8px;}
-  .ccs-ia-card ul{margin:8px 0 0; padding-left:18px; line-height:1.55; font-size:13.5px;}
-  .ccs-ia-card li{margin:4px 0;}
-  .ccs-ia-daily-head{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--amber); margin-bottom:6px;}
-  .ccs-ia-actions{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
-  .ccs-ia-badge{display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; padding:3px 8px; border-radius:999px; background:#E8F7F4; color:#0F6B5F; margin-bottom:6px;}
-  .ccs-ia-badge.warn{background:#FFF3E0; color:#9A5B00;}
-  .ccs-ia-badge.real{background:#E7F0FF; color:#1E4B9A;}
-  @media (max-width:980px){ .ccs-ai-layout{grid-template-columns:1fr;} }
-
+  .ccs-admin-overview{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:18px;}
+  .ccs-admin-overview .ccs-metric{margin:0;}
+  @media (max-width:900px){ .ccs-admin-overview{grid-template-columns:1fr 1fr;} }
   @media (max-width:760px){ .ccs-metrics{grid-template-columns:1fr 1fr;} }
 
   @media (max-width:980px){
@@ -817,77 +777,23 @@
 
   <div class="ccs-admin-layout" id="admin-main" style="display:none;">
     <aside class="ccs-admin-nav">
-      <div class="ccs-admin-nav-title">Menu</div>
-      <button class="ccs-navitem active" id="tab-btn-ia" onclick="switchAdminTab('ia')"><span class="ico">🤖</span> IA Admin</button>
-      <button class="ccs-navitem" id="tab-btn-projetos" onclick="switchAdminTab('projetos')"><span class="ico">📋</span> Projetos</button>
-      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')"><span class="ico">💬</span> Conversas</button>
-      <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')"><span class="ico">✉️</span> Mensagens</button>
-      <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')"><span class="ico">📊</span> Empresa</button>
+      <div class="ccs-admin-nav-title">Painel</div>
+      <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')">Projetos</button>
+      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')">Conversas</button>
+      <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')">Mensagens</button>
+      <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')">Empresa</button>
     </aside>
 
     <div class="ccs-admin-content">
-    <div id="tab-ia">
-      <div class="ccs-ai-layout">
-        <div class="ccs-ia-shell">
-          <div class="ccs-ia-head">
-            <div>
-              <h2>CodeCraft IA · Operações</h2>
-              <p>Agente sênior de prospecção: pesquisa real na web, relatório do que o cliente precisa, contato e abordagem. Qualidade de consultoria — não atalho genérico.</p>
-            </div>
-            <div class="ccs-ia-status" id="ccs-ia-status"><span class="dot"></span> <span id="ccs-ia-status-text">Gemini</span></div>
-          </div>
-          <div class="ccs-ia-body">
-            <div class="ccs-ia-roles">
-              <span>Caça de clientes</span>
-              <span>Freelance / Instagram</span>
-              <span>Atendimento</span>
-              <span>Projetos</span>
-              <span>Pesquisa web</span>
-            </div>
-            <div class="ccs-ia-toolbar">
-              <button class="ccs-btn ghost small" onclick="iaRun('caçar clientes em freelance Instagram Google e Maps em BH — relatório com o que precisam e contato')">Caçar em tudo</button>
-              <button class="ccs-btn ghost small" onclick="iaRun('prospectar no Instagram empresas que precisam de site em BH')">Instagram</button>
-              <button class="ccs-btn ghost small" onclick="iaRun('prospectar em sites de freelance 99freelas Workana GetNinjas pedidos de site loja sistema')">Freelance</button>
-              <button class="ccs-btn ghost small" onclick="iaRun('mostrar leads reais do site')">Leads do site</button>
-              <button class="ccs-btn ghost small" onclick="iaRun('responder conversas abertas')">Atender chats</button>
-              <button class="ccs-btn ghost small" onclick="iaRun('analisar projetos da fila')">Projetos</button>
-              <button class="ccs-btn ghost small" onclick="iaRun('redigir abordagem')">Abordagem</button>
-              <button class="ccs-btn ghost small" onclick="window.open(GESTAO_URL,'_blank')">Abrir Gestão</button>
-            </div>
-            <div class="ccs-ai-box" id="admin-ai-log"></div>
-            <div class="ccs-ia-input-wrap">
-              <textarea id="admin-ai-input" rows="2" placeholder="Ex.: caçar quem precisa de site em BH · freelance Instagram · CNPJ · responder chats" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendAdminAi();}"></textarea>
-              <button class="ccs-btn amber" onclick="sendAdminAi()">Enviar</button>
-            </div>
-          </div>
-        </div>
-        <aside class="ccs-ia-side">
-          <div class="ccs-ia-panel">
-            <h3>Pulso ao vivo</h3>
-            <div id="ia-pulse">Carregando…</div>
-          </div>
-          <div class="ccs-ia-panel">
-            <h3>Fila de prospecção</h3>
-            <div id="ia-pipeline">Nenhum alvo ainda. Peça “prospectar”.</div>
-          </div>
-          <div class="ccs-ia-panel">
-            <h3>Ações rápidas</h3>
-            <div class="ccs-ia-actions">
-              <button class="ccs-btn ghost small" onclick="iaRun('prospectar clientes agora')">Buscar alvos</button>
-              <button class="ccs-btn ghost small" onclick="iaRefreshSide()">Atualizar</button>
-              <button class="ccs-btn ghost small" onclick="switchAdminTab('conversas')">Abrir chats</button>
-              <button class="ccs-btn ghost small" onclick="switchAdminTab('projetos')">Projetos</button>
-            </div>
-          </div>
-        </aside>
-      </div>
-    </div>
-
-    <div id="tab-projetos" style="display:none;">
+    <div id="tab-projetos">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
-        <h2 style="font-size:20px;">Projetos</h2>
+        <div>
+          <h2 style="font-size:20px; margin:0;">Projetos</h2>
+          <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Fila de entrega e acompanhamento em tempo real</div>
+        </div>
         <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
       </div>
+      <div class="ccs-admin-overview" id="admin-overview"></div>
       <div class="ccs-help">
         <strong>Para que serve:</strong> aqui você cadastra e acompanha cada trabalho (site, loja, landing…). Tudo que você mudar aparece <strong>na hora</strong> pro cliente no portal dele — em tempo real, sem ele precisar atualizar a página.
         <div style="margin-top:10px;"><strong>Passo a passo:</strong></div>
@@ -896,7 +802,7 @@
           <li><strong>Enviar o código:</strong> mande o código pro cliente pela aba <strong>Conversas</strong> (chat do app).</li>
           <li><strong>Atualizar o andamento:</strong> use os botões <strong>Em análise → Em andamento → Concluído</strong>. O cliente vê a mudança na hora.</li>
           <li><strong>Marcar o pagamento:</strong> quando o cliente pagar o PIX, clique em <strong>Marcar como pago</strong>.</li>
-          <li><strong>Entregar o projeto:</strong> quando o site estiver pronto, cole o endereço dele no campo <strong>🔗 Link de entrega</strong> (logo abaixo de cada projeto) e clique em <strong>Salvar link</strong>. Aí aparece o botão <strong>"Acessar meu site"</strong> pro cliente no portal, na hora.</li>
+          <li><strong>Entregar o projeto:</strong> quando o site estiver pronto, cole o endereço dele no campo <strong>Link de entrega</strong> (logo abaixo de cada projeto) e clique em <strong>Salvar link</strong>. Aí aparece o botão <strong>"Acessar meu site"</strong> pro cliente no portal, na hora.</li>
         </ol>
       </div>
 
@@ -935,7 +841,7 @@
 
     <div id="tab-conversas" style="display:none;">
       <h2 style="font-size:20px; margin-bottom:16px;">Conversas com clientes</h2>
-      <div class="ccs-help"><strong>Para que serve:</strong> é o chat em tempo real com quem está no site. Inclui os <strong>novos contatos</strong> e as conversas por projeto. Responda aqui e <strong>envie o código de acompanhamento</strong>. Tom recomendado: formal, claro e objetivo. Na aba <strong>IA Admin</strong>, use “Resposta ao cliente” para gerar o texto pronto.</div>
+      <div class="ccs-help"><strong>Para que serve:</strong> é o chat em tempo real com quem está no site. Inclui os <strong>novos contatos</strong> e as conversas por projeto. Responda aqui com tom formal, claro e objetivo, e <strong>envie o código de acompanhamento</strong> quando o projeto for criado.</div>
       <div class="ccs-chat-layout">
         <div class="ccs-chat-side">
           <div id="chat-project-list"></div>
@@ -965,7 +871,7 @@
           BH e Brasil · Chat no site · PIX 31999758385 · @code.invention
         </p>
         <p style="margin:0; font-size:13px; color:var(--ink-soft);">
-          Use este posicionamento no 99Freelas, GetNinjas, propostas e abordagens. A IA Admin e o marketing seguem o mesmo discurso.
+          Use este posicionamento no 99Freelas, GetNinjas, propostas e abordagens — o mesmo discurso em todo o material comercial.
         </p>
       </div>
 
@@ -1598,19 +1504,18 @@ function renderAdminGate(){
   document.getElementById('admin-main').style.display = adminLoggedIn ? 'flex' : 'none';
   document.getElementById('admin-logout-btn').style.display = adminLoggedIn ? 'inline-block' : 'none';
   document.getElementById('admin-live').style.display = adminLoggedIn ? 'inline-flex' : 'none';
-    if(adminLoggedIn){
+  if(adminLoggedIn){
     renderAdminAll();
-    switchAdminTab('ia');
-    startIaAdminAutopilot();
+    switchAdminTab('projetos');
     stopRealtime();
     realtimeChannel = supabaseClient.channel('admin-projects')
-      .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); })
-      .on('postgres_changes', { event:'*', schema:'public', table:'messages' }, ()=>{ renderMessagesList(); })
-      .on('postgres_changes', { event:'*', schema:'public', table:'lead_chats' }, ()=>{ renderChatProjectList(); })
+      .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); renderAdminOverview(); })
+      .on('postgres_changes', { event:'*', schema:'public', table:'messages' }, ()=>{ renderMessagesList(); renderAdminOverview(); })
+      .on('postgres_changes', { event:'*', schema:'public', table:'lead_chats' }, ()=>{ renderChatProjectList(); renderAdminOverview(); })
       .on('postgres_changes', { event:'*', schema:'public', table:'chat_messages' }, ()=>{ if(currentChatCode) renderAdminChat(); })
       .subscribe();
     startPolling(()=>{
-      renderProjectsList(); renderMessagesList(); renderEmpresa(); renderChatProjectList();
+      renderProjectsList(); renderMessagesList(); renderEmpresa(); renderChatProjectList(); renderAdminOverview();
       if(currentChatCode) renderAdminChat();
     });
   }
@@ -1661,20 +1566,41 @@ if(configOk){
   });
 }
 
-const ADMIN_TABS = ['ia','projetos','conversas','mensagens','empresa'];
+const ADMIN_TABS = ['projetos','conversas','mensagens','empresa'];
 function switchAdminTab(tab){
-  if(!ADMIN_TABS.includes(tab)) tab = 'ia';
+  if(!ADMIN_TABS.includes(tab)) tab = 'projetos';
   ADMIN_TABS.forEach(t=>{
     const pane = document.getElementById('tab-'+t);
     const btn = document.getElementById('tab-btn-'+t);
     if(pane) pane.style.display = t===tab ? 'block' : 'none';
     if(btn) btn.classList.toggle('active', t===tab);
   });
-  if(tab==='ia') bootAdminAi();
+  if(tab==='projetos'){ renderProjectsList(); renderAdminOverview(); }
   if(tab==='conversas') renderChatProjectList();
+  if(tab==='mensagens') renderMessagesList();
   if(tab==='empresa'){ renderEmpresa(); buildCalculator(); }
 }
-async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); }
+async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); await renderAdminOverview(); }
+async function renderAdminOverview(){
+  const el = document.getElementById('admin-overview');
+  if(!el) return;
+  try{
+    const [projects, messages, leads] = await Promise.all([
+      loadProjects().catch(()=>[]),
+      loadMessages().catch(()=>[]),
+      loadLeadChats().catch(()=>[])
+    ]);
+    const unpaid = (projects||[]).filter(p=>!p.paid && Number(p.pixValue)>0).length;
+    const open = (projects||[]).filter(p=>p.status==='analise' || p.status==='andamento').length;
+    el.innerHTML =
+      '<div class="ccs-metric"><div class="lbl">Projetos</div><div class="val">'+(projects||[]).length+'</div><div class="sub">'+open+' em produção</div></div>'+
+      '<div class="ccs-metric receber"><div class="lbl">PIX a receber</div><div class="val">'+unpaid+'</div><div class="sub">sem pagamento marcado</div></div>'+
+      '<div class="ccs-metric"><div class="lbl">Conversas</div><div class="val">'+(leads||[]).length+'</div><div class="sub">contatos pelo site</div></div>'+
+      '<div class="ccs-metric"><div class="lbl">Mensagens</div><div class="val">'+(messages||[]).length+'</div><div class="sub">formulário da home</div></div>';
+  }catch(e){
+    el.innerHTML = '<div class="ccs-panel ccs-empty" style="grid-column:1/-1; padding:18px;">Não foi possível carregar o resumo agora.</div>';
+  }
+}
 function toggleNewProjectForm(){
   const f = document.getElementById('new-project-form');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
@@ -1727,7 +1653,7 @@ async function renderProjectsList(){
   const container = document.getElementById('projects-list');
   const projects = await loadProjects();
   if(projects.length === 0){
-    container.innerHTML = '<div class="ccs-panel ccs-empty">Nenhum projeto ainda. Clique em "Novo projeto" para começar.</div>';
+    container.innerHTML = '<div class="ccs-panel ccs-empty"><strong>Nenhum projeto ainda.</strong><br>Clique em <em>+ Novo projeto</em> para cadastrar o primeiro trabalho. O cliente acompanha pelo portal com o código gerado.</div>';
     return;
   }
   container.innerHTML = `<div class="ccs-panel" style="overflow-x:auto;">
@@ -1753,7 +1679,7 @@ async function renderProjectsList(){
           <tr>
             <td colspan="5" style="background:var(--paper-dim); border-bottom:2px solid var(--line);">
               <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                <span style="font-size:13px; color:var(--ink-soft); font-weight:700;">🔗 Link de entrega:</span>
+                <span style="font-size:13px; color:var(--ink-soft); font-weight:700;">Link de entrega:</span>
                 <input id="delivery-${p.id}" value="${escapeHtml(p.deliveryUrl||'')}" placeholder="https://site-do-cliente.com" style="flex:1; min-width:220px; padding:8px 10px; border:1.5px solid var(--line); border-radius:8px; font-size:13.5px;">
                 <button class="ccs-btn amber small" onclick="saveDelivery('${p.id}')">Salvar link</button>
                 ${p.deliveryUrl ? `<a class="ccs-btn ghost small" href="${escapeHtml(p.deliveryUrl)}" target="_blank" rel="noopener">Abrir</a>` : ''}
@@ -1806,7 +1732,7 @@ async function renderMessagesList(){
   const container = document.getElementById('messages-list');
   const messages = await loadMessages();
   if(messages.length === 0){
-    container.innerHTML = '<div class="ccs-panel ccs-empty">Nenhuma mensagem recebida ainda.</div>';
+    container.innerHTML = '<div class="ccs-panel ccs-empty"><strong>Caixa de entrada vazia.</strong><br>Quando alguém enviar o formulário “Fale com a gente” na home, o recado aparece aqui.</div>';
     return;
   }
   container.innerHTML = messages.map(m=>{
@@ -1841,7 +1767,7 @@ async function renderChatProjectList(){
   if(!container) return;
   const [leads, projects] = await Promise.all([loadLeadChats(), loadProjects()]);
   if(leads.length === 0 && projects.length === 0){
-    container.innerHTML = '<div class="ccs-empty" style="padding:16px;">Nenhuma conversa ainda.</div>';
+    container.innerHTML = '<div class="ccs-empty" style="padding:20px;"><strong>Nenhuma conversa ainda.</strong><br><span style="font-size:13px;">Quando um visitante abrir o chat do site, a conversa entra nesta lista.</span></div>';
     return;
   }
   let html = '';
@@ -2168,7 +2094,7 @@ function buildCalculator(){
   calcBuilt = true;
 }
 
-/* ================= ADMIN OPS: leads, caça, post, IA, mercado ================= */
+/* ================= ADMIN OPS: leads, caça, post, mercado ================= */
 const LEADS_KEY = 'ccs-admin-leads';
 const POSTS_KEY = 'ccs-admin-posts';
 const HUNTS = [
@@ -2188,7 +2114,7 @@ const HUNTS = [
 const TASKS_KEY = 'ccs-admin-tasks';
 const GESTAO_URL = 'https://gustavosena972-wq.github.io/financas-codecraft/';
 const GESTAO_PLANOS_URL = 'https://gustavosena972-wq.github.io/financas-codecraft/app/planos/';
-var aiMem = { unpaidI:0, lastHunt:null, lastChannel:null };
+var opsMem = { unpaidI:0, lastHunt:null, lastChannel:null };
 
 function todayISO(){
   const d = new Date();
@@ -2237,7 +2163,7 @@ function renderAgenda(){
       </div>
     </div>`;
   }
-  el.innerHTML = (due.length?`<div class="ccs-eyebrow" style="margin-bottom:8px;">Para hoje / atrasado · ${due.length}</div>`+due.map(row).join(''):'<div class="ccs-panel ccs-empty">Nada atrasado. A IA cria item quando cobra ou caça.</div>')
+  el.innerHTML = (due.length?`<div class="ccs-eyebrow" style="margin-bottom:8px;">Para hoje / atrasado · ${due.length}</div>`+due.map(row).join(''):'<div class="ccs-panel ccs-empty">Nada atrasado. Adicione um item na agenda quando precisar.</div>')
     +(later.length?`<div class="ccs-eyebrow" style="margin:16px 0 8px;">Depois</div>`+later.map(row).join(''):'')
     +(done.length?`<div class="ccs-eyebrow" style="margin:16px 0 8px;">Feito</div>`+done.map(row).join(''):'');
 }
@@ -2342,7 +2268,7 @@ async function renderLeads(){
   const el = document.getElementById('leads-list');
   if(!el) return;
   const list = await loadCrmLeads();
-  if(!list.length){ el.innerHTML = '<div class="ccs-panel ccs-empty">Nenhum lead ainda. Caçe um nicho e cole o nome aqui.</div>'; return; }
+  if(!list.length){ el.innerHTML = '<div class="ccs-panel ccs-empty">Nenhum lead ainda. Cadastre o nome da empresa quando fizer contato.</div>'; return; }
   el.innerHTML = list.map(l=>`
     <div class="ccs-panel" style="margin-bottom:10px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
       <div><strong>${escapeHtml(l.name)}</strong> · ${escapeHtml(l.niche||'—')}<br><span style="color:var(--ink-soft); font-size:13px;">${escapeHtml(l.phone||'sem telefone')} · ${l.status}</span></div>
@@ -2379,7 +2305,7 @@ function runHunt(id, city){
   if(niche) niche.value = h.niche;
   const nameEl = document.getElementById('lead-name');
   if(nameEl && !nameEl.value) nameEl.placeholder = 'Cole o nome que achou em '+place;
-  aiMem.lastHunt = { id:h.id, city:place };
+  opsMem.lastHunt = { id:h.id, city:place };
   addTask('Caçar '+h.label+' em '+place, todayISO(), 'cacar');
   showToast('Maps, Google e Instagram abertos.');
 }
@@ -2547,8 +2473,8 @@ async function chaseUnpaid(){
   const projects = await loadProjects();
   const unpaid = projects.filter(x=>!x.paid && Number(x.pixValue)>0);
   if(!unpaid.length){ showToast('Nada a cobrar.'); return null; }
-  const p = unpaid[aiMem.unpaidI % unpaid.length];
-  aiMem.unpaidI++;
+  const p = unpaid[opsMem.unpaidI % unpaid.length];
+  opsMem.unpaidI++;
   await chaseProject(p);
   return p;
 }
@@ -2629,630 +2555,13 @@ async function replyStalledChat(){
   return s;
 }
 
-/* ================= IA ADMIN — CodeCraft Ops (integrada) ================= */
-let adminAiBooted = false;
-const IA_ADMIN_KEY = 'ccs-ia-admin-chat-v2';
-const IA_PIPELINE_KEY = 'ccs-ia-pipeline-v1';
-const IA_LAST_LEAD_KEY = 'ccs-ia-last-prospect';
-
-const CCS_COMPANY = {
-  name: 'CodeCraft Solutions',
-  city: 'Belo Horizonte / Grande BH · Brasil',
-  pitch: 'Sites, lojas, sistemas e ERP para MEI, PME e grandes empresas.',
-  pix: '31999758385',
-  chatSite: 'Atendimento pelo chat do site (sem WhatsApp)',
-  instagram: '@code.invention',
-  gestaoUrl: (typeof GESTAO_URL !== 'undefined' ? GESTAO_URL : ''),
-  products: [
-    { id:'gestao', name:'CodeCraft Gestão', price:'R$ 280 a R$ 500/mês', forWhom:'MEI, PME e empresas (CNPJ)', pain:'ponto, caixa, folha, títulos', detail:'ERP/HCM B2B: Financeiro, RH e assinatura Asaas.' },
-    { id:'landing', name:'Landing page', price:'a partir de R$ 300', forWhom:'MEI a grandes empresas', pain:'não converte visita', detail:'Página única de alta conversão + chat no site.' },
-    { id:'site', name:'Site institucional', price:'a partir de R$ 500', forWhom:'Pequenas, médias e grandes empresas', pain:'não aparece no Google', detail:'Várias páginas, identidade e redes.' },
-    { id:'loja', name:'Loja virtual', price:'a partir de R$ 500', forWhom:'Comércio local a operação grande', pain:'só vende no balcão', detail:'Catálogo, pedido, frete e PIX.' },
-    { id:'sistema', name:'Sistema / App sob medida', price:'R$ 1.500 a R$ 15.000', forWhom:'PME e corporativo', pain:'planilha e caos', detail:'Painéis, cadastros, integrações e portal ao vivo.' },
-    { id:'manutencao', name:'Manutenção mensal', price:'a partir de R$ 100/mês', forWhom:'Pós-entrega', pain:'site parado', detail:'Ajustes, correções e suporte.' }
-  ]
-};
-
-const IA_HUNT_SOURCES = [
-  { id:'google', label:'Google', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent(q) },
-  { id:'maps', label:'Google Maps', build:(q)=>'https://www.google.com/maps/search/'+encodeURIComponent(q) },
-  { id:'instagram', label:'Instagram', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent('site:instagram.com '+q) },
-  { id:'99freelas', label:'99Freelas', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent('site:99freelas.com.br '+q) },
-  { id:'workana', label:'Workana', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent('site:workana.com '+q) },
-  { id:'getninjas', label:'GetNinjas', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent('site:getninjas.com.br '+q) },
-  { id:'freelancer', label:'Freelancer', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent('site:freelancer.com.br OR site:freelancer.com '+q) },
-  { id:'linkedin', label:'LinkedIn', build:(q)=>'https://www.google.com/search?q='+encodeURIComponent('site:linkedin.com/company OR site:linkedin.com/in '+q+' Belo Horizonte') }
-];
-
-const IA_HUNT_NICHES = [
-  { key:'clinica', label:'Clínicas e consultórios', query:'clínica médica Belo Horizonte', offer:'gestao', project:'CodeCraft Gestão (ponto + folha) ou site com agenda', need:'controle de ponto/folha ou presença digital fraca', maps:'https://www.google.com/maps/search/cl%C3%ADnica+m%C3%A9dica+Belo+Horizonte' },
-  { key:'odontologia', label:'Consultórios odontológicos', query:'dentista Belo Horizonte', offer:'gestao', project:'Gestão Essencial + site institucional', need:'agenda/site e RH simples', maps:'https://www.google.com/maps/search/dentista+Belo+Horizonte' },
-  { key:'oficina', label:'Oficinas e auto peças', query:'oficina mecânica Belo Horizonte', offer:'loja', project:'Loja virtual com pedido e PIX', need:'vender além do balcão', maps:'https://www.google.com/maps/search/oficina+mec%C3%A2nica+Belo+Horizonte' },
-  { key:'salao', label:'Salões e estética', query:'salão de beleza Belo Horizonte', offer:'site', project:'Site com chat e agenda', need:'perder cliente no Google / só WhatsApp', maps:'https://www.google.com/maps/search/sal%C3%A3o+de+beleza+Belo+Horizonte' },
-  { key:'loja', label:'Lojas de bairro', query:'loja Belo Horizonte', offer:'loja', project:'Loja virtual + Gestão de caixa', need:'catálogo e pedido online', maps:'https://www.google.com/maps/search/loja+Belo+Horizonte' },
-  { key:'contabilidade', label:'Contabilidades', query:'contabilidade Belo Horizonte', offer:'sistema', project:'Portal sob medida para clientes', need:'portal e processos manuais', maps:'https://www.google.com/maps/search/contabilidade+Belo+Horizonte' },
-  { key:'restaurante', label:'Restaurantes', query:'restaurante Belo Horizonte', offer:'site', project:'Site + cardápio + pedidos online', need:'cardápio/pedido digital', maps:'https://www.google.com/maps/search/restaurante+Belo+Horizonte' },
-  { key:'advocacia', label:'Escritórios de advocacia', query:'advocacia Belo Horizonte', offer:'site', project:'Site institucional + captura', need:'captação de leads jurídicos', maps:'https://www.google.com/maps/search/advocacia+Belo+Horizonte' },
-  { key:'imobiliaria', label:'Imobiliárias', query:'imobiliária Belo Horizonte', offer:'sistema', project:'Catálogo de imóveis + CRM leve', need:'vitrine de imóveis online', maps:'https://www.google.com/maps/search/imobili%C3%A1ria+Belo+Horizonte' },
-  { key:'academia', label:'Academias', query:'academia Belo Horizonte', offer:'gestao', project:'Gestão + site de matrículas', need:'matrícula e ponto/caixa', maps:'https://www.google.com/maps/search/academia+Belo+Horizonte' },
-  { key:'site', label:'Quem pede site / loja / sistema', query:'preciso de site OR landing page OR loja virtual OR sistema Belo Horizonte', offer:'site', project:'Site / loja / sistema sob medida', need:'demanda explícita de criação digital', maps:'https://www.google.com/search?q=preciso+de+site+Belo+Horizonte' }
-];
-
-function iaNorm(s){
-  return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function analyzeMarket(mkt){
+  const parts = [];
+  if(mkt && mkt.selic!=null && Number(mkt.selic) >= 12) parts.push('Selic alta: priorize PIX à vista e recorrência com CodeCraft Gestão.');
+  if(mkt && mkt.usdPct!=null && Math.abs(Number(mkt.usdPct)) >= 0.8) parts.push('Dólar volátil: destaque preço em real e entrega local.');
+  if(!parts.length) parts.push('Mercado estável: responda chats e feche propostas com clareza.');
+  return { copy: parts.join(' ') };
 }
-function loadIaChat(){
-  try{ return JSON.parse(localStorage.getItem(IA_ADMIN_KEY)||'[]'); }catch(e){ return []; }
-}
-function saveIaChat(items){
-  try{ localStorage.setItem(IA_ADMIN_KEY, JSON.stringify((items||[]).slice(-200))); }catch(e){}
-}
-function loadIaPipeline(){
-  try{ return JSON.parse(localStorage.getItem(IA_PIPELINE_KEY)||'[]'); }catch(e){ return []; }
-}
-function saveIaPipeline(items){
-  try{ localStorage.setItem(IA_PIPELINE_KEY, JSON.stringify((items||[]).slice(0,40))); }catch(e){}
-  iaRenderPipeline();
-}
-function iaPushProspect(p){
-  const list = loadIaPipeline().filter(x=>x.id !== p.id);
-  list.unshift(p);
-  saveIaPipeline(list);
-  try{ localStorage.setItem(IA_LAST_LEAD_KEY, JSON.stringify(p)); }catch(e){}
-}
-function renderIaAdminChat(){
-  const log = document.getElementById('admin-ai-log');
-  if(!log) return;
-  const chat = loadIaChat();
-  if(!chat.length){
-    log.innerHTML = '<div class="ccs-ai-msg"><div class="ccs-ai-meta">CodeCraft IA</div><strong>Agente sênior pronto.</strong><br>Pesquisa web + relatório profissional (quem / o que precisa / projeto CodeCraft / contato / abordagem). Peça: <em>caçar em tudo</em>, <em>leads do site</em>, <em>responder chats</em>, ou cole um CNPJ.</div>';
-    return;
-  }
-  log.innerHTML = chat.map(m=>{
-    const who = m.who==='me' ? 'me' : '';
-    const meta = m.who==='me' ? 'Você' : 'CodeCraft IA';
-    return '<div class="ccs-ai-msg '+who+'"><div class="ccs-ai-meta">'+meta+'</div>'+m.html+'</div>';
-  }).join('');
-  log.scrollTop = log.scrollHeight;
-}
-function pushAi(who, html){
-  const chat = loadIaChat();
-  chat.push({ who: who||'ia', html, ts: Date.now() });
-  saveIaChat(chat);
-  renderIaAdminChat();
-}
-function iaWrap(title, body){ return '<strong>'+title+'</strong><br>'+body; }
-function iaDaySeed(){
-  const d = new Date();
-  return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
-}
-
-async function iaSnapshot(){
-  const [projects, messages, leads] = await Promise.all([
-    loadProjects().catch(()=>[]),
-    loadMessages().catch(()=>[]),
-    loadLeadChats().catch(()=>[])
-  ]);
-  const openChats = [];
-  for(const l of (leads||[]).slice(0,10)){
-    const msgs = await loadChat(l.code).catch(()=>[]);
-    const last = msgs[msgs.length-1];
-    const sender = last ? (last.sender||last.from||'') : '';
-    openChats.push({
-      code: l.code,
-      name: l.name || l.code,
-      count: msgs.length,
-      unanswered: !!(last && sender !== 'admin'),
-      last: last ? (last.body||last.message||'') : ''
-    });
-  }
-  const unpaid = (projects||[]).filter(p=>!p.paid && Number(p.pixValue)>0);
-  const stuck = (projects||[]).filter(p=>p.status==='analise' || (p.status==='andamento' && !p.deliveryUrl));
-  return { projects: projects||[], messages: messages||[], leads: leads||[], openChats, unpaid, stuck };
-}
-
-async function iaRefreshSide(){
-  const pulse = document.getElementById('ia-pulse');
-  if(pulse){
-    try{
-      const s = await iaSnapshot();
-      const waiting = s.openChats.filter(c=>c.unanswered).length;
-      pulse.innerHTML =
-        '<div class="ccs-ia-pulse-row"><span>Projetos</span><b>'+s.projects.length+'</b></div>'+
-        '<div class="ccs-ia-pulse-row"><span>Travados</span><b>'+s.stuck.length+'</b></div>'+
-        '<div class="ccs-ia-pulse-row"><span>PIX a receber</span><b>'+s.unpaid.length+'</b></div>'+
-        '<div class="ccs-ia-pulse-row"><span>Chats do site</span><b>'+s.leads.length+'</b></div>'+
-        '<div class="ccs-ia-pulse-row"><span>Aguardando resposta</span><b>'+waiting+'</b></div>'+
-        '<div class="ccs-ia-pulse-row"><span>Mensagens</span><b>'+s.messages.length+'</b></div>';
-    }catch(e){
-      pulse.innerHTML = '<span style="color:var(--ink-soft);font-size:13px;">Sem leitura do banco agora.</span>';
-    }
-  }
-  iaRenderPipeline();
-}
-function iaRenderPipeline(){
-  const el = document.getElementById('ia-pipeline');
-  if(!el) return;
-  const list = loadIaPipeline();
-  if(!list.length){
-    el.innerHTML = '<span style="font-size:13px;color:var(--ink-soft);">Nenhum alvo. Peça “prospectar clientes”.</span>';
-    return;
-  }
-  el.innerHTML = list.slice(0,6).map(p=>{
-    const badge = p.source==='inbound' ? '<span class="ccs-ia-badge real">Lead real</span>'
-      : p.source==='cnpj' ? '<span class="ccs-ia-badge">CNPJ</span>'
-      : '<span class="ccs-ia-badge warn">Alvo</span>';
-  const chatBtn = p.phone ? '<button class="ccs-btn amber small" type="button" onclick="navigator.clipboard.writeText('+JSON.stringify(p.outreach||'')+');openAppConversas();">Copiar e abrir chat</button>' : '';
-    const maps = p.maps ? '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+p.maps+'">Maps</a>' : '';
-    const chat = p.chatCode ? '<button class="ccs-btn ghost small" onclick="iaOpenChatCode(\''+String(p.chatCode).replace(/'/g,"\\'")+'\')">Chat</button>' : '';
-    return '<div class="ccs-ia-lead">'+badge+
-      '<strong>'+escapeHtml(p.company||p.name||'Alvo')+'</strong>'+
-      '<span>'+escapeHtml(p.project||p.pain||'')+'</span>'+
-      (p.contact? '<span>'+escapeHtml(p.contact)+'</span>':'')+
-      (p.phone||p.email? '<span>'+escapeHtml([p.phone,p.email].filter(Boolean).join(' · '))+'</span>':'')+
-      '<div class="acts">'+chatBtn+maps+chat+
-      '<button class="ccs-btn ghost small" onclick="iaDraftProspect(\''+String(p.id).replace(/'/g,"\\'")+'\')">Abordagem</button></div></div>';
-  }).join('');
-}
-
-function iaOpenChatCode(code){
-  switchAdminTab('conversas');
-  if(typeof openAdminLeadChat==='function') openAdminLeadChat(code);
-  else if(typeof openAdminChat==='function') openAdminChat(code);
-}
-function iaDraftProspect(id){
-  const p = loadIaPipeline().find(x=>x.id===id);
-  if(!p){ showToast('Alvo não encontrado.'); return; }
-  pushAi('ia', iaOutreachHtml(p));
-}
-function iaOutreachHtml(p){
-  const nome = (p.contact||'responsável').split('(')[0].trim();
-  const prod = CCS_COMPANY.products.find(x=>x.id===p.offer) || CCS_COMPANY.products[0];
-  const plain =
-    'Prezado(a) '+nome+',\n\nSou da '+CCS_COMPANY.name+', em '+CCS_COMPANY.city+
-    '.\n\nIdentificamos oportunidade para '+(p.company||'sua empresa')+': '+(p.pain||p.project||'melhorar operação digital')+
-    '.\n\nPodemos entregar '+prod.name+' ('+prod.price+') com portal em tempo real e PIX '+CCS_COMPANY.pix+
-    '.\n\nProjeto sugerido: '+(p.project||prod.detail)+
-    '.\n\nPodemos falar 15 minutos ainda hoje?\n\nAtenciosamente,\nEquipe '+CCS_COMPANY.name+'\nChat: gustavosena972-wq.github.io/CodeCraft-Solutions/';
-  p.outreach = plain;
-  iaPushProspect(p);
-  const body = plain.replace(/\n/g,'<br>');
-  const chatAct = '<div class="ccs-ia-actions"><button class="ccs-btn amber small" type="button" onclick="navigator.clipboard.writeText('+JSON.stringify(plain)+');openAppConversas();">Copiar e abrir chat</button></div>';
-  return iaWrap('Abordagem pronta', body)+chatAct;
-}
-
-function iaCompanyCard(){
-  return iaWrap('O que a CodeCraft Solutions vende',
-    CCS_COMPANY.city+' · Chat no site · PIX '+CCS_COMPANY.pix+' · '+CCS_COMPANY.instagram+'<br><br>'+
-    CCS_COMPANY.products.map(p=>
-      '• <strong>'+p.name+'</strong> — '+p.price+' · '+p.forWhom+' · dor: '+p.pain+'<br><span style="color:var(--ink-soft)">'+p.detail+'</span>'
-    ).join('<br><br>')+
-    '<br><br>Não sou IA solta: leio a fila deste admin e preparo ações (chat, portal, Gestão).'
-  );
-}
-
-async function iaInboundLeadsHtml(snap){
-  const inbound = [];
-  (snap.openChats||[]).forEach(c=>{
-    const p = {
-      id: 'chat-'+c.code, source:'inbound', company:c.name, name:c.name, chatCode:c.code,
-      pain: c.unanswered ? 'Mensagem sem resposta no chat do site' : 'Conversa ativa no site',
-      project:'Qualificar necessidade e converter em projeto CodeCraft', offer:'site',
-      contact:c.name, phone:'', email:'',
-      outreach:'Olá, '+c.name+'! Aqui é da CodeCraft Solutions. Vi sua mensagem no site e quero te ajudar no próximo passo.'
-    };
-    inbound.push(p); iaPushProspect(p);
-  });
-  (snap.messages||[]).slice(0,8).forEach((m,i)=>{
-    const contact = m.contact || m.email || m.phone || '';
-    const p = {
-      id:'msg-'+(m.id||i), source:'inbound', company:m.name||'Contato do formulário', name:m.name||'',
-      pain:(m.msg||m.message||m.body||'').slice(0,160),
-      project:'Retornar formulário e abrir proposta', offer:'site', contact:m.name||'',
-      phone: /\d{10,}/.test(contact) ? contact : '',
-      email: /@/.test(contact) ? contact : '',
-      outreach:'Olá'+(m.name?', '+m.name:'')+'! Recebemos sua mensagem na CodeCraft Solutions e retornamos agora.'
-    };
-    inbound.push(p); iaPushProspect(p);
-  });
-  if(!inbound.length){
-    return iaWrap('Leads reais do site',
-      'Não há chats/mensagens novos agora. Use <strong>prospectar</strong> (Maps por nicho) ou cole um CNPJ para buscar empresa na Receita (BrasilAPI).');
-  }
-  let html = '<span class="ccs-ia-badge real">Leads reais</span> '+inbound.length+' contato(s) do site — prioridade máxima.';
-  inbound.slice(0,6).forEach(p=>{
-    html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">Lead inbound</div><ul>'+
-      '<li><strong>Nome:</strong> '+escapeHtml(p.company)+'</li>'+
-      '<li><strong>Mensagem / dor:</strong> '+escapeHtml(p.pain||'—')+'</li>'+
-      '<li><strong>Projeto sugerido:</strong> '+escapeHtml(p.project)+'</li>'+
-      (p.chatCode? '<li><strong>Chat:</strong> '+escapeHtml(p.chatCode)+'</li>':'')+
-      (p.phone||p.email? '<li><strong>Contato:</strong> '+escapeHtml([p.phone,p.email].filter(Boolean).join(' · '))+'</li>':'')+
-      '</ul><div class="ccs-ia-actions">'+
-      (p.chatCode? '<button class="ccs-btn amber small" onclick="iaOpenChatCode(\''+p.chatCode+'\')">Abrir e responder</button>':'')+
-      (!p.chatCode && p.outreach ? '<button class="ccs-btn ghost small" type="button" onclick="navigator.clipboard.writeText('+JSON.stringify(p.outreach||'')+');openAppConversas();">Copiar resposta</button>':'')+
-      '</div></div>';
-  });
-  return html;
-}
-
-function iaHuntHtml(raw){
-  const t = iaNorm(raw);
-  const emTudo = /em tudo|cacar|caçar|freelance|instagram|varredura|prospect/.test(t);
-  let niche = IA_HUNT_NICHES.find(n=> t.includes(n.key) || t.includes(iaNorm(n.label).split(' ')[0]));
-  if(emTudo && !niche) niche = IA_HUNT_NICHES.find(n=>n.key==='site') || IA_HUNT_NICHES[0];
-  if(!niche) niche = IA_HUNT_NICHES[iaDaySeed() % IA_HUNT_NICHES.length];
-  const prod = CCS_COMPANY.products.find(x=>x.id===niche.offer) || CCS_COMPANY.products[0];
-  const freelanceQ = '"preciso de site" OR "loja virtual" OR "landing page" OR sistema OR aplicativo';
-  const queries = {
-    google: '"preciso de site" OR "quero um site" OR "orçamento site" Belo Horizonte',
-    maps: niche.query + ' (sem site OR só WhatsApp)',
-    instagram: '"preciso de site" OR "alguém faz site" OR "orçamento" Belo Horizonte',
-    '99freelas': freelanceQ,
-    workana: freelanceQ + ' Brasil',
-    getninjas: '"criação de site" OR "loja virtual" pedido Belo Horizonte',
-    freelancer: freelanceQ,
-    linkedin: '"preciso de site" OR "contratar desenvolvedor" Belo Horizonte'
-  };
-
-  const pack = emTudo
-    ? IA_HUNT_NICHES.filter(n=>n.key!=='site').slice(0,6)
-    : [niche];
-
-  pack.forEach((n,i)=>{
-    const p = CCS_COMPANY.products.find(x=>x.id===n.offer) || prod;
-    iaPushProspect({
-      id:'hunt-'+n.key+'-'+iaDaySeed()+'-'+i, source:'hunt',
-      company: n.label+' · demanda a validar',
-      pain: n.need || 'Buscar pedido real no freelance (não empresa 5 estrelas).',
-      project:n.project, offer:n.offer, contact:'Abrir anúncio e copiar contato',
-      phone:'', email:'', maps:n.maps,
-      outreach:'Olá! Vi que você busca '+n.project.toLowerCase()+'. Sou da CodeCraft Solutions (BH). Posso te mostrar opções com preço e prazo?'
-    });
-  });
-
-  let html = iaWrap('Caça de DEMANDA real — '+niche.label,
-    '<span class="ccs-ia-badge real">Pedidos reais</span> Foque em quem <strong>está pedindo</strong> site/loja/sistema — não em empresas 5 estrelas do Maps.<br><br>'+
-    '<strong>O que procurar no anúncio:</strong> o que a pessoa quer + telefone/@/e-mail do brief.<br>'+
-    '<strong>Projeto CodeCraft:</strong> '+escapeHtml(prod.name)+' — '+escapeHtml(prod.price)+'<br><br>'+
-    '<strong>Canais (prioridade freelance):</strong>'
-  );
-
-  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">1 · Freelance (melhor fonte)</div>'+
-    '<p style="margin:0 0 8px;font-size:13.5px;color:var(--ink-soft)">Aqui tem gente pedindo de verdade. Abra o projeto, copie o que precisam e o contato.</p>'+
-    '<div class="ccs-ia-actions">'+
-    '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='99freelas').build(queries['99freelas'])+'">99Freelas</a>'+
-    '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='workana').build(queries.workana)+'">Workana</a>'+
-    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='getninjas').build(queries.getninjas)+'">GetNinjas</a>'+
-    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='freelancer').build(queries.freelancer)+'">Freelancer</a>'+
-    '</div></div>';
-
-  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">2 · Pedidos explícitos no Google</div>'+
-    '<div class="ccs-ia-actions">'+
-    '<a class="ccs-btn amber small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='google').build(queries.google)+'">“Preciso de site” BH</a>'+
-    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+IA_HUNT_SOURCES.find(s=>s.id==='instagram').build(queries.instagram)+'">Instagram (pedidos)</a>'+
-    '</div></div>';
-
-  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">3 · Maps (só se for validar negócio sem site)</div>'+
-    '<p style="margin:0 0 8px;font-size:13.5px;color:var(--ink-soft)">Não use ranking 5 estrelas. Procure negócio que só tem WhatsApp/Instagram.</p>'+
-    '<div class="ccs-ia-actions">'+
-    '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+niche.maps+'">Maps · '+escapeHtml(niche.label)+'</a>'+
-    '</div></div>';
-
-  html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">Modelo do relatório (obrigatório)</div><ul>'+
-    '<li><strong>Quem:</strong> nome do anúncio</li>'+
-    '<li><strong>O que precisa:</strong> texto do pedido</li>'+
-    '<li><strong>Projeto CodeCraft:</strong> '+escapeHtml(prod.name)+'</li>'+
-    '<li><strong>Canal:</strong> 99Freelas / Workana / …</li>'+
-    '<li><strong>Contato:</strong> do anúncio (não inventar)</li>'+
-    '<li><strong>Link:</strong> URL do projeto</li></ul></div>';
-
-  html += '<br>'+iaWrap('Prioridade',
-    'Leads do <strong>chat/formulário do site</strong> primeiro. Depois freelance. Maps 5 estrelas não conta como lead.');
-  return html;
-}
-
-async function iaLookupCnpj(cnpj){
-  const digits = String(cnpj).replace(/\D/g,'');
-  if(digits.length!==14) return iaWrap('CNPJ inválido', 'Envie 14 dígitos para consultar na BrasilAPI.');
-  try{
-    const res = await fetch('https://brasilapi.com.br/api/cnpj/v1/'+digits);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const j = await res.json();
-    const company = j.razao_social || j.nome_fantasia || 'Empresa';
-    const phone = (j.ddd_telefone_1||'').replace(/\D/g,'');
-    const email = j.email || '';
-    const city = ((j.municipio||'')+'/'+(j.uf||'')).replace(/^\/|\/$/g,'');
-    const cnae = j.cnae_fiscal_descricao || '';
-    const cnaeN = iaNorm(cnae);
-    let offer = 'site';
-    if(/saude|clinic|medic|odont|hospital/.test(cnaeN)) offer = 'gestao';
-    else if(/comerc|varej|loja/.test(cnaeN)) offer = 'loja';
-    else if(/contab|software|tecnolog/.test(cnaeN)) offer = 'sistema';
-    const prod = CCS_COMPANY.products.find(x=>x.id===offer);
-    const p = {
-      id:'cnpj-'+digits, source:'cnpj', company,
-      pain:'Empresa ativa ('+cnae+') em '+city,
-      project: prod ? prod.name+' · '+prod.detail : 'Diagnóstico CodeCraft',
-      offer, contact:(j.qsa && j.qsa[0] && j.qsa[0].nome_socio) || 'Comercial',
-      phone: phone.length>=10 ? phone : '', email,
-      maps:'https://www.google.com/maps/search/'+encodeURIComponent(company+' '+(j.municipio||'Belo Horizonte')),
-      outreach:'Olá! Sou da CodeCraft Solutions. Vi a '+company+' e posso ajudar com '+((prod&&prod.name)||'soluções digitais')+'. Combinamos 15 minutos?'
-    };
-    iaPushProspect(p);
-    return '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">Pesquisa CNPJ · dados públicos</div><ul>'+
-      '<li><strong>Empresa:</strong> '+escapeHtml(company)+'</li>'+
-      '<li><strong>Fantasia:</strong> '+escapeHtml(j.nome_fantasia||'—')+'</li>'+
-      '<li><strong>CNAE:</strong> '+escapeHtml(cnae||'—')+'</li>'+
-      '<li><strong>Situação:</strong> '+escapeHtml(j.descricao_situacao_cadastral||'—')+'</li>'+
-      '<li><strong>Cidade:</strong> '+escapeHtml(city||'—')+'</li>'+
-      '<li><strong>Telefone Receita:</strong> '+escapeHtml(phone||'não informado')+'</li>'+
-      '<li><strong>E-mail:</strong> '+escapeHtml(email||'não informado')+'</li>'+
-      '<li><strong>Projeto sugerido:</strong> '+escapeHtml(p.project)+'</li>'+
-      '<li><strong>Contato:</strong> '+escapeHtml(p.contact)+'</li></ul>'+
-      '<div class="ccs-ia-actions">'+
-      (p.phone? '<button class="ccs-btn amber small" type="button" onclick="navigator.clipboard.writeText('+JSON.stringify(p.outreach||'')+');openAppConversas();">Copiar abordagem</button>':'')+
-      '<a class="ccs-btn ghost small" target="_blank" rel="noopener" href="'+p.maps+'">Maps</a>'+
-      '<button class="ccs-btn ghost small" onclick="iaDraftProspect(\''+p.id+'\')">Abordagem</button></div></div>';
-  }catch(e){
-    return iaWrap('Falha na consulta CNPJ', 'BrasilAPI indisponível agora. Tente de novo em instantes.');
-  }
-}
-
-async function iaAnalyzeProjects(snap){
-  const projects = snap.projects||[];
-  if(!projects.length) return iaWrap('Fila de projetos', 'Nenhum projeto no painel ainda.');
-  const by = {};
-  projects.forEach(p=>{ by[p.status]=(by[p.status]||0)+1; });
-  let html = iaWrap('Análise da fila',
-    projects.length+' projeto(s): '+(by.analise||0)+' análise · '+(by.andamento||0)+' andamento · '+(by.concluido||0)+' concluído.<br>'+
-    'PIX em aberto: '+snap.unpaid.length+' · Travados: '+snap.stuck.length+'.');
-  projects.slice(0,8).forEach(p=>{
-    const risks = [];
-    if(!p.paid && Number(p.pixValue)>0) risks.push('PIX pendente');
-    if(p.status==='concluido' && !p.deliveryUrl) risks.push('sem link de entrega');
-    if(p.status==='analise') risks.push('ainda em análise');
-    html += '<div class="ccs-ia-card"><strong>'+escapeHtml(p.clientName)+'</strong> · '+escapeHtml(p.projectName)+
-      '<br><span style="font-size:12.5px;color:var(--ink-soft)">'+escapeHtml(p.trackingCode)+' · '+escapeHtml(p.status)+' · '+money(Number(p.pixValue||0))+(p.paid?' · pago':'')+'</span>'+
-      (risks.length? '<br>⚠ '+risks.join(' · '):' <br>✓ ok')+
-      '<div class="ccs-ia-actions"><button class="ccs-btn ghost small" onclick="switchAdminTab(\'projetos\')">Projetos</button>'+
-      '<button class="ccs-btn ghost small" onclick="iaOpenChatCode(\''+escapeHtml(p.trackingCode)+'\')">Chat</button></div></div>';
-  });
-  return html;
-}
-
-async function iaAttendChats(snap){
-  const waiting = (snap.openChats||[]).filter(c=>c.unanswered);
-  if(!waiting.length) return iaWrap('Atendimento', 'Nenhum chat aguardando resposta agora.');
-  let html = iaWrap('Conversas aguardando', waiting.length+' chat(s) com última mensagem do cliente.');
-  waiting.slice(0,5).forEach(c=>{
-    const draft =
-      'Prezado(a) '+c.name+',\n\nAgradecemos o contato com a CodeCraft Solutions.\n\n'+
-      'Recebemos sua mensagem e queremos entender: (1) objetivo do projeto; (2) prazo; (3) se prefere site, loja, sistema ou CodeCraft Gestão.\n\n'+
-      'Com isso, enviamos a proposta com clareza.\n\nAtenciosamente,\nEquipe CodeCraft Solutions\nChat: gustavosena972-wq.github.io/CodeCraft-Solutions/';
-    window.__iaDrafts = window.__iaDrafts || {};
-    window.__iaDrafts[c.code] = draft;
-    html += '<div class="ccs-ia-card"><div class="ccs-ia-daily-head">Chat '+escapeHtml(c.code)+'</div>'+
-      '<strong>'+escapeHtml(c.name)+'</strong><br>'+
-      '<span style="font-size:13px;color:var(--ink-soft)">Última: '+escapeHtml((c.last||'').slice(0,180))+'</span>'+
-      '<div class="ccs-ia-actions">'+
-      '<button class="ccs-btn amber small" onclick="iaSendDraftToChat(\''+c.code+'\')">Enviar resposta no chat</button>'+
-      '<button class="ccs-btn ghost small" onclick="iaOpenChatCode(\''+c.code+'\')">Abrir</button></div></div>';
-  });
-  return html;
-}
-
-async function iaSendDraftToChat(code){
-  const text = (window.__iaDrafts && window.__iaDrafts[code]) || '';
-  if(!text){ showToast('Rascunho não encontrado.'); return; }
-  const ok = await insertChat(code, 'admin', text);
-  if(ok){ showToast('Resposta enviada.'); iaOpenChatCode(code); iaRefreshSide(); }
-  else showToast('Falha ao enviar.');
-}
-
-function iaPanelHtml(snap, mkt){
-  const paid = (snap.projects||[]).filter(p=>p.paid).reduce((s,p)=>s+Number(p.pixValue||0),0);
-  const open = snap.unpaid.reduce((s,p)=>s+Number(p.pixValue||0),0);
-  return iaWrap('Painel da empresa',
-    'Projetos: '+snap.projects.length+' · Chats: '+snap.leads.length+' · Formulários: '+snap.messages.length+'<br>'+
-    'Recebido: '+money(paid)+' · A receber: '+money(open)+'<br>'+
-    'Travados: '+snap.stuck.length+' · Sem resposta: '+snap.openChats.filter(c=>c.unanswered).length+'<br><br>'+
-    (mkt && mkt.usd!=null ? ('Mercado: dólar R$ '+Number(mkt.usd).toFixed(2)+(mkt.selic!=null?' · Selic '+mkt.selic+'%':'')+'<br><br>') : '')+
-    'Prioridade: 1) responder chats reais 2) cobrar PIX 3) prospectar 1 nicho 4) destravar projetos'
-  );
-}
-
-async function iaSeniorReply(text, snap, mkt){
-  const t = iaNorm(text);
-  const cnpjMatch = text.match(/\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}/) || text.match(/\b\d{14}\b/);
-  if(cnpjMatch) return await iaLookupCnpj(cnpjMatch[0]);
-
-  if(/o que (a )?codecraft|o que (voces|vocês) fazem|o que vendemos|produtos|servicos|serviços|quem somos/.test(t))
-    return iaCompanyCard();
-  if(/lead(s)? do site|inbound|mensagens do formulario|mensagens do formulário|contatos do site|mostrar leads/.test(t))
-    return await iaInboundLeadsHtml(snap);
-  if(/prospect|prospec|achar cliente|encontrar cliente|buscar cliente|cacar|caçar|varredura|scan|oportunidad|prospectar|freelance|99freela|workana|getninjas|instagram|em tudo/.test(t)){
-    const inbound = await iaInboundLeadsHtml(snap);
-    return inbound + '<br><br>' + iaHuntHtml(text);
-  }
-  if(/responder conversa|atender chat|conversas abertas|chats abertos|atendimento|responder conversas/.test(t))
-    return await iaAttendChats(snap);
-  if(/analise de projeto|análise de projeto|analise de projetos|análise de projetos|projetos da fila|analisar projeto|analisar projetos/.test(t))
-    return await iaAnalyzeProjects(snap);
-  if(/painel|empresa|operacao|operação|caixa/.test(t) && !/gestao|gestão/.test(t))
-    return iaPanelHtml(snap, mkt);
-  if(/mercado|dolar|dólar|selic|ibov|economia/.test(t)){
-    if(typeof analyzeMarket==='function') return analyzeMarket(mkt||{}).copy;
-    if(typeof analyzeMarket==='undefined' && mkt && mkt.usd!=null){
-      return iaWrap('Mercado', 'Dólar R$ '+Number(mkt.usd).toFixed(2)+(mkt.selic!=null?' · Selic '+mkt.selic+'%':'')+'. Com Selic alta, priorize PIX à vista e CodeCraft Gestão.');
-    }
-    return iaWrap('Mercado', 'Sem cotação no momento.');
-  }
-  if(/abordagem|redig|mensagem comercial|whatsapp comercial|redigir abordagem/.test(t)){
-    let lead = null;
-    try{ lead = JSON.parse(localStorage.getItem(IA_LAST_LEAD_KEY)||'null'); }catch(e){}
-    if(!lead) lead = loadIaPipeline()[0];
-    if(!lead) return iaWrap('Sem alvo', 'Rode prospectar ou leads do site primeiro.');
-    return iaOutreachHtml(lead);
-  }
-  if(/arquitet/.test(t)) return iaWrap('Arquitetura', 'Separar SaaS (Gestão) de sob medida. Cada entrega: portal + status + PIX '+CCS_COMPANY.pix+'. Segredos só no Supabase.');
-  if(/codigo|código|code review|qualidade tecnica|qualidade técnica/.test(t)) return iaWrap('Código', 'Validação, RLS, webhook Asaas com token, sem secret no front, UI com estados claros.');
-  if(/gestao|gestão|erp|asaas/.test(t))
-    return iaWrap('CodeCraft Gestão', 'SaaS B2B: Financeiro, RH e Billing Asaas (R$ 280–500/mês).<br><a class="ccs-btn amber small" href="'+CCS_COMPANY.gestaoUrl+'" target="_blank" rel="noopener">Abrir Gestão</a>');
-  if(/ajuda|o que voce faz|o que você faz|comandos|menu|como funciona/.test(t))
-    return iaWrap('Como trabalho',
-      '• Prospectar — leads reais + Maps por nicho<br>• CNPJ — dados públicos BrasilAPI<br>• Atender chats — redijo e envio<br>• Projetos/Painel — operação ao vivo<br>• Conheço o catálogo CodeCraft<br>Não invento telefone.');
-  return iaWrap('CodeCraft IA',
-    'Entendi: “'+escapeHtml(text.slice(0,200))+'”.<br><br>'+
-    'Painel: '+snap.projects.length+' projetos, '+snap.leads.length+' chats, '+snap.openChats.filter(c=>c.unanswered).length+' sem resposta.<br><br>'+
-    'Diga: <em>prospectar clientes</em>, <em>leads do site</em>, <em>responder conversas</em> ou cole um CNPJ.'
-  );
-}
-
-async function runDailyScan(force){
-  const snap = await iaSnapshot();
-  const html = (await iaInboundLeadsHtml(snap)) + '<br><br>' + iaHuntHtml('prospectar');
-  pushAi('ia', '<strong>Varredura operacional</strong><br>'+html);
-  await iaRefreshSide();
-  showToast('Varredura concluída.');
-}
-function iaDraftFromLastLead(){
-  let lead = null;
-  try{ lead = JSON.parse(localStorage.getItem(IA_LAST_LEAD_KEY)||'null'); }catch(e){}
-  if(!lead) lead = loadIaPipeline()[0];
-  if(!lead){ showToast('Sem alvo. Prospecte primeiro.'); return; }
-  pushAi('ia', iaOutreachHtml(lead));
-}
-function runAiOrder(text){ iaRun(text); }
-function iaRun(text){
-  const input = document.getElementById('admin-ai-input');
-  if(input) input.value = text;
-  switchAdminTab('ia');
-  sendAdminAi();
-}
-function bootAdminAi(){
-  adminAiBooted = true;
-  renderIaAdminChat();
-  iaRefreshSide();
-}
-function iaSetStatus(label){
-  const el = document.getElementById('ccs-ia-status-text');
-  if(el) el.textContent = label;
-}
-function iaCompactSnapshot(snap){
-  return {
-    projects: (snap.projects||[]).map(p=>({
-      code:p.trackingCode, client:p.clientName, project:p.projectName, status:p.status,
-      paid:!!p.paid, value:Number(p.pixValue||0), delivery:!!p.deliveryUrl
-    })),
-    unpaid: (snap.unpaid||[]).length,
-    stuck: (snap.stuck||[]).map(p=>({ code:p.trackingCode, client:p.clientName, status:p.status })),
-    leads: (snap.leads||[]).map(l=>({ code:l.code, name:l.name })),
-    openChats: (snap.openChats||[]).map(c=>({ code:c.code, name:c.name, unanswered:c.unanswered, last:c.last||'' })),
-    messages: (snap.messages||[]).map(m=>({ name:m.name, contact:m.contact, msg:m.msg||'' })),
-    company: { name:CCS_COMPANY.name, pix:CCS_COMPANY.pix, contact:CCS_COMPANY.chatSite, products:CCS_COMPANY.products }
-  };
-}
-async function callClaudeAdminAi(text, snap, mkt){
-  if(!supabaseClient) return null;
-  const session = await requireAdminSession();
-  if(!session) return null;
-  const history = loadIaChat().slice(-60).map(m=>({
-    role: m.who==='me' ? 'user' : 'assistant',
-    content: String(m.html||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()
-  })).filter(h=>h.content);
-  const { data, error } = await supabaseClient.functions.invoke('ccs-admin-ai', {
-    body: {
-      message: text,
-      snapshot: iaCompactSnapshot(snap),
-      market: mkt||{},
-      history
-    }
-  });
-  if(error){
-    console.warn('ccs-admin-ai', error);
-    return { ok:false, error: error.message||String(error) };
-  }
-  if(data && data.error){
-    return { ok:false, error: data.error, code: data.code };
-  }
-  if(data && (data.replyHtml || data.reply)){
-    return {
-      ok:true,
-      html: data.replyHtml || data.reply,
-      webSearch: !!data.webSearch,
-      model: data.model,
-      provider: data.provider || 'claude'
-    };
-  }
-  return { ok:false, error: 'Resposta vazia da Claude.' };
-}
-async function sendAdminAi(){
-  return sendAdminAiCore();
-}
-async function sendAdminAiCore(){
-  const input = document.getElementById('admin-ai-input');
-  const text = (input && input.value || '').trim();
-  if(!text) return;
-  input.value = '';
-  const chat = loadIaChat();
-  chat.push({ who:'me', html:escapeHtml(text).replace(/\n/g,'<br>'), ts:Date.now() });
-  saveIaChat(chat);
-  renderIaAdminChat();
-  pushAi('ia', '<span style="color:var(--ink-soft)">Pesquisando e montando relatório sênior…</span>');
-  try{
-    const [snap, mkt] = await Promise.all([
-      iaSnapshot(),
-      (typeof loadMarket==='function' ? loadMarket() : Promise.resolve({}))
-    ]);
-    let reply = null;
-    try{
-      const cloud = await callClaudeAdminAi(text, snap, mkt||{});
-      if(cloud && cloud.ok){
-        const label = cloud.provider === 'groq'
-          ? (cloud.webSearch ? 'Groq · web' : 'Groq')
-          : cloud.provider === 'gemini'
-          ? (cloud.webSearch ? 'Gemini · web' : 'Gemini')
-          : (cloud.webSearch ? 'Claude · web' : 'Claude');
-        iaSetStatus(label);
-        const badge = cloud.provider === 'groq'
-          ? '<span class="ccs-ia-badge real">Groq 70B + pesquisa</span>'
-          : cloud.provider === 'gemini'
-          ? '<span class="ccs-ia-badge real">Gemini + pesquisa</span>'
-          : '<span class="ccs-ia-badge real">Claude + pesquisa</span>';
-        reply = badge + '<br>' + cloud.html;
-      } else if(cloud && cloud.code === 'NO_KEY'){
-        iaSetStatus('Aguardando chave Groq');
-      } else if(cloud && cloud.error){
-        console.warn('IA cloud:', cloud.error);
-        iaSetStatus('Local · apoio');
-      }
-    }catch(err){
-      console.warn(err);
-      iaSetStatus('Local · apoio');
-    }
-    if(!reply){
-      reply = await iaSeniorReply(text, snap, mkt||{});
-      if(!String(reply).includes('ccs-ia-badge')){
-        reply = '<span class="ccs-ia-badge warn">Aguardando GROQ_API_KEY</span><br>' +
-          '<p>Caminho sênior grátis (sem cartão): crie a chave em <a target="_blank" rel="noopener" href="https://console.groq.com/keys">console.groq.com/keys</a> (login com Google) e cole aqui. Ou use Gemini se conseguir criar.</p>' +
-          reply;
-      }
-      if(!document.getElementById('ccs-ia-status-text')?.textContent?.includes('Gemini') &&
-         !document.getElementById('ccs-ia-status-text')?.textContent?.includes('Claude')){
-        iaSetStatus('Local · apoio');
-      }
-    }
-    const items = loadIaChat();
-    if(items.length && items[items.length-1].who!=='me') items.pop();
-    items.push({ who:'ia', html:reply, ts:Date.now() });
-    saveIaChat(items);
-    renderIaAdminChat();
-    await iaRefreshSide();
-  }catch(e){
-    pushAi('ia', 'Falha: '+escapeHtml(e.message||String(e)));
-  }
-}
-
 const MKT_BANK = [
   { cat:'strategy', title:'Posicionamento', body:'CodeCraft Solutions atende MEI, PME e grandes empresas em BH e Brasil. Sites, lojas, sistemas sob medida e CodeCraft Gestão (ERP). Toda peça: 1 problema, 1 prova, 1 CTA (chat do site ou portal).' },
   { cat:'calendar', title:'Semana padrão', body:'Seg: problema do nicho. Ter: antes/depois. Qua: CodeCraft Gestão. Qui: prova social. Sex: oferta PIX na entrega. Sáb: mercado (Selic/dólar) e o que vender. Dom: bastidor da @code.invention. 1 CTA por post.' },
