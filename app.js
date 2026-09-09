@@ -26,11 +26,15 @@ const supabaseClient = configOk ? window.supabase.createClient(SUPABASE_URL, SUP
   },
 }) : null;
 
-/* Contas autorizadas no painel (Gustavo + Lucas). Criar/resetar senha no Supabase → Authentication → Users. */
+/* Contas autorizadas no painel (Gustavo + Lucas). */
 const ADMIN_ALLOWED_EMAILS = [
   'gustavosena972@gmail.com',
   'lucashdhdhdhdhdbddb@gmail.com'
 ];
+/* Senha compartilhada das versões anteriores — libera o painel mesmo se o Auth do Supabase estiver com outra senha. */
+const ADMIN_SHARED_PASSWORD = 'codecraft2026';
+let adminLocalOk = false;
+let adminLocalEmail = '';
 function normalizeEmail(email){
   return String(email || '').trim().toLowerCase();
 }
@@ -44,12 +48,18 @@ async function requireAdminSession(){
   if(!supabaseClient) return null;
   const { data } = await supabaseClient.auth.getSession();
   const session = data && data.session ? data.session : null;
-  if(!session) return null;
-  if(!isAllowedAdminEmail(sessionAdminEmail(session))){
-    await supabaseClient.auth.signOut();
-    return null;
+  if(session){
+    if(!isAllowedAdminEmail(sessionAdminEmail(session))){
+      await supabaseClient.auth.signOut();
+    } else {
+      return session;
+    }
   }
-  return session;
+  /* Login local (e-mail autorizado + senha compartilhada). */
+  if(adminLocalOk && isAllowedAdminEmail(adminLocalEmail)){
+    return { user: { email: adminLocalEmail }, local: true };
+  }
+  return null;
 }
 
 /* ================= UTIL ================= */
@@ -630,37 +640,56 @@ async function adminLogin(){
     errEl.style.display = 'block';
     return;
   }
+
+  /* 1) Tenta Auth do Supabase (se a senha do usuário bater). */
   const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if(error){
-    errEl.textContent = 'E-mail ou senha incorretos.';
-    errEl.style.display = 'block';
+  if(!error){
+    adminLocalOk = false;
+    adminLocalEmail = '';
+    adminLoggedIn = true;
+    errEl.style.display = 'none';
+    document.getElementById('admin-pass').value = '';
+    migrateCrmLeads();
+    renderAdminGate();
     return;
   }
-  const session = await requireAdminSession();
-  if(!session){
-    errEl.textContent = 'Este e-mail não tem acesso ao admin.';
-    errEl.style.display = 'block';
+
+  /* 2) Fallback: mesma senha compartilhada das versões anteriores. */
+  if(password === ADMIN_SHARED_PASSWORD){
+    adminLocalOk = true;
+    adminLocalEmail = normalizeEmail(email);
+    adminLoggedIn = true;
+    errEl.style.display = 'none';
+    document.getElementById('admin-pass').value = '';
+    migrateCrmLeads();
+    renderAdminGate();
     return;
   }
-  adminLoggedIn = true;
-  errEl.style.display = 'none';
-  document.getElementById('admin-pass').value = '';
-  migrateCrmLeads();
-  renderAdminGate();
+
+  errEl.textContent = 'E-mail ou senha incorretos.';
+  errEl.style.display = 'block';
 }
 async function adminLogout(){
   adminLoggedIn = false;
+  adminLocalOk = false;
+  adminLocalEmail = '';
   stopRealtime();
   if(supabaseClient){ await supabaseClient.auth.signOut(); }
   renderAdminGate();
 }
 async function syncAdminSessionFromAuth(session){
-  const ok = !!(session && isAllowedAdminEmail(sessionAdminEmail(session)));
-  if(session && !ok){
+  const authOk = !!(session && isAllowedAdminEmail(sessionAdminEmail(session)));
+  if(session && !authOk){
     await supabaseClient.auth.signOut();
-    adminLoggedIn = false;
+  }
+  if(authOk){
+    adminLocalOk = false;
+    adminLocalEmail = '';
+    adminLoggedIn = true;
+  } else if(adminLocalOk && isAllowedAdminEmail(adminLocalEmail)){
+    adminLoggedIn = true;
   } else {
-    adminLoggedIn = ok;
+    adminLoggedIn = false;
   }
   const onAdmin = window.CCS_PAGE === 'admin' || (document.getElementById('screen-admin') && document.getElementById('screen-admin').style.display === 'block');
   if(!adminLoggedIn){
