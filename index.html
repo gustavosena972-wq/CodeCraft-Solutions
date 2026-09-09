@@ -465,9 +465,6 @@
       <a href="#precos" onclick="closeSiteNav()">Preços</a>
       <a href="#contato" onclick="closeSiteNav()">Contato</a>
       <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" aria-label="Instagram da CodeCraft Solutions">Instagram</a>
-      <div class="ccs-nav-more">
-        <button class="ccs-btn ghost" onclick="closeSiteNav(); showScreen('admin')">Área admin</button>
-      </div>
     </div>
     <div class="ccs-nav-actions">
       <button class="ccs-btn amber" onclick="showScreen('client')">Portal</button>
@@ -711,6 +708,7 @@
         @code.invention
       </a>
       <a href="#contato" style="text-decoration:none; color:var(--ink-soft); font-weight:600;">Contato</a>
+      <a href="#" onclick="showScreen('admin'); return false;" style="text-decoration:none; color:var(--ink-soft); font-weight:600; opacity:.55;">Admin</a>
     </div>
   </footer>
 
@@ -1417,6 +1415,16 @@ function renderBubble(m){
   return `<div class="ccs-bubble ${who}">${escapeHtml(m.body)}<span class="t">${fmtDate(m.createdAt)}</span></div>`;
 }
 function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function safeHttpUrl(u){
+  const s = String(u||'').trim();
+  if(!s) return '';
+  try{
+    const withProto = /^https?:\/\//i.test(s) ? s : ('https://' + s);
+    const parsed = new URL(withProto);
+    if(parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
+    return parsed.toString();
+  }catch(e){ return ''; }
+}
 function renderClientProject(proj){
   document.getElementById('client-tracking').textContent = 'Código: ' + proj.trackingCode;
   document.getElementById('client-project-name').textContent = proj.projectName;
@@ -1426,32 +1434,34 @@ function renderClientProject(proj){
   document.getElementById('client-notes').innerHTML = proj.notes ? ('<strong>Observações da equipe:</strong> ' + escapeHtml(proj.notes)) : '';
 
   const deliveryArea = document.getElementById('client-delivery-area');
-  if(proj.deliveryUrl){
+  const safeDelivery = safeHttpUrl(proj.deliveryUrl);
+  if(safeDelivery){
     deliveryArea.innerHTML = `<div style="margin-top:16px; padding:18px; border:2px solid var(--teal); border-radius:12px; background:#fff;">
-      <div style="font-weight:800; color:var(--teal); margin-bottom:4px;">🎉 Seu projeto está pronto!</div>
+      <div style="font-weight:800; color:var(--teal); margin-bottom:4px;">Seu projeto está pronto!</div>
       <div style="font-size:13.5px; color:var(--ink-soft); margin-bottom:12px;">Clique no botão abaixo para acessar.</div>
-      <a class="ccs-btn amber" href="${escapeHtml(proj.deliveryUrl)}" target="_blank" rel="noopener">Acessar meu site →</a>
+      <a class="ccs-btn amber" href="${escapeHtml(safeDelivery)}" target="_blank" rel="noopener noreferrer">Acessar meu site →</a>
     </div>`;
   } else {
     deliveryArea.innerHTML = '';
   }
 
   const pixArea = document.getElementById('client-pix-area');
+  const pixKey = (proj.pixKey || COMPANY_PIX_KEY || '').trim();
   if(proj.paid){
     pixArea.innerHTML = `<div class="ccs-pix-box" style="border-color:var(--teal); border-style:solid;"><div style="color:var(--teal); font-weight:700;">✓ Pagamento confirmado. Obrigado!</div></div>`;
-  } else if(proj.pixKey){
+  } else if(pixKey){
     pixArea.innerHTML = `
       <div class="ccs-pix-box">
-        <div id="qr-${proj.trackingCode}" class="ccs-qr"></div>
+        <div id="qr-${escapeHtml(proj.trackingCode)}" class="ccs-qr"></div>
         <div style="flex:1; min-width:220px;">
           <div style="font-weight:700; margin-bottom:6px;">Pagamento via PIX</div>
-          <div style="font-size:14px; color:var(--ink-soft); margin-bottom:8px;">Valor: ${proj.pixValue ? 'R$ '+Number(proj.pixValue).toFixed(2) : 'a combinar'} · Chave: <strong>31999758385</strong></div>
-          <div class="ccs-pix-key" id="pixkeytext-${proj.trackingCode}"></div>
-          <button class="ccs-btn amber small" style="margin-top:10px;" onclick="copyText('31999758385')">Copiar chave 31999758385</button>
-          <button class="ccs-btn ghost small" style="margin-top:10px;" onclick="copyPix('${proj.trackingCode}')">Copiar copia e cola</button>
+          <div style="font-size:14px; color:var(--ink-soft); margin-bottom:8px;">Valor: ${proj.pixValue ? 'R$ '+Number(proj.pixValue).toFixed(2) : 'a combinar'} · Chave: <strong>${escapeHtml(pixKey)}</strong></div>
+          <div class="ccs-pix-key" id="pixkeytext-${escapeHtml(proj.trackingCode)}"></div>
+          <button class="ccs-btn amber small" style="margin-top:10px;" onclick="copyText('${escapeHtml(pixKey)}')">Copiar chave</button>
+          <button class="ccs-btn ghost small" style="margin-top:10px;" onclick="copyPix('${escapeHtml(proj.trackingCode)}')">Copiar copia e cola</button>
         </div>
       </div>`;
-    const payload = buildPixPayload({chave: COMPANY_PIX_KEY, valor: proj.pixValue, nome:'CODECRAFT SOLUTIONS', cidade: proj.pixCity || COMPANY_PIX_CITY, txid: proj.trackingCode});
+    const payload = buildPixPayload({chave: pixKey, valor: proj.pixValue, nome:'CODECRAFT SOLUTIONS', cidade: proj.pixCity || COMPANY_PIX_CITY, txid: proj.trackingCode});
     document.getElementById(`pixkeytext-${proj.trackingCode}`).textContent = payload;
     const qrEl = document.getElementById(`qr-${proj.trackingCode}`);
     qrEl.innerHTML = '';
@@ -1534,7 +1544,7 @@ async function startLead(){
   localStorage.setItem('ccs_lead_name', name);
   document.getElementById('lead-name-step').style.display = 'none';
   document.getElementById('lead-chat-step').style.display = 'block';
-  await insertChat(code, 'admin', leadBotReply('oi', true));
+  /* Sem bot automático: só a equipe autenticada responde como admin. */
   renderLeadChat();
   startLeadLive();
   if(pendingLeadPrefill){
@@ -1542,36 +1552,6 @@ async function startLead(){
     if(input){ input.value = pendingLeadPrefill; input.focus(); }
     pendingLeadPrefill = '';
   }
-}
-function leadBotReply(text, isFirst){
-  const t = (text||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  if(/preco|preço|quanto custa|valor|orcamento|orçamento/.test(t))
-    return 'Obrigada pela pergunta. Valores de referência da CodeCraft Solutions: landing page a partir de R$ 1.200; site institucional a partir de R$ 1.800; loja virtual a partir de R$ 2.800; sistema sob medida a partir de R$ 4.500. O valor final depende do escopo aprovado. Pagamentos somente na chave PIX 31999758385. A equipe confirma o orçamento neste chat com clareza e formalidade.';
-  if(/prazo|quando fica|quanto tempo|dias/.test(t))
-    return 'Com prazer. Prazos típicos: landing de 7 a 15 dias; site de 15 a 30 dias; loja e sistemas sob medida são definidos após o briefing. Você acompanha o andamento com o código no Portal do cliente, de forma transparente.';
-  if(/pix|pagar|chave|pagamento/.test(t))
-    return 'A chave PIX oficial da CodeCraft Solutions é 31999758385 (banco Inter). Por segurança, não utilize outra chave. O valor do seu projeto aparece no portal quando a equipe cadastrar o serviço.';
-  if(/loja|e-?commerce|venda online|pedido/.test(t) && !/gestao|gestão/.test(t))
-    return 'Entendido. Para loja virtual, entregamos catálogo, pedido e PIX, com acompanhamento no portal. Informe se já possui produtos cadastrados e o prazo desejado; a equipe retorna com escopo e valor.';
-  if(/sistema|app|aplicativo|sob medida|portal/.test(t) && !/gestao|gestão|financ/.test(t))
-    return 'Perfeito. Sistemas sob medida são desenhados conforme o seu processo (agenda, estoque, portal interno etc.). Descreva o problema principal e quantas pessoas usarão; assim montamos a proposta com objetividade.';
-  if(/site|landing|pagina|página|institucional/.test(t) && !/loja|gestao|gestão/.test(t))
-    return 'Certo. Desenvolvemos sites e landing pages focados em conversão (chat no site e formulário). Informe o segmento do negócio e se já possui domínio ou textos; a equipe segue com a orientação do próximo passo.';
-  if(/financas|finanças|caixa|planilha|gastos|gestao|gestão|erp|assinatura|plano|ponto|folha|rh/.test(t))
-    return 'O CodeCraft Gestão é nossa plataforma para empresas (CNPJ): Financeiro, RH e assinatura mensal via Asaas (R$ 280 a R$ 500). Acesso: https://gustavosena972-wq.github.io/financas-codecraft/app/planos/ . Posso esclarecer dúvidas ou a equipe comercial continua com você neste chat.';
-  if(/whats|zap|telefone|contato/.test(t))
-    return 'O atendimento é por aqui mesmo, neste chat do site — em tempo real. A equipe acompanha esta conversa e responde com clareza.';
-  if(/bh|belo horizonte|contagem|nova lima|betim/.test(t) && /atend|cidade|onde/.test(t))
-    return 'Atendemos Belo Horizonte e região (Contagem, Betim, Nova Lima) e também de forma online. Por favor, descreva o tipo de projeto desejado para a equipe orientar o próximo passo.';
-  if(/humano|pessoa|atendente|falar com|equipe/.test(t))
-    return 'Com certeza. Nossa equipe acompanha este chat agora. Enquanto isso, você pode resumir o que precisa (site, loja, sistema ou Gestão) para agilizarmos o atendimento.';
-  if(/obrigad|valeu|agrade/.test(t))
-    return 'Nós que agradecemos o contato. Estamos à disposição para seguir com o orçamento ou com o CodeCraft Gestão.';
-  if(/ola|oi|bom dia|boa tarde|boa noite|tudo bem/.test(t) && t.length < 40)
-    return 'Olá. Seja bem-vindo(a) à CodeCraft Solutions. Em que podemos ajudar: site, loja, sistema sob medida ou CodeCraft Gestão?';
-  if(isFirst)
-    return 'Olá. Aqui é o atendimento da CodeCraft Solutions, em Belo Horizonte. Oferecemos site, loja virtual, sistema sob medida e o CodeCraft Gestão (Financeiro + RH). Por favor, descreva com objetividade o que você precisa. Nossa equipe acompanha esta conversa agora e responde de forma clara e formal.';
-  return null;
 }
 async function sendLead(){
   if(!leadCode) return;
@@ -1582,10 +1562,6 @@ async function sendLead(){
   if(ok){
     input.value='';
     await touchLead(leadCode);
-    const msgs = await loadChat(leadCode);
-    const fromAdmin = (msgs||[]).filter(m=>m.sender==='admin').length;
-    const bot = leadBotReply(body, fromAdmin===0);
-    if(bot) await insertChat(leadCode, 'admin', bot);
     renderLeadChat();
   }
 }
@@ -1595,7 +1571,7 @@ async function renderLeadChat(){
   if(!box) return;
   const msgs = await loadChat(leadCode);
   box.innerHTML = msgs.length ? msgs.map(renderBubble).join('')
-    : '<div style="text-align:center; color:var(--ink-soft); font-size:13px; margin:auto;">Envie uma mensagem para começar a conversa.</div>';
+    : '<div class="ccs-bubble admin" style="align-self:flex-start; max-width:92%;"><strong>CodeCraft Solutions</strong><br>Olá'+(leadName?', '+escapeHtml(leadName):'')+'! Conte o que você precisa (site, loja, sistema ou Gestão). A equipe responde por aqui — sem bot, atendimento humano.<span class="t">agora</span></div>';
   box.scrollTop = box.scrollHeight;
 }
 function startLeadLive(){
@@ -1801,7 +1777,10 @@ async function saveDelivery(id){
   const input = document.getElementById('delivery-'+id);
   if(!input) return;
   let url = input.value.trim();
-  if(url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+  if(url){
+    url = safeHttpUrl(url);
+    if(!url){ showToast('Link inválido. Use http:// ou https://'); return; }
+  }
   await updateProject(id, { delivery_url: url });
   showToast(url ? 'Link de entrega salvo!' : 'Link removido.');
   renderProjectsList();
@@ -1888,7 +1867,10 @@ function sendCodeInApp(){
   openAppConversas();
   showToast('Código copiado. Envie na aba Conversas.');
 }
-function createProjectFromMessage(msgId, name, contact, msg){
+function createProjectFromMessage(btn){
+  const name = (btn && btn.getAttribute('data-name')) || '';
+  const contact = (btn && btn.getAttribute('data-contact')) || '';
+  const msg = (btn && btn.getAttribute('data-msg')) || '';
   switchAdminTab('projetos');
   const f = document.getElementById('new-project-form');
   f.style.display = 'block';
@@ -1904,9 +1886,6 @@ async function renderMessagesList(){
     return;
   }
   container.innerHTML = messages.map(m=>{
-    const nameJs = m.name.replace(/'/g, "\\'");
-    const contactJs = m.contact.replace(/'/g, "\\'");
-    const msgJs = m.msg.replace(/'/g, "\\'").replace(/\n/g, "\\n");
     const replyChat = `<button class="ccs-btn amber small" onclick="openAppConversas()">Responder no chat</button>`;
     return `
     <div class="ccs-panel" style="margin-bottom:14px;">
@@ -1917,7 +1896,7 @@ async function renderMessagesList(){
       <div style="font-size:13px; color:var(--ink-soft); margin:4px 0 8px;">${escapeHtml(m.contact)}</div>
       <div style="font-size:14.5px; margin-bottom:12px;">${escapeHtml(m.msg)}</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="ccs-btn amber small" onclick="createProjectFromMessage('${m.id}', '${nameJs}', '${contactJs}', '${msgJs}')">Criar projeto</button>
+        <button class="ccs-btn amber small" data-name="${escapeHtml(m.name)}" data-contact="${escapeHtml(m.contact)}" data-msg="${escapeHtml(m.msg)}" onclick="createProjectFromMessage(this)">Criar projeto</button>
         ${replyChat}
       </div>
     </div>`;
