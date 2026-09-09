@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CodeCraft Solutions — Sites, lojas e sistemas em Belo Horizonte</title>
+<title>Admin · CodeCraft Solutions</title>
 <meta name="description" content="CodeCraft Solutions — estúdio de software em Belo Horizonte. Sites, lojas, sistemas e CodeCraft Gestão. Orçamento no chat, portal do cliente e entrega com acompanhamento.">
 <meta name="keywords" content="criar site Belo Horizonte, loja virtual BH, sistema sob medida, landing page, ERP pequena empresa, CodeCraft Gestão, desenvolvimento web BH">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="https://gustavosena972-wq.github.io/CodeCraft-Solutions/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
@@ -30,8 +30,8 @@
   "sameAs": ["https://instagram.com/code.invention"]
 }
 </script>
-<link rel="icon" type="image/png" href="logo.png">
-<link rel="apple-touch-icon" href="logo.png">
+<link rel="icon" type="image/png" href="../logo.png">
+<link rel="apple-touch-icon" href="../logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -448,340 +448,232 @@
 <body>
 
 <div class="ccs-config-banner" id="config-banner">
-  ⚠️ Configuração pendente: cole sua SUPABASE_URL e SUPABASE_ANON_KEY no topo do &lt;script&gt;, no arquivo, antes de usar o site.
+  ⚠️ Configuração pendente: cole sua SUPABASE_URL e SUPABASE_ANON_KEY no arquivo app.js.
 </div>
 
-<!-- ================= LANDING ================= -->
-<div id="screen-landing">
-  <nav class="ccs-nav" id="ccs-nav">
-    <a class="ccs-logo" href="#" onclick="goHome(); return false;" aria-label="CodeCraft Solutions">
-      <span class="mark"><img src="logo.png" alt="" width="36" height="36"></span>
-      <span class="word">CodeCraft Solutions<small>Belo Horizonte</small></span>
-    </a>
-    <div class="ccs-nav-links" id="ccs-nav-links">
-      <a href="#quem-somos" onclick="closeSiteNav()">Quem somos</a>
-      <a href="#trabalhos" onclick="closeSiteNav()">Trabalhos</a>
-      <a href="#servicos" onclick="closeSiteNav()">Serviços</a>
-      <a href="#precos" onclick="closeSiteNav()">Preços</a>
-      <a href="#contato" onclick="closeSiteNav()">Contato</a>
-      <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" aria-label="Instagram da CodeCraft Solutions">Instagram</a>
-    </div>
-    <div class="ccs-nav-actions">
-      <button class="ccs-btn amber" onclick="showScreen('client')">Portal</button>
-      <button class="ccs-nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" onclick="toggleSiteNav(this)">
-        <span></span>
-      </button>
-    </div>
-  </nav>
-
-  <div class="ccs-urgency">
-    Estúdio em Belo Horizonte · Orçamento em até 24h ·
-    <a href="#" onclick="toggleLeadWidget(); return false;">Fale no chat</a>
-    · Landing a partir de R$ 300
-  </div>
-
-  <section class="ccs-hero">
-    <div class="ccs-hero-copy">
-      <div class="ccs-hero-brand">
-        <span class="mark"><img src="logo.png" alt="Logo CodeCraft Solutions" width="52" height="52"></span>
-        <div>
-          <strong>CodeCraft Solutions</strong>
-          <span>Estúdio de software · Belo Horizonte</span>
-        </div>
-      </div>
-      <div class="ccs-hero-eyebrow">Empresa de verdade · atendimento humano</div>
-      <h1>Seu negócio no ar.<br><span>Com acompanhamento de verdade.</span></h1>
-      <p>Criamos sites, lojas e sistemas para empresas de BH e do Brasil. Você fala no chat, acompanha o projeto no portal e paga via PIX — tudo transparente, do orçamento à entrega.</p>
-      <div class="ccs-hero-ctas">
-        <button class="ccs-btn amber" onclick="toggleLeadWidget()">Pedir orçamento no chat</button>
-        <button class="ccs-btn ghost" style="border-color:#4A517A; color:#fff;" onclick="showScreen('client')">Já sou cliente · Portal</button>
-      </div>
-    </div>
-    <div class="ccs-terminal">
-      <div class="bar"><span></span><span></span><span></span></div>
-      <div id="ccs-typed" class="mono"></div>
-    </div>
-  </section>
-
-  <div class="ccs-trust" aria-label="Como trabalhamos">
-    <div class="item"><strong>Chat humano</strong><span>Resposta da equipe — sem robô inventando preço.</span></div>
-    <div class="item"><strong>Portal do cliente</strong><span>Status, PIX e entrega em tempo real.</span></div>
-    <div class="item"><strong>Preço combinado</strong><span>Tabela clara no site; valor final no chat.</span></div>
-    <div class="item"><strong>BH e online</strong><span>Atendemos Grande BH e todo o Brasil.</span></div>
-  </div>
-
-  <section class="ccs-section ccs-about" id="quem-somos">
-    <div class="ccs-eyebrow">Quem somos</div>
-    <h2>CodeCraft Solutions — estúdio de software em BH.</h2>
-    <p class="ccs-lede">Somos um estúdio independente em Belo Horizonte. Construímos presença digital e ferramentas que o negócio usa de verdade: landing, site, loja virtual, sistema sob medida e o produto <strong>CodeCraft Gestão</strong>.</p>
-    <p class="ccs-lede">Trabalhamos com processo claro: conversa no chat → escopo e valor → código de acompanhamento → entrega com link no portal. Sem enrolação, sem sumiço.</p>
-    <div class="ccs-grid-3" style="margin-top:28px;">
-      <div class="ccs-card"><div class="num">01</div><h3>Escopo fechado</h3><p>Antes de cobrar, alinhamos o que entra e o que fica de fora.</p></div>
-      <div class="ccs-card"><div class="num">02</div><h3>Você vê o andamento</h3><p>Portal com status, observações da equipe e pagamento PIX.</p></div>
-      <div class="ccs-card featured"><div class="num">03</div><h3>Entrega no ar</h3><p>Quando fica pronto, o link aparece no portal com um clique.</p></div>
-    </div>
-  </section>
-
-  <section class="ccs-section" id="trabalhos">
-    <div class="ccs-eyebrow">Prova de entrega</div>
-    <h2>Produtos e entregas no ar</h2>
-    <p class="ccs-lede">Não vendemos só discurso — o que fazemos está online para você ver.</p>
-    <div class="ccs-grid-3">
-      <a class="ccs-card" href="https://gustavosena972-wq.github.io/CodeCraft-Solutions/" style="text-decoration:none; color:inherit;">
-        <div class="num">CASE</div>
-        <h3>Site CodeCraft Solutions</h3>
-        <p>Hub da empresa: serviços, preços, chat e portal do cliente.</p>
-      </a>
-      <a class="ccs-card featured" href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
-        <div class="num">PRODUTO</div>
-        <h3>CodeCraft Gestão</h3>
-        <p>ERP para empresas: financeiro + RH, planos a partir de R$ 280/mês.</p>
-      </a>
-      <div class="ccs-card">
-        <div class="num">MODELO</div>
-        <h3>Loja / site sob medida</h3>
-        <p>Vitrine, painel e acompanhamento — sob orçamento no chat.</p>
-        <button class="ccs-btn amber small" style="margin-top:14px;" onclick="toggleLeadWidget()">Quero o meu</button>
-      </div>
-    </div>
-  </section>
-
-  <div class="ccs-gestao-band" id="gestao">
-    <section class="ccs-section">
-      <div class="ccs-gestao-wrap">
-        <div class="ccs-eyebrow">Produto próprio</div>
-        <h2>CodeCraft Gestão</h2>
-        <p class="ccs-lede">Plataforma para quem precisa organizar caixa e equipe: Financeiro, RH e assinatura mensal.</p>
-        <div class="ccs-gestao-biz">
-          <div class="biz"><strong>01 · Financeiro</strong><span>Caixa, pagar/receber e DRE.</span></div>
-          <div class="biz"><strong>02 · RH</strong><span>Cadastro, ponto e folha.</span></div>
-          <div class="biz"><strong>03 · Assinatura</strong><span>PIX ou cartão · renovação automática.</span></div>
-        </div>
-        <div class="ccs-gestao-plans">
-          <span class="plan">Essencial · R$ 280</span>
-          <span class="plan hot">Empresa · R$ 390</span>
-          <span class="plan">Corporativo · R$ 500</span>
-        </div>
-        <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/app/planos/" target="_blank" rel="noopener">Conhecer CodeCraft Gestão</a>
-      </div>
-    </section>
-  </div>
-
-  <section class="ccs-section" id="servicos">
-    <div class="ccs-eyebrow">Serviços</div>
-    <h2>O que entregamos</h2>
-    <p class="ccs-lede">Linhas claras — diga no chat qual combina com você.</p>
-    <div class="ccs-grid-3">
-      <div class="ccs-card"><div class="num">01</div><h3>Landing e sites</h3><p>Página ou site institucional, rápido no celular, com chat e formulário.</p></div>
-      <div class="ccs-card"><div class="num">02</div><h3>Loja virtual</h3><p>Catálogo, pedido e painel para você gerenciar no dia a dia.</p></div>
-      <div class="ccs-card"><div class="num">03</div><h3>Sistema sob medida</h3><p>Painéis e fluxos feitos para o processo da sua empresa.</p></div>
-      <div class="ccs-card"><div class="num">04</div><h3>CodeCraft Gestão</h3><p>Financeiro + RH por assinatura. <a href="#gestao">Ver planos</a>.</p></div>
-      <div class="ccs-card"><div class="num">05</div><h3>Manutenção</h3><p>Ajustes e suporte depois que o projeto está no ar.</p></div>
-      <div class="ccs-card"><div class="num">06</div><h3>Integrações</h3><p>Conexão com planilhas, banco e ferramentas que você já usa.</p></div>
-    </div>
-  </section>
-
-  <section class="ccs-section ccs-band" id="como-funciona">
-    <div class="ccs-eyebrow">Como a empresa trabalha</div>
-    <h2>Do chat à entrega</h2>
-    <p class="ccs-lede">Três etapas. Você acompanha tudo no Portal do cliente.</p>
-    <div class="ccs-pipeline">
-      <div class="ccs-stage current"><div class="track"></div><div class="node">1</div><h4>Conversa e escopo</h4><p>Você conta o que precisa no chat. Fechamos o combinado e o valor.</p></div>
-      <div class="ccs-stage future"><div class="track"></div><div class="node">2</div><h4>Produção</h4><p>Você recebe um código e vê o andamento (análise → em andamento).</p></div>
-      <div class="ccs-stage future"><div class="track"></div><div class="node">3</div><h4>No ar</h4><p>PIX no portal, entrega com link e suporte inicial.</p></div>
-    </div>
-    <div style="max-width:var(--content); margin:28px auto 0; text-align:center;">
-      <button class="ccs-btn amber" onclick="toggleLeadWidget()">Começar pelo chat</button>
-    </div>
-  </section>
-
-  <section class="ccs-section" id="precos">
-    <div class="ccs-eyebrow">Preços</div>
-    <h2>Tabela de referência</h2>
-    <p class="ccs-lede">Valores <strong>a partir de</strong>. O preço final é combinado no chat conforme o tamanho do projeto.</p>
-    <div class="ccs-price-grid">
-      <div class="ccs-price-card">
-        <div class="ccs-price-tag">Landing page</div>
-        <div class="ccs-price"><span class="from">a partir de</span> R$ 300</div>
-        <ul>
-          <li>Página única de conversão</li>
-          <li>Chat / formulário no site</li>
-          <li>Otimizada para celular</li>
-        </ul>
-        <button class="ccs-btn amber" onclick="openLeadFromPricing('Landing page')">Pedir orçamento</button>
-      </div>
-      <div class="ccs-price-card">
-        <div class="ccs-price-tag">Site institucional</div>
-        <div class="ccs-price"><span class="from">a partir de</span> R$ 500</div>
-        <ul>
-          <li>Várias páginas</li>
-          <li>Visual da sua marca</li>
-          <li>Pronto para divulgar</li>
-        </ul>
-        <button class="ccs-btn amber" onclick="openLeadFromPricing('Site institucional')">Pedir orçamento</button>
-      </div>
-      <div class="ccs-price-card featured">
-        <div class="ccs-price-badge">Mais pedido</div>
-        <div class="ccs-price-tag">Loja virtual</div>
-        <div class="ccs-price"><span class="from">a partir de</span> R$ 500</div>
-        <ul>
-          <li>Catálogo de produtos</li>
-          <li>Pagamento e frete</li>
-          <li>Painel para gerenciar</li>
-        </ul>
-        <button class="ccs-btn amber" onclick="openLeadFromPricing('Loja virtual')">Pedir orçamento</button>
-      </div>
-      <div class="ccs-price-card">
-        <div class="ccs-price-tag">Sistema / App</div>
-        <div class="ccs-price"><span class="from">sob orçamento</span> R$ 1.500+</div>
-        <ul>
-          <li>Feito para o seu processo</li>
-          <li>Painéis e cadastros</li>
-          <li>Escopo alinhado com você</li>
-        </ul>
-        <button class="ccs-btn amber" onclick="openLeadFromPricing('Sistema/App sob medida')">Pedir orçamento</button>
-      </div>
-      <div class="ccs-price-card featured">
-        <div class="ccs-price-badge">Produto</div>
-        <div class="ccs-price-tag">CodeCraft Gestão</div>
-        <div class="ccs-price"><span class="from">a partir de</span> R$ 280<span class="per">/mês</span></div>
-        <ul>
-          <li>Financeiro + RH</li>
-          <li>Assinatura mensal</li>
-          <li>Para empresas em operação</li>
-        </ul>
-        <a class="ccs-btn amber" href="https://gustavosena972-wq.github.io/financas-codecraft/app/planos/" target="_blank" rel="noopener">Ver planos</a>
-      </div>
-      <div class="ccs-price-card">
-        <div class="ccs-price-tag">Manutenção</div>
-        <div class="ccs-price"><span class="from">a partir de</span> R$ 100<span class="per">/mês</span></div>
-        <ul>
-          <li>Ajustes e correções</li>
-          <li>Pequenas melhorias</li>
-          <li>Suporte contínuo</li>
-        </ul>
-        <button class="ccs-btn amber" onclick="openLeadFromPricing('Manutenção mensal')">Pedir orçamento</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="ccs-section" id="contato">
-    <div class="ccs-contact-wrap">
-      <div>
-        <div class="ccs-eyebrow">Contato</div>
-        <h2>Fale com a CodeCraft</h2>
-        <p class="ccs-lede">Preferimos o <strong>chat do site</strong> — é o canal oficial. Também pode deixar mensagem no formulário. Instagram: <a href="https://instagram.com/code.invention" target="_blank" rel="noopener">@code.invention</a>.</p>
-        <p class="ccs-lede" style="margin-top:12px;">Belo Horizonte · atendimento online para todo o Brasil · pagamento via PIX.</p>
-      </div>
-      <form class="ccs-panel" onsubmit="submitContact(event)">
-        <div class="ccs-field"><label>Nome</label><input required id="c-name" placeholder="Seu nome ou empresa"></div>
-        <div class="ccs-field"><label>Contato (e-mail ou telefone)</label><input required id="c-contact" placeholder="Como te respondemos"></div>
-        <div class="ccs-field"><label>Mensagem</label><textarea required id="c-msg" rows="4" placeholder="O que você precisa"></textarea></div>
-        <button class="ccs-btn amber" type="submit" style="width:100%;">Enviar mensagem</button>
-        <button class="ccs-btn ghost" type="button" style="width:100%; margin-top:10px;" onclick="toggleLeadWidget()">Abrir chat agora</button>
-      </form>
-    </div>
-  </section>
-
-  <footer>
-    <div class="foot-brand">
-      <img src="logo.png" alt="" width="28" height="28">
-      <div>
-        <div class="ccs-logo" style="font-size:14px; gap:0;">CodeCraft Solutions</div>
-        <div style="font-size:12px; margin-top:2px;">Estúdio de software · Belo Horizonte</div>
-      </div>
-    </div>
-    <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-      <a href="#trabalhos" style="text-decoration:none; color:var(--ink-soft); font-weight:600;">Trabalhos</a>
-      <a href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener" style="text-decoration:none; color:var(--ink-soft); font-weight:600;">CodeCraft Gestão</a>
-      <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" style="text-decoration:none; color:var(--ink-soft); font-weight:600;">@code.invention</a>
-      <a href="#contato" style="text-decoration:none; color:var(--ink-soft); font-weight:600;">Contato</a>
-      <a href="admin/" style="text-decoration:none; color:var(--ink-soft); font-weight:600; opacity:.45;">Admin</a>
-    </div>
-  </footer>
-
-  <!-- ===== Chat aberto: cliente fala com a equipe sem precisar de código ===== -->
-  <div id="lead-widget">
-    <button id="lead-fab" onclick="toggleLeadWidget()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H8l-4 4V5a1 1 0 0 1 1-1Z"/></svg>
-      Fale com a gente
-    </button>
-    <div id="lead-panel" style="display:none;">
-      <div class="lead-head">
-        <div><strong>CodeCraft Solutions</strong><br><span>Atendimento no chat</span></div>
-        <button class="lead-close" onclick="toggleLeadWidget()" aria-label="Fechar">&times;</button>
-      </div>
-      <div id="lead-name-step">
-        <p>Olá! Sou da CodeCraft Solutions (BH). Como você se chama? Depois conte o que precisa — a equipe responde neste chat.</p>
-        <input id="lead-name-input" placeholder="Seu nome" onkeydown="if(event.key==='Enter')startLead()">
-        <button class="ccs-btn amber" onclick="startLead()">Começar conversa</button>
-      </div>
-      <div id="lead-chat-step" style="display:none;">
-        <div id="lead-messages" class="ccs-chat-messages"></div>
-        <div class="ccs-chat-input">
-          <input id="lead-input" placeholder="Escreva sua mensagem..." onkeydown="if(event.key==='Enter')sendLead()">
-          <button class="ccs-btn amber" onclick="sendLead()">Enviar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ================= CLIENT PORTAL ================= -->
-<div id="screen-client" style="display:none;">
+<!-- ================= ADMIN ================= -->
+<div id="screen-admin" style="display:block;">
   <div class="ccs-app-header">
-    <div class="ccs-logo" style="font-size:15px;" onclick="goHome()">
-      <span class="mark"><img src="logo.png" alt="" width="34" height="34"></span>
-      <span class="word">CodeCraft Solutions<small>Portal do cliente</small></span>
+    <div class="ccs-logo" style="font-size:15px; cursor:pointer;" onclick="goHome()">
+      <span class="mark"><img src="../logo.png" alt="" width="34" height="34"></span>
+      <span class="word">CodeCraft Solutions<small>Painel admin</small></span>
     </div>
-    <button class="ccs-btn ghost small" onclick="goHome()">← Voltar ao site</button>
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <span id="ccs-db-status" class="ccs-db-status" title="Status do banco"><span class="p"></span> <span id="ccs-db-status-text">banco</span></span>
+      <span id="admin-live" class="ccs-live-dot" style="display:none;"><span class="d"></span> ao vivo</span>
+      <button class="ccs-btn ghost small" id="admin-logout-btn" style="display:none;" onclick="adminLogout()">Sair</button>
+      <a class="ccs-btn ghost small" href="../index.html">← Voltar ao site</a>
+    </div>
   </div>
-  <div class="ccs-shell">
-    <div id="client-lookup" class="ccs-panel">
-      <div class="ccs-eyebrow">Portal do cliente</div>
-      <h2 style="font-size:22px;">Acompanhe seu projeto</h2>
-      <p class="ccs-lede" style="margin-bottom:18px;">Digite o código de acompanhamento que você recebeu da CodeCraft.</p>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <input id="client-code-input" class="mono" style="flex:1; min-width:200px; padding:12px; border:1.5px solid var(--line); border-radius:8px; font-size:15px; text-transform:uppercase;" placeholder="EX: A1B2C3">
-        <button class="ccs-btn amber" onclick="lookupProject()">Ver status</button>
+
+  <div class="ccs-shell" id="admin-login-shell">
+    <div class="ccs-panel ccs-admin-login-card" style="max-width:420px; margin:0 auto;">
+      <div class="brand-row">
+        <img src="../logo.png" alt="CodeCraft Solutions" width="44" height="44">
+        <div>
+          <div class="ccs-eyebrow" style="margin:0;">Acesso restrito</div>
+          <h2 style="font-size:20px;">Entrar no painel</h2>
+        </div>
       </div>
-      <p id="client-error" style="color:var(--danger); font-size:13.5px; margin-top:10px; display:none;">Não encontramos nenhum projeto com esse código. Confira e tente de novo.</p>
-      <div class="ccs-help" style="margin:18px 0 0;"><strong>Ainda não tem um código?</strong> Volte ao site e clique no botão <strong>"Fale com a gente"</strong> (canto inferior direito). Comece a conversa e a equipe te envia o seu código de acompanhamento pelo próprio chat.</div>
+      <p style="color:var(--ink-soft); font-size:13.5px; margin:0 0 18px;">Use o e-mail e a senha do usuário criado no Supabase (Authentication → Users). A senha não fica no código do site.</p>
+      <div class="ccs-field"><label>E-mail</label><input id="admin-email" type="email" placeholder="seu@email.com" autocomplete="username"></div>
+      <div class="ccs-field"><label>Senha</label><input id="admin-pass" type="password" placeholder="Sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()"></div>
+      <button class="ccs-btn amber" style="width:100%;" onclick="adminLogin()">Entrar</button>
+      <p id="admin-login-error" style="color:var(--danger); font-size:13px; margin-top:10px; display:none;">E-mail ou senha incorretos.</p>
+    </div>
+  </div>
+
+  <div class="ccs-admin-layout" id="admin-main" style="display:none;">
+    <aside class="ccs-admin-nav">
+      <div class="ccs-admin-nav-title">Painel</div>
+      <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')">Projetos <span class="badge" id="badge-projetos" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')">Conversas <span class="badge" id="badge-conversas" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')">Mensagens <span class="badge" id="badge-mensagens" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-operacoes" onclick="switchAdminTab('operacoes')">Operações</button>
+      <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')">Empresa</button>
+    </aside>
+
+    <div class="ccs-admin-content">
+    <div id="tab-projetos">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+        <div>
+          <h2 style="font-size:20px; margin:0;">Projetos</h2>
+          <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Fila de entrega e acompanhamento em tempo real</div>
+        </div>
+        <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
+      </div>
+      <div class="ccs-admin-overview" id="admin-overview"></div>
+
+      <div class="ccs-filter-bar" id="project-filters">
+        <button type="button" class="ccs-chip active" data-filter="all" onclick="setProjectFilter('all')">Todos</button>
+        <button type="button" class="ccs-chip" data-filter="analise" onclick="setProjectFilter('analise')">Em análise</button>
+        <button type="button" class="ccs-chip" data-filter="andamento" onclick="setProjectFilter('andamento')">Em andamento</button>
+        <button type="button" class="ccs-chip" data-filter="concluido" onclick="setProjectFilter('concluido')">Concluído</button>
+        <button type="button" class="ccs-chip" data-filter="unpaid" onclick="setProjectFilter('unpaid')">PIX a receber</button>
+      </div>
+
+      <div class="ccs-help">
+        <strong>Para que serve:</strong> aqui você cadastra e acompanha cada trabalho (site, loja, landing…). Tudo que você mudar aparece <strong>na hora</strong> pro cliente no portal dele — em tempo real, sem ele precisar atualizar a página.
+        <div style="margin-top:10px;"><strong>Passo a passo:</strong></div>
+        <ol style="margin:6px 0 0 18px; padding:0; line-height:1.75;">
+          <li><strong>Criar o projeto:</strong> clique em <strong>+ Novo projeto</strong>, preencha o nome do cliente, o tipo de serviço, o valor e a chave PIX, e clique em Salvar. O sistema gera um <strong>código</strong> pro cliente.</li>
+          <li><strong>Enviar o código:</strong> mande o código pro cliente pela aba <strong>Conversas</strong> (chat do app).</li>
+          <li><strong>Atualizar o andamento:</strong> use os botões <strong>Em análise → Em andamento → Concluído</strong>. O cliente vê a mudança na hora.</li>
+          <li><strong>Marcar o pagamento:</strong> quando o cliente pagar o PIX, clique em <strong>Marcar como pago</strong>.</li>
+          <li><strong>Entregar o projeto:</strong> quando o site estiver pronto, cole o endereço dele no campo <strong>Link de entrega</strong> (logo abaixo de cada projeto) e clique em <strong>Salvar link</strong>. Aí aparece o botão <strong>"Acessar meu site"</strong> pro cliente no portal, na hora.</li>
+        </ol>
+      </div>
+
+      <div class="ccs-panel" id="new-project-form" style="display:none; margin-bottom:22px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="ccs-field"><label>Nome do cliente</label><input id="np-client"></div>
+          <div class="ccs-field"><label>Nome do projeto</label><input id="np-project"></div>
+          <div class="ccs-field"><label>Tipo de serviço</label>
+            <select id="np-service">
+              <option value="loja">Loja virtual</option>
+              <option value="site">Site institucional</option>
+              <option value="landing">Landing page</option>
+              <option value="sistema">Sistema/App sob medida</option>
+              <option value="manutencao">Manutenção mensal</option>
+            </select>
+          </div>
+          <div class="ccs-field"><label>Chave PIX</label><input id="np-pixkey" list="np-pixkey-options" value="31999758385" placeholder="CPF, e-mail, telefone ou chave aleatória"><datalist id="np-pixkey-options"><option value="31999758385">Inter (principal)</option></datalist></div>
+          <div class="ccs-field"><label>Valor (R$)</label><input id="np-value" type="number" step="0.01" placeholder="0.00"></div>
+          <div class="ccs-field"><label>Cidade (para o PIX)</label><input id="np-city" value="BELO HORIZONTE" placeholder="Ex: SAO PAULO"></div>
+          <div class="ccs-field"><label>Observações para o cliente</label><input id="np-notes" placeholder="Opcional"></div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:6px;">
+          <button class="ccs-btn amber" onclick="createProject()">Salvar projeto</button>
+          <button class="ccs-btn ghost" onclick="toggleNewProjectForm()">Cancelar</button>
+        </div>
+      </div>
+
+      <div id="projects-list"></div>
     </div>
 
-    <div id="client-result" style="display:none;">
-      <div class="ccs-panel">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
-          <div>
-            <div class="ccs-eyebrow" id="client-tracking"></div>
-            <h2 style="font-size:22px;" id="client-project-name"></h2>
-            <p style="color:var(--ink-soft); font-size:14px; margin-top:4px;" id="client-name"></p>
+    <div id="tab-mensagens" style="display:none;">
+      <h2 style="font-size:20px; margin-bottom:16px;">Mensagens do site</h2>
+      <div class="ccs-help"><strong>Para que serve:</strong> é a caixa de entrada do formulário "Fale com a gente" da página inicial. Quando alguém preenche nome, contato e mensagem, o recado cai aqui pra você responder pela aba <strong>Conversas</strong> (chat do app).</div>
+      <div id="messages-list"></div>
+    </div>
+
+    <div id="tab-conversas" style="display:none;">
+      <h2 style="font-size:20px; margin-bottom:16px;">Conversas com clientes</h2>
+      <div class="ccs-help"><strong>Para que serve:</strong> é o chat em tempo real com quem está no site. Inclui os <strong>novos contatos</strong> e as conversas por projeto. Responda aqui com tom formal, claro e objetivo, e <strong>envie o código de acompanhamento</strong> quando o projeto for criado.</div>
+      <div class="ccs-chat-layout">
+        <div class="ccs-chat-side">
+          <div id="chat-project-list"></div>
+        </div>
+        <div class="ccs-chat-main" id="admin-chat-main">
+          <div class="ccs-empty">Selecione uma conversa ao lado para responder.</div>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="tab-operacoes" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <div>
+          <h2 style="font-size:20px; margin:0;">Operações do dia</h2>
+          <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Agenda, prospecção e cadastro de leads — sem IA.</div>
+        </div>
+      </div>
+      <div class="ccs-help"><strong>Rotina sugerida:</strong> 1) responder Conversas e Mensagens · 2) atualizar status dos projetos · 3) caçar 3 empresas em BH e salvar em Clientes · 4) marcar PIX quando cair.</div>
+      <div class="ccs-ops-grid">
+        <div>
+          <div class="ccs-eyebrow" style="margin-bottom:10px;">Agenda</div>
+          <div class="ccs-panel" style="margin-bottom:14px;">
+            <div class="ccs-field"><label>O que fazer</label><input id="task-title" placeholder="Ex: Retornar clínica Savassi"></div>
+            <div class="ccs-field"><label>Quando</label><input id="task-when" type="date"></div>
+            <button class="ccs-btn amber small" onclick="addTaskFromForm()">Adicionar na agenda</button>
           </div>
-          <span class="ccs-live-dot"><span class="d"></span> ao vivo</span>
+          <div id="agenda-list"></div>
         </div>
-        <div class="ccs-pipeline" id="client-pipeline"></div>
-        <p style="font-size:13px; color:var(--ink-soft); margin-top:24px;" id="client-updated"></p>
-        <div id="client-notes" style="margin-top:14px; font-size:14.5px;"></div>
-        <div id="client-delivery-area"></div>
-        <div id="client-pix-area"></div>
+        <div>
+          <div class="ccs-eyebrow" style="margin-bottom:10px;">Clientes / leads</div>
+          <div class="ccs-panel" style="margin-bottom:14px;">
+            <div class="ccs-field"><label>Nome da empresa</label><input id="lead-name" placeholder="Ex: Clínica Horizonte"></div>
+            <div class="ccs-field"><label>Telefone / contato</label><input id="lead-phone" placeholder="Opcional"></div>
+            <div class="ccs-field"><label>Nicho</label><input id="lead-niche" placeholder="Ex: Odontologia"></div>
+            <button class="ccs-btn amber small" onclick="saveLeadAndPing()">Salvar lead</button>
+          </div>
+          <div id="leads-list"></div>
+        </div>
+        <div class="full">
+          <div class="ccs-eyebrow" style="margin:8px 0 10px;">Prospecção BH</div>
+          <p style="font-size:13.5px; color:var(--ink-soft); margin:0 0 12px;">Atalhos para Maps / Google / Instagram. Achou uma empresa? Salve em Clientes e use o texto pronto.</p>
+          <div id="hunt-grid" style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px;"></div>
+        </div>
+        <div class="full">
+          <div class="ccs-eyebrow" style="margin:8px 0 10px;">Respostas prontas (chat)</div>
+          <div class="ccs-panel" id="ops-templates">
+            <p style="margin:0 0 10px; font-size:13.5px; color:var(--ink-soft);">Na aba Conversas, use os chips acima do campo de mensagem. Aqui você vê o texto completo:</p>
+            <ul style="margin:0; padding-left:18px; font-size:13.5px; line-height:1.6;" id="ops-templates-list"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-empresa" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <div>
+          <h2 style="font-size:20px; margin-bottom:4px;">Painel de controle</h2>
+          <div style="font-size:13px; color:var(--ink-soft);">Visão financeira e de projetos em tempo real.</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="ccs-btn amber small" onclick="exportExcel()">↧ Exportar Excel</button>
+        </div>
+      </div>
+      <div class="ccs-help"><strong>Para que serve:</strong> é o painel de gestão da CodeCraft Solutions. Mostra quanto você já recebeu e quanto tem a receber, quantos sites/lojas estão em produção e entregues, gráficos de faturamento (inclusive por tipo de serviço) e uma calculadora. O botão <strong>Exportar Excel</strong> baixa tudo em planilha (Resumo, Por serviço e Projetos).</div>
+
+      <div class="ccs-panel" style="margin-bottom:20px; border-left:4px solid var(--amber);">
+        <div class="ccs-eyebrow" style="margin-bottom:6px;">Posicionamento · CodeCraft Solutions</div>
+        <p style="margin:0 0 8px; font-size:14.5px; line-height:1.65;">
+          <strong>MEI, pequenas, médias e grandes empresas.</strong> Sites, lojas virtuais, sistemas sob medida e CodeCraft Gestão (ERP/HCM B2B).
+          BH e Brasil · Chat no site · PIX 31999758385 · @code.invention
+        </p>
+        <p style="margin:0; font-size:13px; color:var(--ink-soft);">
+          Use este posicionamento no 99Freelas, GetNinjas, propostas e abordagens — o mesmo discurso em todo o material comercial.
+        </p>
       </div>
 
-      <div class="ccs-panel" style="margin-top:16px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <h3 style="font-size:16px;">Fale com a equipe</h3>
-          <span class="ccs-live-dot"><span class="d"></span> ao vivo</span>
+      <div class="ccs-eyebrow" style="margin-bottom:10px;">Indicadores</div>
+      <div class="ccs-metrics" id="empresa-metrics"></div>
+
+      <div class="ccs-eyebrow" style="margin:24px 0 10px;">Gráficos de controle</div>
+      <div class="ccs-charts">
+        <div class="ccs-panel ccs-chart-card" style="grid-column:span 2;">
+          <div class="ccs-chart-title">Faturamento por mês</div>
+          <div class="ccs-chart-box"><canvas id="chart-revenue"></canvas></div>
         </div>
-        <div id="client-chat-messages" class="ccs-chat-messages"></div>
-        <div class="ccs-chat-input">
-          <input id="client-chat-input" placeholder="Escreva sua mensagem..." onkeydown="if(event.key==='Enter')sendClientChat()">
-          <button class="ccs-btn amber" onclick="sendClientChat()">Enviar</button>
+        <div class="ccs-panel ccs-chart-card">
+          <div class="ccs-chart-title">Recebido x A receber</div>
+          <div class="ccs-chart-box"><canvas id="chart-paid"></canvas></div>
+        </div>
+        <div class="ccs-panel ccs-chart-card">
+          <div class="ccs-chart-title">Projetos por status</div>
+          <div class="ccs-chart-box"><canvas id="chart-status"></canvas></div>
+        </div>
+        <div class="ccs-panel ccs-chart-card" style="grid-column:span 2;">
+          <div class="ccs-chart-title">Faturamento por tipo de serviço</div>
+          <div class="ccs-chart-box"><canvas id="chart-service"></canvas></div>
         </div>
       </div>
 
-      <button class="ccs-btn ghost small" style="margin-top:16px;" onclick="resetClientLookup()">Ver outro código</button>
+      <div class="ccs-eyebrow" style="margin:24px 0 10px;">Controle de projetos</div>
+      <div class="ccs-panel" style="overflow-x:auto;" id="empresa-table"></div>
+
+      <div class="ccs-panel" style="margin-top:24px; max-width:340px;">
+        <div class="ccs-eyebrow" style="margin-bottom:10px;">Calculadora</div>
+        <input id="calc-display" class="mono" readonly value="0"
+          style="width:100%; text-align:right; font-size:24px; padding:12px; border:1.5px solid var(--line); border-radius:8px; background:var(--paper-dim); margin-bottom:12px;">
+        <div class="ccs-calc-grid" id="calc-grid"></div>
+      </div>
+    </div>
     </div>
   </div>
 </div>
+
 
 <div class="ccs-toast" id="ccs-toast"></div>
 
@@ -803,7 +695,8 @@
   </div>
 </div>
 
-<script>window.CCS_PAGE = 'site';</script>
-<script src="app.js"></script>
+
+<script>window.CCS_PAGE = 'admin';</script>
+<script src="../app.js"></script>
 </body>
 </html>
