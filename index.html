@@ -1282,18 +1282,18 @@ function closeSiteNav(){
 
 /* ================= HERO TYPING ================= */
 const heroLines = [
-  '$ codecraft status --cliente',
-  '> analisando escopo do projeto...',
-  '> CodeCraft Gestão: Financeiro + RH + Billing',
-  '> planos R$ 280 a R$ 500 · só empresas',
-  '> etapa atual: em andamento ✓'
+  '$ codecraft — estúdio BH',
+  '> chat humano · portal ao vivo · PIX',
+  '> site · loja · sistema · Gestão',
+  '> do orçamento à entrega, transparente ✓'
 ];
 function typeHero(){
   const el = document.getElementById('ccs-typed');
+  if(!el) return;
   let full = '';
   let li = 0, ci = 0;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduced){ el.textContent = heroLines.join('\\n'); return; }
+  if(reduced){ el.textContent = heroLines.join('\n'); return; }
   function step(){
     if(li >= heroLines.length){ return; }
     const line = heroLines[li];
@@ -1301,7 +1301,7 @@ function typeHero(){
       el.innerHTML = full + line.slice(0,ci) + '<span class="ccs-cursor">&nbsp;</span>';
       ci++; setTimeout(step, 22);
     } else {
-      full += line + '\\n'; li++; ci = 0; setTimeout(step, 260);
+      full += line + '\n'; li++; ci = 0; setTimeout(step, 260);
     }
   }
   step();
