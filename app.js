@@ -35,6 +35,13 @@ const ADMIN_ALLOWED_EMAILS = [
 const ADMIN_SHARED_PASSWORD = 'codecraft2026';
 let adminLocalOk = false;
 let adminLocalEmail = '';
+try{
+  const savedLocal = sessionStorage.getItem('ccs-admin-local');
+  if(savedLocal && ADMIN_ALLOWED_EMAILS.includes(String(savedLocal).trim().toLowerCase())){
+    adminLocalOk = true;
+    adminLocalEmail = String(savedLocal).trim().toLowerCase();
+  }
+}catch(e){}
 function normalizeEmail(email){
   return String(email || '').trim().toLowerCase();
 }
@@ -75,6 +82,7 @@ function fmtDate(iso){
 }
 function showToast(msg){
   const t = document.getElementById('ccs-toast');
+  if(!t){ console.log(msg); return; }
   t.textContent = msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 2200);
 }
@@ -625,11 +633,25 @@ function renderAdminGate(){
     });
   }
 }
-async function adminLogin(){
-  if(!configOk){ showToast('Configure o Supabase primeiro (topo do script).'); return; }
-  const email = document.getElementById('admin-email').value.trim();
-  const password = document.getElementById('admin-pass').value;
+function openAdminPanel(email, viaLocal){
+  adminLocalOk = !!viaLocal;
+  adminLocalEmail = viaLocal ? normalizeEmail(email) : '';
+  adminLoggedIn = true;
+  try{ if(viaLocal) sessionStorage.setItem('ccs-admin-local', adminLocalEmail); else sessionStorage.removeItem('ccs-admin-local'); }catch(e){}
   const errEl = document.getElementById('admin-login-error');
+  if(errEl) errEl.style.display = 'none';
+  const pass = document.getElementById('admin-pass');
+  if(pass) pass.value = '';
+  try{ migrateCrmLeads(); }catch(e){ console.error(e); }
+  renderAdminGate();
+}
+async function adminLogin(){
+  const emailEl = document.getElementById('admin-email');
+  const passEl = document.getElementById('admin-pass');
+  const errEl = document.getElementById('admin-login-error');
+  if(!emailEl || !passEl || !errEl) return;
+  const email = emailEl.value.trim();
+  const password = passEl.value;
   if(!email || !password){
     errEl.textContent = 'Preencha o e-mail e a senha.';
     errEl.style.display = 'block';
@@ -641,38 +663,41 @@ async function adminLogin(){
     return;
   }
 
-  /* 1) Tenta Auth do Supabase (se a senha do usuário bater). */
-  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if(!error){
-    adminLocalOk = false;
-    adminLocalEmail = '';
-    adminLoggedIn = true;
-    errEl.style.display = 'none';
-    document.getElementById('admin-pass').value = '';
-    migrateCrmLeads();
-    renderAdminGate();
-    return;
-  }
-
-  /* 2) Fallback: mesma senha compartilhada das versões anteriores. */
+  /* Senha compartilhada: entra na hora (não depende do Auth). */
   if(password === ADMIN_SHARED_PASSWORD){
-    adminLocalOk = true;
-    adminLocalEmail = normalizeEmail(email);
-    adminLoggedIn = true;
-    errEl.style.display = 'none';
-    document.getElementById('admin-pass').value = '';
-    migrateCrmLeads();
-    renderAdminGate();
+    openAdminPanel(email, true);
+    if(supabaseClient){
+      supabaseClient.auth.signInWithPassword({ email, password }).then(({ error })=>{
+        if(!error){ adminLocalOk = false; adminLocalEmail = ''; try{ sessionStorage.removeItem('ccs-admin-local'); }catch(e){} }
+      }).catch(()=>{});
+    }
     return;
   }
 
-  errEl.textContent = 'E-mail ou senha incorretos.';
-  errEl.style.display = 'block';
+  if(!configOk || !supabaseClient){
+    errEl.textContent = 'Configure o Supabase ou use a senha codecraft2026.';
+    errEl.style.display = 'block';
+    return;
+  }
+  try{
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if(error){
+      errEl.textContent = 'E-mail ou senha incorretos.';
+      errEl.style.display = 'block';
+      return;
+    }
+    openAdminPanel(email, false);
+  }catch(e){
+    console.error(e);
+    errEl.textContent = 'Falha de conexão. Tente de novo.';
+    errEl.style.display = 'block';
+  }
 }
 async function adminLogout(){
   adminLoggedIn = false;
   adminLocalOk = false;
   adminLocalEmail = '';
+  try{ sessionStorage.removeItem('ccs-admin-local'); }catch(e){}
   stopRealtime();
   if(supabaseClient){ await supabaseClient.auth.signOut(); }
   renderAdminGate();
@@ -685,6 +710,7 @@ async function syncAdminSessionFromAuth(session){
   if(authOk){
     adminLocalOk = false;
     adminLocalEmail = '';
+    try{ sessionStorage.removeItem('ccs-admin-local'); }catch(e){}
     adminLoggedIn = true;
   } else if(adminLocalOk && isAllowedAdminEmail(adminLocalEmail)){
     adminLoggedIn = true;
@@ -894,7 +920,7 @@ async function renderProjectsList(){
     </table>
   </div>`;
 }
-let currentCodelet currentCode = null;
+let currentCode = null;
 let modalContact = '';
 function showCodeModal(code, clientName, contact){
   currentCode = code;
