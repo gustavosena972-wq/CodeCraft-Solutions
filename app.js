@@ -69,11 +69,29 @@ function fmtDate(iso){
   const d = new Date(iso);
   return d.toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
-function showToast(msg){
+let __ccsToastTimer = null;
+function showToast(msg, ms){
   const t = document.getElementById('ccs-toast');
   if(!t){ console.log(msg); return; }
   t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2200);
+  if(__ccsToastTimer) clearTimeout(__ccsToastTimer);
+  __ccsToastTimer = setTimeout(()=>t.classList.remove('show'), ms || 2600);
+}
+function downloadTextFile(filename, text, mime){
+  const blob = new Blob([text], { type: mime || 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1500);
+}
+function csvEscape(v){
+  const s = String(v == null ? '' : v);
+  if(/[",\n\r]/.test(s)) return '"'+s.replace(/"/g,'""')+'"';
+  return s;
+}
+function rowsToCsv(rows){
+  return rows.map(r=>r.map(csvEscape).join(',')).join('\r\n');
 }
 function digitsOnly(s){ return String(s||'').replace(/\D/g,''); }
 function phoneToWa(phone){
@@ -662,14 +680,41 @@ function stopLeadLive(){
 /* ================= ADMIN ================= */
 let adminLoggedIn = false;
 
+const ADMIN_TAB_KEY = 'ccs-admin-tab-v1';
+const HANDLED_MSG_KEY = 'ccs-admin-handled-msgs-v1';
+function loadHandledMessages(){
+  try{ return JSON.parse(localStorage.getItem(HANDLED_MSG_KEY)||'{}'); }catch(e){ return {}; }
+}
+function markMessageHandled(id){
+  const map = loadHandledMessages();
+  map[String(id)] = new Date().toISOString();
+  localStorage.setItem(HANDLED_MSG_KEY, JSON.stringify(map));
+  showToast('Recado marcado como tratado.');
+  renderMessagesList();
+  renderAdminOverview();
+}
+function rememberAdminTab(tab){
+  try{ sessionStorage.setItem(ADMIN_TAB_KEY, tab); }catch(e){}
+}
+function lastAdminTab(){
+  try{
+    const t = sessionStorage.getItem(ADMIN_TAB_KEY);
+    if(t && ADMIN_TABS.includes(t) && t !== 'mensagens') return t;
+  }catch(e){}
+  return 'projetos';
+}
 function renderAdminGate(){
-  document.getElementById('admin-login-shell').style.display = adminLoggedIn ? 'none' : 'block';
-  document.getElementById('admin-main').style.display = adminLoggedIn ? 'flex' : 'none';
-  document.getElementById('admin-logout-btn').style.display = adminLoggedIn ? 'inline-block' : 'none';
-  document.getElementById('admin-live').style.display = adminLoggedIn ? 'inline-flex' : 'none';
+  const loginShell = document.getElementById('admin-login-shell');
+  const main = document.getElementById('admin-main');
+  if(loginShell) loginShell.style.display = adminLoggedIn ? 'none' : 'block';
+  if(main) main.style.display = adminLoggedIn ? 'flex' : 'none';
+  const logoutBtn = document.getElementById('admin-logout-btn');
+  if(logoutBtn) logoutBtn.style.display = adminLoggedIn ? 'inline-block' : 'none';
+  const live = document.getElementById('admin-live');
+  if(live) live.style.display = adminLoggedIn ? 'inline-flex' : 'none';
   const emailEl = document.getElementById('admin-session-email');
   if(emailEl){
-    if(adminLoggedIn){
+    if(adminLoggedIn && supabaseClient){
       supabaseClient.auth.getSession().then(({ data })=>{
         const em = sessionAdminEmail(data && data.session);
         emailEl.textContent = em || 'admin';
@@ -684,14 +729,16 @@ function renderAdminGate(){
   if(adminLoggedIn){
     fillAdminSettingsForm();
     renderAdminAll();
-    switchAdminTab('projetos');
+    switchAdminTab(lastAdminTab());
     stopRealtime();
-    realtimeChannel = supabaseClient.channel('admin-projects')
-      .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); renderAdminOverview(); renderClientesList(); })
-      .on('postgres_changes', { event:'*', schema:'public', table:'messages' }, ()=>{ renderMessagesList(); renderAdminOverview(); renderClientesList(); })
-      .on('postgres_changes', { event:'*', schema:'public', table:'lead_chats' }, ()=>{ renderChatProjectList(); renderAdminOverview(); renderClientesList(); })
-      .on('postgres_changes', { event:'*', schema:'public', table:'chat_messages' }, ()=>{ if(currentChatCode) renderAdminChat(); })
-      .subscribe();
+    if(supabaseClient){
+      realtimeChannel = supabaseClient.channel('admin-projects')
+        .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); renderAdminOverview(); renderClientesList(); })
+        .on('postgres_changes', { event:'*', schema:'public', table:'messages' }, ()=>{ renderMessagesList(); renderAdminOverview(); renderClientesList(); })
+        .on('postgres_changes', { event:'*', schema:'public', table:'lead_chats' }, ()=>{ renderChatProjectList(); renderAdminOverview(); renderClientesList(); })
+        .on('postgres_changes', { event:'*', schema:'public', table:'chat_messages' }, ()=>{ if(currentChatCode) renderAdminChat(); })
+        .subscribe();
+    }
     startPolling(()=>{
       renderProjectsList(); renderMessagesList(); renderEmpresa(); renderChatProjectList(); renderAdminOverview();
       if(currentChatCode) renderAdminChat();
@@ -711,6 +758,7 @@ async function adminLogin(){
   const emailEl = document.getElementById('admin-email');
   const passEl = document.getElementById('admin-pass');
   const errEl = document.getElementById('admin-login-error');
+  const btn = document.getElementById('admin-login-btn');
   if(!emailEl || !passEl || !errEl) return;
   const email = emailEl.value.trim();
   const password = passEl.value;
@@ -730,6 +778,7 @@ async function adminLogin(){
     errEl.style.display = 'block';
     return;
   }
+  if(btn){ btn.disabled = true; btn.textContent = 'Entrando…'; }
   try{
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if(error){
@@ -738,10 +787,13 @@ async function adminLogin(){
       return;
     }
     openAdminPanel();
+    showToast('Sessão ativa. Bom trabalho.', 3200);
   }catch(e){
     console.error(e);
     errEl.textContent = 'Falha de conexão. Tente de novo.';
     errEl.style.display = 'block';
+  }finally{
+    if(btn){ btn.disabled = false; btn.textContent = 'Entrar'; }
   }
 }
 async function adminLogout(){
@@ -823,6 +875,8 @@ function extractContactPhone(notes){
 }
 function switchAdminTab(tab){
   if(!ADMIN_TABS.includes(tab)) tab = 'projetos';
+  if(tab === 'mensagens'){ switchAdminTab('conversas'); return; }
+  rememberAdminTab(tab);
   ADMIN_TABS.forEach(t=>{
     const pane = document.getElementById('tab-'+t);
     const btn = document.getElementById('tab-btn-'+t);
@@ -831,7 +885,6 @@ function switchAdminTab(tab){
   });
   if(tab==='projetos'){ renderProjectsList(); renderAdminOverview(); renderAdminActivity(); }
   if(tab==='conversas'){ renderChatProjectList(); renderMessagesList(); }
-  if(tab==='mensagens'){ switchAdminTab('conversas'); return; }
   if(tab==='clientes'){ renderClientesList(); }
   if(tab==='operacoes'){ renderAgenda(); renderLeads(); renderHunt(); renderOpsTemplates(); }
   if(tab==='empresa'){ renderEmpresa(); buildCalculator(); fillAdminSettingsForm(); }
@@ -870,16 +923,23 @@ async function renderAdminOverview(){
       loadMessages().catch(()=>[]),
       loadLeadChats().catch(()=>[])
     ]);
-    const unpaid = (projects||[]).filter(p=>!p.paid && Number(p.pixValue)>0).length;
-    const open = (projects||[]).filter(p=>p.status==='analise' || p.status==='andamento').length;
-    const entregues = (projects||[]).filter(p=>p.status==='concluido').length;
+    const list = projects || [];
+    const unpaidList = list.filter(p=>!p.paid && Number(p.pixValue)>0);
+    const unpaid = unpaidList.length;
+    const unpaidSum = unpaidList.reduce((s,p)=>s+Number(p.pixValue||0), 0);
+    const open = list.filter(p=>p.status==='analise' || p.status==='andamento').length;
+    const entregues = list.filter(p=>p.status==='concluido').length;
+    const recebido = list.filter(p=>p.paid).reduce((s,p)=>s+Number(p.pixValue||0), 0);
+    const handled = loadHandledMessages();
+    const openForms = (messages||[]).filter(m=>!handled[String(m.id)]).length;
+    const inboxN = (leads||[]).length + openForms;
     el.innerHTML =
-      '<div class="ccs-metric"><div class="lbl">Em produção</div><div class="val">'+open+'</div><div class="sub">novos + andamento</div></div>'+
-      '<div class="ccs-metric receber"><div class="lbl">PIX a receber</div><div class="val">'+unpaid+'</div><div class="sub">sem pagamento marcado</div></div>'+
-      '<div class="ccs-metric"><div class="lbl">Caixa de entrada</div><div class="val">'+((leads||[]).length + (messages||[]).length)+'</div><div class="sub">'+(leads||[]).length+' chat · '+(messages||[]).length+' formulário</div></div>'+
-      '<div class="ccs-metric recebido"><div class="lbl">Entregues</div><div class="val">'+entregues+'</div><div class="sub">de '+(projects||[]).length+' projetos</div></div>';
+      '<div class="ccs-metric"><div class="lbl">Em produção</div><div class="val">'+open+'</div><div class="sub">análise + andamento</div></div>'+
+      '<div class="ccs-metric receber"><div class="lbl">PIX a receber</div><div class="val">'+unpaid+'</div><div class="sub">'+money(unpaidSum)+' · sem marcar pago</div></div>'+
+      '<div class="ccs-metric"><div class="lbl">Caixa de entrada</div><div class="val">'+inboxN+'</div><div class="sub">'+(leads||[]).length+' chat · '+openForms+' formulário aberto</div></div>'+
+      '<div class="ccs-metric recebido"><div class="lbl">Recebido / entregues</div><div class="val">'+money(recebido)+'</div><div class="sub">'+entregues+' entregues · '+list.length+' projetos</div></div>';
     setNavBadge('badge-projetos', open);
-    setNavBadge('badge-conversas', (leads||[]).length + (messages||[]).length);
+    setNavBadge('badge-conversas', inboxN);
     const crm = await loadCrmLeads().catch(()=>[]);
     setNavBadge('badge-clientes', (projects||[]).length + (crm||[]).length);
   }catch(e){
@@ -944,7 +1004,9 @@ function toggleNewProjectForm(){
     if(c) c.focus();
   }
 }
+let __creatingProject = false;
 async function createProject(){
+  if(__creatingProject) return;
   const clientName = document.getElementById('np-client').value.trim();
   const projectName = document.getElementById('np-project').value.trim();
   const serviceType = document.getElementById('np-service').value;
@@ -957,31 +1019,52 @@ async function createProject(){
     notes = (notes ? notes+'\n' : '') + 'WhatsApp: '+phone;
   }
   if(!clientName || !projectName){ showToast('Preencha nome do cliente e do projeto.'); return; }
-  const trackingCode = genCode();
-  const created = await insertProject({ trackingCode, clientName, projectName, serviceType, pixKey, pixValue, pixCity, notes });
-  if(!created) return;
-  pushActivity('projeto', 'Criou '+projectName+' · '+trackingCode);
-  const contact = phone || (notes.match(/Contato:\s*(.+)/) || [])[1] || '';
-  ['np-client','np-project','np-value','np-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-  const phoneEl = document.getElementById('np-phone'); if(phoneEl) phoneEl.value='';
-  document.getElementById('np-service').value = 'site';
-  document.getElementById('np-pixkey').value = COMPANY_PIX_KEY;
-  document.getElementById('np-city').value = COMPANY_PIX_CITY;
-  toggleNewProjectForm();
-  /* Se o projeto veio de um chat aberto, manda o código direto na conversa do cliente. */
-  if(pendingLeadCode){
-    await insertChat(pendingLeadCode, 'admin', `Seu código de acompanhamento é: ${trackingCode}\nAbra o "Portal do cliente" no site e digite esse código para acompanhar seu projeto em tempo real.`);
-    await touchLead(pendingLeadCode);
-    pendingLeadCode = null; pendingLeadName = '';
-    showToast('Código enviado no chat do cliente!');
+  if(pixValue && Number(pixValue) < 0){ showToast('Valor do PIX não pode ser negativo.'); return; }
+  __creatingProject = true;
+  const saveBtn = document.getElementById('np-save-btn');
+  if(saveBtn){ saveBtn.disabled = true; saveBtn.textContent = 'Salvando…'; }
+  try{
+    const trackingCode = genCode();
+    const created = await insertProject({ trackingCode, clientName, projectName, serviceType, pixKey, pixValue, pixCity, notes });
+    if(!created) return;
+    pushActivity('projeto', 'Criou '+projectName+' · '+trackingCode);
+    const contact = phone || (notes.match(/Contato:\s*(.+)/) || [])[1] || '';
+    ['np-client','np-project','np-value','np-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    const phoneEl = document.getElementById('np-phone'); if(phoneEl) phoneEl.value='';
+    document.getElementById('np-service').value = 'site';
+    document.getElementById('np-pixkey').value = COMPANY_PIX_KEY;
+    document.getElementById('np-city').value = COMPANY_PIX_CITY;
+    toggleNewProjectForm();
+    if(pendingLeadCode){
+      await insertChat(pendingLeadCode, 'admin', `Seu código de acompanhamento é: ${trackingCode}\nAbra o "Portal do cliente" no site e digite esse código para acompanhar seu projeto em tempo real.`);
+      await touchLead(pendingLeadCode);
+      pendingLeadCode = null; pendingLeadName = '';
+      showToast('Código enviado no chat do cliente!', 3200);
+    }
+    showCodeModal(trackingCode, clientName, contact);
+    renderProjectsList();
+    renderAdminActivity();
+    renderClientesList();
+    renderAdminOverview();
+  }finally{
+    __creatingProject = false;
+    if(saveBtn){ saveBtn.disabled = false; saveBtn.textContent = 'Salvar projeto'; }
   }
-  showCodeModal(trackingCode, clientName, contact);
-  renderProjectsList();
-  renderAdminActivity();
-  renderClientesList();
 }
-async function setStatus(id, status){ await updateProject(id, { status }); renderProjectsList(); renderEmpresa(); renderAdminOverview(); renderAdminActivity(); }
-async function togglePaid(id, current){ await updateProject(id, { paid: !current }); renderProjectsList(); renderEmpresa(); renderAdminOverview(); renderAdminActivity(); renderClientesList(); }
+async function setStatus(id, status){
+  if(status === 'concluido' && !confirm('Marcar este projeto como entregue?')) return;
+  await updateProject(id, { status });
+  pushActivity('status', 'Status → '+(STATUS_LABELS[status]||status));
+  renderProjectsList(); renderEmpresa(); renderAdminOverview(); renderAdminActivity();
+}
+async function togglePaid(id, current){
+  if(!current && !confirm('Confirmar que o PIX caiu e marcar como pago?')) return;
+  if(current && !confirm('Desmarcar pagamento deste projeto?')) return;
+  await updateProject(id, { paid: !current });
+  pushActivity('pix', current ? 'Desmarcou pagamento' : 'Marcou PIX como pago');
+  showToast(current ? 'Pagamento desmarcado.' : 'PIX marcado como pago.', 2800);
+  renderProjectsList(); renderEmpresa(); renderAdminOverview(); renderAdminActivity(); renderClientesList();
+}
 async function saveDelivery(id){
   const input = document.getElementById('delivery-'+id);
   if(!input) return;
@@ -1009,11 +1092,11 @@ async function advancePipeline(id){
   const stage = pipelineStage(p);
   if(stage === 'novo'){ await setStatus(id, 'andamento'); showToast('Avançou para Em andamento'); return; }
   if(stage === 'andamento'){
-    if(Number(p.pixValue) > 0){ showToast('Aguardando PIX — marque como pago quando cair.'); renderProjectsList(); return; }
-    await setStatus(id, 'concluido'); showToast('Marcado como entregue'); return;
+    if(Number(p.pixValue) > 0){ showToast('Aguardando PIX — marque como pago quando cair no banco.', 3200); renderProjectsList(); return; }
+    await setStatus(id, 'concluido'); if(pipelineStage({...p,status:'concluido'})==='entregue') showToast('Marcado como entregue'); return;
   }
-  if(stage === 'aguardando_pix'){ await togglePaid(id, false); showToast('PIX marcado como pago'); return; }
-  if(stage === 'pago'){ await setStatus(id, 'concluido'); showToast('Marcado como entregue'); return; }
+  if(stage === 'aguardando_pix'){ await togglePaid(id, false); return; }
+  if(stage === 'pago'){ await setStatus(id, 'concluido'); return; }
   showToast('Pipeline completo. Confira o link de entrega.');
 }
 async function waProject(id){
@@ -1121,6 +1204,17 @@ function showCodeModal(code, clientName, contact){
   modalContact = contact || '';
   document.getElementById('modal-code').textContent = code;
   document.getElementById('modal-client-name').textContent = clientName;
+  const waBtn = document.getElementById('modal-wa-btn');
+  if(waBtn){
+    if(phoneToWa(modalContact)){
+      waBtn.style.display = 'block';
+      waBtn.onclick = function(){
+        openWhatsApp(modalContact, 'Olá, '+clientName+'! Seu código de acompanhamento na CodeCraft Solutions é: '+code+'. Abra o Portal do cliente no site e cole o código.');
+      };
+    } else {
+      waBtn.style.display = 'none';
+    }
+  }
   document.getElementById('code-modal').style.display = 'flex';
 }
 function closeCodeModal(){
@@ -1159,32 +1253,40 @@ async function renderMessagesList(){
   const container = document.getElementById('inbox-form-messages') || document.getElementById('messages-list');
   if(!container) return;
   const messages = await loadMessages();
+  const handled = loadHandledMessages();
   if(messages.length === 0){
     container.innerHTML = '<div class="ccs-panel ccs-empty" style="padding:14px;"><strong>Sem recados do formulário.</strong> Quando alguém enviar “Fale com a gente” na home, aparece aqui.</div>';
     return;
   }
-  container.innerHTML =
-    '<div class="ccs-eyebrow" style="margin:0 0 8px;">Formulário da home · '+messages.length+'</div>'+
-    messages.map(m=>{
+  const open = messages.filter(m=>!handled[String(m.id)]);
+  const done = messages.filter(m=>handled[String(m.id)]);
+  function card(m, isDone){
     const waBtn = phoneToWa(m.contact)
       ? `<button class="ccs-btn ghost small" type="button" data-phone="${escapeHtml(digitsOnly(m.contact))}" data-name="${escapeHtml(m.name)}" onclick="openWhatsApp(this.dataset.phone,'Olá, '+this.dataset.name+'! Aqui é da CodeCraft Solutions. Recebemos sua mensagem e podemos seguir por aqui.')">WhatsApp</button>`
       : '';
-    const replyChat = `<button class="ccs-btn amber small" onclick="openAppConversas()">Abrir chat</button>`;
+    const handleBtn = isDone
+      ? ''
+      : `<button class="ccs-btn ghost small" type="button" onclick="markMessageHandled('${escapeHtml(String(m.id))}')">Marcar tratado</button>`;
     return `
-    <div class="ccs-panel" style="margin-bottom:10px; padding:12px 14px;">
+    <div class="ccs-panel" style="margin-bottom:10px; padding:12px 14px; ${isDone?'opacity:.62;':''}">
       <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;">
         <strong>${escapeHtml(m.name)}</strong>
-        <span style="font-size:12.5px; color:var(--ink-soft);">${fmtDate(m.createdAt)}</span>
+        <span style="font-size:12.5px; color:var(--ink-soft);">${fmtDate(m.createdAt)}${isDone?' · tratado':''}</span>
       </div>
       <div style="font-size:13px; color:var(--ink-soft); margin:4px 0 8px;">${escapeHtml(m.contact)}</div>
       <div style="font-size:14.5px; margin-bottom:10px;">${escapeHtml(m.msg)}</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="ccs-btn amber small" data-name="${escapeHtml(m.name)}" data-contact="${escapeHtml(m.contact)}" data-msg="${escapeHtml(m.msg)}" onclick="createProjectFromMessage(this)">Criar projeto</button>
         ${waBtn}
-        ${replyChat}
+        <button class="ccs-btn ghost small" onclick="openAppConversas()">Abrir chat</button>
+        ${handleBtn}
       </div>
     </div>`;
-  }).join('');
+  }
+  container.innerHTML =
+    '<div class="ccs-eyebrow" style="margin:0 0 8px;">Formulário da home · '+open.length+' aberto(s)'+(done.length?' · '+done.length+' tratado(s)':'')+'</div>'+
+    (open.length ? open.map(m=>card(m,false)).join('') : '<div class="ccs-panel ccs-empty" style="padding:12px; margin-bottom:10px;">Nenhum recado pendente.</div>')+
+    (done.length ? '<div class="ccs-eyebrow" style="margin:14px 0 8px;">Já tratados</div>'+done.slice(0,8).map(m=>card(m,true)).join('') : '');
 }
 
 async function renderClientesList(){
@@ -1353,13 +1455,17 @@ async function openAdminChat(code){
   document.querySelectorAll('.ccs-chat-proj').forEach(b=>b.classList.remove('active'));
   renderChatProjectList();
   const main = document.getElementById('admin-chat-main');
-  const contact = proj && proj.notes ? (proj.notes.match(/Contato:\s*(.+)/)||[])[1] : '';
+  const contact = proj ? extractContactPhone(proj.notes) : '';
+  const waBtn = phoneToWa(contact)
+    ? `<button class="ccs-btn ghost small" type="button" onclick="openWhatsApp('${escapeHtml(digitsOnly(contact))}','Olá, ${escapeHtml(proj.clientName)}! Aqui é da CodeCraft Solutions. Sobre o projeto ${escapeHtml(proj.projectName)} (código ${escapeHtml(code)}).')">WhatsApp</button>`
+    : '';
   main.innerHTML = `
     <div class="ccs-chat-head">
       <div><strong>${escapeHtml(proj ? proj.clientName : code)}</strong><br>
         <span style="font-size:12px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace;">${code}</span></div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="ccs-btn ghost small" onclick="sendCodeInChat()">Enviar código</button>
+        ${waBtn}
       </div>
     </div>
     <div id="admin-chat-messages" class="ccs-chat-messages"></div>
@@ -1585,6 +1691,39 @@ function exportExcel(){
   const stamp = new Date().toISOString().slice(0,10);
   XLSX.writeFile(wb, `codecraft-controle-${stamp}.xlsx`);
   showToast('Excel exportado!');
+}
+function exportCsv(){
+  const projects = lastEmpresaProjects || [];
+  const rows = [['Codigo','Cliente','Projeto','Tipo','Status','Valor','Pago','Criado','Atualizado','WhatsApp','Notas']];
+  projects.forEach(p=>{
+    rows.push([
+      p.trackingCode, p.clientName, p.projectName,
+      SERVICE_LABELS[p.serviceType] || p.serviceType || '',
+      STATUS_LABELS[p.status] || p.status || '',
+      Number(p.pixValue || 0),
+      p.paid ? 'Sim' : 'Nao',
+      fmtDate(p.createdAt), fmtDate(p.updatedAt),
+      extractContactPhone(p.notes),
+      String(p.notes||'').replace(/\n/g,' | ')
+    ]);
+  });
+  const stamp = new Date().toISOString().slice(0,10);
+  downloadTextFile(`codecraft-projetos-${stamp}.csv`, '\uFEFF'+rowsToCsv(rows), 'text/csv;charset=utf-8');
+  showToast('CSV de projetos exportado!');
+}
+async function exportContactsCsv(){
+  const [projects, leads, messages] = await Promise.all([
+    loadProjects().catch(()=>[]),
+    loadCrmLeads().catch(()=>[]),
+    loadMessages().catch(()=>[])
+  ]);
+  const rows = [['Tipo','Nome','Detalhe','Telefone','Codigo','Meta']];
+  (projects||[]).forEach(p=> rows.push(['projeto', p.clientName, p.projectName, extractContactPhone(p.notes), p.trackingCode, pipelineStage(p)]));
+  (leads||[]).forEach(l=> rows.push(['lead', l.name, l.niche||'', l.phone||'', '', l.status||'']));
+  (messages||[]).forEach(m=> rows.push(['formulario', m.name, String(m.msg||'').slice(0,120), m.contact||'', '', '']));
+  const stamp = new Date().toISOString().slice(0,10);
+  downloadTextFile(`codecraft-contatos-${stamp}.csv`, '\uFEFF'+rowsToCsv(rows), 'text/csv;charset=utf-8');
+  showToast('CSV de contatos exportado!');
 }
 let calcExpr = '';
 function calcPress(v){
@@ -2016,6 +2155,7 @@ async function chaseAllUnpaid(){
   const projects = await loadProjects();
   const unpaid = projects.filter(x=>!x.paid && Number(x.pixValue)>0);
   if(!unpaid.length){ showToast('Nada a cobrar.'); return; }
+  if(!confirm('Abrir cobrança de até 6 clientes com PIX pendente?')) return;
   unpaid.slice(0,6).forEach((p,i)=> setTimeout(()=> chaseProject(p), i*700));
   showToast('Abrindo cobrança de '+Math.min(6, unpaid.length)+' cliente(s).');
 }
@@ -2054,7 +2194,9 @@ function renderTools(){
     ['Analisar mercado e postar','Lê dólar, bolsa e Selic e já publica.','(async()=>{const p=await loadProjects();const m=await loadMessages();const k=await loadMarket();openPost(bestChannel(p,m,k).id,k);})()'],
     ['Responder chat parado','Abre a conversa parada e manda o texto.','replyStalledChat()'],
     ['Abrir CodeCraft Gestão','ERP/HCM: Financeiro, RH e Billing.','window.open(GESTAO_URL,"_blank")'],
-    ['Exportar a empresa','Baixa Excel de projetos e caixa.','exportExcel()']
+    ['Exportar a empresa','Baixa Excel de projetos e caixa.','exportExcel()'],
+    ['Exportar CSV','Planilha leve de projetos (Excel-compatible).','exportCsv()'],
+    ['Exportar contatos','CSV de projetos, leads e formulário.','exportContactsCsv()']
   ].map(([t,d,fn])=>`
     <div class="ccs-panel">
       <strong>${t}</strong>
@@ -2191,6 +2333,17 @@ if(window.CCS_PAGE === 'admin'){
       const f = document.getElementById('new-project-form');
       if(f && f.style.display === 'none') toggleNewProjectForm();
       else if(f){ const c=document.getElementById('np-client'); if(c) c.focus(); }
+      return;
+    }
+    if(e.key === 'e' || e.key === 'E'){
+      e.preventDefault();
+      switchAdminTab('empresa');
+      exportExcel();
+      return;
+    }
+    if(e.key === 'c' || e.key === 'C'){
+      e.preventDefault();
+      exportCsv();
       return;
     }
     const map = { '1':'projetos', '2':'conversas', '3':'clientes', '4':'operacoes', '5':'empresa' };

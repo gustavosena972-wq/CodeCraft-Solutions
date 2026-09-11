@@ -422,6 +422,17 @@
     font-size:12px; font-weight:600; color:var(--ink); cursor:pointer;
   }
   .ccs-reply-chips button:hover{border-color:var(--amber); background:#FFF7EC;}
+  .ccs-skip{
+    position:absolute; left:-999px; top:auto; width:1px; height:1px; overflow:hidden;
+  }
+  .ccs-skip:focus{
+    position:fixed; left:16px; top:16px; z-index:200; width:auto; height:auto; overflow:visible;
+    background:var(--amber); color:#221304; padding:10px 14px; border-radius:10px; font-weight:800;
+    text-decoration:none; outline:2px solid #fff; outline-offset:2px;
+  }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+    outline:2px solid var(--amber); outline-offset:2px;
+  }
   .ccs-ops-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:16px;}
   .ccs-ops-grid .full{grid-column:1 / -1;}
   .ccs-admin-nav{background:linear-gradient(180deg,#161B33 0%, #1A2140 100%);}
@@ -451,6 +462,8 @@
   ⚠️ Configuração pendente: cole sua SUPABASE_URL e SUPABASE_ANON_KEY no topo do &lt;script&gt;, no arquivo, antes de usar o site.
 </div>
 
+<a class="ccs-skip" href="#quem-somos">Ir para o conteúdo</a>
+
 <!-- ================= LANDING ================= -->
 <div id="screen-landing">
   <nav class="ccs-nav" id="ccs-nav">
@@ -469,14 +482,15 @@
       <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" aria-label="Instagram da CodeCraft Solutions">Instagram</a>
     </div>
     <div class="ccs-nav-actions">
-      <button class="ccs-btn amber" onclick="showScreen('client')">Portal</button>
+      <a class="ccs-btn ghost small" href="https://wa.me/5531999758385" target="_blank" rel="noopener" style="text-decoration:none; display:none;" id="nav-wa-desktop">WhatsApp</a>
+      <button class="ccs-btn amber" onclick="showScreen('client')" aria-label="Abrir portal do cliente">Portal</button>
       <button class="ccs-nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" onclick="toggleSiteNav(this)">
         <span></span>
       </button>
     </div>
   </nav>
 
-  <section class="ccs-hero">
+  <section class="ccs-hero" aria-label="Apresentação CodeCraft Solutions">
     <div class="ccs-hero-copy">
       <div class="ccs-hero-brand">
         <span class="mark"><img src="logo.png" alt="Logo CodeCraft Solutions" width="52" height="52"></span>
@@ -485,8 +499,9 @@
           <span>Estúdio de software · Belo Horizonte</span>
         </div>
       </div>
+      <p class="ccs-hero-eyebrow">BH · chat · portal · PIX</p>
       <h1>CodeCraft Solutions</h1>
-      <p>Sites, lojas e sistemas com chat humano, portal ao vivo e PIX — do orçamento à entrega.</p>
+      <p>Sites, lojas e sistemas que a empresa usa de verdade — orçamento no chat, portal ao vivo e PIX até a entrega.</p>
       <div class="ccs-hero-ctas">
         <button class="ccs-btn amber" onclick="toggleLeadWidget()">Pedir orçamento</button>
         <a class="ccs-btn ghost" style="border-color:#4A517A; color:#fff; text-decoration:none; display:inline-flex; align-items:center;" href="https://wa.me/5531999758385" target="_blank" rel="noopener">WhatsApp</a>
@@ -678,7 +693,7 @@
       <div>
         <div class="ccs-logo" style="font-size:14px; gap:0;">CodeCraft Solutions</div>
         <div style="font-size:12px; margin-top:2px;">Estúdio de software · Belo Horizonte · MG</div>
-        <div style="font-size:11px; margin-top:4px; opacity:.85;">CNPJ em regularização · PIX 31999758385</div>
+        <div style="font-size:11px; margin-top:4px; opacity:.85;">CNPJ em regularização · PIX 31999758385 · (31) 99975-8385</div>
       </div>
     </div>
     <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
@@ -689,6 +704,7 @@
       <a href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener" style="text-decoration:none; color:var(--ink-soft); font-weight:600;">CodeCraft Gestão</a>
       <a href="https://instagram.com/code.invention" target="_blank" rel="noopener" style="text-decoration:none; color:var(--ink-soft); font-weight:600;">@code.invention</a>
       <a href="#contato" style="text-decoration:none; color:var(--ink-soft); font-weight:600;">Contato</a>
+      <button type="button" onclick="showScreen('client')" style="border:none; background:transparent; color:var(--ink-soft); font-weight:600; cursor:pointer; padding:0; font-size:inherit;">Portal</button>
       <a href="admin/" style="text-decoration:none; color:var(--ink-soft); font-weight:600; opacity:.45;">Admin</a>
     </div>
   </footer>

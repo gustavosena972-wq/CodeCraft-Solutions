@@ -459,6 +459,13 @@
   .ccs-activity-row:last-child{border-bottom:none;}
   .ccs-activity-row .when{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); flex:0 0 88px;}
   #admin-settings textarea:focus{outline:2px solid var(--amber); outline-offset:1px; border-color:var(--amber);}
+  @media (max-width:560px){
+    .ccs-admin-overview{grid-template-columns:1fr;}
+    .ccs-table{font-size:12.5px;}
+    .ccs-table th, .ccs-table td{padding:8px 6px;}
+    #new-project-form > div:first-child{grid-template-columns:1fr !important;}
+    #admin-settings > div:first-child{grid-template-columns:1fr !important;}
+  }
 </style>
 </head>
 <body>
@@ -495,7 +502,7 @@
       <p style="color:var(--ink-soft); font-size:13.5px; margin:0 0 18px;">Acesso só para Gustavo e Lucas. Use o Gmail autorizado e a senha da sua conta no Supabase Auth.</p>
       <div class="ccs-field"><label>E-mail</label><input id="admin-email" type="email" placeholder="seu@gmail.com" autocomplete="username"></div>
       <div class="ccs-field"><label>Senha</label><input id="admin-pass" type="password" placeholder="Sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()"></div>
-      <button class="ccs-btn amber" style="width:100%;" onclick="adminLogin()">Entrar</button>
+      <button class="ccs-btn amber" id="admin-login-btn" style="width:100%;" onclick="adminLogin()">Entrar</button>
       <p id="admin-login-error" style="color:var(--danger); font-size:13px; margin-top:10px; display:none;">E-mail ou senha incorretos.</p>
     </div>
   </div>
@@ -509,7 +516,7 @@
       <button class="ccs-navitem" id="tab-btn-operacoes" onclick="switchAdminTab('operacoes')" title="Atalho 4">Operações</button>
       <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')" title="Atalho 5">Empresa</button>
       <div class="ccs-admin-nav-title" style="margin-top:12px;">Atalhos</div>
-      <div style="padding:4px 10px 8px; font-size:11px; color:#A8AED0; line-height:1.5;">1–5 abas · / buscar · N novo projeto</div>
+      <div style="padding:4px 10px 8px; font-size:11px; color:#A8AED0; line-height:1.5;">1–5 abas · / buscar · N novo · E excel · C csv</div>
     </aside>
 
     <div class="ccs-admin-content">
@@ -571,9 +578,12 @@
           <div class="ccs-field" style="grid-column:1/-1;"><label>Observações (cliente vê no portal)</label><input id="np-notes" placeholder="Prazo, escopo, contato…"></div>
         </div>
         <div style="display:flex; gap:10px; margin-top:6px;">
-          <button class="ccs-btn amber" onclick="createProject()">Salvar projeto</button>
+          <button class="ccs-btn amber" id="np-save-btn" onclick="createProject()">Salvar projeto</button>
           <button class="ccs-btn ghost" onclick="toggleNewProjectForm()">Cancelar</button>
         </div>
+        <p style="font-size:12.5px; color:var(--ink-soft); margin:12px 0 0; line-height:1.5;">
+          <strong>PIX:</strong> o valor e a chave entram no portal do cliente (QR + copia e cola). Vocês só marcam <em>Pago</em> quando o dinheiro cair — sem cobrança automática.
+        </p>
       </div>
 
       <div id="projects-list"></div>
@@ -590,6 +600,7 @@
           <h2 style="font-size:20px; margin:0;">Clientes e contatos</h2>
           <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Projetos, leads de prospecção e formulário — busca e WhatsApp num só lugar.</div>
         </div>
+        <button class="ccs-btn ghost small" type="button" onclick="exportContactsCsv()">↧ Exportar CSV</button>
       </div>
       <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
         <input id="client-search" type="search" placeholder="Buscar por nome, telefone, código…" oninput="setClientSearch(this.value)"
@@ -675,7 +686,9 @@
           <div style="font-size:13px; color:var(--ink-soft);">Visão financeira e de projetos em tempo real.</div>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="ccs-btn amber small" onclick="exportExcel()">↧ Exportar Excel</button>
+          <button class="ccs-btn amber small" onclick="exportExcel()">↧ Excel</button>
+          <button class="ccs-btn ghost small" onclick="exportCsv()">↧ CSV projetos</button>
+          <button class="ccs-btn ghost small" onclick="exportContactsCsv()">↧ CSV contatos</button>
         </div>
       </div>
       <div class="ccs-help"><strong>Para que serve:</strong> é o painel de gestão da CodeCraft Solutions. Mostra quanto você já recebeu e quanto tem a receber, quantos sites/lojas estão em produção e entregues, gráficos de faturamento (inclusive por tipo de serviço) e uma calculadora. O botão <strong>Exportar Excel</strong> baixa tudo em planilha (Resumo, Por serviço e Projetos).</div>
@@ -751,6 +764,9 @@
     </div>
     <button class="ccs-btn amber" id="modal-chat-btn" onclick="sendCodeInApp()" style="width:100%; margin-bottom:10px;">
       Enviar código no chat
+    </button>
+    <button class="ccs-btn ghost" id="modal-wa-btn" style="width:100%; margin-bottom:10px; display:none;">
+      Enviar código no WhatsApp
     </button>
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <button class="ccs-btn amber" onclick="copyCode()" style="flex:1;">Copiar código</button>
