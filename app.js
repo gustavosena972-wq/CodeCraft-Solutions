@@ -713,13 +713,26 @@ function lastAdminTab(){
   }catch(e){}
   return 'painel';
 }
+function syncAdminSidebarUi(){
+  const shell = document.getElementById('admin-main');
+  const open = !!(shell && shell.classList.contains('nav-open'));
+  document.body.classList.toggle('admin-nav-open', open);
+  const btn = document.getElementById('admin-sidebar-toggle');
+  if(btn){
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  }
+}
 function toggleAdminSidebar(){
   const shell = document.getElementById('admin-main');
-  if(shell) shell.classList.toggle('nav-open');
+  if(!shell) return;
+  shell.classList.toggle('nav-open');
+  syncAdminSidebarUi();
 }
 function closeAdminSidebar(){
   const shell = document.getElementById('admin-main');
   if(shell) shell.classList.remove('nav-open');
+  syncAdminSidebarUi();
 }
 function renderAdminGate(){
   const loginShell = document.getElementById('admin-login-shell');
@@ -1846,7 +1859,7 @@ function renderEmpresaTable(projects, s){
   if(!el) return;
   if(!projects.length){ el.innerHTML = '<div class="ccs-empty">Nenhum projeto ainda.</div>'; return; }
   el.innerHTML = `
-    <table class="ccs-table">
+    <div class="ccs-table-wrap"><table class="ccs-table">
       <thead><tr><th>Código</th><th>Cliente</th><th>Projeto</th><th>Tipo</th><th>Status</th><th>Valor</th><th>Pago</th><th>Criado em</th></tr></thead>
       <tbody>
         ${projects.map(p=>`
@@ -1866,7 +1879,7 @@ function renderEmpresaTable(projects, s){
         <td>${money(s.total)}</td>
         <td colspan="2">${money(s.recebido)} recebido</td>
       </tr></tfoot>
-    </table>`;
+    </table></div>`;
 }
 
 function exportExcel(){

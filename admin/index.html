@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Admin · CodeCraft Solutions</title>
 <meta name="description" content="CodeCraft Solutions — estúdio de software em Belo Horizonte. Sites, lojas, sistemas e CodeCraft Gestão. Orçamento no chat, portal do cliente e entrega com acompanhamento.">
 <meta name="keywords" content="criar site Belo Horizonte, loja virtual BH, sistema sob medida, landing page, ERP pequena empresa, CodeCraft Gestão, desenvolvimento web BH">
@@ -501,36 +501,75 @@
   .ccs-view-toggle button.active{background:var(--panel); color:#fff;}
   .ccs-local-tag{display:inline-block; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#8A5A12; background:#FFF7EC; border:1px solid #F0C878; border-radius:4px; padding:2px 6px; vertical-align:middle;}
   .ccs-sidebar-toggle{
-    display:none; width:40px; height:40px; border-radius:10px; border:1.5px solid var(--line);
+    display:none; width:44px; height:44px; border-radius:10px; border:1.5px solid var(--line);
     background:#fff; align-items:center; justify-content:center; padding:0; flex-shrink:0;
   }
   .ccs-sidebar-toggle span{display:block; width:16px; height:2px; background:var(--ink); position:relative;}
   .ccs-sidebar-toggle span::before, .ccs-sidebar-toggle span::after{content:''; position:absolute; left:0; width:16px; height:2px; background:var(--ink);}
   .ccs-sidebar-toggle span::before{top:-5px;} .ccs-sidebar-toggle span::after{top:5px;}
-  .ccs-admin-overlay{display:none; position:fixed; inset:0; background:rgba(18,23,43,.45); z-index:35;}
+  .ccs-admin-overlay{display:none; position:fixed; inset:0; background:rgba(18,23,43,.45); z-index:45;}
   .ccs-priority{font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:800; letter-spacing:.04em; padding:2px 6px; border-radius:4px;}
   .ccs-priority.alta{background:#FCEAEA; color:#8B2E2E;}
   .ccs-priority.normal{background:var(--paper-dim); color:var(--ink-soft);}
   .ccs-team-card{display:flex; gap:14px; align-items:flex-start; padding:16px; border:1px solid var(--line); border-radius:12px; background:#fff; margin-bottom:10px;}
   .ccs-team-card .avatar{width:40px; height:40px; border-radius:10px; background:var(--panel); color:var(--amber); display:grid; place-items:center; font-family:'JetBrains Mono',monospace; font-weight:800; flex-shrink:0;}
+  .ccs-table-wrap{width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  body.admin-nav-open{overflow:hidden; touch-action:none;}
   @media (max-width:960px){
     .ccs-admin-shell{position:relative;}
     .ccs-sidebar-toggle{display:inline-flex;}
     .ccs-admin-sidebar{
-      position:fixed; left:0; top:0; bottom:0; height:100vh; transform:translateX(-105%);
+      position:fixed; left:0; top:0; bottom:0; width:min(288px, 88vw);
+      height:100vh; height:100dvh; flex:none;
+      transform:translateX(-105%);
       transition:transform .22s ease; box-shadow:12px 0 40px rgba(0,0,0,.25);
+      z-index:50; padding-top:max(18px, env(safe-area-inset-top, 0px));
+      padding-bottom:max(28px, env(safe-area-inset-bottom, 0px));
     }
     .ccs-admin-shell.nav-open .ccs-admin-sidebar{transform:none;}
     .ccs-admin-shell.nav-open .ccs-admin-overlay{display:block;}
-    .ccs-admin-main{padding:20px 16px 40px;}
-    .ccs-kanban{grid-template-columns:repeat(5, minmax(200px,1fr));}
+    .ccs-admin-main{padding:16px 12px calc(40px + env(safe-area-inset-bottom, 0px));}
+    .ccs-admin-sidebar .ccs-navitem{min-height:44px; padding:12px 14px;}
+    .ccs-app-header{
+      padding:12px; gap:8px; flex-wrap:wrap;
+      padding-top:max(12px, env(safe-area-inset-top, 0px));
+    }
+    .ccs-kanban{
+      display:flex; grid-template-columns:none; gap:12px;
+      overflow-x:auto; -webkit-overflow-scrolling:touch;
+      scroll-snap-type:x mandatory; padding-bottom:12px;
+    }
+    .ccs-kanban-col{flex:0 0 min(280px, 82vw); scroll-snap-align:start; min-height:200px;}
+    .ccs-kanban-card .acts button, .ccs-chip, .ccs-view-toggle button, .ccs-status-btns button{
+      min-height:40px; padding:8px 12px;
+    }
+    .ccs-btn.small{min-height:40px; padding:10px 14px;}
+    .ccs-quick-actions .ccs-btn{min-height:44px;}
+    .ccs-panel:has(> .ccs-table), .ccs-table-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+    .ccs-field input, .ccs-field textarea, .ccs-field select,
+    .ccs-chat-input input, input[type="search"], input[type="text"], input[type="email"], input[type="password"], select, textarea{
+      font-size:16px; min-height:44px;
+    }
   }
   @media (max-width:560px){
     .ccs-admin-overview{grid-template-columns:1fr;}
+    .ccs-metrics{grid-template-columns:1fr;}
     .ccs-table{font-size:12.5px;}
-    .ccs-table th, .ccs-table td{padding:8px 6px;}
+    .ccs-table th, .ccs-table td{padding:10px 8px; white-space:nowrap;}
     #new-project-form > div:first-child{grid-template-columns:1fr !important;}
     #admin-settings > div:first-child{grid-template-columns:1fr !important;}
+    #admin-session-email{display:none !important; max-width:0 !important;}
+    .ccs-logo .word small{display:none;}
+    .ccs-page-head h2{font-size:18px;}
+    .ccs-panel{padding:16px;}
+    .ccs-shell{padding:28px 16px;}
+    .ccs-activity-row{flex-wrap:wrap;}
+    .ccs-activity-row .when{flex:0 0 auto;}
+    .ccs-chat-input{flex-wrap:wrap;}
+    .ccs-chat-input .ccs-btn{flex:1 1 100%; min-height:44px;}
+    .ccs-team-card{flex-wrap:wrap;}
+    .ccs-filter-bar .ccs-chip{min-height:40px;}
+    .ccs-ops-grid{gap:12px;}
   }
 </style>
 </head>
@@ -544,7 +583,7 @@
 <div id="screen-admin" style="display:block;">
   <div class="ccs-app-header">
     <div style="display:flex; align-items:center; gap:10px;">
-      <button type="button" class="ccs-sidebar-toggle" id="admin-sidebar-toggle" onclick="toggleAdminSidebar()" aria-label="Abrir menu"><span></span></button>
+      <button type="button" class="ccs-sidebar-toggle" id="admin-sidebar-toggle" onclick="toggleAdminSidebar()" aria-label="Abrir menu" aria-expanded="false" aria-controls="admin-sidebar"><span></span></button>
       <div class="ccs-logo" style="font-size:15px; cursor:pointer;" onclick="goHome()">
         <span class="mark"><img src="../logo.png" alt="" width="34" height="34"></span>
         <span class="word">CodeCraft Solutions<small>Ops console</small></span>

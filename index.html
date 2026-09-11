@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>CodeCraft Solutions — Sites, lojas e sistemas em Belo Horizonte</title>
 <meta name="description" content="CodeCraft Solutions — estúdio de software em Belo Horizonte. Sites, lojas, sistemas e CodeCraft Gestão. Orçamento no chat, portal do cliente e entrega com acompanhamento.">
 <meta name="keywords" content="criar site Belo Horizonte, loja virtual BH, sistema sob medida, landing page, ERP pequena empresa, CodeCraft Gestão, desenvolvimento web BH">
@@ -392,6 +392,10 @@
     .ccs-price-grid{grid-template-columns:1fr;}
     .ccs-contact-wrap{grid-template-columns:1fr; gap:36px;}
     .ccs-app-header{padding:16px 20px;}
+    .ccs-nav-toggle{width:44px; height:44px;}
+    .ccs-btn{min-height:44px; display:inline-flex; align-items:center; justify-content:center;}
+    .ccs-btn.small{min-height:40px;}
+    .ccs-field input, .ccs-field textarea, .ccs-field select{font-size:16px; min-height:44px;}
   }
 
   /* ===== Trust + ops upgrade ===== */
@@ -442,14 +446,39 @@
   .ccs-navitem.active{background:rgba(232,163,61,.16); color:#fff; border-color:rgba(232,163,61,.35);}
   .ccs-admin-login-card .brand-row{display:flex; gap:12px; align-items:center; margin-bottom:8px;}
   .ccs-admin-login-card .brand-row img{border-radius:10px;}
+  .ccs-table-wrap{width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch;}
   @media (max-width:900px){
     .ccs-trust{grid-template-columns:1fr 1fr;}
     .ccs-ops-grid{grid-template-columns:1fr;}
     #hunt-grid{grid-template-columns:1fr 1fr !important;}
   }
   @media (max-width:560px){
+    :root{ --page-x: 16px; --section-y: 52px; }
     .ccs-trust{grid-template-columns:1fr;}
     #hunt-grid{grid-template-columns:1fr !important;}
+    .ccs-hero{padding:40px var(--page-x) 48px;}
+    .ccs-hero h1{font-size:28px;}
+    .ccs-hero p{font-size:15px;}
+    .ccs-hero-brand{flex-wrap:wrap;}
+    .ccs-hero-ctas{flex-direction:column;}
+    .ccs-hero-ctas .ccs-btn{width:100%; min-width:0;}
+    .ccs-nav{padding:12px var(--page-x);}
+    .ccs-nav-links a{min-height:44px; display:flex; align-items:center;}
+    .ccs-metrics{grid-template-columns:1fr;}
+    .ccs-pipeline{flex-direction:column;}
+    .ccs-stage{min-width:0; width:100%; padding:0 0 18px;}
+    .ccs-step{padding:18px; gap:14px;}
+    footer{flex-direction:column; align-items:flex-start; padding:28px var(--page-x);}
+    .ccs-shell{padding:28px 16px;}
+    .ccs-panel{padding:18px;}
+    .ccs-pix-key{min-width:0;}
+    .ccs-urgency{font-size:12.5px; padding:10px 14px;}
+    #lead-widget{right:12px; bottom:12px; left:12px;}
+    #lead-panel{width:auto; max-width:none; left:0; right:0;}
+    #lead-fab{width:100%; justify-content:center; min-height:48px;}
+    .ccs-gestao-plans .plan{min-height:40px; display:inline-flex; align-items:center;}
+    .ccs-chat-input{flex-wrap:wrap;}
+    .ccs-chat-input .ccs-btn{flex:1 1 100%; min-height:44px;}
   }
   @media (min-width:861px) and (max-width:1100px){
     .ccs-grid-3, .ccs-price-grid{grid-template-columns:repeat(2,1fr);}
