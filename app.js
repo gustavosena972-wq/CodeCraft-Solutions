@@ -717,8 +717,8 @@ function switchAdminTab(tab){
     if(btn) btn.classList.toggle('active', t===tab);
   });
   if(tab==='projetos'){ renderProjectsList(); renderAdminOverview(); }
-  if(tab==='conversas') renderChatProjectList();
-  if(tab==='mensagens') renderMessagesList();
+  if(tab==='conversas'){ renderChatProjectList(); renderMessagesList(); }
+  if(tab==='mensagens'){ switchAdminTab('conversas'); return; }
   if(tab==='operacoes'){ renderAgenda(); renderLeads(); renderHunt(); renderOpsTemplates(); }
   if(tab==='empresa'){ renderEmpresa(); buildCalculator(); }
 }
@@ -737,11 +737,10 @@ async function renderAdminOverview(){
     el.innerHTML =
       '<div class="ccs-metric"><div class="lbl">Projetos</div><div class="val">'+(projects||[]).length+'</div><div class="sub">'+open+' em produção</div></div>'+
       '<div class="ccs-metric receber"><div class="lbl">PIX a receber</div><div class="val">'+unpaid+'</div><div class="sub">sem pagamento marcado</div></div>'+
-      '<div class="ccs-metric"><div class="lbl">Conversas</div><div class="val">'+(leads||[]).length+'</div><div class="sub">contatos pelo site</div></div>'+
-      '<div class="ccs-metric"><div class="lbl">Mensagens</div><div class="val">'+(messages||[]).length+'</div><div class="sub">formulário da home</div></div>';
+      '<div class="ccs-metric"><div class="lbl">Caixa de entrada</div><div class="val">'+((leads||[]).length + (messages||[]).length)+'</div><div class="sub">'+(leads||[]).length+' chat · '+(messages||[]).length+' formulário</div></div>'+
+      '<div class="ccs-metric"><div class="lbl">Em produção</div><div class="val">'+open+'</div><div class="sub">análise + andamento</div></div>';
     setNavBadge('badge-projetos', open);
-    setNavBadge('badge-conversas', (leads||[]).length);
-    setNavBadge('badge-mensagens', (messages||[]).length);
+    setNavBadge('badge-conversas', (leads||[]).length + (messages||[]).length);
   }catch(e){
     el.innerHTML = '<div class="ccs-panel ccs-empty" style="grid-column:1/-1; padding:18px;">Não foi possível carregar o resumo agora.</div>';
   }
@@ -907,7 +906,7 @@ function sendCodeInApp(){
   copyCode();
   closeCodeModal();
   openAppConversas();
-  showToast('Código copiado. Envie na aba Conversas.');
+  showToast('Código copiado. Envie na Caixa de entrada.');
 }
 function createProjectFromMessage(btn){
   const name = (btn && btn.getAttribute('data-name')) || '';
@@ -921,22 +920,25 @@ function createProjectFromMessage(btn){
   document.getElementById('np-project').focus();
 }
 async function renderMessagesList(){
-  const container = document.getElementById('messages-list');
+  const container = document.getElementById('inbox-form-messages') || document.getElementById('messages-list');
+  if(!container) return;
   const messages = await loadMessages();
   if(messages.length === 0){
-    container.innerHTML = '<div class="ccs-panel ccs-empty"><strong>Caixa de entrada vazia.</strong><br>Quando alguém enviar o formulário “Fale com a gente” na home, o recado aparece aqui.</div>';
+    container.innerHTML = '<div class="ccs-panel ccs-empty" style="padding:14px;"><strong>Sem recados do formulário.</strong> Quando alguém enviar “Fale com a gente” na home, aparece aqui.</div>';
     return;
   }
-  container.innerHTML = messages.map(m=>{
-    const replyChat = `<button class="ccs-btn amber small" onclick="openAppConversas()">Responder no chat</button>`;
+  container.innerHTML =
+    '<div class="ccs-eyebrow" style="margin:0 0 8px;">Formulário da home · '+messages.length+'</div>'+
+    messages.map(m=>{
+    const replyChat = `<button class="ccs-btn amber small" onclick="openAppConversas()">Abrir chat</button>`;
     return `
-    <div class="ccs-panel" style="margin-bottom:14px;">
+    <div class="ccs-panel" style="margin-bottom:10px; padding:12px 14px;">
       <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;">
         <strong>${escapeHtml(m.name)}</strong>
         <span style="font-size:12.5px; color:var(--ink-soft);">${fmtDate(m.createdAt)}</span>
       </div>
       <div style="font-size:13px; color:var(--ink-soft); margin:4px 0 8px;">${escapeHtml(m.contact)}</div>
-      <div style="font-size:14.5px; margin-bottom:12px;">${escapeHtml(m.msg)}</div>
+      <div style="font-size:14.5px; margin-bottom:10px;">${escapeHtml(m.msg)}</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="ccs-btn amber small" data-name="${escapeHtml(m.name)}" data-contact="${escapeHtml(m.contact)}" data-msg="${escapeHtml(m.msg)}" onclick="createProjectFromMessage(this)">Criar projeto</button>
         ${replyChat}

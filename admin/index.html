@@ -487,8 +487,7 @@
     <aside class="ccs-admin-nav">
       <div class="ccs-admin-nav-title">Painel</div>
       <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')">Projetos <span class="badge" id="badge-projetos" style="display:none">0</span></button>
-      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')">Conversas <span class="badge" id="badge-conversas" style="display:none">0</span></button>
-      <button class="ccs-navitem" id="tab-btn-mensagens" onclick="switchAdminTab('mensagens')">Mensagens <span class="badge" id="badge-mensagens" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')">Caixa de entrada <span class="badge" id="badge-conversas" style="display:none">0</span></button>
       <button class="ccs-navitem" id="tab-btn-operacoes" onclick="switchAdminTab('operacoes')">Operações</button>
       <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')">Empresa</button>
     </aside>
@@ -517,7 +516,7 @@
         <div style="margin-top:10px;"><strong>Passo a passo:</strong></div>
         <ol style="margin:6px 0 0 18px; padding:0; line-height:1.75;">
           <li><strong>Criar o projeto:</strong> clique em <strong>+ Novo projeto</strong>, preencha o nome do cliente, o tipo de serviço, o valor e a chave PIX, e clique em Salvar. O sistema gera um <strong>código</strong> pro cliente.</li>
-          <li><strong>Enviar o código:</strong> mande o código pro cliente pela aba <strong>Conversas</strong> (chat do app).</li>
+          <li><strong>Enviar o código:</strong> mande o código pro cliente pela <strong>Caixa de entrada</strong> (chat).</li>
           <li><strong>Atualizar o andamento:</strong> use os botões <strong>Em análise → Em andamento → Concluído</strong>. O cliente vê a mudança na hora.</li>
           <li><strong>Marcar o pagamento:</strong> quando o cliente pagar o PIX, clique em <strong>Marcar como pago</strong>.</li>
           <li><strong>Entregar o projeto:</strong> quando o site estiver pronto, cole o endereço dele no campo <strong>Link de entrega</strong> (logo abaixo de cada projeto) e clique em <strong>Salvar link</strong>. Aí aparece o botão <strong>"Acessar meu site"</strong> pro cliente no portal, na hora.</li>
@@ -551,15 +550,20 @@
       <div id="projects-list"></div>
     </div>
 
-    <div id="tab-mensagens" style="display:none;">
-      <h2 style="font-size:20px; margin-bottom:16px;">Mensagens do site</h2>
-      <div class="ccs-help"><strong>Para que serve:</strong> é a caixa de entrada do formulário "Fale com a gente" da página inicial. Quando alguém preenche nome, contato e mensagem, o recado cai aqui pra você responder pela aba <strong>Conversas</strong> (chat do app).</div>
-      <div id="messages-list"></div>
+    <div id="tab-mensagens" style="display:none;" hidden aria-hidden="true">
+      <!-- legado: unificado em Caixa de entrada -->
+      <div id="messages-list-legacy"></div>
     </div>
 
     <div id="tab-conversas" style="display:none;">
-      <h2 style="font-size:20px; margin-bottom:16px;">Conversas com clientes</h2>
-      <div class="ccs-help"><strong>Para que serve:</strong> é o chat em tempo real com quem está no site. Inclui os <strong>novos contatos</strong> e as conversas por projeto. Responda aqui com tom formal, claro e objetivo, e <strong>envie o código de acompanhamento</strong> quando o projeto for criado.</div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+        <div>
+          <h2 style="font-size:20px; margin:0;">Caixa de entrada</h2>
+          <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Formulário da home + chat ao vivo — um só lugar para responder.</div>
+        </div>
+      </div>
+      <div class="ccs-help" style="margin-bottom:14px;"><strong>Rotina:</strong> veja recados do formulário abaixo → responda no chat → envie o código quando criar o projeto.</div>
+      <div id="inbox-form-messages" style="margin-bottom:18px;"></div>
       <div class="ccs-chat-layout">
         <div class="ccs-chat-side">
           <div id="chat-project-list"></div>
@@ -578,7 +582,7 @@
           <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Agenda, prospecção e cadastro de leads — sem IA.</div>
         </div>
       </div>
-      <div class="ccs-help"><strong>Rotina sugerida:</strong> 1) responder Conversas e Mensagens · 2) atualizar status dos projetos · 3) caçar 3 empresas em BH e salvar em Clientes · 4) marcar PIX quando cair.</div>
+      <div class="ccs-help"><strong>Rotina sugerida:</strong> 1) responder a Caixa de entrada · 2) atualizar status dos projetos · 3) caçar 3 empresas em BH e salvar em Clientes · 4) marcar PIX quando cair.</div>
       <div class="ccs-ops-grid">
         <div>
           <div class="ccs-eyebrow" style="margin-bottom:10px;">Agenda</div>
@@ -607,7 +611,7 @@
         <div class="full">
           <div class="ccs-eyebrow" style="margin:8px 0 10px;">Respostas prontas (chat)</div>
           <div class="ccs-panel" id="ops-templates">
-            <p style="margin:0 0 10px; font-size:13.5px; color:var(--ink-soft);">Na aba Conversas, use os chips acima do campo de mensagem. Aqui você vê o texto completo:</p>
+            <p style="margin:0 0 10px; font-size:13.5px; color:var(--ink-soft);">Na Caixa de entrada, use os chips acima do campo de mensagem. Aqui você vê o texto completo:</p>
             <ul style="margin:0; padding-left:18px; font-size:13.5px; line-height:1.6;" id="ops-templates-list"></ul>
           </div>
         </div>
