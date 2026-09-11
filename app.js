@@ -26,22 +26,12 @@ const supabaseClient = configOk ? window.supabase.createClient(SUPABASE_URL, SUP
   },
 }) : null;
 
-/* Contas autorizadas no painel (Gustavo + Lucas). */
+/* Contas autorizadas no painel (Gustavo + Lucas) — login só via Supabase Auth. */
 const ADMIN_ALLOWED_EMAILS = [
   'gustavosena972@gmail.com',
   'lucashdhdhdhdhdbddb@gmail.com'
 ];
-/* Senha compartilhada das versões anteriores — libera o painel mesmo se o Auth do Supabase estiver com outra senha. */
-const ADMIN_SHARED_PASSWORD = 'codecraft2026';
-let adminLocalOk = false;
-let adminLocalEmail = '';
-try{
-  const savedLocal = sessionStorage.getItem('ccs-admin-local');
-  if(savedLocal && ADMIN_ALLOWED_EMAILS.includes(String(savedLocal).trim().toLowerCase())){
-    adminLocalOk = true;
-    adminLocalEmail = String(savedLocal).trim().toLowerCase();
-  }
-}catch(e){}
+try{ sessionStorage.removeItem('ccs-admin-local'); }catch(e){}
 function normalizeEmail(email){
   return String(email || '').trim().toLowerCase();
 }
@@ -58,13 +48,9 @@ async function requireAdminSession(){
   if(session){
     if(!isAllowedAdminEmail(sessionAdminEmail(session))){
       await supabaseClient.auth.signOut();
-    } else {
-      return session;
+      return null;
     }
-  }
-  /* Login local (e-mail autorizado + senha compartilhada). */
-  if(adminLocalOk && isAllowedAdminEmail(adminLocalEmail)){
-    return { user: { email: adminLocalEmail }, local: true };
+    return session;
   }
   return null;
 }
@@ -633,11 +619,8 @@ function renderAdminGate(){
     });
   }
 }
-function openAdminPanel(email, viaLocal){
-  adminLocalOk = !!viaLocal;
-  adminLocalEmail = viaLocal ? normalizeEmail(email) : '';
+function openAdminPanel(){
   adminLoggedIn = true;
-  try{ if(viaLocal) sessionStorage.setItem('ccs-admin-local', adminLocalEmail); else sessionStorage.removeItem('ccs-admin-local'); }catch(e){}
   const errEl = document.getElementById('admin-login-error');
   if(errEl) errEl.style.display = 'none';
   const pass = document.getElementById('admin-pass');
@@ -663,30 +646,19 @@ async function adminLogin(){
     return;
   }
 
-  /* Senha compartilhada: entra na hora (não depende do Auth). */
-  if(password === ADMIN_SHARED_PASSWORD){
-    openAdminPanel(email, true);
-    if(supabaseClient){
-      supabaseClient.auth.signInWithPassword({ email, password }).then(({ error })=>{
-        if(!error){ adminLocalOk = false; adminLocalEmail = ''; try{ sessionStorage.removeItem('ccs-admin-local'); }catch(e){} }
-      }).catch(()=>{});
-    }
-    return;
-  }
-
   if(!configOk || !supabaseClient){
-    errEl.textContent = 'Configure o Supabase ou use a senha codecraft2026.';
+    errEl.textContent = 'Configure o Supabase (URL e chave) no app.js.';
     errEl.style.display = 'block';
     return;
   }
   try{
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if(error){
-      errEl.textContent = 'E-mail ou senha incorretos.';
+      errEl.textContent = 'E-mail ou senha incorretos. Use a senha da conta no Supabase Auth (Authentication → Users).';
       errEl.style.display = 'block';
       return;
     }
-    openAdminPanel(email, false);
+    openAdminPanel();
   }catch(e){
     console.error(e);
     errEl.textContent = 'Falha de conexão. Tente de novo.';
@@ -695,8 +667,6 @@ async function adminLogin(){
 }
 async function adminLogout(){
   adminLoggedIn = false;
-  adminLocalOk = false;
-  adminLocalEmail = '';
   try{ sessionStorage.removeItem('ccs-admin-local'); }catch(e){}
   stopRealtime();
   if(supabaseClient){ await supabaseClient.auth.signOut(); }
@@ -707,16 +677,7 @@ async function syncAdminSessionFromAuth(session){
   if(session && !authOk){
     await supabaseClient.auth.signOut();
   }
-  if(authOk){
-    adminLocalOk = false;
-    adminLocalEmail = '';
-    try{ sessionStorage.removeItem('ccs-admin-local'); }catch(e){}
-    adminLoggedIn = true;
-  } else if(adminLocalOk && isAllowedAdminEmail(adminLocalEmail)){
-    adminLoggedIn = true;
-  } else {
-    adminLoggedIn = false;
-  }
+  adminLoggedIn = authOk;
   const onAdmin = window.CCS_PAGE === 'admin' || (document.getElementById('screen-admin') && document.getElementById('screen-admin').style.display === 'block');
   if(!adminLoggedIn){
     stopRealtime();
