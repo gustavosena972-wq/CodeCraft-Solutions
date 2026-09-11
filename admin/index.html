@@ -443,6 +443,22 @@
   @media (min-width:861px) and (max-width:1100px){
     .ccs-grid-3, .ccs-price-grid{grid-template-columns:repeat(2,1fr);}
   }
+
+  /* ===== Admin ops excellence ===== */
+  .ccs-pipe{display:flex; flex-wrap:wrap; gap:4px; margin:8px 0 4px;}
+  .ccs-pipe span{
+    font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.04em; padding:3px 7px; border-radius:999px; border:1px solid var(--line);
+    color:var(--ink-soft); background:#fff;
+  }
+  .ccs-pipe span.on{background:var(--panel); color:#fff; border-color:var(--panel);}
+  .ccs-pipe span.done{background:var(--teal); color:#fff; border-color:var(--teal);}
+  .ccs-pipe span.warn{background:#FFF7EC; color:#8A5A12; border-color:var(--amber);}
+  .ccs-loading{padding:28px; text-align:center; color:var(--ink-soft); font-size:14px;}
+  .ccs-activity-row{display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+  .ccs-activity-row:last-child{border-bottom:none;}
+  .ccs-activity-row .when{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); flex:0 0 88px;}
+  #admin-settings textarea:focus{outline:2px solid var(--amber); outline-offset:1px; border-color:var(--amber);}
 </style>
 </head>
 <body>
@@ -461,6 +477,7 @@
     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
       <span id="ccs-db-status" class="ccs-db-status" title="Status do banco"><span class="p"></span> <span id="ccs-db-status-text">banco</span></span>
       <span id="admin-live" class="ccs-live-dot" style="display:none;"><span class="d"></span> ao vivo</span>
+      <span id="admin-session-email" class="mono" style="display:none; font-size:12px; color:var(--ink-soft); max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
       <button class="ccs-btn ghost small" id="admin-logout-btn" style="display:none;" onclick="adminLogout()">Sair</button>
       <a class="ccs-btn ghost small" href="../index.html">← Voltar ao site</a>
     </div>
@@ -485,11 +502,14 @@
 
   <div class="ccs-admin-layout" id="admin-main" style="display:none;">
     <aside class="ccs-admin-nav">
-      <div class="ccs-admin-nav-title">Painel</div>
-      <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')">Projetos <span class="badge" id="badge-projetos" style="display:none">0</span></button>
-      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')">Caixa de entrada <span class="badge" id="badge-conversas" style="display:none">0</span></button>
-      <button class="ccs-navitem" id="tab-btn-operacoes" onclick="switchAdminTab('operacoes')">Operações</button>
-      <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')">Empresa</button>
+      <div class="ccs-admin-nav-title">Operação</div>
+      <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')" title="Atalho 1">Projetos <span class="badge" id="badge-projetos" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')" title="Atalho 2">Caixa de entrada <span class="badge" id="badge-conversas" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-clientes" onclick="switchAdminTab('clientes')" title="Atalho 3">Clientes <span class="badge" id="badge-clientes" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-operacoes" onclick="switchAdminTab('operacoes')" title="Atalho 4">Operações</button>
+      <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')" title="Atalho 5">Empresa</button>
+      <div class="ccs-admin-nav-title" style="margin-top:12px;">Atalhos</div>
+      <div style="padding:4px 10px 8px; font-size:11px; color:#A8AED0; line-height:1.5;">1–5 abas · / buscar · N novo projeto</div>
     </aside>
 
     <div class="ccs-admin-content">
@@ -502,13 +522,20 @@
         <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
       </div>
       <div class="ccs-admin-overview" id="admin-overview"></div>
+      <div id="admin-activity" class="ccs-panel" style="margin-bottom:14px; padding:14px 16px;"></div>
+
+      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; align-items:center;">
+        <input id="project-search" type="search" placeholder="Buscar cliente, projeto ou código…" oninput="setProjectSearch(this.value)"
+          style="flex:1; min-width:200px; padding:10px 12px; border:1.5px solid var(--line); border-radius:10px; font-size:14px;">
+      </div>
 
       <div class="ccs-filter-bar" id="project-filters">
         <button type="button" class="ccs-chip active" data-filter="all" onclick="setProjectFilter('all')">Todos</button>
-        <button type="button" class="ccs-chip" data-filter="analise" onclick="setProjectFilter('analise')">Em análise</button>
+        <button type="button" class="ccs-chip" data-filter="novo" onclick="setProjectFilter('novo')">Novo</button>
         <button type="button" class="ccs-chip" data-filter="andamento" onclick="setProjectFilter('andamento')">Em andamento</button>
-        <button type="button" class="ccs-chip" data-filter="concluido" onclick="setProjectFilter('concluido')">Concluído</button>
-        <button type="button" class="ccs-chip" data-filter="unpaid" onclick="setProjectFilter('unpaid')">PIX a receber</button>
+        <button type="button" class="ccs-chip" data-filter="aguardando_pix" onclick="setProjectFilter('aguardando_pix')">Aguardando PIX</button>
+        <button type="button" class="ccs-chip" data-filter="pago" onclick="setProjectFilter('pago')">Pago</button>
+        <button type="button" class="ccs-chip" data-filter="entregue" onclick="setProjectFilter('entregue')">Entregue</button>
       </div>
 
       <div class="ccs-help">
@@ -517,16 +544,18 @@
         <ol style="margin:6px 0 0 18px; padding:0; line-height:1.75;">
           <li><strong>Criar o projeto:</strong> clique em <strong>+ Novo projeto</strong>, preencha o nome do cliente, o tipo de serviço, o valor e a chave PIX, e clique em Salvar. O sistema gera um <strong>código</strong> pro cliente.</li>
           <li><strong>Enviar o código:</strong> mande o código pro cliente pela <strong>Caixa de entrada</strong> (chat).</li>
-          <li><strong>Atualizar o andamento:</strong> use os botões <strong>Em análise → Em andamento → Concluído</strong>. O cliente vê a mudança na hora.</li>
-          <li><strong>Marcar o pagamento:</strong> quando o cliente pagar o PIX, clique em <strong>Marcar como pago</strong>.</li>
-          <li><strong>Entregar o projeto:</strong> quando o site estiver pronto, cole o endereço dele no campo <strong>Link de entrega</strong> (logo abaixo de cada projeto) e clique em <strong>Salvar link</strong>. Aí aparece o botão <strong>"Acessar meu site"</strong> pro cliente no portal, na hora.</li>
+          <li><strong>Atualizar o andamento:</strong> use <strong>Avançar etapa</strong> (Novo → Andamento → Aguard. PIX → Pago → Entregue) ou os botões de status. O cliente vê a mudança na hora.</li>
+          <li><strong>Marcar o pagamento:</strong> quando o PIX cair, clique em <strong>Marcar pago</strong> (ou avance a etapa).</li>
+          <li><strong>WhatsApp:</strong> em cada projeto/contato há atalho com mensagem pronta.</li>
+          <li><strong>Entregar o projeto:</strong> cole o endereço no <strong>Link de entrega</strong> e salve. O cliente vê <strong>"Acessar meu site"</strong> no portal.</li>
         </ol>
       </div>
 
       <div class="ccs-panel" id="new-project-form" style="display:none; margin-bottom:22px;">
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-          <div class="ccs-field"><label>Nome do cliente</label><input id="np-client"></div>
+          <div class="ccs-field"><label>Nome do cliente</label><input id="np-client" autocomplete="organization"></div>
           <div class="ccs-field"><label>Nome do projeto</label><input id="np-project"></div>
+          <div class="ccs-field"><label>WhatsApp / telefone</label><input id="np-phone" type="tel" placeholder="31 99999-9999" inputmode="tel"></div>
           <div class="ccs-field"><label>Tipo de serviço</label>
             <select id="np-service">
               <option value="loja">Loja virtual</option>
@@ -539,7 +568,7 @@
           <div class="ccs-field"><label>Chave PIX</label><input id="np-pixkey" list="np-pixkey-options" value="31999758385" placeholder="CPF, e-mail, telefone ou chave aleatória"><datalist id="np-pixkey-options"><option value="31999758385">Inter (principal)</option></datalist></div>
           <div class="ccs-field"><label>Valor (R$)</label><input id="np-value" type="number" step="0.01" placeholder="0.00"></div>
           <div class="ccs-field"><label>Cidade (para o PIX)</label><input id="np-city" value="BELO HORIZONTE" placeholder="Ex: SAO PAULO"></div>
-          <div class="ccs-field"><label>Observações para o cliente</label><input id="np-notes" placeholder="Opcional"></div>
+          <div class="ccs-field" style="grid-column:1/-1;"><label>Observações (cliente vê no portal)</label><input id="np-notes" placeholder="Prazo, escopo, contato…"></div>
         </div>
         <div style="display:flex; gap:10px; margin-top:6px;">
           <button class="ccs-btn amber" onclick="createProject()">Salvar projeto</button>
@@ -553,6 +582,27 @@
     <div id="tab-mensagens" style="display:none;" hidden aria-hidden="true">
       <!-- legado: unificado em Caixa de entrada -->
       <div id="messages-list-legacy"></div>
+    </div>
+
+    <div id="tab-clientes" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+        <div>
+          <h2 style="font-size:20px; margin:0;">Clientes e contatos</h2>
+          <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Projetos, leads de prospecção e formulário — busca e WhatsApp num só lugar.</div>
+        </div>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <input id="client-search" type="search" placeholder="Buscar por nome, telefone, código…" oninput="setClientSearch(this.value)"
+          style="flex:1; min-width:200px; padding:10px 12px; border:1.5px solid var(--line); border-radius:10px; font-size:14px;">
+      </div>
+      <div class="ccs-filter-bar" id="client-filters">
+        <button type="button" class="ccs-chip active" data-cfilter="all" onclick="setClientFilter('all')">Todos</button>
+        <button type="button" class="ccs-chip" data-cfilter="projeto" onclick="setClientFilter('projeto')">Com projeto</button>
+        <button type="button" class="ccs-chip" data-cfilter="lead" onclick="setClientFilter('lead')">Leads</button>
+        <button type="button" class="ccs-chip" data-cfilter="form" onclick="setClientFilter('form')">Formulário</button>
+        <button type="button" class="ccs-chip" data-cfilter="pix" onclick="setClientFilter('pix')">PIX pendente</button>
+      </div>
+      <div id="clientes-list"></div>
     </div>
 
     <div id="tab-conversas" style="display:none;">
@@ -637,8 +687,19 @@
           BH e Brasil · Chat no site · PIX 31999758385 · @code.invention
         </p>
         <p style="margin:0; font-size:13px; color:var(--ink-soft);">
-          Use este posicionamento no 99Freelas, GetNinjas, propostas e abordagens — o mesmo discurso em todo o material comercial.
+          CNPJ: <strong>em regularização</strong> — não inventamos número. Atualize aqui quando o cadastro estiver pronto.
         </p>
+      </div>
+
+      <div class="ccs-eyebrow" style="margin-bottom:10px;">Configurações do estúdio</div>
+      <div class="ccs-panel" style="margin-bottom:20px;" id="admin-settings">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="ccs-field"><label>Chave PIX (exibida no portal)</label><input id="set-pix" readonly value="31999758385" class="mono"></div>
+          <div class="ccs-field"><label>WhatsApp comercial</label><input id="set-wa" type="tel" placeholder="5531999758385" inputmode="tel"></div>
+          <div class="ccs-field" style="grid-column:1/-1;"><label>Notas internas da empresa</label><textarea id="set-notes" rows="3" placeholder="Horário, parceiros, lembretes da operação…" style="padding:12px 14px; border-radius:10px; border:1.5px solid var(--line); font-family:Inter,sans-serif; font-size:14.5px; resize:vertical;"></textarea></div>
+        </div>
+        <button class="ccs-btn amber small" type="button" onclick="saveAdminSettings()">Salvar configurações</button>
+        <p style="font-size:12.5px; color:var(--ink-soft); margin:10px 0 0;">PIX é só leitura (já usada no portal). WhatsApp e notas ficam neste navegador para atalhos rápidos.</p>
       </div>
 
       <div class="ccs-eyebrow" style="margin-bottom:10px;">Indicadores</div>

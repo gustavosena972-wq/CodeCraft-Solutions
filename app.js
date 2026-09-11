@@ -11,6 +11,9 @@ const COMPANY_NAME = 'CODECRAFT SOLUTIONS';
 const COMPANY_PIX_KEY = '31999758385';
 const COMPANY_PIX_KEY_ALT = '31999758385';
 const COMPANY_PIX_CITY = 'BELO HORIZONTE';
+const COMPANY_WHATSAPP = '5531999758385';
+const SETTINGS_KEY = 'ccs-admin-settings-v1';
+const ACTIVITY_KEY = 'ccs-admin-activity-v1';
 /* Intervalo (ms) do fallback de atualização automática caso o realtime falhe. */
 const LIVE_POLL_MS = 3000;
 
@@ -72,6 +75,60 @@ function showToast(msg){
   t.textContent = msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 2200);
 }
+function digitsOnly(s){ return String(s||'').replace(/\D/g,''); }
+function phoneToWa(phone){
+  let d = digitsOnly(phone);
+  if(!d) return '';
+  if(d.length === 10 || d.length === 11) d = '55'+d;
+  if(d.length < 12) return '';
+  return d;
+}
+function openWhatsApp(phone, text){
+  const wa = phoneToWa(phone) || getAdminSettings().whatsapp || COMPANY_WHATSAPP;
+  const url = 'https://wa.me/'+wa+(text ? ('?text='+encodeURIComponent(text)) : '');
+  window.open(url, '_blank', 'noopener');
+  return true;
+}
+function loadAdminSettings(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}');
+    return {
+      whatsapp: phoneToWa(raw.whatsapp) || COMPANY_WHATSAPP,
+      notes: String(raw.notes||'')
+    };
+  }catch(e){
+    return { whatsapp: COMPANY_WHATSAPP, notes: '' };
+  }
+}
+function getAdminSettings(){ return loadAdminSettings(); }
+function saveAdminSettings(){
+  const waEl = document.getElementById('set-wa');
+  const notesEl = document.getElementById('set-notes');
+  const wa = phoneToWa(waEl ? waEl.value : '') || COMPANY_WHATSAPP;
+  const notes = notesEl ? notesEl.value.trim() : '';
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify({ whatsapp: wa, notes }));
+  if(waEl) waEl.value = wa;
+  showToast('Configurações salvas neste navegador.');
+  pushActivity('config', 'Configurações do estúdio atualizadas');
+  renderAdminActivity();
+}
+function fillAdminSettingsForm(){
+  const s = loadAdminSettings();
+  const wa = document.getElementById('set-wa');
+  const notes = document.getElementById('set-notes');
+  const pix = document.getElementById('set-pix');
+  if(wa) wa.value = s.whatsapp;
+  if(notes) notes.value = s.notes;
+  if(pix) pix.value = COMPANY_PIX_KEY;
+}
+function loadActivity(){
+  try{ return JSON.parse(localStorage.getItem(ACTIVITY_KEY)||'[]'); }catch(e){ return []; }
+}
+function pushActivity(kind, text){
+  const list = loadActivity();
+  list.unshift({ id: Date.now().toString(36), kind, text: String(text||'').slice(0,160), at: new Date().toISOString() });
+  localStorage.setItem(ACTIVITY_KEY, JSON.stringify(list.slice(0,40)));
+}
 function fromRow(r){
   return { id:r.id, trackingCode:r.tracking_code, clientName:r.client_name, projectName:r.project_name,
     serviceType:r.service_type || 'site', status:r.status, pixKey:r.pix_key, pixValue:r.pix_value, pixCity:r.pix_city, notes:r.notes,
@@ -109,8 +166,15 @@ async function updateProject(id, fields){
   if('status' in fields) dbFields.status = fields.status;
   if('paid' in fields) dbFields.paid = fields.paid;
   if('delivery_url' in fields) dbFields.delivery_url = fields.delivery_url;
+  if('notes' in fields) dbFields.notes = fields.notes;
   const { error } = await supabaseClient.from('projects').update(dbFields).eq('id', id);
   if(error){ console.error(error); showToast('Não foi possível atualizar o projeto.'); }
+  else {
+    if('status' in fields) pushActivity('status', 'Status → '+String(fields.status));
+    if('paid' in fields) pushActivity('pix', fields.paid ? 'PIX marcado como pago' : 'PIX desmarcado');
+    if('delivery_url' in fields) pushActivity('entrega', fields.delivery_url ? 'Link de entrega salvo' : 'Link de entrega removido');
+    if('notes' in fields) pushActivity('nota', 'Observações atualizadas');
+  }
 }
 async function deleteProjectRow(id){
   if(!supabaseClient) return;
@@ -603,14 +667,29 @@ function renderAdminGate(){
   document.getElementById('admin-main').style.display = adminLoggedIn ? 'flex' : 'none';
   document.getElementById('admin-logout-btn').style.display = adminLoggedIn ? 'inline-block' : 'none';
   document.getElementById('admin-live').style.display = adminLoggedIn ? 'inline-flex' : 'none';
+  const emailEl = document.getElementById('admin-session-email');
+  if(emailEl){
+    if(adminLoggedIn){
+      supabaseClient.auth.getSession().then(({ data })=>{
+        const em = sessionAdminEmail(data && data.session);
+        emailEl.textContent = em || 'admin';
+        emailEl.style.display = 'inline';
+        emailEl.title = em;
+      }).catch(()=>{ emailEl.style.display = 'none'; });
+    } else {
+      emailEl.style.display = 'none';
+      emailEl.textContent = '';
+    }
+  }
   if(adminLoggedIn){
+    fillAdminSettingsForm();
     renderAdminAll();
     switchAdminTab('projetos');
     stopRealtime();
     realtimeChannel = supabaseClient.channel('admin-projects')
-      .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); renderAdminOverview(); })
-      .on('postgres_changes', { event:'*', schema:'public', table:'messages' }, ()=>{ renderMessagesList(); renderAdminOverview(); })
-      .on('postgres_changes', { event:'*', schema:'public', table:'lead_chats' }, ()=>{ renderChatProjectList(); renderAdminOverview(); })
+      .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); renderAdminOverview(); renderClientesList(); })
+      .on('postgres_changes', { event:'*', schema:'public', table:'messages' }, ()=>{ renderMessagesList(); renderAdminOverview(); renderClientesList(); })
+      .on('postgres_changes', { event:'*', schema:'public', table:'lead_chats' }, ()=>{ renderChatProjectList(); renderAdminOverview(); renderClientesList(); })
       .on('postgres_changes', { event:'*', schema:'public', table:'chat_messages' }, ()=>{ if(currentChatCode) renderAdminChat(); })
       .subscribe();
     startPolling(()=>{
@@ -699,8 +778,18 @@ if(configOk){
   });
 }
 
-const ADMIN_TABS = ['projetos','conversas','mensagens','operacoes','empresa'];
+const ADMIN_TABS = ['projetos','conversas','mensagens','clientes','operacoes','empresa'];
 let projectFilter = 'all';
+let projectSearch = '';
+let clientFilter = 'all';
+let clientSearch = '';
+const PIPELINE_STEPS = [
+  { id:'novo', label:'Novo' },
+  { id:'andamento', label:'Andamento' },
+  { id:'aguardando_pix', label:'Aguard. PIX' },
+  { id:'pago', label:'Pago' },
+  { id:'entregue', label:'Entregue' }
+];
 const REPLY_TEMPLATES = [
   { id:'ola', label:'Saudação', body:'Olá! Obrigado pelo contato. Sou da CodeCraft Solutions (BH). Pode me contar em uma frase o que você precisa (site, loja ou sistema)?' },
   { id:'orc', label:'Orçamento', body:'Perfeito. Para montar um orçamento justo, me diga: 1) tipo de projeto, 2) prazo desejado, 3) se já tem identidade visual. Em seguida te envio as opções.' },
@@ -708,6 +797,30 @@ const REPLY_TEMPLATES = [
   { id:'pix', label:'PIX', body:'Quando estiver tudo certo, o pagamento é via PIX no portal do projeto. Assim que confirmar, marcamos como pago e seguimos a entrega.' },
   { id:'entrega', label:'Entrega', body:'Seu projeto está no ar. No portal do cliente aparece o botão Acessar meu site. Qualquer ajuste fino nos primeiros dias, fale por aqui.' }
 ];
+function pipelineStage(p){
+  if(!p) return 'novo';
+  if(p.status === 'concluido') return 'entregue';
+  if(p.paid) return 'pago';
+  if(p.status === 'andamento' && Number(p.pixValue) > 0) return 'aguardando_pix';
+  if(p.status === 'andamento') return 'andamento';
+  return 'novo';
+}
+function pipelineHtml(p){
+  const cur = pipelineStage(p);
+  const order = PIPELINE_STEPS.map(s=>s.id);
+  const idx = order.indexOf(cur);
+  return '<div class="ccs-pipe" title="Pipeline do projeto">'+PIPELINE_STEPS.map((s,i)=>{
+    let cls = '';
+    if(i < idx) cls = 'done';
+    else if(i === idx) cls = (s.id==='aguardando_pix' ? 'warn' : 'on');
+    return '<span class="'+cls+'">'+s.label+'</span>';
+  }).join('')+'</div>';
+}
+function extractContactPhone(notes){
+  const n = String(notes||'');
+  const m = n.match(/WhatsApp:\s*([^\n]+)/i) || n.match(/Contato:\s*([^\n]+)/i);
+  return m ? m[1].trim() : '';
+}
 function switchAdminTab(tab){
   if(!ADMIN_TABS.includes(tab)) tab = 'projetos';
   ADMIN_TABS.forEach(t=>{
@@ -716,16 +829,41 @@ function switchAdminTab(tab){
     if(pane) pane.style.display = t===tab ? 'block' : 'none';
     if(btn) btn.classList.toggle('active', t===tab);
   });
-  if(tab==='projetos'){ renderProjectsList(); renderAdminOverview(); }
+  if(tab==='projetos'){ renderProjectsList(); renderAdminOverview(); renderAdminActivity(); }
   if(tab==='conversas'){ renderChatProjectList(); renderMessagesList(); }
   if(tab==='mensagens'){ switchAdminTab('conversas'); return; }
+  if(tab==='clientes'){ renderClientesList(); }
   if(tab==='operacoes'){ renderAgenda(); renderLeads(); renderHunt(); renderOpsTemplates(); }
-  if(tab==='empresa'){ renderEmpresa(); buildCalculator(); }
+  if(tab==='empresa'){ renderEmpresa(); buildCalculator(); fillAdminSettingsForm(); }
 }
-async function renderAdminAll(){ await renderProjectsList(); await renderMessagesList(); await renderEmpresa(); await renderChatProjectList(); await renderAdminOverview(); renderAgenda(); await renderLeads(); renderHunt(); renderOpsTemplates(); }
+async function renderAdminAll(){
+  await renderProjectsList();
+  await renderMessagesList();
+  await renderEmpresa();
+  await renderChatProjectList();
+  await renderAdminOverview();
+  renderAdminActivity();
+  renderAgenda();
+  await renderLeads();
+  renderHunt();
+  renderOpsTemplates();
+  await renderClientesList();
+}
+function renderAdminActivity(){
+  const el = document.getElementById('admin-activity');
+  if(!el) return;
+  const list = loadActivity().slice(0,6);
+  if(!list.length){
+    el.innerHTML = '<div class="ccs-eyebrow" style="margin:0 0 6px;">Última atividade</div><div style="font-size:13.5px; color:var(--ink-soft);">Ainda sem ações neste navegador. Mudanças de status, PIX e configs aparecem aqui.</div>';
+    return;
+  }
+  el.innerHTML = '<div class="ccs-eyebrow" style="margin:0 0 6px;">Última atividade</div>'+
+    list.map(a=>'<div class="ccs-activity-row"><span class="when">'+fmtDate(a.at).split(' ')[0]+'<br>'+fmtDate(a.at).split(', ')[1]+'</span><span><strong>'+escapeHtml(a.kind)+'</strong> · '+escapeHtml(a.text)+'</span></div>').join('');
+}
 async function renderAdminOverview(){
   const el = document.getElementById('admin-overview');
   if(!el) return;
+  el.innerHTML = '<div class="ccs-loading" style="grid-column:1/-1;">Carregando painel…</div>';
   try{
     const [projects, messages, leads] = await Promise.all([
       loadProjects().catch(()=>[]),
@@ -734,13 +872,16 @@ async function renderAdminOverview(){
     ]);
     const unpaid = (projects||[]).filter(p=>!p.paid && Number(p.pixValue)>0).length;
     const open = (projects||[]).filter(p=>p.status==='analise' || p.status==='andamento').length;
+    const entregues = (projects||[]).filter(p=>p.status==='concluido').length;
     el.innerHTML =
-      '<div class="ccs-metric"><div class="lbl">Projetos</div><div class="val">'+(projects||[]).length+'</div><div class="sub">'+open+' em produção</div></div>'+
+      '<div class="ccs-metric"><div class="lbl">Em produção</div><div class="val">'+open+'</div><div class="sub">novos + andamento</div></div>'+
       '<div class="ccs-metric receber"><div class="lbl">PIX a receber</div><div class="val">'+unpaid+'</div><div class="sub">sem pagamento marcado</div></div>'+
       '<div class="ccs-metric"><div class="lbl">Caixa de entrada</div><div class="val">'+((leads||[]).length + (messages||[]).length)+'</div><div class="sub">'+(leads||[]).length+' chat · '+(messages||[]).length+' formulário</div></div>'+
-      '<div class="ccs-metric"><div class="lbl">Em produção</div><div class="val">'+open+'</div><div class="sub">análise + andamento</div></div>';
+      '<div class="ccs-metric recebido"><div class="lbl">Entregues</div><div class="val">'+entregues+'</div><div class="sub">de '+(projects||[]).length+' projetos</div></div>';
     setNavBadge('badge-projetos', open);
     setNavBadge('badge-conversas', (leads||[]).length + (messages||[]).length);
+    const crm = await loadCrmLeads().catch(()=>[]);
+    setNavBadge('badge-clientes', (projects||[]).length + (crm||[]).length);
   }catch(e){
     el.innerHTML = '<div class="ccs-panel ccs-empty" style="grid-column:1/-1; padding:18px;">Não foi possível carregar o resumo agora.</div>';
   }
@@ -757,6 +898,21 @@ function setProjectFilter(f){
     btn.classList.toggle('active', btn.getAttribute('data-filter') === projectFilter);
   });
   renderProjectsList();
+}
+function setProjectSearch(q){
+  projectSearch = String(q||'').trim().toLowerCase();
+  renderProjectsList();
+}
+function setClientFilter(f){
+  clientFilter = f || 'all';
+  document.querySelectorAll('#client-filters .ccs-chip').forEach(btn=>{
+    btn.classList.toggle('active', btn.getAttribute('data-cfilter') === clientFilter);
+  });
+  renderClientesList();
+}
+function setClientSearch(q){
+  clientSearch = String(q||'').trim().toLowerCase();
+  renderClientesList();
 }
 function renderOpsTemplates(){
   const el = document.getElementById('ops-templates-list');
@@ -783,21 +939,31 @@ function copyTrackingCode(code){
 function toggleNewProjectForm(){
   const f = document.getElementById('new-project-form');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  if(f.style.display === 'block'){
+    const c = document.getElementById('np-client');
+    if(c) c.focus();
+  }
 }
 async function createProject(){
   const clientName = document.getElementById('np-client').value.trim();
   const projectName = document.getElementById('np-project').value.trim();
   const serviceType = document.getElementById('np-service').value;
+  const phone = (document.getElementById('np-phone')||{}).value ? document.getElementById('np-phone').value.trim() : '';
   const pixKey = document.getElementById('np-pixkey').value.trim() || COMPANY_PIX_KEY;
   const pixValue = document.getElementById('np-value').value.trim();
   const pixCity = document.getElementById('np-city').value.trim() || COMPANY_PIX_CITY;
-  const notes = document.getElementById('np-notes').value.trim();
+  let notes = document.getElementById('np-notes').value.trim();
+  if(phone){
+    notes = (notes ? notes+'\n' : '') + 'WhatsApp: '+phone;
+  }
   if(!clientName || !projectName){ showToast('Preencha nome do cliente e do projeto.'); return; }
   const trackingCode = genCode();
   const created = await insertProject({ trackingCode, clientName, projectName, serviceType, pixKey, pixValue, pixCity, notes });
   if(!created) return;
-  const contact = (notes.match(/Contato:\s*(.+)/) || [])[1] || '';
-  ['np-client','np-project','np-value','np-notes'].forEach(id=>document.getElementById(id).value='');
+  pushActivity('projeto', 'Criou '+projectName+' · '+trackingCode);
+  const contact = phone || (notes.match(/Contato:\s*(.+)/) || [])[1] || '';
+  ['np-client','np-project','np-value','np-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  const phoneEl = document.getElementById('np-phone'); if(phoneEl) phoneEl.value='';
   document.getElementById('np-service').value = 'site';
   document.getElementById('np-pixkey').value = COMPANY_PIX_KEY;
   document.getElementById('np-city').value = COMPANY_PIX_CITY;
@@ -811,9 +977,11 @@ async function createProject(){
   }
   showCodeModal(trackingCode, clientName, contact);
   renderProjectsList();
+  renderAdminActivity();
+  renderClientesList();
 }
-async function setStatus(id, status){ await updateProject(id, { status }); renderProjectsList(); renderEmpresa(); }
-async function togglePaid(id, current){ await updateProject(id, { paid: !current }); renderProjectsList(); renderEmpresa(); }
+async function setStatus(id, status){ await updateProject(id, { status }); renderProjectsList(); renderEmpresa(); renderAdminOverview(); renderAdminActivity(); }
+async function togglePaid(id, current){ await updateProject(id, { paid: !current }); renderProjectsList(); renderEmpresa(); renderAdminOverview(); renderAdminActivity(); renderClientesList(); }
 async function saveDelivery(id){
   const input = document.getElementById('delivery-'+id);
   if(!input) return;
@@ -825,57 +993,123 @@ async function saveDelivery(id){
   await updateProject(id, { delivery_url: url });
   showToast(url ? 'Link de entrega salvo!' : 'Link removido.');
   renderProjectsList();
+  renderAdminActivity();
+}
+async function saveProjectNotes(id){
+  const input = document.getElementById('notes-'+id);
+  if(!input) return;
+  await updateProject(id, { notes: input.value.trim() });
+  showToast('Observações salvas.');
+  renderAdminActivity();
+}
+async function advancePipeline(id){
+  const projects = await loadProjects();
+  const p = projects.find(x=>x.id===id);
+  if(!p) return;
+  const stage = pipelineStage(p);
+  if(stage === 'novo'){ await setStatus(id, 'andamento'); showToast('Avançou para Em andamento'); return; }
+  if(stage === 'andamento'){
+    if(Number(p.pixValue) > 0){ showToast('Aguardando PIX — marque como pago quando cair.'); renderProjectsList(); return; }
+    await setStatus(id, 'concluido'); showToast('Marcado como entregue'); return;
+  }
+  if(stage === 'aguardando_pix'){ await togglePaid(id, false); showToast('PIX marcado como pago'); return; }
+  if(stage === 'pago'){ await setStatus(id, 'concluido'); showToast('Marcado como entregue'); return; }
+  showToast('Pipeline completo. Confira o link de entrega.');
+}
+async function waProject(id){
+  const projects = await loadProjects();
+  const p = projects.find(x=>x.id===id);
+  if(!p) return;
+  const phone = extractContactPhone(p.notes);
+  const text = 'Olá, '+p.clientName+'! Aqui é da CodeCraft Solutions. Sobre o projeto '+p.projectName+' (código '+p.trackingCode+').';
+  if(!phoneToWa(phone)){
+    await navigator.clipboard.writeText(text).catch(()=>{});
+    openWhatsApp('', text);
+    showToast('WhatsApp do estúdio aberto com texto pronto. Cole o número do cliente se precisar.');
+    return;
+  }
+  openWhatsApp(phone, text);
 }
 async function deleteProject(id){
   if(!confirm('Excluir este projeto? Essa ação não pode ser desfeita.')) return;
   await deleteProjectRow(id);
-  renderProjectsList(); renderEmpresa(); renderChatProjectList();
+  pushActivity('excluir', 'Projeto removido');
+  renderProjectsList(); renderEmpresa(); renderChatProjectList(); renderAdminOverview(); renderAdminActivity(); renderClientesList();
 }
 async function renderProjectsList(){
   const container = document.getElementById('projects-list');
+  if(!container) return;
+  container.innerHTML = '<div class="ccs-panel ccs-loading">Carregando projetos…</div>';
   let projects = await loadProjects();
-  if(projectFilter === 'analise' || projectFilter === 'andamento' || projectFilter === 'concluido'){
-    projects = projects.filter(p=>p.status === projectFilter);
-  } else if(projectFilter === 'unpaid'){
-    projects = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
+  if(projectSearch){
+    projects = projects.filter(p=>{
+      const blob = (p.clientName+' '+p.projectName+' '+p.trackingCode+' '+(p.notes||'')).toLowerCase();
+      return blob.includes(projectSearch);
+    });
   }
+  if(projectFilter === 'novo') projects = projects.filter(p=>pipelineStage(p)==='novo');
+  else if(projectFilter === 'andamento') projects = projects.filter(p=>pipelineStage(p)==='andamento');
+  else if(projectFilter === 'aguardando_pix') projects = projects.filter(p=>pipelineStage(p)==='aguardando_pix' || (!p.paid && Number(p.pixValue)>0 && p.status!=='concluido'));
+  else if(projectFilter === 'pago') projects = projects.filter(p=>pipelineStage(p)==='pago' || (p.paid && p.status!=='concluido'));
+  else if(projectFilter === 'entregue') projects = projects.filter(p=>pipelineStage(p)==='entregue');
+  else if(projectFilter === 'analise') projects = projects.filter(p=>p.status==='analise');
+  else if(projectFilter === 'concluido') projects = projects.filter(p=>p.status==='concluido');
+  else if(projectFilter === 'unpaid') projects = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
+
   if(projects.length === 0){
-    container.innerHTML = '<div class="ccs-panel ccs-empty"><strong>Nenhum projeto neste filtro.</strong><br>Ajuste o filtro ou clique em <em>+ Novo projeto</em>.</div>';
+    container.innerHTML = '<div class="ccs-panel ccs-empty"><strong>Nenhum projeto neste filtro.</strong><br>Ajuste a busca/filtro ou clique em <em>+ Novo projeto</em>.</div>';
     return;
   }
   container.innerHTML = `<div class="ccs-panel" style="overflow-x:auto;">
     <table class="ccs-table">
-      <thead><tr><th>Código</th><th>Cliente / Projeto</th><th>Serviço</th><th>Status</th><th>PIX</th><th></th></tr></thead>
+      <thead><tr><th>Código</th><th>Cliente / Projeto</th><th>Pipeline</th><th>Status</th><th>PIX</th><th></th></tr></thead>
       <tbody>
-        ${projects.map(p=>`
+        ${projects.map(p=>{
+          const phone = extractContactPhone(p.notes);
+          return `
           <tr>
             <td class="mono"><button class="ccs-btn ghost small" style="font-family:inherit;" onclick="copyTrackingCode('${escapeHtml(p.trackingCode)}')">${escapeHtml(p.trackingCode)}</button></td>
-            <td><strong>${escapeHtml(p.clientName)}</strong><br><span style="color:var(--ink-soft); font-size:13px;">${escapeHtml(p.projectName)}</span></td>
-            <td style="font-size:13px;">${escapeHtml((typeof SERVICE_LABELS!=='undefined' && SERVICE_LABELS[p.serviceType]) ? SERVICE_LABELS[p.serviceType] : (p.serviceType||'—'))}</td>
+            <td>
+              <strong>${escapeHtml(p.clientName)}</strong><br>
+              <span style="color:var(--ink-soft); font-size:13px;">${escapeHtml(p.projectName)}</span>
+              <div style="font-size:12px; color:var(--ink-soft); margin-top:4px;">${escapeHtml((typeof SERVICE_LABELS!=='undefined' && SERVICE_LABELS[p.serviceType]) ? SERVICE_LABELS[p.serviceType] : (p.serviceType||'—'))}${phone?' · '+escapeHtml(phone):''}</div>
+              ${pipelineHtml(p)}
+            </td>
+            <td style="min-width:120px;">
+              <button class="ccs-btn amber small" onclick="advancePipeline('${p.id}')">Avançar etapa</button>
+            </td>
             <td>
               <div class="ccs-status-btns">
-                <button class="${p.status==='analise'?'active-analise':''}" onclick="setStatus('${p.id}','analise')">Em análise</button>
-                <button class="${p.status==='andamento'?'active-andamento':''}" onclick="setStatus('${p.id}','andamento')">Em andamento</button>
-                <button class="${p.status==='concluido'?'active-concluido':''}" onclick="setStatus('${p.id}','concluido')">Concluído</button>
+                <button class="${p.status==='analise'?'active-analise':''}" onclick="setStatus('${p.id}','analise')">Novo</button>
+                <button class="${p.status==='andamento'?'active-andamento':''}" onclick="setStatus('${p.id}','andamento')">Andamento</button>
+                <button class="${p.status==='concluido'?'active-concluido':''}" onclick="setStatus('${p.id}','concluido')">Entregue</button>
               </div>
             </td>
             <td>
-              ${p.pixKey ? `R$ ${p.pixValue ? Number(p.pixValue).toFixed(2) : '—'}<br><button class="ccs-btn ${p.paid?'ghost':'amber'} small" style="margin-top:6px;" onclick="togglePaid('${p.id}', ${p.paid})">${p.paid ? 'Marcado como pago ✓' : 'Marcar como pago'}</button>` : '<span style="color:var(--ink-soft);">sem PIX</span>'}
+              ${p.pixKey ? `R$ ${p.pixValue ? Number(p.pixValue).toFixed(2) : '—'}<br><button class="ccs-btn ${p.paid?'ghost':'amber'} small" style="margin-top:6px;" onclick="togglePaid('${p.id}', ${p.paid})">${p.paid ? 'Pago ✓' : 'Marcar pago'}</button>` : '<span style="color:var(--ink-soft);">sem PIX</span>'}
             </td>
-            <td><button class="ccs-btn ghost small" onclick="deleteProject('${p.id}')">Excluir</button></td>
+            <td style="white-space:nowrap;">
+              <button class="ccs-btn ghost small" onclick="waProject('${p.id}')">WhatsApp</button>
+              <button class="ccs-btn ghost small" onclick="openAdminChat('${escapeHtml(p.trackingCode)}'); switchAdminTab('conversas')">Chat</button>
+              <button class="ccs-btn ghost small" onclick="deleteProject('${p.id}')">Excluir</button>
+            </td>
           </tr>
           <tr>
             <td colspan="6" style="background:var(--paper-dim); border-bottom:2px solid var(--line);">
-              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
                 <span style="font-size:13px; color:var(--ink-soft); font-weight:700;">Link de entrega:</span>
                 <input id="delivery-${p.id}" value="${escapeHtml(p.deliveryUrl||'')}" placeholder="https://site-do-cliente.com" style="flex:1; min-width:220px; padding:8px 10px; border:1.5px solid var(--line); border-radius:8px; font-size:13.5px;">
                 <button class="ccs-btn amber small" onclick="saveDelivery('${p.id}')">Salvar link</button>
                 ${p.deliveryUrl ? `<a class="ccs-btn ghost small" href="${escapeHtml(p.deliveryUrl)}" target="_blank" rel="noopener">Abrir</a>` : ''}
               </div>
-              <div style="font-size:12px; color:var(--ink-soft); margin-top:6px;">Cole o endereço do site pronto e salve — o cliente vê o botão "Acessar meu site" na hora, no portal.</div>
+              <div style="display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap;">
+                <span style="font-size:13px; color:var(--ink-soft); font-weight:700; padding-top:8px;">Notas:</span>
+                <input id="notes-${p.id}" value="${escapeHtml(p.notes||'')}" placeholder="Contato, prazo, escopo…" style="flex:1; min-width:220px; padding:8px 10px; border:1.5px solid var(--line); border-radius:8px; font-size:13.5px;">
+                <button class="ccs-btn ghost small" onclick="saveProjectNotes('${p.id}')">Salvar notas</button>
+              </div>
             </td>
-          </tr>
-        `).join('')}
+          </tr>`;
+        }).join('')}
       </tbody>
     </table>
   </div>`;
@@ -917,6 +1151,8 @@ function createProjectFromMessage(btn){
   f.style.display = 'block';
   document.getElementById('np-client').value = name;
   document.getElementById('np-notes').value = `Contato: ${contact}\nMensagem: ${msg}`;
+  const phoneEl = document.getElementById('np-phone');
+  if(phoneEl && phoneToWa(contact)) phoneEl.value = contact;
   document.getElementById('np-project').focus();
 }
 async function renderMessagesList(){
@@ -930,6 +1166,9 @@ async function renderMessagesList(){
   container.innerHTML =
     '<div class="ccs-eyebrow" style="margin:0 0 8px;">Formulário da home · '+messages.length+'</div>'+
     messages.map(m=>{
+    const waBtn = phoneToWa(m.contact)
+      ? `<button class="ccs-btn ghost small" type="button" data-phone="${escapeHtml(digitsOnly(m.contact))}" data-name="${escapeHtml(m.name)}" onclick="openWhatsApp(this.dataset.phone,'Olá, '+this.dataset.name+'! Aqui é da CodeCraft Solutions. Recebemos sua mensagem e podemos seguir por aqui.')">WhatsApp</button>`
+      : '';
     const replyChat = `<button class="ccs-btn amber small" onclick="openAppConversas()">Abrir chat</button>`;
     return `
     <div class="ccs-panel" style="margin-bottom:10px; padding:12px 14px;">
@@ -941,8 +1180,99 @@ async function renderMessagesList(){
       <div style="font-size:14.5px; margin-bottom:10px;">${escapeHtml(m.msg)}</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="ccs-btn amber small" data-name="${escapeHtml(m.name)}" data-contact="${escapeHtml(m.contact)}" data-msg="${escapeHtml(m.msg)}" onclick="createProjectFromMessage(this)">Criar projeto</button>
+        ${waBtn}
         ${replyChat}
       </div>
+    </div>`;
+  }).join('');
+}
+
+async function renderClientesList(){
+  const el = document.getElementById('clientes-list');
+  if(!el) return;
+  el.innerHTML = '<div class="ccs-panel ccs-loading">Carregando contatos…</div>';
+  const [projects, leads, messages] = await Promise.all([
+    loadProjects().catch(()=>[]),
+    loadCrmLeads().catch(()=>[]),
+    loadMessages().catch(()=>[])
+  ]);
+  const rows = [];
+  (projects||[]).forEach(p=>{
+    rows.push({
+      kind:'projeto',
+      name: p.clientName,
+      detail: p.projectName+' · '+p.trackingCode,
+      phone: extractContactPhone(p.notes),
+      meta: pipelineStage(p),
+      pixPending: !p.paid && Number(p.pixValue)>0,
+      id: p.id,
+      code: p.trackingCode,
+      sort: p.updatedAt || p.createdAt
+    });
+  });
+  (leads||[]).forEach(l=>{
+    rows.push({
+      kind:'lead',
+      name: l.name,
+      detail: (l.niche||'Lead')+' · '+l.status,
+      phone: l.phone||'',
+      meta: l.status,
+      pixPending: false,
+      id: l.id,
+      code: '',
+      sort: l.createdAt
+    });
+  });
+  (messages||[]).forEach(m=>{
+    rows.push({
+      kind:'form',
+      name: m.name,
+      detail: (m.msg||'').slice(0,80),
+      phone: m.contact||'',
+      meta: 'formulário',
+      pixPending: false,
+      id: m.id,
+      code: '',
+      sort: m.createdAt
+    });
+  });
+  let list = rows.sort((a,b)=> String(b.sort||'').localeCompare(String(a.sort||'')));
+  if(clientFilter === 'projeto') list = list.filter(r=>r.kind==='projeto');
+  else if(clientFilter === 'lead') list = list.filter(r=>r.kind==='lead');
+  else if(clientFilter === 'form') list = list.filter(r=>r.kind==='form');
+  else if(clientFilter === 'pix') list = list.filter(r=>r.pixPending);
+  if(clientSearch){
+    list = list.filter(r=>{
+      const blob = (r.name+' '+r.detail+' '+r.phone+' '+r.code).toLowerCase();
+      return blob.includes(clientSearch);
+    });
+  }
+  if(!list.length){
+    el.innerHTML = '<div class="ccs-panel ccs-empty"><strong>Nenhum contato neste filtro.</strong><br>Cadastre leads em Operações ou crie um projeto.</div>';
+    return;
+  }
+  el.innerHTML = list.map(r=>{
+    const waText = r.kind==='projeto'
+      ? ('Olá, '+r.name+'! Aqui é da CodeCraft Solutions. Sobre '+r.detail+'.')
+      : pitchFor(r.name, r.kind==='lead' ? String(r.detail).split(' · ')[0] : '');
+    const actions = [];
+    actions.push(`<button class="ccs-btn amber small" type="button" data-phone="${escapeHtml(digitsOnly(r.phone))}" data-text="${escapeHtml(waText)}" onclick="openWhatsApp(this.dataset.phone, this.dataset.text)">WhatsApp</button>`);
+    if(r.kind==='projeto' && r.code){
+      actions.push(`<button class="ccs-btn ghost small" type="button" onclick="switchAdminTab('conversas'); openAdminChat('${escapeHtml(r.code)}')">Chat</button>`);
+      actions.push(`<button class="ccs-btn ghost small" type="button" data-code="${escapeHtml(r.code)}" onclick="switchAdminTab('projetos'); setProjectSearch(this.dataset.code.toLowerCase()); var s=document.getElementById('project-search'); if(s) s.value=this.dataset.code;">Ver projeto</button>`);
+    }
+    if(r.kind==='lead'){
+      actions.push(`<button class="ccs-btn ghost small" type="button" onclick="markLead('${r.id}','respondeu')">Marcou resposta</button>`);
+    }
+    return `<div class="ccs-panel" style="margin-bottom:10px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div>
+        <strong>${escapeHtml(r.name)}</strong>
+        <span class="ccs-chip" style="margin-left:8px; padding:3px 8px; cursor:default;">${escapeHtml(r.kind)}</span>
+        ${r.pixPending?'<span class="ccs-chip" style="margin-left:4px; padding:3px 8px; cursor:default; border-color:var(--amber); color:#8A5A12;">PIX pendente</span>':''}
+        <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">${escapeHtml(r.detail)}</div>
+        <div style="font-size:12.5px; color:var(--ink-soft); margin-top:2px;">${escapeHtml(r.phone||'sem telefone')} · ${escapeHtml(r.meta)}</div>
+      </div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:flex-start;">${actions.join('')}</div>
     </div>`;
   }).join('');
 }
@@ -1453,9 +1783,14 @@ async function openLeadWa(id){
   const l = list.find(x=>x.id===id);
   if(!l) return;
   const text = pitchFor(l.name, l.niche);
+  if(phoneToWa(l.phone)){
+    openWhatsApp(l.phone, text);
+    showToast('Abrindo WhatsApp com texto pronto.');
+    return;
+  }
   await navigator.clipboard.writeText(text).catch(()=>{});
-  openAppConversas();
-  showToast('Texto copiado. Responda na aba Conversas.');
+  openWhatsApp('', text);
+  showToast('Texto no WhatsApp do estúdio. Cadastre o telefone do lead para ir direto.');
 }
 async function renderLeads(){
   const el = document.getElementById('leads-list');
@@ -1466,7 +1801,7 @@ async function renderLeads(){
     <div class="ccs-panel" style="margin-bottom:10px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
       <div><strong>${escapeHtml(l.name)}</strong> · ${escapeHtml(l.niche||'—')}<br><span style="color:var(--ink-soft); font-size:13px;">${escapeHtml(l.phone||'sem telefone')} · ${l.status}</span></div>
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
-        <button class="ccs-btn amber small" onclick="openLeadWa('${l.id}')">Abrir chat</button>
+        <button class="ccs-btn amber small" onclick="openLeadWa('${l.id}')">WhatsApp</button>
         <button class="ccs-btn ghost small" onclick="markLead('${l.id}','respondeu')">Respondeu</button>
         <button class="ccs-btn ghost small" onclick="removeLead('${l.id}')">Tirar</button>
       </div>
@@ -1648,7 +1983,12 @@ function chaseText(p){
 async function chaseProject(p){
   if(!p) return false;
   const text = chaseText(p);
-  if(p.trackingCode){
+  const phone = extractContactPhone(p.notes);
+  if(phoneToWa(phone)){
+    openWhatsApp(phone, text);
+    if(p.trackingCode) await insertChat(p.trackingCode, 'admin', text).catch(()=>{});
+    showToast('Cobrança no WhatsApp: '+p.clientName);
+  } else if(p.trackingCode){
     await insertChat(p.trackingCode, 'admin', text);
     showScreen('admin');
     switchAdminTab('conversas');
@@ -1656,10 +1996,11 @@ async function chaseProject(p){
     showToast('Cobrança enviada no chat: '+p.clientName);
   } else {
     await navigator.clipboard.writeText(text).catch(()=>{});
-    openAppConversas();
-    showToast('Texto copiado. Envie na aba Conversas.');
+    openWhatsApp('', text);
+    showToast('Texto pronto no WhatsApp do estúdio.');
   }
   addTask('Cobrar '+p.clientName+' · '+money(Number(p.pixValue)), todayISO(), 'cobranca');
+  pushActivity('cobranca', 'Cobrou '+p.clientName);
   return true;
 }
 async function chaseUnpaid(){
@@ -1824,6 +2165,37 @@ if(window.CCS_PAGE === 'admin'){
   document.title = 'Admin · CodeCraft Solutions';
   probeDbHealth();
   renderAdminGate();
+  document.addEventListener('keydown', function(e){
+    if(!adminLoggedIn) return;
+    const tag = (e.target && e.target.tagName) || '';
+    const typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target && e.target.isContentEditable);
+    if(typing && e.key !== 'Escape') return;
+    if(e.key === 'Escape'){
+      const modal = document.getElementById('code-modal');
+      if(modal && modal.style.display === 'flex'){ closeCodeModal(); return; }
+      if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      return;
+    }
+    if(e.key === '/' && !e.ctrlKey && !e.metaKey){
+      e.preventDefault();
+      const tabClientes = document.getElementById('tab-clientes');
+      const focusEl = (tabClientes && tabClientes.style.display !== 'none')
+        ? document.getElementById('client-search')
+        : document.getElementById('project-search');
+      if(focusEl){ switchAdminTab(tabClientes && tabClientes.style.display !== 'none' ? 'clientes' : 'projetos'); focusEl.focus(); }
+      return;
+    }
+    if(e.key === 'n' || e.key === 'N'){
+      e.preventDefault();
+      switchAdminTab('projetos');
+      const f = document.getElementById('new-project-form');
+      if(f && f.style.display === 'none') toggleNewProjectForm();
+      else if(f){ const c=document.getElementById('np-client'); if(c) c.focus(); }
+      return;
+    }
+    const map = { '1':'projetos', '2':'conversas', '3':'clientes', '4':'operacoes', '5':'empresa' };
+    if(map[e.key]){ e.preventDefault(); switchAdminTab(map[e.key]); }
+  });
 } else {
   typeHero();
   initLead();
