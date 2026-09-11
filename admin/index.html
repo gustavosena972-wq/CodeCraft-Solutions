@@ -459,6 +459,72 @@
   .ccs-activity-row:last-child{border-bottom:none;}
   .ccs-activity-row .when{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); flex:0 0 88px;}
   #admin-settings textarea:focus{outline:2px solid var(--amber); outline-offset:1px; border-color:var(--amber);}
+
+  /* ===== Enterprise ops console ===== */
+  .ccs-admin-shell{display:flex; min-height:calc(100vh - 72px); max-width:1400px; margin:0 auto;}
+  .ccs-admin-sidebar{
+    flex:0 0 248px; background:linear-gradient(180deg,#12172B 0%, #1A2140 55%, #161B33 100%);
+    border-right:1px solid var(--line-dark); padding:18px 12px 28px; display:flex; flex-direction:column; gap:2px;
+    position:sticky; top:72px; height:calc(100vh - 72px); overflow:auto; z-index:40;
+  }
+  .ccs-admin-sidebar .brand-mini{
+    display:flex; align-items:center; gap:10px; padding:6px 10px 16px; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:10px;
+  }
+  .ccs-admin-sidebar .brand-mini img{width:32px; height:32px; border-radius:8px;}
+  .ccs-admin-sidebar .brand-mini strong{display:block; color:#fff; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:800;}
+  .ccs-admin-sidebar .brand-mini span{display:block; color:#A8AED0; font-size:11px; margin-top:2px;}
+  .ccs-nav-group{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#7E86AD; padding:14px 12px 6px;}
+  .ccs-admin-sidebar .ccs-navitem{color:#D7DBF0; border-radius:8px; padding:9px 12px; font-size:13.5px;}
+  .ccs-admin-sidebar .ccs-navitem .ico{opacity:.85; font-size:14px; width:18px;}
+  .ccs-admin-sidebar .ccs-navitem:hover{background:rgba(255,255,255,.06); color:#fff;}
+  .ccs-admin-sidebar .ccs-navitem.active{background:rgba(232,163,61,.18); color:#fff; box-shadow:inset 3px 0 0 var(--amber);}
+  .ccs-admin-sidebar .ccs-nav-foot{margin-top:auto; padding:14px 10px 4px; border-top:1px solid rgba(255,255,255,.08); font-size:11px; color:#8B92B5; line-height:1.55;}
+  .ccs-admin-main{flex:1; min-width:0; padding:28px 28px 48px; background:
+    radial-gradient(700px 280px at 100% 0%, rgba(232,163,61,.06), transparent 55%),
+    var(--paper);}
+  .ccs-page-head{display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:18px;}
+  .ccs-page-head h2{font-size:22px; margin:0;}
+  .ccs-page-head .sub{font-size:13.5px; color:var(--ink-soft); margin-top:4px;}
+  .ccs-quick-actions{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px;}
+  .ccs-kanban{display:grid; grid-template-columns:repeat(5,minmax(180px,1fr)); gap:12px; overflow-x:auto; padding-bottom:8px;}
+  .ccs-kanban-col{background:var(--paper-dim); border:1px solid var(--line); border-radius:12px; min-height:220px; display:flex; flex-direction:column;}
+  .ccs-kanban-col .col-h{padding:10px 12px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .ccs-kanban-col .col-h strong{font-size:12.5px; font-family:'JetBrains Mono',monospace; letter-spacing:.04em; text-transform:uppercase;}
+  .ccs-kanban-col .col-h .n{font-size:11px; color:var(--ink-soft); font-weight:700;}
+  .ccs-kanban-col .col-b{padding:10px; display:flex; flex-direction:column; gap:8px; flex:1;}
+  .ccs-kanban-card{background:#fff; border:1px solid var(--line); border-radius:10px; padding:12px; cursor:default;}
+  .ccs-kanban-card strong{display:block; font-size:13.5px; margin-bottom:2px;}
+  .ccs-kanban-card .meta{font-size:12px; color:var(--ink-soft); line-height:1.4;}
+  .ccs-kanban-card .acts{display:flex; flex-wrap:wrap; gap:4px; margin-top:8px;}
+  .ccs-view-toggle{display:inline-flex; border:1.5px solid var(--line); border-radius:10px; overflow:hidden; background:#fff;}
+  .ccs-view-toggle button{border:none; background:transparent; padding:8px 14px; font-size:12.5px; font-weight:700; color:var(--ink-soft); cursor:pointer;}
+  .ccs-view-toggle button.active{background:var(--panel); color:#fff;}
+  .ccs-local-tag{display:inline-block; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#8A5A12; background:#FFF7EC; border:1px solid #F0C878; border-radius:4px; padding:2px 6px; vertical-align:middle;}
+  .ccs-sidebar-toggle{
+    display:none; width:40px; height:40px; border-radius:10px; border:1.5px solid var(--line);
+    background:#fff; align-items:center; justify-content:center; padding:0; flex-shrink:0;
+  }
+  .ccs-sidebar-toggle span{display:block; width:16px; height:2px; background:var(--ink); position:relative;}
+  .ccs-sidebar-toggle span::before, .ccs-sidebar-toggle span::after{content:''; position:absolute; left:0; width:16px; height:2px; background:var(--ink);}
+  .ccs-sidebar-toggle span::before{top:-5px;} .ccs-sidebar-toggle span::after{top:5px;}
+  .ccs-admin-overlay{display:none; position:fixed; inset:0; background:rgba(18,23,43,.45); z-index:35;}
+  .ccs-priority{font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:800; letter-spacing:.04em; padding:2px 6px; border-radius:4px;}
+  .ccs-priority.alta{background:#FCEAEA; color:#8B2E2E;}
+  .ccs-priority.normal{background:var(--paper-dim); color:var(--ink-soft);}
+  .ccs-team-card{display:flex; gap:14px; align-items:flex-start; padding:16px; border:1px solid var(--line); border-radius:12px; background:#fff; margin-bottom:10px;}
+  .ccs-team-card .avatar{width:40px; height:40px; border-radius:10px; background:var(--panel); color:var(--amber); display:grid; place-items:center; font-family:'JetBrains Mono',monospace; font-weight:800; flex-shrink:0;}
+  @media (max-width:960px){
+    .ccs-admin-shell{position:relative;}
+    .ccs-sidebar-toggle{display:inline-flex;}
+    .ccs-admin-sidebar{
+      position:fixed; left:0; top:0; bottom:0; height:100vh; transform:translateX(-105%);
+      transition:transform .22s ease; box-shadow:12px 0 40px rgba(0,0,0,.25);
+    }
+    .ccs-admin-shell.nav-open .ccs-admin-sidebar{transform:none;}
+    .ccs-admin-shell.nav-open .ccs-admin-overlay{display:block;}
+    .ccs-admin-main{padding:20px 16px 40px;}
+    .ccs-kanban{grid-template-columns:repeat(5, minmax(200px,1fr));}
+  }
   @media (max-width:560px){
     .ccs-admin-overview{grid-template-columns:1fr;}
     .ccs-table{font-size:12.5px;}
@@ -477,16 +543,19 @@
 <!-- ================= ADMIN ================= -->
 <div id="screen-admin" style="display:block;">
   <div class="ccs-app-header">
-    <div class="ccs-logo" style="font-size:15px; cursor:pointer;" onclick="goHome()">
-      <span class="mark"><img src="../logo.png" alt="" width="34" height="34"></span>
-      <span class="word">CodeCraft Solutions<small>Painel admin</small></span>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button type="button" class="ccs-sidebar-toggle" id="admin-sidebar-toggle" onclick="toggleAdminSidebar()" aria-label="Abrir menu"><span></span></button>
+      <div class="ccs-logo" style="font-size:15px; cursor:pointer;" onclick="goHome()">
+        <span class="mark"><img src="../logo.png" alt="" width="34" height="34"></span>
+        <span class="word">CodeCraft Solutions<small>Ops console</small></span>
+      </div>
     </div>
     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
       <span id="ccs-db-status" class="ccs-db-status" title="Status do banco"><span class="p"></span> <span id="ccs-db-status-text">banco</span></span>
       <span id="admin-live" class="ccs-live-dot" style="display:none;"><span class="d"></span> ao vivo</span>
       <span id="admin-session-email" class="mono" style="display:none; font-size:12px; color:var(--ink-soft); max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
       <button class="ccs-btn ghost small" id="admin-logout-btn" style="display:none;" onclick="adminLogout()">Sair</button>
-      <a class="ccs-btn ghost small" href="../index.html">← Voltar ao site</a>
+      <a class="ccs-btn ghost small" href="../index.html">← Site</a>
     </div>
   </div>
 
@@ -496,10 +565,10 @@
         <img src="../logo.png" alt="CodeCraft Solutions" width="44" height="44">
         <div>
           <div class="ccs-eyebrow" style="margin:0;">Acesso restrito</div>
-          <h2 style="font-size:20px;">Entrar no painel</h2>
+          <h2 style="font-size:20px;">Entrar no console</h2>
         </div>
       </div>
-      <p style="color:var(--ink-soft); font-size:13.5px; margin:0 0 18px;">Acesso só para Gustavo e Lucas. Use o Gmail autorizado e a senha da sua conta no Supabase Auth.</p>
+      <p style="color:var(--ink-soft); font-size:13.5px; margin:0 0 18px;">Acesso só para Gustavo e Lucas. Use o Gmail autorizado e a senha da conta no Supabase Auth.</p>
       <div class="ccs-field"><label>E-mail</label><input id="admin-email" type="email" placeholder="seu@gmail.com" autocomplete="username"></div>
       <div class="ccs-field"><label>Senha</label><input id="admin-pass" type="password" placeholder="Sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()"></div>
       <button class="ccs-btn amber" id="admin-login-btn" style="width:100%;" onclick="adminLogin()">Entrar</button>
@@ -507,35 +576,80 @@
     </div>
   </div>
 
-  <div class="ccs-admin-layout" id="admin-main" style="display:none;">
-    <aside class="ccs-admin-nav">
-      <div class="ccs-admin-nav-title">Operação</div>
-      <button class="ccs-navitem active" id="tab-btn-projetos" onclick="switchAdminTab('projetos')" title="Atalho 1">Projetos <span class="badge" id="badge-projetos" style="display:none">0</span></button>
-      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')" title="Atalho 2">Caixa de entrada <span class="badge" id="badge-conversas" style="display:none">0</span></button>
-      <button class="ccs-navitem" id="tab-btn-clientes" onclick="switchAdminTab('clientes')" title="Atalho 3">Clientes <span class="badge" id="badge-clientes" style="display:none">0</span></button>
-      <button class="ccs-navitem" id="tab-btn-operacoes" onclick="switchAdminTab('operacoes')" title="Atalho 4">Operações</button>
-      <button class="ccs-navitem" id="tab-btn-empresa" onclick="switchAdminTab('empresa')" title="Atalho 5">Empresa</button>
-      <div class="ccs-admin-nav-title" style="margin-top:12px;">Atalhos</div>
-      <div style="padding:4px 10px 8px; font-size:11px; color:#A8AED0; line-height:1.5;">1–5 abas · / buscar · N novo · E excel · C csv</div>
+  <div class="ccs-admin-shell" id="admin-main" style="display:none;">
+    <div class="ccs-admin-overlay" id="admin-overlay" onclick="closeAdminSidebar()"></div>
+    <aside class="ccs-admin-sidebar" id="admin-sidebar" aria-label="Navegação do console">
+      <div class="brand-mini">
+        <img src="../logo.png" alt="">
+        <div><strong>CodeCraft Ops</strong><span>CRM · financeiro · inbox</span></div>
+      </div>
+
+      <div class="ccs-nav-group">Central</div>
+      <button class="ccs-navitem active" id="tab-btn-painel" onclick="switchAdminTab('painel')" title="Atalho 1"><span class="ico">◈</span> Painel <span class="badge" id="badge-painel" style="display:none">0</span></button>
+
+      <div class="ccs-nav-group">Comercial</div>
+      <button class="ccs-navitem" id="tab-btn-pipeline" onclick="switchAdminTab('pipeline')" title="Atalho 2"><span class="ico">▦</span> CRM / Pipeline <span class="badge" id="badge-pipeline" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-clientes" onclick="switchAdminTab('clientes')" title="Atalho 3"><span class="ico">◎</span> Clientes 360 <span class="badge" id="badge-clientes" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-conversas" onclick="switchAdminTab('conversas')" title="Atalho 4"><span class="ico">✉</span> Caixa de entrada <span class="badge" id="badge-conversas" style="display:none">0</span></button>
+
+      <div class="ccs-nav-group">Operação</div>
+      <button class="ccs-navitem" id="tab-btn-tarefas" onclick="switchAdminTab('tarefas')" title="Atalho 5"><span class="ico">✓</span> Tarefas <span class="badge" id="badge-tarefas" style="display:none">0</span></button>
+      <button class="ccs-navitem" id="tab-btn-financeiro" onclick="switchAdminTab('financeiro')" title="Atalho 6"><span class="ico">$</span> Financeiro <span class="badge" id="badge-financeiro" style="display:none">0</span></button>
+
+      <div class="ccs-nav-group">Gestão</div>
+      <button class="ccs-navitem" id="tab-btn-relatorios" onclick="switchAdminTab('relatorios')" title="Atalho 7"><span class="ico">▣</span> Relatórios</button>
+      <button class="ccs-navitem" id="tab-btn-equipe" onclick="switchAdminTab('equipe')" title="Atalho 8"><span class="ico">◉</span> Equipe</button>
+      <button class="ccs-navitem" id="tab-btn-auditoria" onclick="switchAdminTab('auditoria')" title="Atalho 9"><span class="ico">◷</span> Auditoria</button>
+      <button class="ccs-navitem" id="tab-btn-configuracoes" onclick="switchAdminTab('configuracoes')" title="Atalho 0"><span class="ico">⚙</span> Configurações</button>
+
+      <div class="ccs-nav-foot">
+        Atalhos: 1–9 / 0 abas · / buscar · N novo · E excel · C csv<br>
+        Dados locais (tarefas/config) ficam neste navegador.
+      </div>
     </aside>
 
-    <div class="ccs-admin-content">
-    <div id="tab-projetos">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+    <div class="ccs-admin-main">
+
+    <!-- 1. PAINEL -->
+    <div id="tab-painel">
+      <div class="ccs-page-head">
         <div>
-          <h2 style="font-size:20px; margin:0;">Projetos</h2>
-          <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Fila de entrega e acompanhamento em tempo real</div>
+          <h2>Painel</h2>
+          <div class="sub">Command center — o que precisa de atenção agora</div>
         </div>
-        <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
+        <button class="ccs-btn amber small" onclick="switchAdminTab('pipeline'); toggleNewProjectForm();">+ Novo projeto</button>
       </div>
       <div class="ccs-admin-overview" id="admin-overview"></div>
-      <div id="admin-activity" class="ccs-panel" style="margin-bottom:14px; padding:14px 16px;"></div>
+      <div class="ccs-quick-actions" id="painel-quick-actions"></div>
+      <div class="ccs-ops-grid">
+        <div id="admin-activity" class="ccs-panel" style="padding:14px 16px;"></div>
+        <div class="ccs-panel" style="padding:14px 16px;">
+          <div class="ccs-eyebrow" style="margin:0 0 8px;">Fila do dia</div>
+          <div id="painel-fila" class="ccs-loading" style="padding:12px;">Carregando…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. CRM / PIPELINE -->
+    <div id="tab-pipeline" style="display:none;">
+      <div class="ccs-page-head">
+        <div>
+          <h2>CRM / Pipeline</h2>
+          <div class="sub">Estágios comerciais e entrega — Kanban ou lista</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <div class="ccs-view-toggle" role="group" aria-label="Modo de visualização">
+            <button type="button" id="view-btn-kanban" class="active" onclick="setPipelineView('kanban')">Kanban</button>
+            <button type="button" id="view-btn-list" onclick="setPipelineView('list')">Lista</button>
+          </div>
+          <button class="ccs-btn amber small" onclick="toggleNewProjectForm()">+ Novo projeto</button>
+        </div>
+      </div>
 
       <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; align-items:center;">
         <input id="project-search" type="search" placeholder="Buscar cliente, projeto ou código…" oninput="setProjectSearch(this.value)"
           style="flex:1; min-width:200px; padding:10px 12px; border:1.5px solid var(--line); border-radius:10px; font-size:14px;">
       </div>
-
       <div class="ccs-filter-bar" id="project-filters">
         <button type="button" class="ccs-chip active" data-filter="all" onclick="setProjectFilter('all')">Todos</button>
         <button type="button" class="ccs-chip" data-filter="novo" onclick="setProjectFilter('novo')">Novo</button>
@@ -543,19 +657,6 @@
         <button type="button" class="ccs-chip" data-filter="aguardando_pix" onclick="setProjectFilter('aguardando_pix')">Aguardando PIX</button>
         <button type="button" class="ccs-chip" data-filter="pago" onclick="setProjectFilter('pago')">Pago</button>
         <button type="button" class="ccs-chip" data-filter="entregue" onclick="setProjectFilter('entregue')">Entregue</button>
-      </div>
-
-      <div class="ccs-help">
-        <strong>Para que serve:</strong> aqui você cadastra e acompanha cada trabalho (site, loja, landing…). Tudo que você mudar aparece <strong>na hora</strong> pro cliente no portal dele — em tempo real, sem ele precisar atualizar a página.
-        <div style="margin-top:10px;"><strong>Passo a passo:</strong></div>
-        <ol style="margin:6px 0 0 18px; padding:0; line-height:1.75;">
-          <li><strong>Criar o projeto:</strong> clique em <strong>+ Novo projeto</strong>, preencha o nome do cliente, o tipo de serviço, o valor e a chave PIX, e clique em Salvar. O sistema gera um <strong>código</strong> pro cliente.</li>
-          <li><strong>Enviar o código:</strong> mande o código pro cliente pela <strong>Caixa de entrada</strong> (chat).</li>
-          <li><strong>Atualizar o andamento:</strong> use <strong>Avançar etapa</strong> (Novo → Andamento → Aguard. PIX → Pago → Entregue) ou os botões de status. O cliente vê a mudança na hora.</li>
-          <li><strong>Marcar o pagamento:</strong> quando o PIX cair, clique em <strong>Marcar pago</strong> (ou avance a etapa).</li>
-          <li><strong>WhatsApp:</strong> em cada projeto/contato há atalho com mensagem pronta.</li>
-          <li><strong>Entregar o projeto:</strong> cole o endereço no <strong>Link de entrega</strong> e salve. O cliente vê <strong>"Acessar meu site"</strong> no portal.</li>
-        </ol>
       </div>
 
       <div class="ccs-panel" id="new-project-form" style="display:none; margin-bottom:22px;">
@@ -582,23 +683,45 @@
           <button class="ccs-btn ghost" onclick="toggleNewProjectForm()">Cancelar</button>
         </div>
         <p style="font-size:12.5px; color:var(--ink-soft); margin:12px 0 0; line-height:1.5;">
-          <strong>PIX:</strong> o valor e a chave entram no portal do cliente (QR + copia e cola). Vocês só marcam <em>Pago</em> quando o dinheiro cair — sem cobrança automática.
+          <strong>PIX:</strong> valor e chave entram no portal (QR + copia e cola). Marquem <em>Pago</em> só quando o dinheiro cair.
         </p>
       </div>
 
-      <div id="projects-list"></div>
+      <div id="pipeline-kanban"></div>
+      <div id="projects-list" style="display:none;"></div>
+
+      <div style="margin-top:28px;">
+        <div class="ccs-eyebrow" style="margin-bottom:10px;">Prospecção BH</div>
+        <p style="font-size:13.5px; color:var(--ink-soft); margin:0 0 12px;">Cadastre leads e use atalhos de Maps/Google. Contatos entram em Clientes 360.</p>
+        <div class="ccs-ops-grid">
+          <div>
+            <div class="ccs-panel" style="margin-bottom:14px;">
+              <div class="ccs-field"><label>Nome da empresa</label><input id="lead-name" placeholder="Ex: Clínica Horizonte"></div>
+              <div class="ccs-field"><label>Telefone / contato</label><input id="lead-phone" placeholder="Opcional"></div>
+              <div class="ccs-field"><label>Nicho</label><input id="lead-niche" placeholder="Ex: Odontologia"></div>
+              <button class="ccs-btn amber small" onclick="saveLeadAndPing()">Salvar lead</button>
+            </div>
+            <div id="leads-list"></div>
+          </div>
+          <div>
+            <div id="hunt-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div id="tab-mensagens" style="display:none;" hidden aria-hidden="true">
-      <!-- legado: unificado em Caixa de entrada -->
-      <div id="messages-list-legacy"></div>
-    </div>
+    <div id="tab-mensagens" style="display:none;" hidden aria-hidden="true"><div id="messages-list-legacy"></div></div>
+    <!-- aliases ocultos p/ legado JS -->
+    <div id="tab-projetos" style="display:none;" hidden aria-hidden="true"></div>
+    <div id="tab-operacoes" style="display:none;" hidden aria-hidden="true"></div>
+    <div id="tab-empresa" style="display:none;" hidden aria-hidden="true"></div>
 
+    <!-- 3. CLIENTES 360 -->
     <div id="tab-clientes" style="display:none;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+      <div class="ccs-page-head">
         <div>
-          <h2 style="font-size:20px; margin:0;">Clientes e contatos</h2>
-          <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Projetos, leads de prospecção e formulário — busca e WhatsApp num só lugar.</div>
+          <h2>Clientes 360</h2>
+          <div class="sub">Visão unificada — projetos, leads e formulário</div>
         </div>
         <button class="ccs-btn ghost small" type="button" onclick="exportContactsCsv()">↧ Exportar CSV</button>
       </div>
@@ -616,74 +739,77 @@
       <div id="clientes-list"></div>
     </div>
 
+    <!-- 4. CAIXA DE ENTRADA -->
     <div id="tab-conversas" style="display:none;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+      <div class="ccs-page-head">
         <div>
-          <h2 style="font-size:20px; margin:0;">Caixa de entrada</h2>
-          <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Formulário da home + chat ao vivo — um só lugar para responder.</div>
+          <h2>Caixa de entrada</h2>
+          <div class="sub">Formulário + chat ao vivo — priorize e marque tratado</div>
         </div>
       </div>
-      <div class="ccs-help" style="margin-bottom:14px;"><strong>Rotina:</strong> veja recados do formulário abaixo → responda no chat → envie o código quando criar o projeto.</div>
+      <div class="ccs-help" style="margin-bottom:14px;"><strong>Rotina:</strong> recados do formulário → chat → código do projeto quando fechar.</div>
       <div id="inbox-form-messages" style="margin-bottom:18px;"></div>
       <div class="ccs-chat-layout">
-        <div class="ccs-chat-side">
-          <div id="chat-project-list"></div>
-        </div>
+        <div class="ccs-chat-side"><div id="chat-project-list"></div></div>
         <div class="ccs-chat-main" id="admin-chat-main">
           <div class="ccs-empty">Selecione uma conversa ao lado para responder.</div>
         </div>
       </div>
     </div>
 
-
-    <div id="tab-operacoes" style="display:none;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+    <!-- 5. TAREFAS -->
+    <div id="tab-tarefas" style="display:none;">
+      <div class="ccs-page-head">
         <div>
-          <h2 style="font-size:20px; margin:0;">Operações do dia</h2>
-          <div style="font-size:13px; color:var(--ink-soft); margin-top:4px;">Agenda, prospecção e cadastro de leads — sem IA.</div>
+          <h2>Tarefas / Follow-ups</h2>
+          <div class="sub">Agenda operacional · <span class="ccs-local-tag">local</span> por navegador</div>
         </div>
       </div>
-      <div class="ccs-help"><strong>Rotina sugerida:</strong> 1) responder a Caixa de entrada · 2) atualizar status dos projetos · 3) caçar 3 empresas em BH e salvar em Clientes · 4) marcar PIX quando cair.</div>
       <div class="ccs-ops-grid">
         <div>
-          <div class="ccs-eyebrow" style="margin-bottom:10px;">Agenda</div>
           <div class="ccs-panel" style="margin-bottom:14px;">
             <div class="ccs-field"><label>O que fazer</label><input id="task-title" placeholder="Ex: Retornar clínica Savassi"></div>
             <div class="ccs-field"><label>Quando</label><input id="task-when" type="date"></div>
-            <button class="ccs-btn amber small" onclick="addTaskFromForm()">Adicionar na agenda</button>
+            <div class="ccs-field"><label>Vínculo (código ou cliente)</label><input id="task-link" placeholder="Opcional — ex: ABC123 ou nome"></div>
+            <div class="ccs-field"><label>Prioridade</label>
+              <select id="task-priority">
+                <option value="normal">Normal</option>
+                <option value="alta">Alta</option>
+              </select>
+            </div>
+            <button class="ccs-btn amber small" onclick="addTaskFromForm()">Adicionar tarefa</button>
           </div>
-          <div id="agenda-list"></div>
         </div>
         <div>
-          <div class="ccs-eyebrow" style="margin-bottom:10px;">Clientes / leads</div>
-          <div class="ccs-panel" style="margin-bottom:14px;">
-            <div class="ccs-field"><label>Nome da empresa</label><input id="lead-name" placeholder="Ex: Clínica Horizonte"></div>
-            <div class="ccs-field"><label>Telefone / contato</label><input id="lead-phone" placeholder="Opcional"></div>
-            <div class="ccs-field"><label>Nicho</label><input id="lead-niche" placeholder="Ex: Odontologia"></div>
-            <button class="ccs-btn amber small" onclick="saveLeadAndPing()">Salvar lead</button>
-          </div>
-          <div id="leads-list"></div>
-        </div>
-        <div class="full">
-          <div class="ccs-eyebrow" style="margin:8px 0 10px;">Prospecção BH</div>
-          <p style="font-size:13.5px; color:var(--ink-soft); margin:0 0 12px;">Atalhos para Maps / Google / Instagram. Achou uma empresa? Salve em Clientes e use o texto pronto.</p>
-          <div id="hunt-grid" style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px;"></div>
-        </div>
-        <div class="full">
-          <div class="ccs-eyebrow" style="margin:8px 0 10px;">Respostas prontas (chat)</div>
-          <div class="ccs-panel" id="ops-templates">
-            <p style="margin:0 0 10px; font-size:13.5px; color:var(--ink-soft);">Na Caixa de entrada, use os chips acima do campo de mensagem. Aqui você vê o texto completo:</p>
-            <ul style="margin:0; padding-left:18px; font-size:13.5px; line-height:1.6;" id="ops-templates-list"></ul>
-          </div>
+          <div class="ccs-help" style="margin-bottom:12px;">Tarefas ficam neste navegador (não no Supabase). Use para follow-ups do dia sem inventar tabela frágil.</div>
+          <div id="agenda-list"></div>
         </div>
       </div>
     </div>
 
-    <div id="tab-empresa" style="display:none;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+    <!-- 6. FINANCEIRO -->
+    <div id="tab-financeiro" style="display:none;">
+      <div class="ccs-page-head">
         <div>
-          <h2 style="font-size:20px; margin-bottom:4px;">Painel de controle</h2>
-          <div style="font-size:13px; color:var(--ink-soft);">Visão financeira e de projetos em tempo real.</div>
+          <h2>Financeiro ops</h2>
+          <div class="sub">PIX pendente, recebido e confirmação de pagamento</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="ccs-btn ghost small" onclick="exportCsv()">↧ CSV projetos</button>
+          <button class="ccs-btn amber small" onclick="exportExcel()">↧ Excel</button>
+        </div>
+      </div>
+      <div class="ccs-admin-overview" id="financeiro-overview"></div>
+      <div class="ccs-help"><strong>Chave PIX do portal:</strong> <span class="mono">31999758385</span> — marque pago só com confirmação no banco.</div>
+      <div id="financeiro-list"></div>
+    </div>
+
+    <!-- 7. RELATÓRIOS -->
+    <div id="tab-relatorios" style="display:none;">
+      <div class="ccs-page-head">
+        <div>
+          <h2>Relatórios</h2>
+          <div class="sub">Resumo do período, gráficos e exportação</div>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button class="ccs-btn amber small" onclick="exportExcel()">↧ Excel</button>
@@ -691,34 +817,10 @@
           <button class="ccs-btn ghost small" onclick="exportContactsCsv()">↧ CSV contatos</button>
         </div>
       </div>
-      <div class="ccs-help"><strong>Para que serve:</strong> é o painel de gestão da CodeCraft Solutions. Mostra quanto você já recebeu e quanto tem a receber, quantos sites/lojas estão em produção e entregues, gráficos de faturamento (inclusive por tipo de serviço) e uma calculadora. O botão <strong>Exportar Excel</strong> baixa tudo em planilha (Resumo, Por serviço e Projetos).</div>
-
-      <div class="ccs-panel" style="margin-bottom:20px; border-left:4px solid var(--amber);">
-        <div class="ccs-eyebrow" style="margin-bottom:6px;">Posicionamento · CodeCraft Solutions</div>
-        <p style="margin:0 0 8px; font-size:14.5px; line-height:1.65;">
-          <strong>MEI, pequenas, médias e grandes empresas.</strong> Sites, lojas virtuais, sistemas sob medida e CodeCraft Gestão (ERP/HCM B2B).
-          BH e Brasil · Chat no site · PIX 31999758385 · @code.invention
-        </p>
-        <p style="margin:0; font-size:13px; color:var(--ink-soft);">
-          CNPJ: <strong>em regularização</strong> — não inventamos número. Atualize aqui quando o cadastro estiver pronto.
-        </p>
-      </div>
-
-      <div class="ccs-eyebrow" style="margin-bottom:10px;">Configurações do estúdio</div>
-      <div class="ccs-panel" style="margin-bottom:20px;" id="admin-settings">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-          <div class="ccs-field"><label>Chave PIX (exibida no portal)</label><input id="set-pix" readonly value="31999758385" class="mono"></div>
-          <div class="ccs-field"><label>WhatsApp comercial</label><input id="set-wa" type="tel" placeholder="5531999758385" inputmode="tel"></div>
-          <div class="ccs-field" style="grid-column:1/-1;"><label>Notas internas da empresa</label><textarea id="set-notes" rows="3" placeholder="Horário, parceiros, lembretes da operação…" style="padding:12px 14px; border-radius:10px; border:1.5px solid var(--line); font-family:Inter,sans-serif; font-size:14.5px; resize:vertical;"></textarea></div>
-        </div>
-        <button class="ccs-btn amber small" type="button" onclick="saveAdminSettings()">Salvar configurações</button>
-        <p style="font-size:12.5px; color:var(--ink-soft); margin:10px 0 0;">PIX é só leitura (já usada no portal). WhatsApp e notas ficam neste navegador para atalhos rápidos.</p>
-      </div>
-
+      <div class="ccs-admin-overview" id="relatorios-period"></div>
       <div class="ccs-eyebrow" style="margin-bottom:10px;">Indicadores</div>
       <div class="ccs-metrics" id="empresa-metrics"></div>
-
-      <div class="ccs-eyebrow" style="margin:24px 0 10px;">Gráficos de controle</div>
+      <div class="ccs-eyebrow" style="margin:24px 0 10px;">Gráficos</div>
       <div class="ccs-charts">
         <div class="ccs-panel ccs-chart-card" style="grid-column:span 2;">
           <div class="ccs-chart-title">Faturamento por mês</div>
@@ -737,10 +839,8 @@
           <div class="ccs-chart-box"><canvas id="chart-service"></canvas></div>
         </div>
       </div>
-
-      <div class="ccs-eyebrow" style="margin:24px 0 10px;">Controle de projetos</div>
+      <div class="ccs-eyebrow" style="margin:24px 0 10px;">Tabela de projetos</div>
       <div class="ccs-panel" style="overflow-x:auto;" id="empresa-table"></div>
-
       <div class="ccs-panel" style="margin-top:24px; max-width:340px;">
         <div class="ccs-eyebrow" style="margin-bottom:10px;">Calculadora</div>
         <input id="calc-display" class="mono" readonly value="0"
@@ -748,6 +848,93 @@
         <div class="ccs-calc-grid" id="calc-grid"></div>
       </div>
     </div>
+
+    <!-- 8. EQUIPE -->
+    <div id="tab-equipe" style="display:none;">
+      <div class="ccs-page-head">
+        <div>
+          <h2>Equipe</h2>
+          <div class="sub">Quem tem acesso a este console</div>
+        </div>
+      </div>
+      <div id="equipe-session" class="ccs-panel" style="margin-bottom:16px;"></div>
+      <div class="ccs-eyebrow" style="margin-bottom:10px;">Allowlist (Supabase Auth)</div>
+      <div class="ccs-team-card">
+        <div class="avatar">G</div>
+        <div>
+          <strong>Gustavo</strong>
+          <div style="font-size:13.5px; color:var(--ink-soft); margin-top:4px;" class="mono">gustavosena972@gmail.com</div>
+          <div style="font-size:12.5px; color:var(--ink-soft); margin-top:6px;">Acesso total ao ops console · senha no Supabase Auth</div>
+        </div>
+      </div>
+      <div class="ccs-team-card">
+        <div class="avatar">L</div>
+        <div>
+          <strong>Lucas</strong>
+          <div style="font-size:13.5px; color:var(--ink-soft); margin-top:4px;" class="mono">lucashdhdhdhdhdbddb@gmail.com</div>
+          <div style="font-size:12.5px; color:var(--ink-soft); margin-top:6px;">Acesso total ao ops console · senha no Supabase Auth</div>
+        </div>
+      </div>
+      <div class="ccs-help" style="margin-top:14px;">Sem RBAC multi-tenant: os dois e-mails na allowlist entram com o mesmo nível. Para incluir alguém, adicione o e-mail em <code>ADMIN_ALLOWED_EMAILS</code> no app.js e crie o usuário no Supabase Auth.</div>
+    </div>
+
+    <!-- 9. AUDITORIA -->
+    <div id="tab-auditoria" style="display:none;">
+      <div class="ccs-page-head">
+        <div>
+          <h2>Auditoria / Atividade</h2>
+          <div class="sub">Trilha das últimas ações neste navegador · <span class="ccs-local-tag">local</span></div>
+        </div>
+        <button class="ccs-btn ghost small" type="button" onclick="clearAdminActivity()">Limpar trilha</button>
+      </div>
+      <div id="auditoria-list" class="ccs-panel" style="padding:14px 16px;"></div>
+    </div>
+
+    <!-- 10. CONFIGURAÇÕES -->
+    <div id="tab-configuracoes" style="display:none;">
+      <div class="ccs-page-head">
+        <div>
+          <h2>Configurações</h2>
+          <div class="sub">PIX, WhatsApp, notas e atalhos</div>
+        </div>
+      </div>
+      <div class="ccs-panel" style="margin-bottom:20px; border-left:4px solid var(--amber);">
+        <div class="ccs-eyebrow" style="margin-bottom:6px;">CodeCraft Solutions</div>
+        <p style="margin:0 0 8px; font-size:14.5px; line-height:1.65;">
+          MEI, PME e empresas · Sites, lojas, sistemas e CodeCraft Gestão · BH · PIX 31999758385 · @code.invention
+        </p>
+        <p style="margin:0; font-size:13px; color:var(--ink-soft);">CNPJ: <strong>em regularização</strong> — não inventamos número.</p>
+      </div>
+      <div class="ccs-panel" style="margin-bottom:20px;" id="admin-settings">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="ccs-field"><label>Chave PIX (portal)</label><input id="set-pix" readonly value="31999758385" class="mono"></div>
+          <div class="ccs-field"><label>WhatsApp comercial</label><input id="set-wa" type="tel" placeholder="5531999758385" inputmode="tel"></div>
+          <div class="ccs-field" style="grid-column:1/-1;"><label>Notas internas</label><textarea id="set-notes" rows="3" placeholder="Horário, parceiros, lembretes…" style="padding:12px 14px; border-radius:10px; border:1.5px solid var(--line); font-family:Inter,sans-serif; font-size:14.5px; resize:vertical;"></textarea></div>
+        </div>
+        <button class="ccs-btn amber small" type="button" onclick="saveAdminSettings()">Salvar configurações</button>
+        <p style="font-size:12.5px; color:var(--ink-soft); margin:10px 0 0;">PIX é só leitura (portal). WhatsApp e notas: <span class="ccs-local-tag">local</span> neste navegador.</p>
+      </div>
+      <div class="ccs-panel" style="margin-bottom:20px;">
+        <div class="ccs-eyebrow" style="margin-bottom:8px;">Atalhos de teclado</div>
+        <ul style="margin:0; padding-left:18px; font-size:13.5px; line-height:1.7; color:var(--ink-soft);">
+          <li><strong>1–9 / 0</strong> — módulos do menu</li>
+          <li><strong>/</strong> — buscar (pipeline ou clientes)</li>
+          <li><strong>N</strong> — novo projeto</li>
+          <li><strong>E</strong> — exportar Excel · <strong>C</strong> — CSV</li>
+          <li><strong>Esc</strong> — fechar modal / sair do campo</li>
+        </ul>
+      </div>
+      <div class="ccs-panel" style="margin-bottom:20px;" id="ops-templates">
+        <div class="ccs-eyebrow" style="margin-bottom:8px;">Respostas prontas (chat)</div>
+        <ul style="margin:0; padding-left:18px; font-size:13.5px; line-height:1.6;" id="ops-templates-list"></ul>
+      </div>
+      <div class="ccs-panel">
+        <div class="ccs-eyebrow" style="margin-bottom:8px;">CodeCraft Gestão</div>
+        <p style="margin:0 0 12px; font-size:13.5px; color:var(--ink-soft);">ERP/HCM em produto separado — atalho leve daqui.</p>
+        <a class="ccs-btn ghost small" href="https://gustavosena972-wq.github.io/financas-codecraft/" target="_blank" rel="noopener">Abrir Gestão</a>
+      </div>
+    </div>
+
     </div>
   </div>
 </div>

@@ -696,12 +696,30 @@ function markMessageHandled(id){
 function rememberAdminTab(tab){
   try{ sessionStorage.setItem(ADMIN_TAB_KEY, tab); }catch(e){}
 }
+function normalizeAdminTab(tab){
+  const aliases = {
+    projetos: 'pipeline',
+    operacoes: 'tarefas',
+    empresa: 'relatorios',
+    mensagens: 'conversas'
+  };
+  const t = aliases[tab] || tab;
+  return ADMIN_TABS.includes(t) ? t : 'painel';
+}
 function lastAdminTab(){
   try{
     const t = sessionStorage.getItem(ADMIN_TAB_KEY);
-    if(t && ADMIN_TABS.includes(t) && t !== 'mensagens') return t;
+    if(t) return normalizeAdminTab(t);
   }catch(e){}
-  return 'projetos';
+  return 'painel';
+}
+function toggleAdminSidebar(){
+  const shell = document.getElementById('admin-main');
+  if(shell) shell.classList.toggle('nav-open');
+}
+function closeAdminSidebar(){
+  const shell = document.getElementById('admin-main');
+  if(shell) shell.classList.remove('nav-open');
 }
 function renderAdminGate(){
   const loginShell = document.getElementById('admin-login-shell');
@@ -733,7 +751,7 @@ function renderAdminGate(){
     stopRealtime();
     if(supabaseClient){
       realtimeChannel = supabaseClient.channel('admin-projects')
-        .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); renderAdminOverview(); renderClientesList(); })
+        .on('postgres_changes', { event:'*', schema:'public', table:'projects' }, ()=>{ renderProjectsList(); renderEmpresa(); renderChatProjectList(); renderAdminOverview(); renderClientesList(); renderFinanceiro(); })
         .on('postgres_changes', { event:'*', schema:'public', table:'messages' }, ()=>{ renderMessagesList(); renderAdminOverview(); renderClientesList(); })
         .on('postgres_changes', { event:'*', schema:'public', table:'lead_chats' }, ()=>{ renderChatProjectList(); renderAdminOverview(); renderClientesList(); })
         .on('postgres_changes', { event:'*', schema:'public', table:'chat_messages' }, ()=>{ if(currentChatCode) renderAdminChat(); })
@@ -743,6 +761,8 @@ function renderAdminGate(){
       renderProjectsList(); renderMessagesList(); renderEmpresa(); renderChatProjectList(); renderAdminOverview();
       if(currentChatCode) renderAdminChat();
     });
+  } else {
+    closeAdminSidebar();
   }
 }
 function openAdminPanel(){
@@ -830,11 +850,16 @@ if(configOk){
   });
 }
 
-const ADMIN_TABS = ['projetos','conversas','mensagens','clientes','operacoes','empresa'];
+const ADMIN_TABS = ['painel','pipeline','clientes','conversas','tarefas','financeiro','relatorios','equipe','auditoria','configuracoes','projetos','operacoes','empresa','mensagens'];
+const ADMIN_TAB_VISIBLE = ['painel','pipeline','clientes','conversas','tarefas','financeiro','relatorios','equipe','auditoria','configuracoes'];
+const PIPELINE_VIEW_KEY = 'ccs-pipeline-view-v1';
 let projectFilter = 'all';
 let projectSearch = '';
 let clientFilter = 'all';
 let clientSearch = '';
+let pipelineView = (function(){
+  try{ return localStorage.getItem(PIPELINE_VIEW_KEY) === 'list' ? 'list' : 'kanban'; }catch(e){ return 'kanban'; }
+})();
 const PIPELINE_STEPS = [
   { id:'novo', label:'Novo' },
   { id:'andamento', label:'Andamento' },
@@ -874,20 +899,25 @@ function extractContactPhone(notes){
   return m ? m[1].trim() : '';
 }
 function switchAdminTab(tab){
-  if(!ADMIN_TABS.includes(tab)) tab = 'projetos';
-  if(tab === 'mensagens'){ switchAdminTab('conversas'); return; }
+  tab = normalizeAdminTab(tab);
   rememberAdminTab(tab);
-  ADMIN_TABS.forEach(t=>{
+  closeAdminSidebar();
+  ADMIN_TAB_VISIBLE.forEach(t=>{
     const pane = document.getElementById('tab-'+t);
     const btn = document.getElementById('tab-btn-'+t);
     if(pane) pane.style.display = t===tab ? 'block' : 'none';
     if(btn) btn.classList.toggle('active', t===tab);
   });
-  if(tab==='projetos'){ renderProjectsList(); renderAdminOverview(); renderAdminActivity(); }
+  if(tab==='painel'){ renderAdminOverview(); renderAdminActivity(); renderPainelExtras(); }
+  if(tab==='pipeline'){ applyPipelineView(); renderProjectsList(); renderLeads(); renderHunt(); }
   if(tab==='conversas'){ renderChatProjectList(); renderMessagesList(); }
   if(tab==='clientes'){ renderClientesList(); }
-  if(tab==='operacoes'){ renderAgenda(); renderLeads(); renderHunt(); renderOpsTemplates(); }
-  if(tab==='empresa'){ renderEmpresa(); buildCalculator(); fillAdminSettingsForm(); }
+  if(tab==='tarefas'){ renderAgenda(); }
+  if(tab==='financeiro'){ renderFinanceiro(); }
+  if(tab==='relatorios'){ renderEmpresa(); buildCalculator(); renderRelatoriosPeriod(); }
+  if(tab==='equipe'){ renderEquipe(); }
+  if(tab==='auditoria'){ renderAuditoria(); }
+  if(tab==='configuracoes'){ fillAdminSettingsForm(); renderOpsTemplates(); }
 }
 async function renderAdminAll(){
   await renderProjectsList();
@@ -901,17 +931,85 @@ async function renderAdminAll(){
   renderHunt();
   renderOpsTemplates();
   await renderClientesList();
+  await renderFinanceiro();
+  renderPainelExtras();
+  renderAuditoria();
+  renderEquipe();
+  renderRelatoriosPeriod();
 }
 function renderAdminActivity(){
   const el = document.getElementById('admin-activity');
   if(!el) return;
-  const list = loadActivity().slice(0,6);
+  const list = loadActivity().slice(0,8);
   if(!list.length){
-    el.innerHTML = '<div class="ccs-eyebrow" style="margin:0 0 6px;">Última atividade</div><div style="font-size:13.5px; color:var(--ink-soft);">Ainda sem ações neste navegador. Mudanças de status, PIX e configs aparecem aqui.</div>';
+    el.innerHTML = '<div class="ccs-eyebrow" style="margin:0 0 6px;">Última atividade</div><div style="font-size:13.5px; color:var(--ink-soft);">Ainda sem ações neste navegador. Status, PIX e configs aparecem aqui.</div>';
     return;
   }
   el.innerHTML = '<div class="ccs-eyebrow" style="margin:0 0 6px;">Última atividade</div>'+
-    list.map(a=>'<div class="ccs-activity-row"><span class="when">'+fmtDate(a.at).split(' ')[0]+'<br>'+fmtDate(a.at).split(', ')[1]+'</span><span><strong>'+escapeHtml(a.kind)+'</strong> · '+escapeHtml(a.text)+'</span></div>').join('');
+    list.map(a=>'<div class="ccs-activity-row"><span class="when">'+fmtDate(a.at).split(' ')[0]+'<br>'+(fmtDate(a.at).split(', ')[1]||'')+'</span><span><strong>'+escapeHtml(a.kind)+'</strong> · '+escapeHtml(a.text)+'</span></div>').join('');
+}
+function renderAuditoria(){
+  const el = document.getElementById('auditoria-list');
+  if(!el) return;
+  const list = loadActivity();
+  if(!list.length){
+    el.innerHTML = '<div class="ccs-empty" style="padding:20px;">Nenhuma ação registrada neste navegador ainda.</div>';
+    return;
+  }
+  el.innerHTML = list.map(a=>'<div class="ccs-activity-row"><span class="when">'+fmtDate(a.at)+'</span><span><strong>'+escapeHtml(a.kind)+'</strong> · '+escapeHtml(a.text)+'</span></div>').join('');
+}
+function clearAdminActivity(){
+  if(!confirm('Limpar a trilha de auditoria deste navegador?')) return;
+  localStorage.removeItem(ACTIVITY_KEY);
+  renderAuditoria();
+  renderAdminActivity();
+  showToast('Trilha limpa.');
+}
+async function renderEquipe(){
+  const el = document.getElementById('equipe-session');
+  if(!el) return;
+  let email = '—';
+  if(supabaseClient){
+    try{
+      const { data } = await supabaseClient.auth.getSession();
+      email = sessionAdminEmail(data && data.session) || '—';
+    }catch(e){}
+  }
+  el.innerHTML = '<div class="ccs-eyebrow" style="margin:0 0 8px;">Sessão atual</div>'+
+    '<div style="font-size:15px;"><strong class="mono">'+escapeHtml(email)+'</strong></div>'+
+    '<div style="font-size:13px; color:var(--ink-soft); margin-top:6px;">Autenticado via Supabase Auth · allowlist Gustavo / Lucas</div>';
+}
+async function renderPainelExtras(){
+  const qa = document.getElementById('painel-quick-actions');
+  if(qa){
+    qa.innerHTML =
+      '<button class="ccs-btn amber small" type="button" onclick="switchAdminTab(\'conversas\')">Abrir caixa de entrada</button>'+
+      '<button class="ccs-btn ghost small" type="button" onclick="switchAdminTab(\'financeiro\')">Ver PIX pendente</button>'+
+      '<button class="ccs-btn ghost small" type="button" onclick="switchAdminTab(\'tarefas\')">Tarefas do dia</button>'+
+      '<button class="ccs-btn ghost small" type="button" onclick="switchAdminTab(\'pipeline\'); setPipelineView(\'kanban\');">Pipeline Kanban</button>';
+  }
+  const fila = document.getElementById('painel-fila');
+  if(!fila) return;
+  try{
+    const [projects, tasks] = await Promise.all([loadProjects().catch(()=>[]), Promise.resolve(loadTasks())]);
+    const unpaid = (projects||[]).filter(p=>!p.paid && Number(p.pixValue)>0).slice(0,4);
+    const today = todayISO();
+    const due = (tasks||[]).filter(t=>!t.done && t.when<=today).slice(0,4);
+    let html = '';
+    if(unpaid.length){
+      html += '<div class="ccs-eyebrow" style="margin:0 0 6px;">PIX a confirmar</div>';
+      html += unpaid.map(p=>'<div style="font-size:13.5px; margin-bottom:6px;"><strong>'+escapeHtml(p.clientName)+'</strong> · '+money(p.pixValue)+
+        ' <button class="ccs-btn amber small" style="margin-left:6px;" onclick="togglePaid(\''+p.id+'\', false)">Marcar pago</button></div>').join('');
+    }
+    if(due.length){
+      html += '<div class="ccs-eyebrow" style="margin:12px 0 6px;">Follow-ups</div>';
+      html += due.map(t=>'<div style="font-size:13.5px; margin-bottom:4px;">'+escapeHtml(t.title)+' <span style="color:var(--ink-soft); font-size:12px;">· '+t.when+'</span></div>').join('');
+    }
+    if(!html) html = '<div style="font-size:13.5px; color:var(--ink-soft);">Fila limpa — sem PIX pendente nem tarefas atrasadas.</div>';
+    fila.innerHTML = html;
+  }catch(e){
+    fila.innerHTML = '<div style="font-size:13.5px; color:var(--ink-soft);">Não foi possível montar a fila.</div>';
+  }
 }
 async function renderAdminOverview(){
   const el = document.getElementById('admin-overview');
@@ -933,15 +1031,20 @@ async function renderAdminOverview(){
     const handled = loadHandledMessages();
     const openForms = (messages||[]).filter(m=>!handled[String(m.id)]).length;
     const inboxN = (leads||[]).length + openForms;
+    const dueTasks = loadTasks().filter(t=>!t.done && t.when<=todayISO()).length;
     el.innerHTML =
       '<div class="ccs-metric"><div class="lbl">Em produção</div><div class="val">'+open+'</div><div class="sub">análise + andamento</div></div>'+
-      '<div class="ccs-metric receber"><div class="lbl">PIX a receber</div><div class="val">'+unpaid+'</div><div class="sub">'+money(unpaidSum)+' · sem marcar pago</div></div>'+
-      '<div class="ccs-metric"><div class="lbl">Caixa de entrada</div><div class="val">'+inboxN+'</div><div class="sub">'+(leads||[]).length+' chat · '+openForms+' formulário aberto</div></div>'+
-      '<div class="ccs-metric recebido"><div class="lbl">Recebido / entregues</div><div class="val">'+money(recebido)+'</div><div class="sub">'+entregues+' entregues · '+list.length+' projetos</div></div>';
-    setNavBadge('badge-projetos', open);
+      '<div class="ccs-metric receber"><div class="lbl">A receber</div><div class="val">'+money(unpaidSum)+'</div><div class="sub">'+unpaid+' PIX pendente(s)</div></div>'+
+      '<div class="ccs-metric"><div class="lbl">Caixa de entrada</div><div class="val">'+inboxN+'</div><div class="sub">'+(leads||[]).length+' chat · '+openForms+' formulário</div></div>'+
+      '<div class="ccs-metric recebido"><div class="lbl">Recebido</div><div class="val">'+money(recebido)+'</div><div class="sub">'+entregues+' entregues · '+dueTasks+' tarefa(s) hoje</div></div>';
+    setNavBadge('badge-painel', unpaid + openForms + dueTasks);
+    setNavBadge('badge-pipeline', open);
     setNavBadge('badge-conversas', inboxN);
+    setNavBadge('badge-financeiro', unpaid);
+    setNavBadge('badge-tarefas', dueTasks);
     const crm = await loadCrmLeads().catch(()=>[]);
     setNavBadge('badge-clientes', (projects||[]).length + (crm||[]).length);
+    renderPainelExtras();
   }catch(e){
     el.innerHTML = '<div class="ccs-panel ccs-empty" style="grid-column:1/-1; padding:18px;">Não foi possível carregar o resumo agora.</div>';
   }
@@ -1055,7 +1158,7 @@ async function setStatus(id, status){
   if(status === 'concluido' && !confirm('Marcar este projeto como entregue?')) return;
   await updateProject(id, { status });
   pushActivity('status', 'Status → '+(STATUS_LABELS[status]||status));
-  renderProjectsList(); renderEmpresa(); renderAdminOverview(); renderAdminActivity();
+  renderProjectsList(); renderEmpresa(); renderAdminOverview(); renderAdminActivity(); renderFinanceiro();
 }
 async function togglePaid(id, current){
   if(!current && !confirm('Confirmar que o PIX caiu e marcar como pago?')) return;
@@ -1063,7 +1166,7 @@ async function togglePaid(id, current){
   await updateProject(id, { paid: !current });
   pushActivity('pix', current ? 'Desmarcou pagamento' : 'Marcou PIX como pago');
   showToast(current ? 'Pagamento desmarcado.' : 'PIX marcado como pago.', 2800);
-  renderProjectsList(); renderEmpresa(); renderAdminOverview(); renderAdminActivity(); renderClientesList();
+  renderProjectsList(); renderEmpresa(); renderAdminOverview(); renderAdminActivity(); renderClientesList(); renderFinanceiro();
 }
 async function saveDelivery(id){
   const input = document.getElementById('delivery-'+id);
@@ -1119,26 +1222,87 @@ async function deleteProject(id){
   pushActivity('excluir', 'Projeto removido');
   renderProjectsList(); renderEmpresa(); renderChatProjectList(); renderAdminOverview(); renderAdminActivity(); renderClientesList();
 }
-async function renderProjectsList(){
-  const container = document.getElementById('projects-list');
-  if(!container) return;
-  container.innerHTML = '<div class="ccs-panel ccs-loading">Carregando projetos…</div>';
-  let projects = await loadProjects();
+function setPipelineView(mode){
+  pipelineView = mode === 'list' ? 'list' : 'kanban';
+  try{ localStorage.setItem(PIPELINE_VIEW_KEY, pipelineView); }catch(e){}
+  applyPipelineView();
+  renderProjectsList();
+}
+function applyPipelineView(){
+  const kanban = document.getElementById('pipeline-kanban');
+  const list = document.getElementById('projects-list');
+  const btnK = document.getElementById('view-btn-kanban');
+  const btnL = document.getElementById('view-btn-list');
+  if(btnK) btnK.classList.toggle('active', pipelineView === 'kanban');
+  if(btnL) btnL.classList.toggle('active', pipelineView === 'list');
+  if(kanban) kanban.style.display = pipelineView === 'kanban' ? 'block' : 'none';
+  if(list) list.style.display = pipelineView === 'list' ? 'block' : 'none';
+}
+function filterProjectsPipeline(projects){
+  let list = projects || [];
   if(projectSearch){
-    projects = projects.filter(p=>{
+    list = list.filter(p=>{
       const blob = (p.clientName+' '+p.projectName+' '+p.trackingCode+' '+(p.notes||'')).toLowerCase();
       return blob.includes(projectSearch);
     });
   }
-  if(projectFilter === 'novo') projects = projects.filter(p=>pipelineStage(p)==='novo');
-  else if(projectFilter === 'andamento') projects = projects.filter(p=>pipelineStage(p)==='andamento');
-  else if(projectFilter === 'aguardando_pix') projects = projects.filter(p=>pipelineStage(p)==='aguardando_pix' || (!p.paid && Number(p.pixValue)>0 && p.status!=='concluido'));
-  else if(projectFilter === 'pago') projects = projects.filter(p=>pipelineStage(p)==='pago' || (p.paid && p.status!=='concluido'));
-  else if(projectFilter === 'entregue') projects = projects.filter(p=>pipelineStage(p)==='entregue');
-  else if(projectFilter === 'analise') projects = projects.filter(p=>p.status==='analise');
-  else if(projectFilter === 'concluido') projects = projects.filter(p=>p.status==='concluido');
-  else if(projectFilter === 'unpaid') projects = projects.filter(p=>!p.paid && Number(p.pixValue)>0);
-
+  if(projectFilter === 'novo') list = list.filter(p=>pipelineStage(p)==='novo');
+  else if(projectFilter === 'andamento') list = list.filter(p=>pipelineStage(p)==='andamento');
+  else if(projectFilter === 'aguardando_pix') list = list.filter(p=>pipelineStage(p)==='aguardando_pix' || (!p.paid && Number(p.pixValue)>0 && p.status!=='concluido'));
+  else if(projectFilter === 'pago') list = list.filter(p=>pipelineStage(p)==='pago' || (p.paid && p.status!=='concluido'));
+  else if(projectFilter === 'entregue') list = list.filter(p=>pipelineStage(p)==='entregue');
+  else if(projectFilter === 'analise') list = list.filter(p=>p.status==='analise');
+  else if(projectFilter === 'concluido') list = list.filter(p=>p.status==='concluido');
+  else if(projectFilter === 'unpaid') list = list.filter(p=>!p.paid && Number(p.pixValue)>0);
+  return list;
+}
+function renderPipelineKanban(projects){
+  const el = document.getElementById('pipeline-kanban');
+  if(!el) return;
+  const by = {};
+  PIPELINE_STEPS.forEach(s=>{ by[s.id] = []; });
+  (projects||[]).forEach(p=>{
+    const st = pipelineStage(p);
+    if(by[st]) by[st].push(p); else by.novo.push(p);
+  });
+  el.innerHTML = '<div class="ccs-kanban">'+PIPELINE_STEPS.map(s=>{
+    const cards = by[s.id] || [];
+    return '<div class="ccs-kanban-col"><div class="col-h"><strong>'+s.label+'</strong><span class="n">'+cards.length+'</span></div><div class="col-b">'+
+      (cards.length ? cards.map(p=>{
+        const phone = extractContactPhone(p.notes);
+        return '<div class="ccs-kanban-card">'+
+          '<strong>'+escapeHtml(p.clientName)+'</strong>'+
+          '<div class="meta">'+escapeHtml(p.projectName)+'<br><span class="mono">'+escapeHtml(p.trackingCode)+'</span>'+
+          (p.pixValue ? ' · '+money(p.pixValue) : '')+(phone ? ' · '+escapeHtml(phone) : '')+'</div>'+
+          '<div class="acts">'+
+            '<button class="ccs-btn amber small" onclick="advancePipeline(\''+p.id+'\')">Avançar</button>'+
+            '<button class="ccs-btn ghost small" onclick="waProject(\''+p.id+'\')">WA</button>'+
+            '<button class="ccs-btn ghost small" onclick="openAdminChat(\''+escapeHtml(p.trackingCode)+'\'); switchAdminTab(\'conversas\')">Chat</button>'+
+          '</div></div>';
+      }).join('') : '<div class="ccs-empty" style="padding:16px 8px; font-size:12.5px;">Vazio</div>')+
+      '</div></div>';
+  }).join('')+'</div>';
+}
+async function renderProjectsList(){
+  applyPipelineView();
+  const container = document.getElementById('projects-list');
+  const kanbanEl = document.getElementById('pipeline-kanban');
+  if(kanbanEl && pipelineView === 'kanban'){
+    kanbanEl.innerHTML = '<div class="ccs-panel ccs-loading">Carregando pipeline…</div>';
+  }
+  if(container && pipelineView === 'list'){
+    container.innerHTML = '<div class="ccs-panel ccs-loading">Carregando projetos…</div>';
+  }
+  let projects = filterProjectsPipeline(await loadProjects());
+  if(kanbanEl){
+    if(!projects.length && pipelineView === 'kanban'){
+      kanbanEl.innerHTML = '<div class="ccs-panel ccs-empty"><strong>Nenhum projeto neste filtro.</strong><br>Ajuste a busca ou clique em <em>+ Novo projeto</em>.</div>';
+    } else {
+      renderPipelineKanban(projects);
+    }
+  }
+  if(!container) return;
+  if(pipelineView !== 'list') return;
   if(projects.length === 0){
     container.innerHTML = '<div class="ccs-panel ccs-empty"><strong>Nenhum projeto neste filtro.</strong><br>Ajuste a busca/filtro ou clique em <em>+ Novo projeto</em>.</div>';
     return;
@@ -1197,6 +1361,57 @@ async function renderProjectsList(){
     </table>
   </div>`;
 }
+async function renderFinanceiro(){
+  const ov = document.getElementById('financeiro-overview');
+  const listEl = document.getElementById('financeiro-list');
+  if(!ov && !listEl) return;
+  const projects = await loadProjects().catch(()=>[]);
+  const unpaid = (projects||[]).filter(p=>!p.paid && Number(p.pixValue)>0);
+  const paid = (projects||[]).filter(p=>p.paid);
+  const unpaidSum = unpaid.reduce((s,p)=>s+Number(p.pixValue||0),0);
+  const paidSum = paid.reduce((s,p)=>s+Number(p.pixValue||0),0);
+  if(ov){
+    ov.innerHTML =
+      '<div class="ccs-metric receber"><div class="lbl">A receber</div><div class="val">'+money(unpaidSum)+'</div><div class="sub">'+unpaid.length+' pendente(s)</div></div>'+
+      '<div class="ccs-metric recebido"><div class="lbl">Recebido</div><div class="val">'+money(paidSum)+'</div><div class="sub">'+paid.length+' pago(s)</div></div>'+
+      '<div class="ccs-metric"><div class="lbl">Projetos c/ valor</div><div class="val">'+(unpaid.length+paid.length)+'</div><div class="sub">com PIX cadastrado</div></div>'+
+      '<div class="ccs-metric"><div class="lbl">Chave PIX</div><div class="val" style="font-size:16px;">'+COMPANY_PIX_KEY+'</div><div class="sub">portal do cliente</div></div>';
+  }
+  if(!listEl) return;
+  if(!unpaid.length && !paid.length){
+    listEl.innerHTML = '<div class="ccs-panel ccs-empty">Nenhum valor PIX cadastrado ainda. Crie um projeto no Pipeline com valor.</div>';
+    return;
+  }
+  function row(p, pending){
+    return '<div class="ccs-panel" style="margin-bottom:10px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; '+(pending?'':'opacity:.72;')+'">'+
+      '<div><strong>'+escapeHtml(p.clientName)+'</strong> · '+escapeHtml(p.projectName)+
+      '<div style="font-size:13px; color:var(--ink-soft); margin-top:4px;"><span class="mono">'+escapeHtml(p.trackingCode)+'</span> · '+money(p.pixValue)+
+      (pending?' · <span style="color:#8A5A12; font-weight:700;">pendente</span>':' · pago')+'</div></div>'+
+      '<div style="display:flex; gap:6px; flex-wrap:wrap;">'+
+        '<button class="ccs-btn '+(pending?'amber':'ghost')+' small" onclick="togglePaid(\''+p.id+'\', '+!!p.paid+')">'+(pending?'Confirmar pago':'Desmarcar')+'</button>'+
+        '<button class="ccs-btn ghost small" onclick="waProject(\''+p.id+'\')">WhatsApp</button>'+
+      '</div></div>';
+  }
+  listEl.innerHTML =
+    (unpaid.length ? '<div class="ccs-eyebrow" style="margin:0 0 8px;">Pendentes · '+unpaid.length+'</div>'+unpaid.map(p=>row(p,true)).join('') : '<div class="ccs-panel ccs-empty" style="margin-bottom:12px;">Nenhum PIX pendente.</div>')+
+    (paid.length ? '<div class="ccs-eyebrow" style="margin:16px 0 8px;">Recebidos (recentes)</div>'+paid.slice(0,12).map(p=>row(p,false)).join('') : '');
+}
+async function renderRelatoriosPeriod(){
+  const el = document.getElementById('relatorios-period');
+  if(!el) return;
+  const projects = await loadProjects().catch(()=>[]);
+  const now = new Date();
+  const monthKey = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const thisMonth = (projects||[]).filter(p=>String(p.createdAt||'').startsWith(monthKey));
+  const paidMonth = thisMonth.filter(p=>p.paid).reduce((s,p)=>s+Number(p.pixValue||0),0);
+  const openMonth = thisMonth.filter(p=>!p.paid && Number(p.pixValue)>0).reduce((s,p)=>s+Number(p.pixValue||0),0);
+  const closed = (projects||[]).filter(p=>p.status==='concluido' && String(p.updatedAt||p.createdAt||'').startsWith(monthKey)).length;
+  el.innerHTML =
+    '<div class="ccs-metric"><div class="lbl">Este mês · novos</div><div class="val">'+thisMonth.length+'</div><div class="sub">projetos criados</div></div>'+
+    '<div class="ccs-metric recebido"><div class="lbl">Este mês · recebido</div><div class="val">'+money(paidMonth)+'</div><div class="sub">entre os novos do mês</div></div>'+
+    '<div class="ccs-metric receber"><div class="lbl">Este mês · a receber</div><div class="val">'+money(openMonth)+'</div><div class="sub">novos ainda em aberto</div></div>'+
+    '<div class="ccs-metric"><div class="lbl">Entregas no mês</div><div class="val">'+closed+'</div><div class="sub">status concluído</div></div>';
+}
 let currentCode = null;
 let modalContact = '';
 function showCodeModal(code, clientName, contact){
@@ -1240,7 +1455,8 @@ function createProjectFromMessage(btn){
   const name = (btn && btn.getAttribute('data-name')) || '';
   const contact = (btn && btn.getAttribute('data-contact')) || '';
   const msg = (btn && btn.getAttribute('data-msg')) || '';
-  switchAdminTab('projetos');
+  switchAdminTab('pipeline');
+  setPipelineView('list');
   const f = document.getElementById('new-project-form');
   f.style.display = 'block';
   document.getElementById('np-client').value = name;
@@ -1267,10 +1483,14 @@ async function renderMessagesList(){
     const handleBtn = isDone
       ? ''
       : `<button class="ccs-btn ghost small" type="button" onclick="markMessageHandled('${escapeHtml(String(m.id))}')">Marcar tratado</button>`;
+    const ageH = (Date.now() - new Date(m.createdAt).getTime()) / 3600000;
+    const pri = isDone ? '' : (ageH >= 24
+      ? '<span class="ccs-priority alta">alta · +24h</span> '
+      : '<span class="ccs-priority normal">normal</span> ');
     return `
     <div class="ccs-panel" style="margin-bottom:10px; padding:12px 14px; ${isDone?'opacity:.62;':''}">
       <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;">
-        <strong>${escapeHtml(m.name)}</strong>
+        <strong>${pri}${escapeHtml(m.name)}</strong>
         <span style="font-size:12.5px; color:var(--ink-soft);">${fmtDate(m.createdAt)}${isDone?' · tratado':''}</span>
       </div>
       <div style="font-size:13px; color:var(--ink-soft); margin:4px 0 8px;">${escapeHtml(m.contact)}</div>
@@ -1350,7 +1570,7 @@ async function renderClientesList(){
     });
   }
   if(!list.length){
-    el.innerHTML = '<div class="ccs-panel ccs-empty"><strong>Nenhum contato neste filtro.</strong><br>Cadastre leads em Operações ou crie um projeto.</div>';
+    el.innerHTML = '<div class="ccs-panel ccs-empty"><strong>Nenhum contato neste filtro.</strong><br>Cadastre leads no Pipeline (prospecção) ou crie um projeto.</div>';
     return;
   }
   el.innerHTML = list.map(r=>{
@@ -1361,7 +1581,7 @@ async function renderClientesList(){
     actions.push(`<button class="ccs-btn amber small" type="button" data-phone="${escapeHtml(digitsOnly(r.phone))}" data-text="${escapeHtml(waText)}" onclick="openWhatsApp(this.dataset.phone, this.dataset.text)">WhatsApp</button>`);
     if(r.kind==='projeto' && r.code){
       actions.push(`<button class="ccs-btn ghost small" type="button" onclick="switchAdminTab('conversas'); openAdminChat('${escapeHtml(r.code)}')">Chat</button>`);
-      actions.push(`<button class="ccs-btn ghost small" type="button" data-code="${escapeHtml(r.code)}" onclick="switchAdminTab('projetos'); setProjectSearch(this.dataset.code.toLowerCase()); var s=document.getElementById('project-search'); if(s) s.value=this.dataset.code;">Ver projeto</button>`);
+      actions.push(`<button class="ccs-btn ghost small" type="button" data-code="${escapeHtml(r.code)}" onclick="switchAdminTab('pipeline'); setProjectSearch(this.dataset.code.toLowerCase()); var s=document.getElementById('project-search'); if(s) s.value=this.dataset.code;">Ver projeto</button>`);
     }
     if(r.kind==='lead'){
       actions.push(`<button class="ccs-btn ghost small" type="button" onclick="markLead('${r.id}','respondeu')">Marcou resposta</button>`);
@@ -1440,7 +1660,8 @@ async function createProjectForLead(code){
   const lead = await loadLeadByCode(code);
   pendingLeadCode = code;
   pendingLeadName = lead ? lead.name : '';
-  switchAdminTab('projetos');
+  switchAdminTab('pipeline');
+  setPipelineView('list');
   const f = document.getElementById('new-project-form');
   f.style.display = 'block';
   document.getElementById('np-client').value = pendingLeadName;
@@ -1561,8 +1782,8 @@ async function renderEmpresa(){
 let charts = { revenue:null, paid:null, status:null, service:null };
 function renderEmpresaCharts(s){
   if(typeof Chart === 'undefined') return;
-  /* Só desenha quando a aba Empresa está visível — evita rebuild no polling. */
-  const tab = document.getElementById('tab-empresa');
+  /* Só desenha quando Relatórios está visível — evita rebuild no polling. */
+  const tab = document.getElementById('tab-relatorios');
   if(!tab || tab.style.display === 'none') return;
   const monthLabels = s.months.map(m=>{ const [y,mo]=m.split('-'); return mo+'/'+y.slice(2); });
   const recData = s.months.map(m=>s.byMonth[m].recebido);
@@ -1784,27 +2005,43 @@ function todayISO(){
 }
 function loadTasks(){ try{ return JSON.parse(localStorage.getItem(TASKS_KEY)||'[]'); }catch(e){ return []; } }
 function saveTasks(list){ localStorage.setItem(TASKS_KEY, JSON.stringify(list)); }
-function addTask(title, when, type){
+function addTask(title, when, type, extra){
   const list = loadTasks();
-  list.unshift({ id: Date.now().toString(36)+Math.random().toString(36).slice(2,6), title, when: when||todayISO(), type: type||'geral', done:false, at: new Date().toISOString() });
+  const row = {
+    id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+    title, when: when||todayISO(), type: type||'geral', done:false,
+    at: new Date().toISOString(),
+    link: (extra && extra.link) || '',
+    priority: (extra && extra.priority) || 'normal'
+  };
+  list.unshift(row);
   saveTasks(list.slice(0,80));
 }
 function addTaskFromForm(){
   const title = (document.getElementById('task-title').value||'').trim();
   const when = document.getElementById('task-when').value || todayISO();
+  const linkEl = document.getElementById('task-link');
+  const priEl = document.getElementById('task-priority');
+  const link = linkEl ? linkEl.value.trim() : '';
+  const priority = priEl ? priEl.value : 'normal';
   if(!title){ showToast('Escreve o que fazer.'); return; }
-  addTask(title, when, 'manual');
+  addTask(title, when, 'manual', { link, priority });
   document.getElementById('task-title').value = '';
+  if(linkEl) linkEl.value = '';
   renderAgenda();
-  showToast('Guardado na agenda.');
+  renderAdminOverview();
+  pushActivity('tarefa', 'Nova tarefa: '+title.slice(0,80));
+  showToast('Tarefa salva (local neste navegador).');
 }
 function toggleTask(id){
   saveTasks(loadTasks().map(t=> t.id===id ? Object.assign({},t,{done:!t.done}) : t));
   renderAgenda();
+  renderAdminOverview();
 }
 function removeTask(id){
   saveTasks(loadTasks().filter(t=>t.id!==id));
   renderAgenda();
+  renderAdminOverview();
 }
 function renderAgenda(){
   const when = document.getElementById('task-when');
@@ -1813,19 +2050,21 @@ function renderAgenda(){
   if(!el) return;
   const list = loadTasks();
   const today = todayISO();
-  const due = list.filter(t=>!t.done && t.when<=today);
+  const due = list.filter(t=>!t.done && t.when<=today).sort((a,b)=>(b.priority==='alta'?1:0)-(a.priority==='alta'?1:0));
   const later = list.filter(t=>!t.done && t.when>today);
   const done = list.filter(t=>t.done).slice(0,8);
   function row(t){
+    const pri = t.priority === 'alta' ? '<span class="ccs-priority alta">alta</span> ' : '<span class="ccs-priority normal">normal</span> ';
+    const link = t.link ? ' · '+escapeHtml(t.link) : '';
     return `<div class="ccs-panel" style="margin-bottom:8px; display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; ${t.done?'opacity:.55;':''}">
-      <div><strong>${escapeHtml(t.title)}</strong><br><span style="color:var(--ink-soft); font-size:12px;">${t.when} · ${t.type}</span></div>
+      <div>${pri}<strong>${escapeHtml(t.title)}</strong><br><span style="color:var(--ink-soft); font-size:12px;">${t.when} · ${escapeHtml(t.type||'geral')}${link} · <span class="ccs-local-tag">local</span></span></div>
       <div style="display:flex; gap:6px;">
         <button class="ccs-btn ${t.done?'ghost':'amber'} small" onclick="toggleTask('${t.id}')">${t.done?'Reabrir':'Feito'}</button>
         <button class="ccs-btn ghost small" onclick="removeTask('${t.id}')">Tirar</button>
       </div>
     </div>`;
   }
-  el.innerHTML = (due.length?`<div class="ccs-eyebrow" style="margin-bottom:8px;">Para hoje / atrasado · ${due.length}</div>`+due.map(row).join(''):'<div class="ccs-panel ccs-empty">Nada atrasado. Adicione um item na agenda quando precisar.</div>')
+  el.innerHTML = (due.length?`<div class="ccs-eyebrow" style="margin-bottom:8px;">Para hoje / atrasado · ${due.length}</div>`+due.map(row).join(''):'<div class="ccs-panel ccs-empty">Nada atrasado. Adicione um follow-up quando precisar.</div>')
     +(later.length?`<div class="ccs-eyebrow" style="margin:16px 0 8px;">Depois</div>`+later.map(row).join(''):'')
     +(done.length?`<div class="ccs-eyebrow" style="margin:16px 0 8px;">Feito</div>`+done.map(row).join(''):'');
 }
@@ -2315,21 +2554,29 @@ if(window.CCS_PAGE === 'admin'){
     if(e.key === 'Escape'){
       const modal = document.getElementById('code-modal');
       if(modal && modal.style.display === 'flex'){ closeCodeModal(); return; }
+      closeAdminSidebar();
       if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
       return;
     }
     if(e.key === '/' && !e.ctrlKey && !e.metaKey){
       e.preventDefault();
       const tabClientes = document.getElementById('tab-clientes');
-      const focusEl = (tabClientes && tabClientes.style.display !== 'none')
-        ? document.getElementById('client-search')
-        : document.getElementById('project-search');
-      if(focusEl){ switchAdminTab(tabClientes && tabClientes.style.display !== 'none' ? 'clientes' : 'projetos'); focusEl.focus(); }
+      const onClientes = tabClientes && tabClientes.style.display !== 'none';
+      if(onClientes){
+        switchAdminTab('clientes');
+        const focusEl = document.getElementById('client-search');
+        if(focusEl) focusEl.focus();
+      } else {
+        switchAdminTab('pipeline');
+        const focusEl = document.getElementById('project-search');
+        if(focusEl) focusEl.focus();
+      }
       return;
     }
     if(e.key === 'n' || e.key === 'N'){
       e.preventDefault();
-      switchAdminTab('projetos');
+      switchAdminTab('pipeline');
+      setPipelineView('list');
       const f = document.getElementById('new-project-form');
       if(f && f.style.display === 'none') toggleNewProjectForm();
       else if(f){ const c=document.getElementById('np-client'); if(c) c.focus(); }
@@ -2337,7 +2584,7 @@ if(window.CCS_PAGE === 'admin'){
     }
     if(e.key === 'e' || e.key === 'E'){
       e.preventDefault();
-      switchAdminTab('empresa');
+      switchAdminTab('relatorios');
       exportExcel();
       return;
     }
@@ -2346,7 +2593,10 @@ if(window.CCS_PAGE === 'admin'){
       exportCsv();
       return;
     }
-    const map = { '1':'projetos', '2':'conversas', '3':'clientes', '4':'operacoes', '5':'empresa' };
+    const map = {
+      '1':'painel', '2':'pipeline', '3':'clientes', '4':'conversas', '5':'tarefas',
+      '6':'financeiro', '7':'relatorios', '8':'equipe', '9':'auditoria', '0':'configuracoes'
+    };
     if(map[e.key]){ e.preventDefault(); switchAdminTab(map[e.key]); }
   });
 } else {
